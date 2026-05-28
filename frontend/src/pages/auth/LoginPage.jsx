@@ -1,31 +1,44 @@
+import { useState } from "react";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { loginSuccess } from "../../redux/slices/authSlice";
+
+import { loginUser } from "../../api/authApi";
 
 function LoginPage() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    const fakeUser = {
-      id: 1,
-      name: "MakHon",
-      role: "student",
-    };
+  const handleLogin = async () => {
 
-    const fakeToken = "jwt-token-example";
+    try {
 
-    dispatch(
-      loginSuccess({
-        user: fakeUser,
-        token: fakeToken,
-      })
-    );
+      const data = await loginUser({
+        email,
+        password,
+      });
 
-    navigate("/dashboard");
+      dispatch(
+        loginSuccess({
+          user: data.user,
+          token: data.token,
+        })
+      );
+
+      navigate("/dashboard");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Invalid credentials");
+    }
   };
 
   return (
@@ -40,12 +53,16 @@ function LoginPage() {
         <input
           type="email"
           placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full border p-3 rounded-lg mb-4"
         />
 
         <input
           type="password"
           placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full border p-3 rounded-lg mb-6"
         />
 
