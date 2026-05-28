@@ -164,16 +164,3 @@ To build a production-level university ecosystem platform that connects students
 📌 Author
 
 Developed as a full-stack engineering learning project for Royal University of Phnom Penh (RUPP).
-
-⸻
-
----
-# 🚀 NEXT STEP (AFTER PUSH)
-After you push this to GitHub, tell me:
-👉 “done pushed”
-Then I will help you:
-- set up Prisma + PostgreSQL
-- build real authentication (JWT + bcrypt)
-- connect frontend login to database
-- upgrade your system to production level
-You're now building a real SaaS system, not just a project.

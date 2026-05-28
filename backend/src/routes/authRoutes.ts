@@ -1,20 +1,15 @@
-import express from "express";
+import { Router, Request, Response } from "express";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/login", async (req, res) => {
-
+router.post("/login", (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  if (
-    email === "student@rupp.edu.kh" &&
-    password === "123456"
-  ) {
-
+  if (email === "student@rupp.edu.kh" && password === "123456") {
     return res.json({
-      token: "example-jwt-token",
+      token: "demo-token",
       user: {
-        id: 1,
+        id: "1",
         name: "MakHon",
         role: "STUDENT",
       },
