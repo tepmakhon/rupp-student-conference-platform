@@ -161,3 +161,60 @@ To build a production-level university ecosystem platform that connects students
 📌 Author
 
 Developed as a full-stack engineering learning project for Royal University of Phnom Penh (RUPP).
+
+
+we'll update structure
+backend/
+│
+├── prisma/
+│   ├── schema.prisma
+│   ├── seed.ts
+│
+├── src/
+│
+│   ├── config/
+│   │   ├── prisma.ts
+│   │   ├── env.ts
+│   │
+│   ├── middlewares/
+│   │   ├── auth.middleware.ts
+│   │   ├── rbac.middleware.ts
+│   │   ├── error.middleware.ts   (optional next upgrade)
+│   │
+│   ├── modules/
+│   │
+│   │   ├── auth/
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.routes.ts
+│   │   │
+│   │   ├── user/
+│   │   │   ├── user.controller.ts
+│   │   │   ├── user.service.ts
+│   │   │   ├── user.routes.ts
+│   │   │
+│   │   ├── event/
+│   │   │   ├── event.controller.ts
+│   │   │   ├── event.service.ts
+│   │   │   ├── event.routes.ts
+│   │   │
+│   │   ├── opportunity/
+│   │   │   ├── opportunity.controller.ts
+│   │   │   ├── opportunity.service.ts
+│   │   │   ├── opportunity.routes.ts
+│   │   │
+│   │   ├── notification/
+│   │   │   ├── notification.controller.ts
+│   │   │   ├── notification.service.ts
+│   │   │   ├── notification.routes.ts
+│   │
+│   ├── utils/
+│   │   ├── jwt.ts
+│   │   ├── bcrypt.ts
+│   │
+│   ├── app.ts
+│   ├── server.ts
+│
+├── package.json
+├── tsconfig.json
+└── .env
