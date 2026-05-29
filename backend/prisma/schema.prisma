@@ -1,33 +1,485 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
-enum Role {
 
-  STUDENT
+enum AccountStatus {
+  ACTIVE
 
-  ORGANIZATION
+  PENDING
 
-  ADMIN
+  SUSPENDED
+}
 
+enum RegistrationStatus {
+  PENDING
+
+  APPROVED
+
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  PENDING
+
+  REVIEWING
+
+  ACCEPTED
+
+  REJECTED
+}
+
+enum VerificationMethod {
+  QR_CODE
+
+  MANUAL
+}
+
+model Role {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  roleName String @unique @map("role_name") @db.VarChar(50)
+
+  users User[]
+
+  rolePermissions RolePermission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  permissionName String @unique @map("permission_name")
+
+  rolePermissions RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId BigInt @map("role_id") @db.BigInt
+
+  permissionId BigInt @map("permission_id") @db.BigInt
+
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("role_permissions")
 }
 
 model User {
+  id BigInt @id @default(autoincrement()) @db.BigInt
 
-  id        String   @id @default(uuid())
+  roleId BigInt @map("role_id") @db.BigInt
 
-  email     String   @unique
+  email String @unique @db.VarChar(255)
 
-  password  String
+  passwordHash String @map("password_hash")
 
-  role      Role     @default(STUDENT)
+  accountStatus AccountStatus @default(ACTIVE) @map("account_status")
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @map("updated_at")
 
+  role Role @relation(fields: [roleId], references: [id])
+
+  profile UserProfile?
+
+  student Student?
+
+  organization Organization?
+
+  notifications UserNotification[]
+
+  sessions UserSession[]
+
+  auditLogs AuditLog[]
+
+  @@map("users")
+}
+
+model UserProfile {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  userId BigInt @unique @map("user_id") @db.BigInt
+
+  fullName String @map("full_name") @db.VarChar(150)
+
+  phoneNumber String? @map("phone_number") @db.VarChar(20)
+
+  gender String? @db.VarChar(10)
+
+  dateOfBirth DateTime? @map("date_of_birth")
+
+  bio String?
+
+  profileImageUrl String? @map("profile_image_url")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+model University {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  universityName String @map("university_name") @db.VarChar(255)
+
+  location String? @db.VarChar(255)
+
+  faculties Faculty[]
+
+  students Student[]
+
+  @@map("universities")
+}
+
+model Faculty {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  universityId BigInt @map("university_id") @db.BigInt
+
+  facultyName String @map("faculty_name") @db.VarChar(255)
+
+  university University @relation(fields: [universityId], references: [id])
+
+  majors Major[]
+
+  students Student[]
+
+  @@map("faculties")
+}
+
+model Major {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  facultyId BigInt @map("faculty_id") @db.BigInt
+
+  majorName String @map("major_name") @db.VarChar(255)
+
+  description String?
+
+  careerPath String? @map("career_path")
+
+  faculty Faculty @relation(fields: [facultyId], references: [id])
+
+  students Student[]
+
+  @@map("majors")
+}
+
+model Student {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  userId BigInt @unique @map("user_id") @db.BigInt
+
+  universityId BigInt @map("university_id") @db.BigInt
+
+  facultyId BigInt @map("faculty_id") @db.BigInt
+
+  majorId BigInt @map("major_id") @db.BigInt
+
+  academicYear String? @map("academic_year")
+
+  activityScore Int @default(0) @map("activity_score")
+
+  user User @relation(fields: [userId], references: [id])
+
+  university University @relation(fields: [universityId], references: [id])
+
+  faculty Faculty @relation(fields: [facultyId], references: [id])
+
+  major Major @relation(fields: [majorId], references: [id])
+
+  registrations EventRegistration[]
+
+  applications Application[]
+
+  studentSkills StudentSkill[]
+
+  savedOpportunities SavedOpportunity[]
+
+  scoreHistory ActivityScoreHistory[]
+
+  @@map("students")
+}
+
+model Skill {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  skillName String @unique @map("skill_name")
+
+  studentSkills StudentSkill[]
+
+  @@map("skills")
+}
+
+model StudentSkill {
+  studentId BigInt @map("student_id") @db.BigInt
+
+  skillId BigInt @map("skill_id") @db.BigInt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, skillId])
+  @@map("student_skills")
+}
+
+model Organization {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  userId BigInt @unique @map("user_id") @db.BigInt
+
+  organizationName String @map("organization_name") @db.VarChar(255)
+
+  description String?
+
+  websiteUrl String? @map("website_url")
+
+  logoUrl String? @map("logo_url")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  events Event[]
+
+  opportunities Opportunity[]
+
+  @@map("organizations")
+}
+
+model EventCategory {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  categoryName String @unique @map("category_name")
+
+  events Event[]
+
+  @@map("event_categories")
+}
+
+model Event {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  organizationId BigInt @map("organization_id") @db.BigInt
+
+  categoryId BigInt @map("category_id") @db.BigInt
+
+  title String @db.VarChar(255)
+
+  description String?
+
+  location String? @db.VarChar(255)
+
+  eventDate DateTime @map("event_date")
+
+  capacity Int?
+
+  bannerImageUrl String? @map("banner_image_url")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  category EventCategory @relation(fields: [categoryId], references: [id])
+
+  registrations EventRegistration[]
+
+  @@map("events")
+}
+
+model EventRegistration {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  eventId BigInt @map("event_id") @db.BigInt
+
+  studentId BigInt @map("student_id") @db.BigInt
+
+  registrationStatus RegistrationStatus @default(PENDING) @map("registration_status")
+
+  registeredAt DateTime @default(now()) @map("registered_at")
+
+  event Event @relation(fields: [eventId], references: [id])
+
+  student Student @relation(fields: [studentId], references: [id])
+
+  attendanceRecord AttendanceRecord?
+
+  @@map("event_registrations")
+}
+
+model AttendanceRecord {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  registrationId BigInt @unique @map("registration_id") @db.BigInt
+
+  checkInTime DateTime? @map("check_in_time")
+
+  verificationMethod VerificationMethod @map("verification_method")
+
+  registration EventRegistration @relation(fields: [registrationId], references: [id])
+
+  @@map("attendance_records")
+}
+
+model OpportunityType {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  typeName String @unique @map("type_name")
+
+  opportunities Opportunity[]
+
+  @@map("opportunity_types")
+}
+
+model Opportunity {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  organizationId BigInt @map("organization_id") @db.BigInt
+
+  typeId BigInt @map("type_id") @db.BigInt
+
+  title String @db.VarChar(255)
+
+  description String?
+
+  requirements String?
+
+  deadline DateTime?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  type OpportunityType @relation(fields: [typeId], references: [id])
+
+  applications Application[]
+
+  savedByStudents SavedOpportunity[]
+
+  @@map("opportunities")
+}
+
+model Application {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  opportunityId BigInt @map("opportunity_id") @db.BigInt
+
+  studentId BigInt @map("student_id") @db.BigInt
+
+  cvUrl String? @map("cv_url")
+
+  applicationStatus ApplicationStatus @default(PENDING) @map("application_status")
+
+  appliedAt DateTime @default(now()) @map("applied_at")
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+
+  student Student @relation(fields: [studentId], references: [id])
+
+  @@map("applications")
+}
+
+model Notification {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  title String @db.VarChar(255)
+
+  message String
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  users UserNotification[]
+
+  @@map("notifications")
+}
+
+model UserNotification {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  userId BigInt @map("user_id") @db.BigInt
+
+  notificationId BigInt @map("notification_id") @db.BigInt
+
+  isRead Boolean @default(false) @map("is_read")
+
+  user User @relation(fields: [userId], references: [id])
+
+  notification Notification @relation(fields: [notificationId], references: [id])
+
+  @@map("user_notifications")
+}
+
+model SavedOpportunity {
+  studentId BigInt @map("student_id") @db.BigInt
+
+  opportunityId BigInt @map("opportunity_id") @db.BigInt
+
+  savedAt DateTime @default(now()) @map("saved_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@id([studentId, opportunityId])
+  @@map("saved_opportunities")
+}
+
+model UserSession {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  userId BigInt @map("user_id") @db.BigInt
+
+  refreshToken String @map("refresh_token")
+
+  ipAddress String? @map("ip_address")
+
+  expiresAt DateTime @map("expires_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+model AuditLog {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  userId BigInt @map("user_id") @db.BigInt
+
+  action String
+
+  ipAddress String? @map("ip_address")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model ActivityScoreHistory {
+  id BigInt @id @default(autoincrement()) @db.BigInt
+
+  studentId BigInt @map("student_id") @db.BigInt
+
+  scoreChange Int @map("score_change")
+
+  reason String
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("activity_score_history")
 }
