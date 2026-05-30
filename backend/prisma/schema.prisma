@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EventStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum AccountStatus {
   ACTIVE
 
@@ -287,6 +293,10 @@ model Event {
   capacity Int?
 
   bannerImageUrl String? @map("banner_image_url")
+
+  status EventStatus @default(PENDING)
+
+  approvedAt DateTime? @map("approved_at")
 
   createdAt DateTime @default(now()) @map("created_at")
 

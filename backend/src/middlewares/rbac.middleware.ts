@@ -1,16 +1,23 @@
-import { Response, NextFunction } from "express";
-import { AuthRequest } from "./auth.middleware.js";
+import { Request, Response, NextFunction } from "express";
 
-export const authorize = (...allowedRoles: string[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
-    const role = req.user?.roleName;
+export const rbac = (allowedRoles: string[]) => {
+  return (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const user = (req as any).user;
 
-    if (!role) {
-      return res.status(403).json({ message: "Role missing" });
+    if (!user) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
     }
 
-    if (!allowedRoles.includes(role)) {
-      return res.status(403).json({ message: "Access denied" });
+    if (!allowedRoles.includes(user.roleName)) {
+      return res.status(403).json({
+        message: "Forbidden: RBAC blocked",
+      });
     }
 
     next();

@@ -1,6 +1,6 @@
 export const serializeBigInt = (obj: any) => {
   return JSON.parse(
-    JSON.stringify(obj, (_, value) =>
+    JSON.stringify(obj, (key, value) =>
       typeof value === "bigint" ? value.toString() : value
     )
   );

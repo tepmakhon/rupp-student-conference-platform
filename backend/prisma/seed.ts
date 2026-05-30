@@ -12,7 +12,16 @@ async function main() {
     skipDuplicates: true,
   });
 
-  console.log("Roles seeded successfully");
+  await prisma.eventCategory.createMany({
+    data: [
+      { categoryName: "TECH" },
+      { categoryName: "BUSINESS" },
+      { categoryName: "DESIGN" },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log("Seed completed");
 }
 
 main()
