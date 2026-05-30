@@ -6,6 +6,7 @@ import {
   getPendingEventsController,
   approveEventController,
   rejectEventController,
+  registerEventController,
 } from "./event.controller.js";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
@@ -44,6 +45,13 @@ router.patch(
   authMiddleware,
   rbac(["ADMIN"]),
   rejectEventController
+);
+
+router.post(
+  "/:id/register",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  registerEventController
 );
 
 export default router;

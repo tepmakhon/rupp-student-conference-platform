@@ -6,6 +6,7 @@ import {
   getPendingEvents,
   approveEvent,
   rejectEvent,
+  registerForEvent,
 } from "./event.service.js";
 
 export const createEventController = async (req: Request, res: Response) => {
@@ -83,6 +84,25 @@ export const rejectEventController = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.status(400).json({
+      message: error.message,
+    });
+  }
+};
+
+export const registerEventController = async (req: Request, res: Response) => {
+  try {
+    const eventId = BigInt(
+      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+    );
+    const user = (req as any).user;
+    const registration = await registerForEvent(eventId, BigInt(user.id));
+    res.status(201).json({
+      success: true,
+      registration,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      success: false,
       message: error.message,
     });
   }

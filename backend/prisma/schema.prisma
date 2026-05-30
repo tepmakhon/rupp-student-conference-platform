@@ -15,34 +15,39 @@ enum EventStatus {
 
 enum AccountStatus {
   ACTIVE
-
   PENDING
-
   SUSPENDED
 }
 
 enum RegistrationStatus {
   PENDING
-
   APPROVED
-
   CANCELLED
 }
 
 enum ApplicationStatus {
   PENDING
-
   REVIEWING
-
   ACCEPTED
-
   REJECTED
 }
 
 enum VerificationMethod {
   QR_CODE
-
   MANUAL
+}
+
+enum OpportunityStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CLOSED
+}
+
+enum NotificationType {
+  EVENT
+  OPPORTUNITY
+  SYSTEM
 }
 
 model Role {
@@ -316,7 +321,7 @@ model EventRegistration {
 
   studentId BigInt @map("student_id") @db.BigInt
 
-  registrationStatus RegistrationStatus @default(PENDING) @map("registration_status")
+  registrationStatus RegistrationStatus @default(APPROVED) @map("registration_status")
 
   registeredAt DateTime @default(now()) @map("registered_at")
 
@@ -325,6 +330,8 @@ model EventRegistration {
   student Student @relation(fields: [studentId], references: [id])
 
   attendanceRecord AttendanceRecord?
+
+  @@unique([eventId, studentId])
 
   @@map("event_registrations")
 }
@@ -368,6 +375,10 @@ model Opportunity {
 
   deadline DateTime?
 
+  status OpportunityStatus @default(PENDING)
+
+  approvedAt DateTime? @map("approved_at")
+
   createdAt DateTime @default(now()) @map("created_at")
 
   organization Organization @relation(fields: [organizationId], references: [id])
@@ -398,6 +409,8 @@ model Application {
 
   student Student @relation(fields: [studentId], references: [id])
 
+  @@unique([opportunityId, studentId])
+
   @@map("applications")
 }
 
@@ -407,6 +420,8 @@ model Notification {
   title String @db.VarChar(255)
 
   message String
+
+  type NotificationType
 
   createdAt DateTime @default(now()) @map("created_at")
 
