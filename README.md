@@ -51,15 +51,53 @@ Target Scale:
 
 Feature-Based Modular Architecture
 
-text src/ │ ├── config/ │   └── prisma.ts │ ├── middlewares/ │   ├── auth.middleware.ts │   └── rbac.middleware.ts │ ├── modules/ │   │ │   ├── admin/ │   ├── auth/ │   ├── attendance/ │   ├── dashboard/ │   ├── event/ │   ├── leaderboard/ │   ├── notification/ │   ├── opportunity/ │   ├── organization/ │   ├── student/ │   └── user/ │ ├── app.ts └── server.ts 
+src/
+│
+├── config/
+│   └── prisma.ts
+│
+├── middlewares/
+│   ├── auth.middleware.ts
+│   └── rbac.middleware.ts
+│
+├── modules/
+│   │
+│   ├── admin/
+│   ├── auth/
+│   ├── attendance/
+│   ├── dashboard/
+│   ├── event/
+│   ├── leaderboard/
+│   ├── notification/
+│   ├── opportunity/
+│   ├── organization/
+│   ├── student/
+│   └── user/
+│
+├── app.ts
+└── server.ts
 
 Each module follows:
 
-text module/ │ ├── controller ├── service └── routes 
+module/
+│
+├── controller
+├── service
+└── routes
 
 Flow:
 
-text Request    ↓ Route    ↓ Controller    ↓ Service    ↓ Prisma    ↓ Database 
+Request
+   ↓
+Route
+   ↓
+Controller
+   ↓
+Service
+   ↓
+Prisma
+   ↓
+Database
 
 ---
 
@@ -90,7 +128,15 @@ Current Database Size:
 
 Database Design Pattern:
 
-text RBAC + University Structure + Event Management + Opportunity Management + Notification System 
+RBAC
++
+University Structure
++
+Event Management
++
+Opportunity Management
++
+Notification System
 
 ---
 
@@ -110,7 +156,8 @@ Features:
 
 Endpoints:
 
-http POST /api/auth/register POST /api/auth/login 
+POST /api/auth/register
+POST /api/auth/login
 
 ---
 
@@ -156,8 +203,9 @@ Features:
 - Capacity Management
 
 Endpoints:
-
-http POST /api/events GET /api/events GET /api/events/:id 
+POST /api/events
+GET /api/events
+GET /api/events/:id
 
 ---
 
@@ -172,8 +220,7 @@ Features:
 
 Endpoints:
 
-http PATCH /api/events/:id/approve 
-
+PATCH /api/events/:id/approve
 ---
 
 ## Event Registration System
@@ -188,7 +235,7 @@ Features:
 
 Endpoints:
 
-http POST /api/events/:id/register 
+POST /api/events/:id/register
 
 ---
 
@@ -204,7 +251,7 @@ Features:
 
 Endpoints:
 
-http POST /api/attendance/checkin/:eventId 
+POST /api/attendance/checkin/:eventId
 
 ---
 
@@ -220,7 +267,8 @@ Features:
 
 Example:
 
-text Attend Event +10 Score 
+Attend Event
++10 Score
 
 ---
 
@@ -235,13 +283,30 @@ Features:
 
 Endpoints:
 
-http GET /api/leaderboard 
+GET /api/leaderboard
 
 ---
 
 # Current Project Progress
+Authentication          ✅
+RBAC                    ✅
+Organizations           ✅
+Events                  ✅
+Approval Workflow       ✅
+Registration            ✅
 
-text Authentication          ✅ RBAC                    ✅ Organizations           ✅ Events                  ✅ Approval Workflow       ✅ Registration            ✅  Attendance              ✅ Activity Score          ✅ Leaderboard             ✅  Opportunities           ⏳ Applications            ⏳ Notifications           ⏳  Analytics               ⏳  Frontend                ❌ Deployment              ❌ 
+Attendance              ✅
+Activity Score          ✅
+Leaderboard             ✅
+
+Opportunities           ⏳
+Applications            ⏳
+Notifications           ⏳
+
+Analytics               ⏳
+
+Frontend                ❌
+Deployment              ❌
 
 ---
 
@@ -249,29 +314,35 @@ text Authentication          ✅ RBAC                    ✅ Organizations      
 
 Install Dependencies
 
-bash npm install 
+npm install
 
 Configure Environment Variables
 
 Create:
 
-env DATABASE_URL=postgresql://postgres:password@localhost:5432/rupp_platform  JWT_SECRET=super_secure_secret_key  JWT_EXPIRES_IN=7d 
+env :
+DATABASE_URL=postgresql://postgres:password@localhost:5432/rupp_platform
+
+JWT_SECRET=super_secure_secret_key
+
+JWT_EXPIRES_IN=7d
+
 
 Generate Prisma Client
 
-bash npx prisma generate 
+npx prisma generate
 
 Run Migration
 
-bash npx prisma migrate dev 
+npx prisma migrate dev
 
 Start Server
 
-bash npm run dev 
+npm run dev
 
 Expected:
 
-text Server running on port 5050 
+Server running on port 5050
 
 ---
 
@@ -279,15 +350,19 @@ text Server running on port 5050
 
 ## 1. Register Student
 
-http POST /api/auth/register 
+POST /api/auth/register
 
-json {   "email": "student@gmail.com",   "password": "123456",   "role": "STUDENT" } 
+{
+  "email": "student@gmail.com",
+  "password": "123456",
+  "role": "STUDENT"
+}
 
 ---
 
 ## 2. Login
 
-http POST /api/auth/login 
+POST /api/auth/login
 
 Copy the JWT token.
 
@@ -297,23 +372,29 @@ Copy the JWT token.
 
 Using Prisma Studio:
 
-bash npx prisma studio 
+npx prisma studio
 
 Insert:
 
-text Workshop Competition Conference 
+Workshop
+Competition
+Conference
 
 ---
 
 ## 4. Register Organization
-
-json {   "email": "org@gmail.com",   "password": "123456",   "role": "ORGANIZATION" } 
+json
+{
+  "email": "org@gmail.com",
+  "password": "123456",
+  "role": "ORGANIZATION"
+}
 
 ---
 
 ## 5. Create Event
 
-http POST /api/events 
+POST /api/events
 
 Authorization:
 
