@@ -6,11 +6,10 @@ import eventRoutes from "./modules/event/event.routes.js";
 import studentRoutes from "./modules/student/student.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
 import organizationRoutes from "./modules/organization/organization.routes.js";
-import attendanceRoutes
-from "./modules/attendance/attendance.routes.js";
-
-import leaderboardRoutes
-from "./modules/leaderboard/leaderboard.routes.js";
+import attendanceRoutes from "./modules/attendance/attendance.routes.js";
+import opportunityRoutes from "./modules/opportunity/opportunity.routes.js";
+import leaderboardRoutes from "./modules/leaderboard/leaderboard.routes.js";
+import applicationRoutes from "./modules/application/application.routes.js";
 
 const app = express();
 
@@ -65,6 +64,9 @@ app.use("/api/attendance", attendanceRoutes);
 
 app.use("/api/leaderboard",leaderboardRoutes);
 
+app.use("/api/opportunities", opportunityRoutes);
+
+app.use("/api/applications", applicationRoutes);
 /*
 |--------------------------------------------------------------------------
 | 404 Not Found
