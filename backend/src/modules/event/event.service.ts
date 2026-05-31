@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { createNotification } from "../notification/notification.service.js";
 
 export const createEvent = async (data: any, user: any) => {
   const organization = await prisma.organization.findUnique({
@@ -49,7 +50,8 @@ export const getPendingEvents = async () => {
 };
 
 export const approveEvent = async (eventId: bigint) => {
-  return prisma.event.update({
+
+  const event = await prisma.event.update({
     where: {
       id: eventId,
     },
@@ -57,11 +59,22 @@ export const approveEvent = async (eventId: bigint) => {
       status: "APPROVED",
       approvedAt: new Date(),
     } as any,
+    include: {
+      organization: true,
+    },
   });
-};
 
+  await createNotification(
+    event.organization.userId,
+    "Event Approved",
+    `${event.title} has been approved by admin`
+  );
+
+  return event;
+};
 export const rejectEvent = async (eventId: bigint) => {
-  return prisma.event.update({
+
+  const event = await prisma.event.update({
     where: {
       id: eventId,
     },
@@ -69,38 +82,53 @@ export const rejectEvent = async (eventId: bigint) => {
       status: "REJECTED",
       approvedAt: new Date(),
     } as any,
+    include: {
+      organization: true,
+    },
   });
+
+  await createNotification(
+    event.organization.userId,
+    "Event Rejected",
+    `${event.title} has been rejected by admin`
+  );
+
+  return event;
 };
 
 export const registerForEvent = async (
   eventId: bigint,
   userId: bigint
 ) => {
-  // Find student
+
   const student = await prisma.student.findUnique({
     where: {
       userId,
     },
   });
+
   if (!student) {
     throw new Error("Student profile not found");
   }
-  // Find event
+
   const event = await prisma.event.findUnique({
     where: {
       id: eventId,
     },
     include: {
       registrations: true,
+      organization: true,
     },
   });
+
   if (!event) {
     throw new Error("Event not found");
   }
+
   if (event.status !== "APPROVED") {
     throw new Error("Event is not approved");
   }
-  // Duplicate prevention
+
   const existingRegistration =
     await prisma.eventRegistration.findFirst({
       where: {
@@ -108,21 +136,32 @@ export const registerForEvent = async (
         studentId: student.id,
       },
     });
+
   if (existingRegistration) {
     throw new Error("Already registered");
   }
-  // Capacity check
+
   if (
     event.capacity &&
     event.registrations.length >= event.capacity
   ) {
     throw new Error("Event is full");
   }
-  return prisma.eventRegistration.create({
-    data: {
-      eventId,
-      studentId: student.id,
-      registrationStatus: "APPROVED",
-    },
-  });
+
+  const registration =
+    await prisma.eventRegistration.create({
+      data: {
+        eventId,
+        studentId: student.id,
+        registrationStatus: "APPROVED",
+      },
+    });
+
+  await createNotification(
+    event.organization.userId,
+    "New Event Registration",
+    "A student registered for your event"
+  );
+
+  return registration;
 };

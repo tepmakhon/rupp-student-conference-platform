@@ -10,6 +10,7 @@ import attendanceRoutes from "./modules/attendance/attendance.routes.js";
 import opportunityRoutes from "./modules/opportunity/opportunity.routes.js";
 import leaderboardRoutes from "./modules/leaderboard/leaderboard.routes.js";
 import applicationRoutes from "./modules/application/application.routes.js";
+import notificationRoutes from "./modules/notification/notification.routes.js";
 
 const app = express();
 
@@ -67,6 +68,8 @@ app.use("/api/leaderboard",leaderboardRoutes);
 app.use("/api/opportunities", opportunityRoutes);
 
 app.use("/api/applications", applicationRoutes);
+
+app.use("/api/notifications", notificationRoutes);
 /*
 |--------------------------------------------------------------------------
 | 404 Not Found

@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { createNotification } from "../notification/notification.service.js";
 
 export const createOpportunity = async (
   data: any,
@@ -68,16 +69,29 @@ export const approveOpportunity = async (
   opportunityId: bigint
 ) => {
 
-  return prisma.opportunity.update({
-    where: {
-      id: opportunityId,
-    },
+  const opportunity =
+    await prisma.opportunity.update({
+      where: {
+        id: opportunityId,
+      },
 
-    data: {
-      status: "APPROVED",
-      approvedAt: new Date(),
-    } as any,
-  });
+      data: {
+        status: "APPROVED",
+        approvedAt: new Date(),
+      } as any,
+
+      include: {
+        organization: true,
+      },
+    });
+
+  await createNotification(
+    opportunity.organization.userId,
+    "Opportunity Approved",
+    `${opportunity.title} has been approved by admin`
+  );
+
+  return opportunity;
 };
 
 export const applyOpportunity = async (
@@ -96,6 +110,32 @@ export const applyOpportunity = async (
     throw new Error("Student not found");
   }
 
+  const opportunity =
+    await prisma.opportunity.findUnique({
+      where: {
+        id: opportunityId,
+      },
+
+      include: {
+        organization: true,
+      },
+    });
+
+  if (!opportunity) {
+    throw new Error(
+      "Opportunity not found"
+    );
+  }
+
+  if (
+    (opportunity as any).status !==
+    "APPROVED"
+  ) {
+    throw new Error(
+      "Opportunity is not approved"
+    );
+  }
+
   const existing =
     await prisma.application.findFirst({
       where: {
@@ -110,10 +150,47 @@ export const applyOpportunity = async (
     );
   }
 
-  return prisma.application.create({
-    data: {
-      opportunityId,
-      studentId: student.id,
-    },
-  });
+  const application =
+    await prisma.application.create({
+      data: {
+        opportunityId,
+        studentId: student.id,
+      },
+    });
+
+  await createNotification(
+    opportunity.organization.userId,
+    "New Application",
+    `A student applied for ${opportunity.title}`
+  );
+
+  return application;
+};
+
+export const rejectOpportunity = async (
+  opportunityId: bigint
+) => {
+
+  const opportunity =
+    await prisma.opportunity.update({
+      where: {
+        id: opportunityId,
+      },
+
+      data: {
+        status: "REJECTED",
+      } as any,
+
+      include: {
+        organization: true,
+      },
+    });
+
+  await createNotification(
+    opportunity.organization.userId,
+    "Opportunity Rejected",
+    `${opportunity.title} has been rejected`
+  );
+
+  return opportunity;
 };
