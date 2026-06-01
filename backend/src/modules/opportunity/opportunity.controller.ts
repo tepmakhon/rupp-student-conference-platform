@@ -68,24 +68,36 @@ export const approveOpportunity = async (req: Request, res: Response) => {
   }
 };
 
-export const applyOpportunity = async (req: Request, res: Response) => {
+export const applyOpportunity = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const user = (req as any).user;
+
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
-    const application = await opportunityService.applyOpportunity(
-      BigInt(id),
-      BigInt(user.id),
-    );
+    const opportunityId = BigInt(id);
 
-    res.status(201).json({
+    const user = (req as any).user;
+
+    const application =
+      await opportunityService.applyOpportunity(
+        opportunityId,
+        BigInt(user.id),
+        req.body
+      );
+
+    return res.status(201).json({
       success: true,
       application,
     });
+
   } catch (error: any) {
-    res.status(400).json({
+
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
+
   }
 };

@@ -144,7 +144,8 @@ export const rejectOpportunity = async (
 
 export const applyOpportunity = async (
   opportunityId: bigint,
-  userId: bigint
+  userId: bigint,
+  data: any
 ) => {
 
   const student =
@@ -205,6 +206,7 @@ export const applyOpportunity = async (
       data: {
         opportunityId,
         studentId: student.id,
+        cvUrl: data.cvUrl || null,
       },
     });
 

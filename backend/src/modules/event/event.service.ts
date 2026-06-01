@@ -2,26 +2,37 @@ import { prisma } from "../../config/prisma.js";
 import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
 
-export const createEvent = async (data: any, user: any) => {
-  const organization = await prisma.organization.findUnique({
-    where: {
-      userId: BigInt(user.id),
-    },
-  });
-
+export const createEvent = async (
+  data: any,
+  user: any
+) => {
+  const organization =
+    await prisma.organization.findUnique({
+      where: {
+        userId: BigInt(user.id),
+      },
+    });
   if (!organization) {
-    throw new Error("Only organization can create events");
+    throw new Error(
+      "Only organization can create events"
+    );
   }
-
   const event = await prisma.event.create({
-  data: {
+    data: {
       title: data.title,
       description: data.description,
       location: data.location,
-      eventDate: new Date(data.eventDate),
-      categoryId: BigInt(data.categoryId),
+      eventDate: new Date(
+      data.eventDate
+      ),
+      categoryId: BigInt(
+        data.categoryId
+      ),
       capacity: data.capacity,
-      organizationId: organization.id,
+      bannerImageUrl:
+        data.bannerImageUrl || null,
+      organizationId:
+        organization.id,
     },
   });
 
@@ -29,6 +40,7 @@ export const createEvent = async (data: any, user: any) => {
     BigInt(user.id),
     `EVENT_CREATED:${event.title}`
   );
+
   return event;
 };
 
