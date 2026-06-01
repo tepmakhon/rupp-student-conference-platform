@@ -1,4 +1,6 @@
 import { prisma } from "../../config/prisma.js";
+import { createNotification } from "../notification/notification.service.js";
+import { createAuditLog } from "../audit/audit.service.js";
 
 export const getMyApplications = async (
   userId: bigint
@@ -12,7 +14,9 @@ export const getMyApplications = async (
     });
 
   if (!student) {
-    throw new Error("Student not found");
+    throw new Error(
+      "Student not found"
+    );
   }
 
   return prisma.application.findMany({
@@ -49,7 +53,9 @@ export const getApplicantsForOpportunity =
       });
 
     if (!organization) {
-      throw new Error("Organization not found");
+      throw new Error(
+        "Organization not found"
+      );
     }
 
     const opportunity =
@@ -89,13 +95,53 @@ export const updateApplicationStatus =
     status: string
   ) => {
 
-    return prisma.application.update({
-      where: {
-        id: applicationId,
-      },
+    const validStatuses = [
+      "PENDING",
+      "REVIEWING",
+      "ACCEPTED",
+      "REJECTED",
+    ];
 
-      data: {
-        applicationStatus: status as any,
-      },
-    });
+    if (
+      !validStatuses.includes(status)
+    ) {
+      throw new Error(
+        "Invalid application status"
+      );
+    }
+
+    const application =
+      await prisma.application.update({
+        where: {
+          id: applicationId,
+        },
+
+        data: {
+          applicationStatus:
+            status as any,
+        },
+
+        include: {
+          student: {
+            include: {
+              user: true,
+            },
+          },
+
+          opportunity: true,
+        },
+      });
+
+    await createNotification(
+      application.student.userId,
+      `Application ${status}`,
+      `Your application for ${application.opportunity.title} has been ${status}`
+    );
+
+    await createAuditLog(
+      application.student.userId,
+      `APPLICATION_${status}:${application.opportunity.title}`
+    );
+
+    return application;
 };

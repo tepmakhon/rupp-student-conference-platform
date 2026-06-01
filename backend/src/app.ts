@@ -12,6 +12,7 @@ import leaderboardRoutes from "./modules/leaderboard/leaderboard.routes.js";
 import applicationRoutes from "./modules/application/application.routes.js";
 import notificationRoutes from "./modules/notification/notification.routes.js";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
+import auditRoutes from "./modules/audit/audit.routes.js";
 
 const app = express();
 
@@ -73,6 +74,8 @@ app.use("/api/applications", applicationRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
+
+app.use( "/api/audit", auditRoutes);
 /*
 |--------------------------------------------------------------------------
 | 404 Not Found

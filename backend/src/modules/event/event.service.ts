@@ -1,5 +1,6 @@
 import { prisma } from "../../config/prisma.js";
 import { createNotification } from "../notification/notification.service.js";
+import { createAuditLog } from "../audit/audit.service.js";
 
 export const createEvent = async (data: any, user: any) => {
   const organization = await prisma.organization.findUnique({
@@ -12,8 +13,8 @@ export const createEvent = async (data: any, user: any) => {
     throw new Error("Only organization can create events");
   }
 
-  return prisma.event.create({
-    data: {
+  const event = await prisma.event.create({
+  data: {
       title: data.title,
       description: data.description,
       location: data.location,
@@ -23,6 +24,12 @@ export const createEvent = async (data: any, user: any) => {
       organizationId: organization.id,
     },
   });
+
+  await createAuditLog(
+    BigInt(user.id),
+    "EVENT_CREATED"
+  );
+  return event;
 };
 
 export const getApprovedEvents = async () => {
@@ -69,6 +76,10 @@ export const approveEvent = async (eventId: bigint) => {
     "Event Approved",
     `${event.title} has been approved by admin`
   );
+  await createAuditLog(
+  event.organization.userId,
+  "EVENT_APPROVED"
+  );
 
   return event;
 };
@@ -92,7 +103,10 @@ export const rejectEvent = async (eventId: bigint) => {
     "Event Rejected",
     `${event.title} has been rejected by admin`
   );
-
+  await createAuditLog(
+  event.organization.userId,
+  "EVENT_REJECTED"
+  );
   return event;
 };
 
@@ -162,6 +176,12 @@ export const registerForEvent = async (
     "New Event Registration",
     "A student registered for your event"
   );
+  await createAuditLog(
 
+  userId,
+
+  "EVENT_REGISTERED"
+
+  );
   return registration;
 };

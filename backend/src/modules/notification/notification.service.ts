@@ -71,7 +71,7 @@ export const createNotification = async (
       data: {
         title,
         message,
-      },
+      }as any,
     });
 
   await prisma.userNotification.create({

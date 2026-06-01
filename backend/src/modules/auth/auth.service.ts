@@ -2,6 +2,8 @@ import { prisma } from "../../config/prisma.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+import { createAuditLog } from "../audit/audit.service.js";
+
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
 export const registerUser = async (data: any) => {
@@ -14,7 +16,9 @@ export const registerUser = async (data: any) => {
   } = data;
 
   const existingUser = await prisma.user.findUnique({
-    where: { email },
+    where: {
+      email,
+    },
   });
 
   if (existingUser) {
@@ -31,7 +35,10 @@ export const registerUser = async (data: any) => {
     throw new Error("Role not found");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(
+    password,
+    10
+  );
 
   const user = await prisma.user.create({
     data: {
@@ -44,17 +51,25 @@ export const registerUser = async (data: any) => {
     },
   });
 
-  // Create organization profile automatically
+  // Auto-create organization profile
   if (role.roleName === "ORGANIZATION") {
     await prisma.organization.create({
       data: {
         userId: user.id,
         organizationName:
-          organizationName || "Unnamed Organization",
-        description: description || "",
+          organizationName ||
+          "Unnamed Organization",
+        description:
+          description || "",
       },
     });
   }
+
+  // Audit Log
+  await createAuditLog(
+    user.id,
+    `USER_REGISTERED_${role.roleName}`
+  );
 
   const token = jwt.sign(
     {
@@ -79,7 +94,9 @@ export const loginUser = async (data: any) => {
   const { email, password } = data;
 
   const user = await prisma.user.findUnique({
-    where: { email },
+    where: {
+      email,
+    },
     include: {
       role: true,
     },
@@ -95,8 +112,21 @@ export const loginUser = async (data: any) => {
   );
 
   if (!isValid) {
-    throw new Error("Invalid credentials");
+    await createAuditLog(
+      user.id,
+      "LOGIN_FAILED"
+    );
+
+    throw new Error(
+      "Invalid credentials"
+    );
   }
+
+  // Audit Log
+  await createAuditLog(
+    user.id,
+    "LOGIN_SUCCESS"
+  );
 
   const token = jwt.sign(
     {
