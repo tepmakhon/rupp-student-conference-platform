@@ -29,4 +29,13 @@ router.patch(
   readAllNotifications
 );
 
+/**
+ * @swagger
+ * /api/notifications:
+ *   get:
+ *     summary: My Notifications
+ *     tags:
+ *       - Notifications
+ */
+
 export default router;

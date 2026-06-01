@@ -16,6 +16,7 @@ import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import auditRoutes from "./modules/audit/audit.routes.js";
 import { setupBigIntSerialization } from "./utils/bigint.js";
 import uploadRoutes from "./modules/upload/upload.routes.js";
+import swaggerUi from "swagger-ui-express"; import { swaggerSpec } from "./config/swagger.js";
 
 setupBigIntSerialization();
 
@@ -90,6 +91,17 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/audit", auditRoutes);
 
 app.use("/api/upload", uploadRoutes);
+
+/*
+|--------------------------------------------------------------------------
+| Swagger Documentation
+|--------------------------------------------------------------------------
+*/
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
 
 /*
 |--------------------------------------------------------------------------

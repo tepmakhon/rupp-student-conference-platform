@@ -53,4 +53,13 @@ router.get(
   studentDashboard
 );
 
+/**
+ * @swagger
+ * /api/dashboard:
+ *   get:
+ *     summary: Dashboard Analytics
+ *     tags:
+ *       - Dashboard
+ */
+
 export default router;

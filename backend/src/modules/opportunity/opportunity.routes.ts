@@ -71,4 +71,22 @@ router.post(
   applyOpportunity
 );
 
+/**
+ * @swagger
+ * /api/opportunities:
+ *   get:
+ *     summary: Get Opportunities
+ *     tags:
+ *       - Opportunities
+ */
+
+
+/**
+ * @swagger
+ * /api/opportunities:
+ *   post:
+ *     summary: Create Opportunity
+ *     tags:
+ *       - Opportunities
+ */
 export default router;

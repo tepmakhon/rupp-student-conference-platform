@@ -54,4 +54,39 @@ router.post(
   registerEventController
 );
 
+/**
+ * @swagger
+ * /api/events:
+ *   get:
+ *     summary: Get Approved Events
+ *     tags:
+ *       - Events
+ *     responses:
+ *       200:
+ *         description: Success
+ */
+
+/**
+ * @swagger
+ * /api/events:
+ *   post:
+ *     summary: Create Event
+ *     tags:
+ *       - Events
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/events/register/{eventId}:
+ *   post:
+ *     summary: Register Event
+ *     tags:
+ *       - Events
+ *     security:
+ *       - bearerAuth: []
+ */
+
+
 export default router;

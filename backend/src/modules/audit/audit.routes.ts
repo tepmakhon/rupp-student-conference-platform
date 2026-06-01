@@ -23,4 +23,13 @@ router.get(
   getMyAuditLogs
 );
 
+/**
+ * @swagger
+ * /api/audit:
+ *   get:
+ *     summary: Audit Logs
+ *     tags:
+ *       - Audit
+ */
+
 export default router;

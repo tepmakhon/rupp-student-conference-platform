@@ -14,4 +14,13 @@ router.post(
   checkIn
 );
 
+/**
+ * @swagger
+ * /api/attendance/checkin/{eventId}:
+ *   post:
+ *     summary: Check In Event
+ *     tags:
+ *       - Attendance
+ */
+
 export default router;

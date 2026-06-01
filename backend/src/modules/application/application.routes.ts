@@ -47,4 +47,13 @@ router.patch(
   updateStatus
 );
 
+/**
+ * @swagger
+ * /api/applications/my:
+ *   get:
+ *     summary: My Applications
+ *     tags:
+ *       - Applications
+ */
+
 export default router;
