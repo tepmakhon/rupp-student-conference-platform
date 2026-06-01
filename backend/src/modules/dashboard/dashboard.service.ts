@@ -2,27 +2,43 @@ import { prisma } from "../../config/prisma.js";
 
 export const getAdminDashboard = async () => {
 
-  const totalStudents =
-    await prisma.student.count();
+const [
+  totalStudents,
+  totalOrganizations,
+  totalEvents,
+  approvedEvents,
+  pendingEvents,
+  rejectedEvents,
+  totalOpportunities,
+  approvedOpportunities,
+  totalApplications,
+] = await Promise.all([
+  prisma.student.count(),
 
-  const totalOrganizations =
-    await prisma.organization.count();
+  prisma.organization.count(),
 
-  const totalEvents =
-    await prisma.event.count();
+  prisma.event.count(),
 
-  const pendingEvents =
-    await prisma.event.count({
-      where: {
-        status: "PENDING",
-      } as any,
-    });
+  prisma.event.count({
+    where: { status: "APPROVED" },
+  }),
 
-  const totalOpportunities =
-    await prisma.opportunity.count();
+  prisma.event.count({
+    where: { status: "PENDING" },
+  }),
 
-  const totalApplications =
-    await prisma.application.count();
+  prisma.event.count({
+    where: { status: "REJECTED" },
+  }),
+
+  prisma.opportunity.count(),
+
+  prisma.opportunity.count({
+    where: { status: "APPROVED" } as any,
+  }),
+
+  prisma.application.count(),
+]);
 
   return {
     totalStudents,
@@ -31,6 +47,9 @@ export const getAdminDashboard = async () => {
     pendingEvents,
     totalOpportunities,
     totalApplications,
+    approvedEvents,
+    rejectedEvents,
+    approvedOpportunities,
   };
 };
 

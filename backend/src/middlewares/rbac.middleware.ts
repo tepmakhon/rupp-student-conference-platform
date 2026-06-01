@@ -14,7 +14,11 @@ export const rbac = (allowedRoles: string[]) => {
       });
     }
 
-    if (!allowedRoles.includes(user.roleName)) {
+    if (
+        !allowedRoles.some(
+          role => role === user.roleName
+        )
+      ) {
       return res.status(403).json({
         message: "Forbidden: RBAC blocked",
       });

@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import path from "path";
 
 import authRoutes from "./modules/auth/auth.routes.js";
 import eventRoutes from "./modules/event/event.routes.js";
@@ -13,38 +14,49 @@ import applicationRoutes from "./modules/application/application.routes.js";
 import notificationRoutes from "./modules/notification/notification.routes.js";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import auditRoutes from "./modules/audit/audit.routes.js";
+import { setupBigIntSerialization } from "./utils/bigint.js";
+import uploadRoutes from "./modules/upload/upload.routes.js";
+
+setupBigIntSerialization();
 
 const app = express();
-
-/*
-|--------------------------------------------------------------------------
-| BigInt JSON Fix
-|--------------------------------------------------------------------------
-*/
-(BigInt.prototype as any).toJSON = function () {
-  return this.toString();
-};
 
 /*
 |--------------------------------------------------------------------------
 | Global Middlewares
 |--------------------------------------------------------------------------
 */
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
+app.use(
+  "/uploads",
+  express.static(
+    path.join(process.cwd(), "uploads")
+  )
+);
 /*
 |--------------------------------------------------------------------------
 | Health Check
 |--------------------------------------------------------------------------
 */
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.status(200).json({
     success: true,
-    message: "API running clean",
+    message: "RUPP Student Conference & Opportunity Platform API",
+    version: "1.0.0",
   });
 });
 
@@ -65,7 +77,7 @@ app.use("/api/organizations", organizationRoutes);
 
 app.use("/api/attendance", attendanceRoutes);
 
-app.use("/api/leaderboard",leaderboardRoutes);
+app.use("/api/leaderboard", leaderboardRoutes);
 
 app.use("/api/opportunities", opportunityRoutes);
 
@@ -75,10 +87,13 @@ app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/dashboard", dashboardRoutes);
 
-app.use( "/api/audit", auditRoutes);
+app.use("/api/audit", auditRoutes);
+
+app.use("/api/upload", uploadRoutes);
+
 /*
 |--------------------------------------------------------------------------
-| 404 Not Found
+| 404 Handler
 |--------------------------------------------------------------------------
 */
 app.use((req, res) => {
@@ -96,13 +111,13 @@ app.use((req, res) => {
 app.use(
   (
     err: any,
-    req: express.Request,
+    _req: express.Request,
     res: express.Response,
-    next: express.NextFunction
+    _next: express.NextFunction
   ) => {
-    console.error("ERROR:", err);
+    console.error(err);
 
-    res.status(err.status || 500).json({
+    res.status(err.statusCode || 500).json({
       success: false,
       message: err.message || "Internal Server Error",
     });

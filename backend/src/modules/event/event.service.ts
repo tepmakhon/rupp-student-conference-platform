@@ -27,7 +27,7 @@ export const createEvent = async (data: any, user: any) => {
 
   await createAuditLog(
     BigInt(user.id),
-    "EVENT_CREATED"
+    `EVENT_CREATED:${event.title}`
   );
   return event;
 };
@@ -78,7 +78,7 @@ export const approveEvent = async (eventId: bigint) => {
   );
   await createAuditLog(
   event.organization.userId,
-  "EVENT_APPROVED"
+  `EVENT_APPROVED:${event.title}`
   );
 
   return event;
@@ -105,7 +105,7 @@ export const rejectEvent = async (eventId: bigint) => {
   );
   await createAuditLog(
   event.organization.userId,
-  "EVENT_REJECTED"
+  `EVENT_REJECTED:${event.title}`
   );
   return event;
 };
@@ -180,7 +180,7 @@ export const registerForEvent = async (
 
   userId,
 
-  "EVENT_REGISTERED"
+  `EVENT_REGISTERED:${event.title}`
 
   );
   return registration;

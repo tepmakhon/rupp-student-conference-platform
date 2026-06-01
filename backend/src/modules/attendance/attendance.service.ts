@@ -1,4 +1,6 @@
 import { prisma } from "../../config/prisma.js";
+import { createAuditLog } from "../audit/audit.service.js";
+import { createNotification } from "../notification/notification.service.js";
 
 export const checkInEvent = async (
   eventId: bigint,
@@ -21,10 +23,20 @@ export const checkInEvent = async (
         eventId,
         studentId: student.id,
       },
+
+      include: {
+        event: {
+          include: {
+            organization: true,
+          },
+        },
+      },
     });
 
   if (!registration) {
-    throw new Error("You are not registered");
+    throw new Error(
+      "You are not registered for this event"
+    );
   }
 
   const existingAttendance =
@@ -38,33 +50,52 @@ export const checkInEvent = async (
     throw new Error("Already checked in");
   }
 
-  const attendance =
-    await prisma.attendanceRecord.create({
-      data: {
-        registrationId: registration.id,
-        verificationMethod: "MANUAL",
-        checkInTime: new Date(),
-      },
-    });
+  const result = await prisma.$transaction(
+    async (tx) => {
 
-  await prisma.student.update({
-    where: {
-      id: student.id,
-    },
-    data: {
-      activityScore: {
-        increment: 10,
-      },
-    },
-  });
+      const attendance =
+        await tx.attendanceRecord.create({
+          data: {
+            registrationId: registration.id,
+            verificationMethod: "MANUAL",
+            checkInTime: new Date(),
+          },
+        });
 
-  await prisma.activityScoreHistory.create({
-    data: {
-      studentId: student.id,
-      scoreChange: 10,
-      reason: "Attended Event",
-    },
-  });
+      await tx.student.update({
+        where: {
+          id: student.id,
+        },
 
-  return attendance;
+        data: {
+          activityScore: {
+            increment: 10,
+          },
+        },
+      });
+
+      await tx.activityScoreHistory.create({
+        data: {
+          studentId: student.id,
+          scoreChange: 10,
+          reason: `Attended ${registration.event.title}`,
+        },
+      });
+
+      return attendance;
+    }
+  );
+
+  await createAuditLog(
+    userId,
+    `EVENT_CHECKIN:${registration.event.title}`
+  );
+
+  await createNotification(
+    registration.event.organization.userId,
+    "Student Checked In",
+    `A student checked in to ${registration.event.title}`
+  );
+
+  return result;
 };

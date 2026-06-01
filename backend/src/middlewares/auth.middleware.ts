@@ -27,7 +27,14 @@ export const authMiddleware = (
       });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      JWT_SECRET
+    ) as {
+      id: string;
+      email: string;
+      roleName: string;
+    };
 
     (req as any).user = decoded;
 
