@@ -6,18 +6,32 @@ export const getAuditLogs = async (
   res: Response
 ) => {
   try {
-    const logs =
-      await auditService.getAllAuditLogs();
+
+    const page =
+      Number(req.query.page) || 1;
+
+    const limit =
+      Number(req.query.limit) || 10;
+
+    const result =
+      await auditService.getAllAuditLogs(
+        page,
+        limit
+      );
 
     res.json({
       success: true,
-      logs,
+      logs: result.logs,
+      pagination: result.pagination,
     });
+
   } catch (error: any) {
+
     res.status(500).json({
       success: false,
       message: error.message,
     });
+
   }
 };
 
@@ -26,23 +40,36 @@ export const getMyAuditLogs = async (
   res: Response
 ) => {
   try {
+
     const userId = BigInt(
       (req as any).user.id
     );
 
-    const logs =
+    const page =
+      Number(req.query.page) || 1;
+
+    const limit =
+      Number(req.query.limit) || 10;
+
+    const result =
       await auditService.getAuditLogsByUser(
-        userId
+        userId,
+        page,
+        limit
       );
 
     res.json({
       success: true,
-      logs,
+      logs: result.logs,
+      pagination: result.pagination,
     });
+
   } catch (error: any) {
+
     res.status(500).json({
       success: false,
       message: error.message,
     });
+
   }
 };

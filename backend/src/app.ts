@@ -20,6 +20,7 @@ import swaggerUi from "swagger-ui-express"; import { swaggerSpec } from "./confi
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 
+
 setupBigIntSerialization();
 
 const app = express();
@@ -93,6 +94,8 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/audit", auditRoutes);
 
 app.use("/api/upload", uploadRoutes);
+
+app.use("/api/admin", adminRoutes);
 
 /*
 |--------------------------------------------------------------------------

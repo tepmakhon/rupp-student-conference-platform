@@ -1,16 +1,42 @@
 import { prisma } from "../../config/prisma.js";
 
-export const getLeaderboard = async () => {
+export const getLeaderboard =
+  async (
+    page = 1,
+    limit = 10
+  ) => {
 
-  return prisma.student.findMany({
-    orderBy: {
-      activityScore: "desc",
-    },
+    const skip =
+      (page - 1) * limit;
 
-    take: 20,
+    const [students, total] =
+      await Promise.all([
 
-    include: {
-      user: true,
-    },
-  });
+        prisma.student.findMany({
+          skip,
+          take: limit,
+
+          include: {
+            user: true,
+          },
+
+          orderBy: {
+            activityScore: "desc",
+          },
+        }),
+
+        prisma.student.count(),
+      ]);
+
+    return {
+      students,
+
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages:
+          Math.ceil(total / limit),
+      },
+    };
 };

@@ -1,24 +1,49 @@
 import { prisma } from "../../config/prisma.js";
 
 export const getMyNotifications = async (
-  userId: bigint
+  userId: bigint,
+  page = 1,
+  limit = 10,
 ) => {
+  const skip = (page - 1) * limit;
 
-  return prisma.userNotification.findMany({
-    where: {
-      userId,
-    },
-
-    include: {
-      notification: true,
-    },
-
-    orderBy: {
-      notification: {
-        createdAt: "desc",
+  const [userNotifications, total] = await Promise.all([
+    prisma.userNotification.findMany({
+      where: {
+        userId,
       },
-    },
-  });
+
+      include: {
+        notification: true,
+      },
+
+      skip,
+      take: limit,
+
+      orderBy: {
+        notification: {
+          createdAt: "desc",
+        },
+      },
+    }),
+
+    prisma.userNotification.count({
+      where: {
+        userId,
+      },
+    }),
+  ]);
+  return {
+      userNotifications,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages:
+          Math.ceil(total / limit),
+      },
+
+    };
 };
 
 export const markAsRead = async (

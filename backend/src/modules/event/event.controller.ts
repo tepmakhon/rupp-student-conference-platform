@@ -41,8 +41,10 @@ export const getApprovedEventsController =
 
     res.json({
       success: true,
-      ...result,
-    });
+      events: result.events,
+      pagination:
+      result. pagination,
+  });
   };
 
 export const getPendingEventsController = async (

@@ -14,44 +14,92 @@ export const createAuditLog = async (
   });
 };
 
-export const getAllAuditLogs = async () => {
-  return prisma.auditLog.findMany({
-    include: {
-      user: {
-        include: {
-          role: true,
-          profile: true,
-        },
-      },
-    },
+export const getAllAuditLogs = async (
+  page = 1,
+  limit = 10
+) => {
 
-    orderBy: {
-      createdAt: "desc",
+  const skip =
+    (page - 1) * limit;
+
+  const [logs, total] =
+    await Promise.all([
+
+      prisma.auditLog.findMany({
+        skip,
+        take: limit,
+
+        include: {
+          user: {
+            include: {
+              role: true,
+              profile: true,
+            },
+          },
+        },
+
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      prisma.auditLog.count(),
+    ]);
+
+  return {
+    logs,
+
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages:
+        Math.ceil(total / limit),
     },
-  });
+  };
 };
 
 export const getAuditLogsByUser = async (
-  userId: bigint
+  userId: bigint,
+  page = 1,
+  limit = 10
 ) => {
-  return prisma.auditLog.findMany({
-    where: {
-      userId,
-    },
 
-    include: {
-      user: {
-        include: {
-          role: true,
-          profile: true,
+  const skip =
+    (page - 1) * limit;
+
+  const [logs, total] =
+    await Promise.all([
+
+      prisma.auditLog.findMany({
+        where: {
+          userId,
         },
-      },
-    },
 
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+        skip,
+        take: limit,
 
-  
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      prisma.auditLog.count({
+        where: {
+          userId,
+        },
+      }),
+    ]);
+
+  return {
+    logs,
+
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages:
+        Math.ceil(total / limit),
+    },
+  };
 };
