@@ -6,6 +6,12 @@ from "../../middlewares/auth.middleware.js";
 import { rbac }
 from "../../middlewares/rbac.middleware.js";
 
+import { validate } from "../../middlewares/validate.middleware.js";
+
+import {
+  createOpportunitySchema,
+} from "./opportunity.validation.js";
+
 import {
   createOpportunity,
   getAllOpportunities,
@@ -42,6 +48,7 @@ router.post(
   "/",
   authMiddleware,
   rbac(["ORGANIZATION"]),
+  validate(createOpportunitySchema),
   createOpportunity
 );
 

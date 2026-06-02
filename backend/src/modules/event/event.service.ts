@@ -1,6 +1,7 @@
 import { prisma } from "../../config/prisma.js";
 import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
+import { getPagination } from "../../utils/pagination.js";
 
 export const createEvent = async (
   data: any,
@@ -44,16 +45,50 @@ export const createEvent = async (
   return event;
 };
 
-export const getApprovedEvents = async () => {
-  return prisma.event.findMany({
-    where: {
-      status: "APPROVED",
-    } as any,
-    include: {
-      organization: true,
-      category: true,
+export const getApprovedEvents = async (
+  page = 1,
+  limit = 10
+) => {
+
+  const { skip, take } =
+    getPagination(page, limit);
+
+  const [events, total] =
+    await Promise.all([
+      prisma.event.findMany({
+        where: {
+          status: "APPROVED",
+        } as any,
+
+        include: {
+          organization: true,
+          category: true,
+        },
+
+        skip,
+        take,
+      }),
+
+      prisma.event.count({
+        where: {
+          status: "APPROVED",
+        } as any,
+      }),
+    ]);
+
+  return {
+    events,
+
+    pagination: {
+      page,
+      limit,
+      total,
+
+      totalPages: Math.ceil(
+        total / limit
+      ),
     },
-  });
+  };
 };
 
 export const getPendingEvents = async () => {

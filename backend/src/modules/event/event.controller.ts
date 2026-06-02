@@ -26,7 +26,13 @@ export const getApprovedEventsController = async (
   res: Response,
 ) => {
   try {
-    const events = await getApprovedEvents();
+    const page = Number(req.query.page) || 1;
+    const limit =Number(req.query.limit) || 10;
+    const events =
+      await getApprovedEvents(
+        page,
+        limit
+      );
 
     res.json(events);
   } catch (error: any) {
