@@ -45,19 +45,48 @@ export const createOpportunity = async (
   return opportunity;
 };
 
-export const getAllOpportunities = async () => {
+export const getAllOpportunities =
+  async (
+    page = 1,
+    limit = 10
+  ) => {
 
-  return prisma.opportunity.findMany({
-    include: {
-      organization: true,
-      type: true,
-    },
+    const skip =
+      (page - 1) * limit;
 
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-};
+    const [
+      opportunities,
+      total,
+    ] = await Promise.all([
+      prisma.opportunity.findMany({
+        include: {
+          organization: true,
+          type: true,
+        },
+
+        skip,
+        take: limit,
+
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      prisma.opportunity.count(),
+    ]);
+
+    return {
+      opportunities,
+
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages:
+          Math.ceil(total / limit),
+      },
+    };
+  };
 
 export const getOpportunityById = async (
   opportunityId: bigint

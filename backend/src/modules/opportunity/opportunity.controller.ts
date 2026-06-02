@@ -23,15 +23,38 @@ export const createOpportunity = async (req: Request, res: Response) => {
   }
 };
 
-export const getAllOpportunities = async (req: Request, res: Response) => {
-  const opportunities = await opportunityService.getAllOpportunities();
+export const getAllOpportunities = async (
+  req: Request,
+  res: Response
+) => {
+  try {
 
-  res.json({
-    success: true,
-    opportunities,
-  });
+    const page =
+      Number(req.query.page) || 1;
+
+    const limit =
+      Number(req.query.limit) || 10;
+
+    const result =
+      await opportunityService.getAllOpportunities(
+        page,
+        limit
+      );
+
+    res.json({
+      success: true,
+      ...result,
+    });
+
+  } catch (error: any) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
 };
-
 export const getOpportunityById = async (req: Request, res: Response) => {
   try {
     const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;

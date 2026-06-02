@@ -25,4 +25,31 @@ router.get(
   getMyHistory
 );
 
+/**
+ * @swagger
+ * tags:
+ *   name: Students
+ *   description: Student APIs
+ */
+
+/**
+ * @swagger
+ * /api/students/profile:
+ *   post:
+ *     summary: Create Student Profile
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/students/profile:
+ *   get:
+ *     summary: Get My Profile
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ */
+
 export default router;

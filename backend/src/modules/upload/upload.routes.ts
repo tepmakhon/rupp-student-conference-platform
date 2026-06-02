@@ -34,4 +34,34 @@ router.post(
   uploadFile
 );
 
+/**
+ * @swagger
+ * tags:
+ *   name: Upload
+ *   description: File Upload APIs
+ */
+
+/**
+ * @swagger
+ * /api/upload:
+ *   post:
+ *     summary: Upload File
+ *     tags: [Upload]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: File uploaded
+ */
+
 export default router;

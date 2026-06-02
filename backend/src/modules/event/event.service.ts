@@ -49,9 +49,7 @@ export const getApprovedEvents = async (
   page = 1,
   limit = 10
 ) => {
-
-  const { skip, take } =
-    getPagination(page, limit);
+  const skip = (page - 1) * limit;
 
   const [events, total] =
     await Promise.all([
@@ -66,7 +64,11 @@ export const getApprovedEvents = async (
         },
 
         skip,
-        take,
+        take: limit,
+
+        orderBy: {
+          createdAt: "desc",
+        },
       }),
 
       prisma.event.count({
@@ -83,7 +85,6 @@ export const getApprovedEvents = async (
       page,
       limit,
       total,
-
       totalPages: Math.ceil(
         total / limit
       ),

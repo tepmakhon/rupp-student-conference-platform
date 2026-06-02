@@ -17,4 +17,31 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * tags:
+ *   name: Admin
+ *   description: Admin APIs
+ */
+
+/**
+ * @swagger
+ * /api/admin/users:
+ *   get:
+ *     summary: Get All Users
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /api/admin/users/{id}/status:
+ *   patch:
+ *     summary: Update User Status
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ */
+
 export default router;

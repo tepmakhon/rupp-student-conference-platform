@@ -27,4 +27,37 @@ router.patch(
   updateLogo
 );
 
+/**
+ * @swagger
+ * tags:
+ *   name: Organizations
+ *   description: Organization APIs
+ */
+
+/**
+ * @swagger
+ * /api/organizations/me:
+ *   get:
+ *     summary: Get My Organization
+ *     tags: [Organizations]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Organization found
+ */
+
+/**
+ * @swagger
+ * /api/organizations/logo:
+ *   patch:
+ *     summary: Upload Organization Logo
+ *     tags: [Organizations]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logo updated
+ */
+
 export default router;

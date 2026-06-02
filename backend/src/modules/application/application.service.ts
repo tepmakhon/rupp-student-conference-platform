@@ -3,7 +3,9 @@ import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
 
 export const getMyApplications = async (
-  userId: bigint
+  userId: bigint,
+  page = 1,
+  limit = 10
 ) => {
 
   const student =
@@ -14,29 +16,57 @@ export const getMyApplications = async (
     });
 
   if (!student) {
-    throw new Error(
-      "Student not found"
-    );
+    throw new Error("Student not found");
   }
 
-  return prisma.application.findMany({
-    where: {
-      studentId: student.id,
-    },
+  const skip =
+    (page - 1) * limit;
 
-    include: {
-      opportunity: {
-        include: {
-          organization: true,
-          type: true,
+  const [
+    applications,
+    total,
+  ] = await Promise.all([
+
+    prisma.application.findMany({
+      where: {
+        studentId: student.id,
+      },
+
+      include: {
+        opportunity: {
+          include: {
+            organization: true,
+            type: true,
+          },
         },
       },
-    },
 
-    orderBy: {
-      appliedAt: "desc",
+      skip,
+      take: limit,
+
+      orderBy: {
+        appliedAt: "desc",
+      },
+    }),
+
+    prisma.application.count({
+      where: {
+        studentId: student.id,
+      },
+    }),
+  ]);
+
+  return {
+    applications,
+
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages:
+        Math.ceil(total / limit),
     },
-  });
+  };
 };
 
 export const getApplicantsForOpportunity =

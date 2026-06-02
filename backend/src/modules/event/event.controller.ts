@@ -21,26 +21,29 @@ export const createEventController = async (req: Request, res: Response) => {
   }
 };
 
-export const getApprovedEventsController = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const page = Number(req.query.page) || 1;
-    const limit =Number(req.query.limit) || 10;
-    const events =
+export const getApprovedEventsController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    const page =
+      Number(req.query.page) || 1;
+
+    const limit =
+      Number(req.query.limit) || 10;
+
+    const result =
       await getApprovedEvents(
         page,
         limit
       );
 
-    res.json(events);
-  } catch (error: any) {
-    res.status(500).json({
-      message: error.message,
+    res.json({
+      success: true,
+      ...result,
     });
-  }
-};
+  };
 
 export const getPendingEventsController = async (
   req: Request,
