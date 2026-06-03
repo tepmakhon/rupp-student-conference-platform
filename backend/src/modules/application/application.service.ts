@@ -16,8 +16,10 @@ export const getMyApplications = async (
     });
 
   if (!student) {
-    throw new Error("Student not found");
-  }
+  throw new Error(
+    "Please complete your student profile first"
+  );
+}
 
   const skip =
     (page - 1) * limit;

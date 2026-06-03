@@ -14,8 +14,10 @@ export const checkInEvent = async (
   });
 
   if (!student) {
-    throw new Error("Student not found");
-  }
+  throw new Error(
+    "Please complete your student profile first"
+  );
+}
 
   const registration =
     await prisma.eventRegistration.findFirst({

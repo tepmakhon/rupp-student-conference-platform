@@ -170,8 +170,10 @@ export const registerForEvent = async (
   });
 
   if (!student) {
-    throw new Error("Student profile not found");
-  }
+  throw new Error(
+    "Please complete your student profile first"
+  );
+}
 
   const event = await prisma.event.findUnique({
     where: {
