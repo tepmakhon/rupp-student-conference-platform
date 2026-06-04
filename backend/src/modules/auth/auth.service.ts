@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import { createAuditLog } from "../audit/audit.service.js";
+import { AppError } from "../../utils/AppError.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
@@ -23,8 +24,9 @@ export const registerUser = async (data: any) => {
     });
 
   if (existingUser) {
-    throw new Error(
-      "User already exists"
+    throw new AppError(
+      "User already exists",
+      409
     );
   }
 
@@ -36,8 +38,9 @@ export const registerUser = async (data: any) => {
     });
 
   if (!role) {
-    throw new Error(
-      "Role not found"
+    throw new AppError(
+      "Role not found",
+      404
     );
   }
 
@@ -137,8 +140,9 @@ export const loginUser = async (
     });
 
   if (!user) {
-    throw new Error(
-      "Invalid credentials"
+    throw new AppError(
+      "Invalid credentials",
+      401
     );
   }
 
@@ -154,8 +158,9 @@ export const loginUser = async (
       "LOGIN_FAILED"
     );
 
-    throw new Error(
-      "Invalid credentials"
+    throw new AppError(
+      "Invalid credentials",
+      401
     );
   }
 

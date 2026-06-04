@@ -1,15 +1,23 @@
 export const successResponse = (
+  res: any,
   data: any,
-  message = "Success"
-) => ({
-  success: true,
-  message,
-  data,
-});
+  message = "Success",
+  statusCode = 200
+) => {
+  return res.status(statusCode).json({
+    success: true,
+    message,
+    data,
+  });
+};
 
 export const errorResponse = (
-  message = "Error"
-) => ({
-  success: false,
-  message,
-});
+  res: any,
+  message: string,
+  statusCode = 400
+) => {
+  return res.status(statusCode).json({
+    success: false,
+    message,
+  });
+};

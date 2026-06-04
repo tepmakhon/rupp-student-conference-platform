@@ -2,23 +2,33 @@ import { Request, Response } from "express";
 
 import * as adminService from "./admin.service.js";
 
-export const getSystemStatsController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      const stats =
-        await adminService.getSystemStats();
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
 
-      res.status(200).json({
-        success: true,
-        stats,
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
+export const getSystemStatsController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const stats =
+      await adminService.getSystemStats();
+
+    return successResponse(
+      res,
+      stats,
+      "System statistics retrieved"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
+
+  }
+};

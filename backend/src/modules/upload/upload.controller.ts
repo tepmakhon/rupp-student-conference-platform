@@ -1,26 +1,42 @@
 import { Request, Response } from "express";
 
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
+
 export const uploadFile = async (
   req: Request,
   res: Response
 ) => {
   try {
+
     if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "No file uploaded",
-      });
+
+      return errorResponse(
+        res,
+        "No file uploaded",
+        400
+      );
+
     }
 
-    return res.status(200).json({
-      success: true,
-      filename: req.file.filename,
-      path: `/uploads/${req.file.filename}`,
-    });
+    return successResponse(
+      res,
+      {
+        filename: req.file.filename,
+        path: `/uploads/${req.file.filename}`,
+      },
+      "File uploaded successfully"
+    );
+
   } catch (error: any) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
+
   }
 };

@@ -2,63 +2,104 @@ import { Request, Response } from "express";
 
 import * as notificationService from "./notification.service.js";
 
-export const getNotifications = async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user;
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
 
-    const notifications = await notificationService.getMyNotifications(
-      BigInt(user.id),
+export const getNotifications = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const user =
+      (req as any).user;
+
+    const notifications =
+      await notificationService.getMyNotifications(
+        BigInt(user.id)
+      );
+
+    return successResponse(
+      res,
+      notifications,
+      "Notifications retrieved"
     );
 
-    res.json({
-      success: true,
-      notifications,
-    });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };
 
-export const readNotification = async (req: Request, res: Response) => {
+export const readNotification = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const user = (req as any).user;
 
-    const notificationId = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
+    const user =
+      (req as any).user;
 
-    (await notificationService.markAsRead(
+    const notificationId =
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id;
+
+    await notificationService.markAsRead(
       BigInt(notificationId),
-      BigInt(user.id),
-    )) as any;
+      BigInt(user.id)
+    );
 
-    res.json({
-      success: true,
-    });
+    return successResponse(
+      res,
+      null,
+      "Notification marked as read"
+    );
+
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };
 
-export const readAllNotifications = async (req: Request, res: Response) => {
+export const readAllNotifications = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const user = (req as any).user;
 
-    await notificationService.markAllAsRead(BigInt(user.id));
+    const user =
+      (req as any).user;
 
-    res.json({
-      success: true,
-    });
+    await notificationService.markAllAsRead(
+      BigInt(user.id)
+    );
+
+    return successResponse(
+      res,
+      null,
+      "All notifications marked as read"
+    );
+
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };

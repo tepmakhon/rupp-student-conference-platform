@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 
 export const getAdminDashboard = async () => {
 
@@ -66,8 +67,9 @@ export const getOrganizationDashboard =
       });
 
     if (!organization) {
-      throw new Error(
-        "Organization not found"
+      throw new AppError(
+        "Organization not found",
+        404
       );
     }
 
@@ -128,8 +130,9 @@ export const getStudentDashboard =
       });
 
     if (!student) {
-      throw new Error(
-        "Student not found"
+      throw new AppError(
+        "Student not found",
+        404
       );
     }
 

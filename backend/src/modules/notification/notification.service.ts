@@ -1,11 +1,21 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/AppError.js";
+import { getPagination } from "../../utils/pagination.js";
 
 export const getMyNotifications = async (
   userId: bigint,
   page = 1,
   limit = 10,
 ) => {
-  const skip = (page - 1) * limit;
+  if (page < 1 || limit < 1) {
+    throw new AppError(
+      "Invalid pagination values",
+      400
+    );
+  }
+
+  const { skip } =
+    getPagination(page, limit);
 
   const [userNotifications, total] = await Promise.all([
     prisma.userNotification.findMany({
@@ -50,6 +60,20 @@ export const markAsRead = async (
   notificationId: bigint,
   userId: bigint
 ) => {
+  const notification =
+    await prisma.userNotification.findFirst({
+      where: {
+        id: notificationId,
+        userId,
+      },
+    });
+
+  if (!notification) {
+    throw new AppError(
+      "Notification not found",
+      404
+    );
+  }
 
   return prisma.userNotification.updateMany({
     where: {
@@ -90,6 +114,18 @@ export const createNotification = async (
   title: string,
   message: string
 ) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(
+      "User not found",
+      404
+    );
+  }
 
   const notification =
     await prisma.notification.create({

@@ -8,6 +8,13 @@ import {
   getMyProfile,
 } from "./student.controller.js";
 const router = Router();
+/**
+ * @swagger
+ * tags:
+ *   name: Students
+ *   description: Student APIs
+ */
+
 
 router.get(
   "/dashboard",
@@ -21,33 +28,6 @@ router.get(
   }
 );
 
-router.get(
-  "/history",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  getMyHistory
-);
-
-router.post(
-  "/profile",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  createProfile
-);
-
-router.get(
-  "/profile",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  getMyProfile
-);
-/**
- * @swagger
- * tags:
- *   name: Students
- *   description: Student APIs
- */
-
 /**
  * @swagger
  * /api/students/dashboard:
@@ -58,6 +38,12 @@ router.get(
  *       - bearerAuth: []
 */
 
+router.get(
+  "/history",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  getMyHistory
+);
 /**
  * @swagger
  * /api/students/profile:
@@ -68,6 +54,28 @@ router.get(
  *       - bearerAuth: []
  */
 
+router.post(
+  "/profile",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  createProfile
+);
+/** * @swagger
+ * /api/students/profile:
+ *   post:
+ *     summary: Create Student Profile
+ *     tags: 
+ *      - Students
+ *     security:
+ *       - bearerAuth: []
+ */
+
+router.get(
+  "/profile",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  getMyProfile
+);
 /**
  * @swagger
  * /api/students/profile:

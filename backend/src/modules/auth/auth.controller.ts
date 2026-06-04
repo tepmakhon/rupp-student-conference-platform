@@ -5,6 +5,11 @@ import {
   loginUser,
 } from "./auth.service.js";
 
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
+
 export const registerController = async (
   req: Request,
   res: Response
@@ -12,11 +17,24 @@ export const registerController = async (
   try {
     const result = await registerUser(req.body);
 
-    res.status(201).json(result);
+    return successResponse(
+      res,
+      {
+        user: result.user,
+        token: result.token,
+      },
+      "Registration successful",
+      201
+    );
+
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };
 
@@ -25,12 +43,26 @@ export const loginController = async (
   res: Response
 ) => {
   try {
+
     const result = await loginUser(req.body);
 
-    res.status(200).json(result);
+    return successResponse(
+      res,
+      {
+        user: result.user,
+        token: result.token,
+      },
+      "Login successful",
+      200
+    );
+
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };

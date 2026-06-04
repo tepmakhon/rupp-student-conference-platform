@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
+
 import * as auditService from "./audit.service.js";
+
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
 
 export const getAuditLogs = async (
   req: Request,
@@ -19,18 +25,19 @@ export const getAuditLogs = async (
         limit
       );
 
-    res.json({
-      success: true,
-      logs: result.logs,
-      pagination: result.pagination,
-    });
+    return successResponse(
+      res,
+      result,
+      "Audit logs retrieved"
+    );
 
   } catch (error: any) {
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
 
   }
 };
@@ -58,18 +65,19 @@ export const getMyAuditLogs = async (
         limit
       );
 
-    res.json({
-      success: true,
-      logs: result.logs,
-      pagination: result.pagination,
-    });
+    return successResponse(
+      res,
+      result,
+      "My audit logs retrieved"
+    );
 
   } catch (error: any) {
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
 
   }
 };

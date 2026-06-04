@@ -18,8 +18,8 @@ import { setupBigIntSerialization } from "./utils/bigint.js";
 import uploadRoutes from "./modules/upload/upload.routes.js";
 import swaggerUi from "swagger-ui-express"; import { swaggerSpec } from "./config/swagger.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
-
-
+import { AppError } from "./utils/AppError.js";
+import { successResponse } from "./utils/apiResponse.js";
 
 setupBigIntSerialization();
 
@@ -56,12 +56,15 @@ app.use(
 | Health Check
 |--------------------------------------------------------------------------
 */
+
 app.get("/", (_req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "RUPP Student Conference & Opportunity Platform API",
-    version: "1.0.0",
-  });
+  return successResponse(
+    res,
+    {
+      version: "1.0.0",
+    },
+    "RUPP Student Conference & Opportunity Platform API"
+  );
 });
 
 /*
@@ -95,8 +98,6 @@ app.use("/api/audit", auditRoutes);
 
 app.use("/api/upload", uploadRoutes);
 
-app.use("/api/admin", adminRoutes);
-
 /*
 |--------------------------------------------------------------------------
 | Swagger Documentation
@@ -113,11 +114,13 @@ app.use(
 | 404 Handler
 |--------------------------------------------------------------------------
 */
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: `Cannot ${req.method} ${req.originalUrl}`,
-  });
+app.use((req, res, next) => {
+  next(
+    new AppError(
+      `Cannot ${req.method} ${req.originalUrl}`,
+      404
+    )
+  );
 });
 
 /*

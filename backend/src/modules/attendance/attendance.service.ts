@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 import { createAuditLog } from "../audit/audit.service.js";
 import { createNotification } from "../notification/notification.service.js";
 
@@ -14,10 +15,11 @@ export const checkInEvent = async (
   });
 
   if (!student) {
-  throw new Error(
-    "Please complete your student profile first"
-  );
-}
+    throw new AppError(
+      "Please complete your student profile first",
+      404
+    );
+  }
 
   const registration =
     await prisma.eventRegistration.findFirst({
@@ -36,8 +38,9 @@ export const checkInEvent = async (
     });
 
   if (!registration) {
-    throw new Error(
-      "You are not registered for this event"
+    throw new AppError(
+      "You are not registered for this event",
+      400
     );
   }
 
@@ -49,7 +52,10 @@ export const checkInEvent = async (
     });
 
   if (existingAttendance) {
-    throw new Error("Already checked in");
+    throw new AppError(
+      "Already checked in",
+      409
+    );
   }
 
   const result = await prisma.$transaction(

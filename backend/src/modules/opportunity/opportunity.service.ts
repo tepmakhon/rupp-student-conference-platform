@@ -1,6 +1,8 @@
 import { prisma } from "../../config/prisma.js";
 import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
+import { AppError } from "../../utils/AppError.js";
+import { getPagination } from "../../utils/pagination.js";
 
 export const createOpportunity = async (
   data: any,
@@ -15,8 +17,9 @@ export const createOpportunity = async (
     });
 
   if (!organization) {
-    throw new Error(
-      "Only organization can create opportunities"
+    throw new AppError(
+      "Only organization can create opportunities",
+      403
     );
   }
 
@@ -51,8 +54,15 @@ export const getAllOpportunities =
     limit = 10
   ) => {
 
-    const skip =
-      (page - 1) * limit;
+    if (page < 1 || limit < 1) {
+      throw new AppError(
+        "Invalid pagination values",
+        400
+      );
+    }
+
+    const { skip } =
+      getPagination(page, limit);
 
     const [
       opportunities,
@@ -92,21 +102,45 @@ export const getOpportunityById = async (
   opportunityId: bigint
 ) => {
 
-  return prisma.opportunity.findUnique({
-    where: {
-      id: opportunityId,
-    },
+  const opportunity =
+    await prisma.opportunity.findUnique({
+      where: {
+        id: opportunityId,
+      },
 
-    include: {
-      organization: true,
-      type: true,
-    },
-  });
+      include: {
+        organization: true,
+        type: true,
+      },
+    });
+
+  if (!opportunity) {
+    throw new AppError(
+      "Opportunity not found",
+      404
+    );
+  }
+
+  return opportunity;
 };
 
 export const approveOpportunity = async (
   opportunityId: bigint
 ) => {
+
+  const existingOpportunity =
+    await prisma.opportunity.findUnique({
+      where: {
+        id: opportunityId,
+      },
+    });
+
+  if (!existingOpportunity) {
+    throw new AppError(
+      "Opportunity not found",
+      404
+    );
+  }
 
   const opportunity =
     await prisma.opportunity.update({
@@ -141,6 +175,20 @@ export const approveOpportunity = async (
 export const rejectOpportunity = async (
   opportunityId: bigint
 ) => {
+
+  const existingOpportunity =
+    await prisma.opportunity.findUnique({
+      where: {
+        id: opportunityId,
+      },
+    });
+
+  if (!existingOpportunity) {
+    throw new AppError(
+      "Opportunity not found",
+      404
+    );
+  }
 
   const opportunity =
     await prisma.opportunity.update({
@@ -185,8 +233,9 @@ export const applyOpportunity = async (
     });
 
   if (!student) {
-    throw new Error(
-      "Student not found"
+    throw new AppError(
+      "Please complete your student profile first",
+      400
     );
   }
 
@@ -202,8 +251,9 @@ export const applyOpportunity = async (
     });
 
   if (!opportunity) {
-    throw new Error(
-      "Opportunity not found"
+    throw new AppError(
+      "Opportunity not found",
+      404
     );
   }
 
@@ -211,8 +261,9 @@ export const applyOpportunity = async (
     (opportunity as any).status !==
     "APPROVED"
   ) {
-    throw new Error(
-      "Opportunity is not approved"
+    throw new AppError(
+      "Opportunity is not approved",
+      400
     );
   }
 
@@ -225,8 +276,9 @@ export const applyOpportunity = async (
     });
 
   if (existing) {
-    throw new Error(
-      "Already applied"
+    throw new AppError(
+      "Already applied",
+      409
     );
   }
 

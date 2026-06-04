@@ -1,16 +1,24 @@
 import { Request, Response, NextFunction } from "express";
+import { AppError } from "../utils/AppError.js";
 
 export const errorMiddleware = (
-  err: any,
+  error: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.error(err);
 
-  res.status(err.statusCode || 500).json({
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+
+  console.error(error);
+
+  return res.status(500).json({
     success: false,
-    message:
-      err.message || "Internal Server Error",
+    message: "Internal Server Error",
   });
 };

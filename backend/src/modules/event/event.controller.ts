@@ -9,23 +9,45 @@ import {
   registerForEvent,
 } from "./event.service.js";
 
-export const createEventController = async (req: Request, res: Response) => {
-  try {
-    const event = await createEvent(req.body, (req as any).user);
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
 
-    res.status(201).json(event);
+export const createEventController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const event = await createEvent(
+      req.body,
+      (req as any).user
+    );
+
+    return successResponse(
+      res,
+      event,
+      "Event created",
+      201
+    );
+
   } catch (error: any) {
-    res.status(400).json({
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };
 
-export const getApprovedEventsController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const getApprovedEventsController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
 
     const page =
       Number(req.query.page) || 1;
@@ -39,82 +61,152 @@ export const getApprovedEventsController =
         limit
       );
 
-    res.json({
-      success: true,
-      events: result.events,
-      pagination:
-      result. pagination,
-  });
-  };
+    return successResponse(
+      res,
+      {
+        events: result.events,
+        pagination:
+          result.pagination,
+      },
+      "Approved events fetched"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
+
+  }
+};
 
 export const getPendingEventsController = async (
   req: Request,
-  res: Response,
+  res: Response
 ) => {
   try {
-    const events = await getPendingEvents();
 
-    res.json(events);
-  } catch (error: any) {
-    res.status(500).json({
-      message: error.message,
-    });
-  }
-};
+    const events =
+      await getPendingEvents();
 
-export const approveEventController = async (req: Request, res: Response) => {
-  try {
-    const eventId = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
-
-    const event = await approveEvent(BigInt(eventId));
-
-    res.json({
-      message: "Event approved",
-      event,
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-
-export const rejectEventController = async (req: Request, res: Response) => {
-  try {
-    const eventId = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
-
-    const event = await rejectEvent(BigInt(eventId));
-
-    res.json({
-      message: "Event rejected",
-      event,
-    });
-  } catch (error: any) {
-    res.status(400).json({
-      message: error.message,
-    });
-  }
-};
-
-export const registerEventController = async (req: Request, res: Response) => {
-  try {
-    const eventId = BigInt(
-      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
+    return successResponse(
+      res,
+      events,
+      "Pending events fetched"
     );
-    const user = (req as any).user;
-    const registration = await registerForEvent(eventId, BigInt(user.id));
-    res.status(201).json({
-      success: true,
-      registration,
-    });
+
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
+
+  }
+};
+
+export const approveEventController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const eventId = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
+
+    const event =
+      await approveEvent(eventId);
+
+    return successResponse(
+      res,
+      event,
+      "Event approved"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+};
+
+export const rejectEventController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const eventId = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
+
+    const event =
+      await rejectEvent(eventId);
+
+    return successResponse(
+      res,
+      event,
+      "Event rejected"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+};
+
+export const registerEventController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const eventId = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
+
+    const user =
+      (req as any).user;
+
+    const registration =
+      await registerForEvent(
+        eventId,
+        BigInt(user.id)
+      );
+
+    return successResponse(
+      res,
+      registration,
+      "Successfully registered for event",
+      201
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };

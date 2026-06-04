@@ -1,17 +1,25 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 
 export const createAuditLog = async (
   userId: bigint,
   action: string,
   ipAddress?: string
 ) => {
-  return prisma.auditLog.create({
-    data: {
-      userId,
-      action,
-      ipAddress,
-    },
-  });
+  try {
+    return await prisma.auditLog.create({
+      data: {
+        userId,
+        action,
+        ipAddress,
+      },
+    });
+  } catch {
+    throw new AppError(
+      "Failed to create audit log",
+      500
+    );
+  }
 };
 
 export const getAllAuditLogs = async (
@@ -22,41 +30,55 @@ export const getAllAuditLogs = async (
   const skip =
     (page - 1) * limit;
 
-  const [logs, total] =
-    await Promise.all([
+  if (page < 1 || limit < 1) {
+    throw new AppError(
+      "Invalid pagination values",
+      400
+    );
+  }
 
-      prisma.auditLog.findMany({
-        skip,
-        take: limit,
+  try {
+    const [logs, total] =
+      await Promise.all([
 
-        include: {
-          user: {
-            include: {
-              role: true,
-              profile: true,
+        prisma.auditLog.findMany({
+          skip,
+          take: limit,
+
+          include: {
+            user: {
+              include: {
+                role: true,
+                profile: true,
+              },
             },
           },
-        },
 
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
+          orderBy: {
+            createdAt: "desc",
+          },
+        }),
 
-      prisma.auditLog.count(),
-    ]);
+        prisma.auditLog.count(),
+      ]);
 
-  return {
-    logs,
+    return {
+      logs,
 
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages:
-        Math.ceil(total / limit),
-    },
-  };
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages:
+          Math.ceil(total / limit),
+      },
+    };
+  } catch {
+    throw new AppError(
+      "Failed to retrieve audit logs",
+      500
+    );
+  }
 };
 
 export const getAuditLogsByUser = async (
@@ -68,38 +90,52 @@ export const getAuditLogsByUser = async (
   const skip =
     (page - 1) * limit;
 
-  const [logs, total] =
-    await Promise.all([
+  if (page < 1 || limit < 1) {
+    throw new AppError(
+      "Invalid pagination values",
+      400
+    );
+  }
 
-      prisma.auditLog.findMany({
-        where: {
-          userId,
-        },
+  try {
+    const [logs, total] =
+      await Promise.all([
 
-        skip,
-        take: limit,
+        prisma.auditLog.findMany({
+          where: {
+            userId,
+          },
 
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
+          skip,
+          take: limit,
 
-      prisma.auditLog.count({
-        where: {
-          userId,
-        },
-      }),
-    ]);
+          orderBy: {
+            createdAt: "desc",
+          },
+        }),
 
-  return {
-    logs,
+        prisma.auditLog.count({
+          where: {
+            userId,
+          },
+        }),
+      ]);
 
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages:
-        Math.ceil(total / limit),
-    },
-  };
+    return {
+      logs,
+
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages:
+          Math.ceil(total / limit),
+      },
+    };
+  } catch {
+    throw new AppError(
+      "Failed to retrieve user audit logs",
+      500
+    );
+  }
 };

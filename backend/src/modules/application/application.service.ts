@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
 
@@ -16,10 +17,11 @@ export const getMyApplications = async (
     });
 
   if (!student) {
-  throw new Error(
-    "Please complete your student profile first"
+  throw new AppError(
+    "Please complete your student profile first",
+    404
   );
-}
+  }
 
   const skip =
     (page - 1) * limit;
@@ -85,8 +87,9 @@ export const getApplicantsForOpportunity =
       });
 
     if (!organization) {
-      throw new Error(
-        "Organization not found"
+      throw new AppError(
+        "Organization not found",
+        404
       );
     }
 
@@ -101,8 +104,9 @@ export const getApplicantsForOpportunity =
       !opportunity ||
       opportunity.organizationId !== organization.id
     ) {
-      throw new Error(
-        "Not authorized to view applicants"
+      throw new AppError(
+        "Not authorized to view applicants",
+        403
       );
     }
 
@@ -133,12 +137,26 @@ export const updateApplicationStatus =
       "ACCEPTED",
       "REJECTED",
     ];
+    const existingApplication =
+      await prisma.application.findUnique({
+        where: {
+          id: applicationId,
+        },
+      });
+
+    if (!existingApplication) {
+      throw new AppError(
+        "Application not found",
+        404
+      );
+    }
 
     if (
       !validStatuses.includes(status)
     ) {
-      throw new Error(
-        "Invalid application status"
+      throw new AppError(
+        "Invalid application status",
+        400
       );
     }
 

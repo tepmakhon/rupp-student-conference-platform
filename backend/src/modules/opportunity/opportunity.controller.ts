@@ -2,24 +2,40 @@ import { Request, Response } from "express";
 
 import * as opportunityService from "./opportunity.service.js";
 
-export const createOpportunity = async (req: Request, res: Response) => {
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
+
+export const createOpportunity = async (
+  req: Request,
+  res: Response
+) => {
   try {
+
     const user = (req as any).user;
 
-    const opportunity = await opportunityService.createOpportunity(
-      req.body,
-      BigInt(user.id),
+    const opportunity =
+      await opportunityService.createOpportunity(
+        req.body,
+        BigInt(user.id)
+      );
+
+    return successResponse(
+      res,
+      opportunity,
+      "Opportunity created",
+      201
     );
 
-    res.status(201).json({
-      success: true,
-      opportunity,
-    });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };
 
@@ -41,53 +57,88 @@ export const getAllOpportunities = async (
         limit
       );
 
-    res.json({
-      success: true,
-      ...result,
-    });
+    return successResponse(
+      res,
+      result,
+      "Opportunities retrieved"
+    );
 
   } catch (error: any) {
 
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
 
   }
 };
-export const getOpportunityById = async (req: Request, res: Response) => {
+
+export const getOpportunityById = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
-    const opportunity = await opportunityService.getOpportunityById(BigInt(id));
+    const id = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
 
-    res.json({
-      success: true,
+    const opportunity =
+      await opportunityService.getOpportunityById(
+        id
+      );
+
+    return successResponse(
+      res,
       opportunity,
-    });
+      "Opportunity retrieved"
+    );
+
   } catch (error: any) {
-    res.status(404).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 404
+    );
+
   }
 };
 
-export const approveOpportunity = async (req: Request, res: Response) => {
+export const approveOpportunity = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
 
-    const opportunity = await opportunityService.approveOpportunity(BigInt(id));
+    const id = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
 
-    res.json({
-      success: true,
+    const opportunity =
+      await opportunityService.approveOpportunity(
+        id
+      );
+
+    return successResponse(
+      res,
       opportunity,
-    });
+      "Opportunity approved"
+    );
+
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
   }
 };
 
@@ -97,11 +148,14 @@ export const applyOpportunity = async (
 ) => {
   try {
 
-    const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const opportunityId = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
 
-    const opportunityId = BigInt(id);
-
-    const user = (req as any).user;
+    const user =
+      (req as any).user;
 
     const application =
       await opportunityService.applyOpportunity(
@@ -110,17 +164,20 @@ export const applyOpportunity = async (
         req.body
       );
 
-    return res.status(201).json({
-      success: true,
+    return successResponse(
+      res,
       application,
-    });
+      "Application submitted successfully",
+      201
+    );
 
   } catch (error: any) {
 
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
 
   }
 };

@@ -2,6 +2,7 @@ import { prisma } from "../../config/prisma.js";
 import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
 import { getPagination } from "../../utils/pagination.js";
+import { AppError } from "../../utils/AppError.js";
 
 export const createEvent = async (
   data: any,
@@ -14,8 +15,9 @@ export const createEvent = async (
       },
     });
   if (!organization) {
-    throw new Error(
-      "Only organization can create events"
+    throw new AppError(
+      "Only organization can create events",
+      403
     );
   }
   const event = await prisma.event.create({
@@ -49,7 +51,8 @@ export const getApprovedEvents = async (
   page = 1,
   limit = 10
 ) => {
-  const skip = (page - 1) * limit;
+  const { skip } =
+  getPagination(page, limit);
 
   const [events, total] =
     await Promise.all([
@@ -85,9 +88,8 @@ export const getApprovedEvents = async (
       page,
       limit,
       total,
-      totalPages: Math.ceil(
-        total / limit
-      ),
+      totalPages:
+        Math.ceil(total / limit),
     },
   };
 };
@@ -105,6 +107,19 @@ export const getPendingEvents = async () => {
 };
 
 export const approveEvent = async (eventId: bigint) => {
+  const existingEvent =
+  await prisma.event.findUnique({
+      where: {
+        id: eventId,
+      },
+    });
+
+  if (!existingEvent) {
+    throw new AppError(
+      "Event not found",
+      404
+    );
+  }
 
   const event = await prisma.event.update({
     where: {
@@ -133,6 +148,20 @@ export const approveEvent = async (eventId: bigint) => {
 };
 export const rejectEvent = async (eventId: bigint) => {
 
+  const existingEvent =
+  await prisma.event.findUnique({
+      where: {
+        id: eventId,
+      },
+    });
+
+  if (!existingEvent) {
+    throw new AppError(
+      "Event not found",
+      404
+    );
+  }
+  
   const event = await prisma.event.update({
     where: {
       id: eventId,
@@ -170,10 +199,11 @@ export const registerForEvent = async (
   });
 
   if (!student) {
-  throw new Error(
-    "Please complete your student profile first"
+  throw new AppError(
+  "Please complete your student profile first",
+  400
   );
-}
+  }
 
   const event = await prisma.event.findUnique({
     where: {
@@ -186,11 +216,11 @@ export const registerForEvent = async (
   });
 
   if (!event) {
-    throw new Error("Event not found");
+    throw new AppError("Event not found", 404);
   }
 
   if (event.status !== "APPROVED") {
-    throw new Error("Event is not approved");
+    throw new AppError("Event is not approved", 400);
   }
 
   const existingRegistration =
@@ -202,14 +232,16 @@ export const registerForEvent = async (
     });
 
   if (existingRegistration) {
-    throw new Error("Already registered");
+    throw new AppError(
+    "Already registered",
+    400);
   }
 
   if (
     event.capacity &&
     event.registrations.length >= event.capacity
   ) {
-    throw new Error("Event is full");
+    throw new AppError("Event is full", 400);
   }
 
   const registration =

@@ -5,35 +5,41 @@ import {
   updateOrganizationLogo,
 } from "./organization.service.js";
 
-export const getOrganizationProfile =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
 
-      const user =
-        (req as any).user;
+export const getOrganizationProfile = async (
+  req: Request,
+  res: Response
+) => {
+  try {
 
-      const organization =
-        await getMyOrganization(
-          BigInt(user.id)
-        );
+    const user =
+      (req as any).user;
 
-      return res.status(200).json({
-        success: true,
-        organization,
-      });
+    const organization =
+      await getMyOrganization(
+        BigInt(user.id)
+      );
 
-    } catch (error: any) {
+    return successResponse(
+      res,
+      organization,
+      "Organization profile retrieved"
+    );
 
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
+  } catch (error: any) {
 
-    }
-  };
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+};
 
 export const updateLogo = async (
   req: Request,
@@ -50,17 +56,19 @@ export const updateLogo = async (
         req.body.logoUrl
       );
 
-    return res.status(200).json({
-      success: true,
+    return successResponse(
+      res,
       organization,
-    });
+      "Organization logo updated"
+    );
 
   } catch (error: any) {
 
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
 
   }
 };

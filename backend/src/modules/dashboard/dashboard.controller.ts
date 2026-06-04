@@ -3,90 +3,95 @@ import { Request, Response } from "express";
 import * as dashboardService
 from "./dashboard.service.js";
 
-export const adminDashboard =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+import {
+  successResponse,
+  errorResponse,
+} from "../../utils/apiResponse.js";
 
-    try {
+export const adminDashboard = async (
+  req: Request,
+  res: Response
+) => {
+  try {
 
-      const data =
-        await dashboardService.getAdminDashboard();
+    const data =
+      await dashboardService.getAdminDashboard();
 
-      res.json({
-        success: true,
-        data,
-      });
+    return successResponse(
+      res,
+      data,
+      "Admin dashboard retrieved"
+    );
 
-    } catch (error: any) {
+  } catch (error: any) {
 
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
 
-    }
+  }
 };
 
-export const organizationDashboard =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const organizationDashboard = async (
+  req: Request,
+  res: Response
+) => {
+  try {
 
-    try {
+    const user =
+      (req as any).user;
 
-      const user =
-        (req as any).user;
+    const data =
+      await dashboardService.getOrganizationDashboard(
+        BigInt(user.id)
+      );
 
-      const data =
-        await dashboardService.getOrganizationDashboard(
-          BigInt(user.id)
-        );
+    return successResponse(
+      res,
+      data,
+      "Organization dashboard retrieved"
+    );
 
-      res.json({
-        success: true,
-        data,
-      });
+  } catch (error: any) {
 
-    } catch (error: any) {
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
 
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-
-    }
+  }
 };
 
-export const studentDashboard =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const studentDashboard = async (
+  req: Request,
+  res: Response
+) => {
+  try {
 
-    try {
+    const user =
+      (req as any).user;
 
-      const user =
-        (req as any).user;
+    const data =
+      await dashboardService.getStudentDashboard(
+        BigInt(user.id)
+      );
 
-      const data =
-        await dashboardService.getStudentDashboard(
-          BigInt(user.id)
-        );
+    return successResponse(
+      res,
+      data,
+      "Student dashboard retrieved"
+    );
 
-      res.json({
-        success: true,
-        data,
-      });
+  } catch (error: any) {
 
-    } catch (error: any) {
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
 
-      res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-
-    }
+  }
 };
