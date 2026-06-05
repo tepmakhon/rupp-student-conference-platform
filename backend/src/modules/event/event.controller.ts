@@ -22,7 +22,7 @@ export const createEventController = async (
 
     const event = await createEvent(
       req.body,
-      (req as any).user
+      req.user
     );
 
     return successResponse(
@@ -185,7 +185,7 @@ export const registerEventController = async (
     );
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const registration =
       await registerForEvent(

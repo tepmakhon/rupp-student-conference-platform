@@ -14,7 +14,7 @@ export const getNotifications = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const notifications =
       await notificationService.getMyNotifications(
@@ -45,7 +45,7 @@ export const readNotification = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const notificationId =
       Array.isArray(req.params.id)
@@ -81,7 +81,7 @@ export const readAllNotifications = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     await notificationService.markAllAsRead(
       BigInt(user.id)

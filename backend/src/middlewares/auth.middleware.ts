@@ -36,7 +36,12 @@ export const authMiddleware = (
       roleName: string;
     };
 
-    (req as any).user = decoded;
+    req.user = decoded as {
+      id: string;
+      email: string;
+      roleId: string;
+      roleName: string;
+    };
 
     next();
   } catch (error) {

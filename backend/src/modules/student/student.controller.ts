@@ -13,7 +13,7 @@ export const getMyHistory = async (
 ) => {
   try {
 
-    const user = (req as any).user;
+    const user = req.user!;
 
     const history =
       await studentService.getScoreHistory(
@@ -44,7 +44,7 @@ export const createProfile = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const profile =
       await studentService.createStudentProfile(
@@ -77,7 +77,7 @@ export const getMyProfile = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const profile =
       await studentService.getMyProfile(

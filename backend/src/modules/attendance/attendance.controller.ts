@@ -29,7 +29,7 @@ export const checkIn = async (
       BigInt(eventIdParam);
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const attendance =
       await attendanceService.checkInEvent(

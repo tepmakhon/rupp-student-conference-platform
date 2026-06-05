@@ -41,7 +41,7 @@ export const organizationDashboard = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const data =
       await dashboardService.getOrganizationDashboard(
@@ -72,7 +72,7 @@ export const studentDashboard = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const data =
       await dashboardService.getStudentDashboard(

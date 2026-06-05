@@ -13,7 +13,7 @@ export const createOpportunity = async (
 ) => {
   try {
 
-    const user = (req as any).user;
+    const user = req.user!;
 
     const opportunity =
       await opportunityService.createOpportunity(
@@ -155,7 +155,7 @@ export const applyOpportunity = async (
     );
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const application =
       await opportunityService.applyOpportunity(

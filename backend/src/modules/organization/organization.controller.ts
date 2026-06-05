@@ -17,7 +17,7 @@ export const getOrganizationProfile = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const organization =
       await getMyOrganization(
@@ -48,7 +48,7 @@ export const updateLogo = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const organization =
       await updateOrganizationLogo(

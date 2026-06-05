@@ -6,7 +6,7 @@ export const rbac = (allowedRoles: string[]) => {
     res: Response,
     next: NextFunction
   ) => {
-    const user = (req as any).user;
+    const user = req.user;
 
     if (!user) {
       return res.status(401).json({

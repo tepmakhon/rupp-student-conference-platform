@@ -49,7 +49,7 @@ export const getMyAuditLogs = async (
   try {
 
     const userId = BigInt(
-      (req as any).user.id
+      req.user!.id
     );
 
     const page =

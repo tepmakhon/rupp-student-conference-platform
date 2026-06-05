@@ -14,7 +14,7 @@ export const getMyApplications = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const page =
       Number(req.query.page) || 1;
@@ -53,7 +53,7 @@ export const getApplicants = async (
   try {
 
     const user =
-      (req as any).user;
+      req.user!;
 
     const parseId = (
       id: string | string[]
