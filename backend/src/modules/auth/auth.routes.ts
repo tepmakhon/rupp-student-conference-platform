@@ -13,40 +13,56 @@ import {
 
 const router = Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: Authentication APIs
+ */
+
 router.post(
   "/register",
   validate(registerSchema),
   registerController
 );
-/** * @swagger
+/**
+ * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Register User
- *     tags:
- *       - Authentication
+ *     summary: Register a new user
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
+ *                 example: student@rupp.edu.kh
  *               password:
  *                 type: string
+ *                 example: 123456
  *               roleName:
  *                 type: string
  *                 enum: [STUDENT, ORGANIZATION]
+ *                 example: STUDENT
  *               organizationName:
  *                 type: string
+ *                 example: GDG RUPP
  *               description:
  *                 type: string
+ *                 example: Student technology organization
  *     responses:
  *       201:
- *         description: Registration Successful
+ *         description: Registration successful
+ *       400:
+ *         description: Validation error or user already exists
  */
-
 
 router.post(
   "/login",
@@ -57,23 +73,29 @@ router.post(
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Login User
- *     tags:
- *       - Authentication
+ *     summary: Login user
+ *     tags: [Authentication]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
+ *                 example: admin@rupp.com
  *               password:
  *                 type: string
+ *                 example: 123456
  *     responses:
  *       200:
- *         description: Login Successful
+ *         description: Login successful
+ *       400:
+ *         description: Invalid credentials
  */
 
 export default router;

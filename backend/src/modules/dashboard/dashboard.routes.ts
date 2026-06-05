@@ -55,11 +55,60 @@ router.get(
 
 /**
  * @swagger
- * /api/dashboard:
+ * tags:
+ *   name: Dashboard
+ *   description: Dashboard Analytics APIs
+ */
+
+/**
+ * @swagger
+ * /api/dashboard/admin:
  *   get:
- *     summary: Dashboard Analytics
- *     tags:
- *       - Dashboard
+ *     summary: Admin dashboard statistics
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Admin dashboard data retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ */
+
+/**
+ * @swagger
+ * /api/dashboard/organization:
+ *   get:
+ *     summary: Organization dashboard statistics
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Organization dashboard data retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Organization access required
+ */
+
+/**
+ * @swagger
+ * /api/dashboard/student:
+ *   get:
+ *     summary: Student dashboard statistics
+ *     tags: [Dashboard]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Student dashboard data retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Student access required
  */
 
 export default router;

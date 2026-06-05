@@ -40,20 +40,32 @@ const router = Router();
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - location
+ *               - categoryId
+ *               - eventDate
  *             properties:
  *               title:
  *                 type: string
+ *                 example: Google Developer Workshop 2026
  *               description:
  *                 type: string
+ *                 example: Learn modern web development
  *               location:
  *                 type: string
+ *                 example: RUPP Conference Hall
  *               categoryId:
  *                 type: string
+ *                 example: "1"
  *               capacity:
  *                 type: integer
+ *                 example: 100
  *               eventDate:
  *                 type: string
  *                 format: date
+ *                 example: 2026-06-01T08:00:00.000Z
  *     responses:
  *       201:
  *         description: Event created
@@ -72,6 +84,17 @@ router.post(
  *   get:
  *     summary: Get Approved Events
  *     tags: [Events]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         example: 10
  *     responses:
  *       200:
  *         description: List approved events
@@ -92,6 +115,10 @@ router.get(
  *     responses:
  *       200:
  *         description: List pending events
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
  */
 router.get(
   "/pending",
@@ -117,6 +144,12 @@ router.get(
  *     responses:
  *       200:
  *         description: Event approved
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ *       404:
+ *         description: Event not found
  */
 router.patch(
   "/:id/approve",
@@ -142,6 +175,12 @@ router.patch(
  *     responses:
  *       200:
  *         description: Event rejected
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ *       404:
+ *         description: Event not found
  */
 router.patch(
   "/:id/reject",
@@ -165,8 +204,14 @@ router.patch(
  *         schema:
  *           type: string
  *     responses:
- *       200:
+ *       201:
  *         description: Registration successful
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Student access required
+ *       404:
+ *         description: Event not found
  */
 
 router.post(

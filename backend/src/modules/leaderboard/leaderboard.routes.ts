@@ -20,10 +20,24 @@ router.get("/", getLeaderboard);
  * /api/leaderboard:
  *   get:
  *     summary: Get Student Leaderboard
+ *     description: Returns students ranked by activity score.
  *     tags: [Leaderboard]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         example: 10
+ *         description: Number of records per page
  *     responses:
  *       200:
- *         description: Success
+ *         description: Leaderboard retrieved successfully
  */
 
 export default router;

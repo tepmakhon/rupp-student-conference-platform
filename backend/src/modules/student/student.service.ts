@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 
 export const getScoreHistory = async (
   userId: bigint
@@ -12,7 +13,10 @@ export const getScoreHistory = async (
     });
 
   if (!student) {
-    throw new Error("Student not found");
+    throw new AppError(
+      "Student not found",
+      404
+    );
   }
 
   return prisma.activityScoreHistory.findMany({
@@ -39,8 +43,9 @@ export const createStudentProfile = async (
     });
 
   if (existing) {
-    throw new Error(
-      "Student profile already exists"
+    throw new AppError(
+      "Student profile already exists",
+      409
     );
   }
 
@@ -64,8 +69,7 @@ export const createStudentProfile = async (
 export const getMyProfile = async (
   userId: bigint
 ) => {
-
-  return prisma.student.findUnique({
+  const profile = await prisma.student.findUnique({
     where: {
       userId,
     },
@@ -82,4 +86,13 @@ export const getMyProfile = async (
       },
     },
   });
+
+  if (!profile) {
+    throw new AppError(
+      "Student profile not found",
+      404
+    );
+  }
+
+  return profile;
 };

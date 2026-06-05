@@ -51,13 +51,27 @@ router.patch(
  * @swagger
  * /api/organizations/logo:
  *   patch:
- *     summary: Upload Organization Logo
+ *     summary: Update Organization Logo
  *     tags: [Organizations]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               logoUrl:
+ *                 type: string
+ *                 example: https://example.com/logo.png
  *     responses:
  *       200:
- *         description: Logo updated
+ *         description: Logo updated successfully
+ *       400:
+ *         description: Organization not found or invalid data
+ *       401:
+ *         description: Unauthorized
  */
 
 export default router;

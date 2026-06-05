@@ -1,4 +1,5 @@
 import { prisma } from "../../config/prisma.js";
+import { AppError } from "../../utils/AppError.js";
 import { createAuditLog } from "../audit/audit.service.js";
 
 export const getMyOrganization = async (
@@ -13,8 +14,9 @@ export const getMyOrganization = async (
     });
 
   if (!organization) {
-    throw new Error(
-      "Organization not found"
+    throw new AppError(
+      "Organization not found",
+      404
     );
   }
 
@@ -35,8 +37,16 @@ export const updateOrganizationLogo =
       });
 
     if (!organization) {
-      throw new Error(
-        "Organization not found"
+      throw new AppError(
+        "Organization not found",
+        404
+      );
+    }
+
+    if (!logoUrl) {
+      throw new AppError(
+        "Logo URL is required",
+        400
       );
     }
 

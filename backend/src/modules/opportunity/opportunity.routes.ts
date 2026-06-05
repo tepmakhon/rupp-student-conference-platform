@@ -80,20 +80,127 @@ router.post(
 
 /**
  * @swagger
- * /api/opportunities:
- *   get:
- *     summary: Get Opportunities
- *     tags:
- *       - Opportunities
+ * tags:
+ *   name: Opportunities
+ *   description: Opportunity Management APIs
  */
 
+/**
+ * @swagger
+ * /api/opportunities:
+ *   get:
+ *     summary: Get All Opportunities
+ *     tags: [Opportunities]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         example: 10
+ *     responses:
+ *       200:
+ *         description: Opportunities retrieved successfully
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/{id}:
+ *   get:
+ *     summary: Get Opportunity By ID
+ *     tags: [Opportunities]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Opportunity retrieved successfully
+ *       404:
+ *         description: Opportunity not found
+ */
 
 /**
  * @swagger
  * /api/opportunities:
  *   post:
  *     summary: Create Opportunity
- *     tags:
- *       - Opportunities
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               requirements:
+ *                 type: string
+ *               deadline:
+ *                 type: string
+ *                 format: date
+ *               typeId:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Opportunity created successfully
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/{id}/approve:
+ *   patch:
+ *     summary: Approve Opportunity
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Opportunity approved successfully
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/{id}/apply:
+ *   post:
+ *     summary: Apply For Opportunity
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               cvUrl:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Application submitted successfully
  */
 export default router;

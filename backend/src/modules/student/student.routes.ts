@@ -36,7 +36,23 @@ router.get(
  *     tags: [Students]
  *     security:
  *       - bearerAuth: []
-*/
+ *     responses:
+ *       200:
+ *         description: Student dashboard retrieved
+ */
+
+ /**
+ * @swagger
+ * /api/students/history:
+ *   get:
+ *     summary: Get Activity Score History
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Activity score history retrieved
+ */
 
 router.get(
   "/history",
@@ -52,6 +68,24 @@ router.get(
  *     tags: [Students]
  *     security:
  *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               universityId:
+ *                 type: string
+ *               facultyId:
+ *                 type: string
+ *               majorId:
+ *                 type: string
+ *               academicYear:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Student profile created
  */
 
 router.post(
@@ -60,14 +94,17 @@ router.post(
   rbac(["STUDENT"]),
   createProfile
 );
-/** * @swagger
+/**
+ * @swagger
  * /api/students/profile:
- *   post:
- *     summary: Create Student Profile
- *     tags: 
- *      - Students
+ *   get:
+ *     summary: Get My Profile
+ *     tags: [Students]
  *     security:
  *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Student profile retrieved
  */
 
 router.get(

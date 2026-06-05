@@ -1,6 +1,7 @@
 import express from "express";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { rbac } from "../../middlewares/rbac.middleware.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 const router = express.Router();
 
@@ -9,7 +10,11 @@ router.get(
   authMiddleware,
   rbac(["ADMIN"]),
   (req, res) => {
-    res.json({ message: "Welcome Admin" });
+    return successResponse(
+      res,
+      null,
+      "Welcome Admin"
+    );
   }
 );
 

@@ -25,11 +25,63 @@ router.get(
 
 /**
  * @swagger
+ * tags:
+ *   name: Audit
+ *   description: Audit Log Management APIs
+ */
+
+/**
+ * @swagger
  * /api/audit:
  *   get:
- *     summary: Audit Logs
- *     tags:
- *       - Audit
+ *     summary: Get all audit logs
+ *     tags: [Audit]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *     responses:
+ *       200:
+ *         description: Audit logs retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ */
+
+/**
+ * @swagger
+ * /api/audit/me:
+ *   get:
+ *     summary: Get my audit logs
+ *     tags: [Audit]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *     responses:
+ *       200:
+ *         description: User audit logs retrieved successfully
+ *       401:
+ *         description: Unauthorized
  */
 
 export default router;
