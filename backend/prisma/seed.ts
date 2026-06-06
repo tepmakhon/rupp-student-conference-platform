@@ -1,59 +1,101 @@
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.university.createMany({
-  data: [
-    {
-      id: BigInt(1),
-      universityName: "Royal University of Phnom Penh",
-    },
-  ],
-  skipDuplicates: true,
-});
+  console.log("🌱 Seeding database...");
 
-await prisma.faculty.createMany({
-  data: [
-    {
-      id: BigInt(1),
-      universityId: BigInt(1),
-      facultyName: "Engineering",
-    },
-  ],
-  skipDuplicates: true,
-});
+  // Roles
+  const adminRole = await prisma.role.upsert({
+    where: { roleName: "Admin" },
+    update: {},
+    create: { roleName: "Admin" },
+  });
 
-await prisma.major.createMany({
-  data: [
-    {
-      id: BigInt(1),
-      facultyId: BigInt(1),
-      majorName: "Computer Science",
-    },
-  ],
-  skipDuplicates: true,
-});
+  const studentRole = await prisma.role.upsert({
+    where: { roleName: "Student" },
+    update: {},
+    create: { roleName: "Student" },
+  });
 
-await prisma.student.create({
-  data: {
-    userId: BigInt(5),
-    universityId: BigInt(1),
-    facultyId: BigInt(1),
-    majorId: BigInt(1),
-    academicYear: "Year 3",
-  },
-});
+  const organizationRole = await prisma.role.upsert({
+    where: { roleName: "Organization" },
+    update: {},
+    create: { roleName: "Organization" },
+  });
 
+  console.log("✅ Roles seeded");
+
+  // Event Categories
+  const categories = [
+    "Conference",
+    "Workshop",
+    "Competition",
+    "Seminar",
+    "Hackathon",
+  ];
+
+  for (const category of categories) {
+    await prisma.eventCategory.upsert({
+      where: { categoryName: category },
+      update: {},
+      create: { categoryName: category },
+    });
+  }
+
+  console.log("✅ Event categories seeded");
+
+  // Opportunity Types
+  const opportunityTypes = [
+    "Internship",
+    "Scholarship",
+    "Volunteer",
+    "Part-Time",
+    "Full-Time",
+  ];
+
+  for (const type of opportunityTypes) {
+    await prisma.opportunityType.upsert({
+      where: { typeName: type },
+      update: {},
+      create: { typeName: type },
+    });
+  }
+
+  console.log("✅ Opportunity types seeded");
+
+  // Skills
+  const skills = [
+    "JavaScript",
+    "TypeScript",
+    "React",
+    "Node.js",
+    "Express",
+    "PostgreSQL",
+    "Prisma",
+    "Docker",
+    "Git",
+    "Networking",
+  ];
+
+  for (const skill of skills) {
+    await prisma.skill.upsert({
+      where: { skillName: skill },
+      update: {},
+      create: { skillName: skill },
+    });
+  }
+
+  console.log("✅ Skills seeded");
+
+  console.log("🎉 Database seeded successfully");
 }
 
 main()
-
-  .catch((e) => console.error(e))
-
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
   .finally(async () => {
-
     await prisma.$disconnect();
-
   });
