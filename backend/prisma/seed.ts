@@ -7,21 +7,21 @@ async function main() {
 
   // Roles
   const adminRole = await prisma.role.upsert({
-    where: { roleName: "Admin" },
+    where: { roleName: "ADMIN" },
     update: {},
-    create: { roleName: "Admin" },
+    create: { roleName: "ADMIN" },
   });
 
   const studentRole = await prisma.role.upsert({
-    where: { roleName: "Student" },
+    where: { roleName: "STUDENT" },
     update: {},
-    create: { roleName: "Student" },
+    create: { roleName: "STUDENT" },
   });
 
   const organizationRole = await prisma.role.upsert({
-    where: { roleName: "Organization" },
+    where: { roleName: "ORGANIZATION" },
     update: {},
-    create: { roleName: "Organization" },
+    create: { roleName: "ORGANIZATION" },
   });
 
   console.log("✅ Roles seeded");
