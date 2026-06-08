@@ -15,8 +15,14 @@ from "../../middlewares/rbac.middleware.js";
 import { successResponse }
 from "../../utils/apiResponse.js";
 
-const router =
-  express.Router();
+const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: User Profile APIs
+ */
 
 /**
  * @swagger
@@ -40,7 +46,6 @@ router.get(
   authMiddleware,
   rbac(["ADMIN"]),
   (req, res) => {
-
     return successResponse(
       res,
       null,
@@ -56,6 +61,7 @@ router.get(
  *     tags:
  *       - Users
  *     summary: Create user profile
+ *     description: Create profile information for the authenticated user
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -64,11 +70,33 @@ router.get(
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - fullName
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: Tep MakHon
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "012345678"
+ *               gender:
+ *                 type: string
+ *                 example: Male
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *                 example: "2003-08-15"
+ *               bio:
+ *                 type: string
+ *                 example: Computer Science Student at RUPP
+ *               profileImageUrl:
+ *                 type: string
+ *                 example: /uploads/profile.jpg
  *     responses:
  *       201:
  *         description: Profile created successfully
  *       400:
- *         description: Bad request
+ *         description: Validation failed
  *       401:
  *         description: Unauthorized
  */
@@ -85,6 +113,7 @@ router.post(
  *     tags:
  *       - Users
  *     summary: Get my profile
+ *     description: Retrieve authenticated user's profile
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -108,6 +137,7 @@ router.get(
  *     tags:
  *       - Users
  *     summary: Update my profile
+ *     description: Update authenticated user's profile
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -116,6 +146,26 @@ router.get(
  *         application/json:
  *           schema:
  *             type: object
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: Tep MakHon
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "012345678"
+ *               gender:
+ *                 type: string
+ *                 example: MALE
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *                 example: "2003-01-23T00:00:00.000Z"
+ *               bio:
+ *                 type: string
+ *                 example: Full Stack Developer
+ *               profileImageUrl:
+ *                 type: string
+ *                 example: /uploads/profile.jpg
  *     responses:
  *       200:
  *         description: Profile updated successfully
