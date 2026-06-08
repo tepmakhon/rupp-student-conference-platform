@@ -20,6 +20,7 @@ import swaggerUi from "swagger-ui-express"; import { swaggerSpec } from "./confi
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { AppError } from "./utils/AppError.js";
 import { successResponse } from "./utils/apiResponse.js";
+import userRoutes from "./modules/user/user.routes.js";
 
 setupBigIntSerialization();
 
@@ -80,6 +81,8 @@ app.use("/api/students", studentRoutes);
 
 app.use("/api/admin", adminRoutes);
 
+app.use("/api/users", userRoutes);
+
 app.use("/api/organizations", organizationRoutes);
 
 app.use("/api/attendance", attendanceRoutes);
@@ -97,6 +100,7 @@ app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/audit", auditRoutes);
 
 app.use("/api/upload", uploadRoutes);
+
 
 /*
 |--------------------------------------------------------------------------
