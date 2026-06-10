@@ -9,7 +9,7 @@ export const getMyProfile =
       );
 
     return response.data;
-  };
+};
 
 export const createProfile =
   async (profileData) => {
@@ -21,7 +21,7 @@ export const createProfile =
       );
 
     return response.data;
-  };
+};
 
 export const updateProfile =
   async (profileData) => {
@@ -33,4 +33,4 @@ export const updateProfile =
       );
 
     return response.data;
-  };
+};

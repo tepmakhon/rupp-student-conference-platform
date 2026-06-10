@@ -10,7 +10,7 @@ export const loginUser = async (
       userData
     );
 
-  return response.data;
+  return response.data.data;
 };
 
 export const registerUser =
@@ -22,5 +22,5 @@ export const registerUser =
         userData
       );
 
-    return response.data;
+    return response.data.data;
 };

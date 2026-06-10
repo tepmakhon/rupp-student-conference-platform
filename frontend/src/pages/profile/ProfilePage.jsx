@@ -7,9 +7,10 @@ import {
   createProfile,
   updateProfile,
 } from "../../api/userApi";
+import toast from "react-hot-toast";
 
 function ProfilePage() {
-  
+
   const [loading, setLoading] =
     useState(true);
 
@@ -32,42 +33,58 @@ function ProfilePage() {
 
   const loadProfile = async () => {
 
-    try {
+  try {
 
-      const response =
-        await getMyProfile();
+    const response =
+      await getMyProfile();
 
-      const profile =
-        response.data;
+    console.log(
+      "PROFILE RESPONSE:",
+      response
+    );
 
-      setProfileExists(true);
+    const profile =
+      response.data;
 
-      setFormData({
-        fullName:
-          profile.fullName || "",
-        phoneNumber:
-          profile.phoneNumber || "",
-        gender:
-          profile.gender || "",
-        dateOfBirth:
-          profile.dateOfBirth
-            ? profile.dateOfBirth.split("T")[0]
-            : "",
-        bio:
-          profile.bio || "",
-        profileImageUrl:
-          profile.profileImageUrl || "",
-      });
+    setProfileExists(true);
 
-    } catch (error) {
+    setFormData({
+      fullName:
+        profile?.fullName || "",
 
-      console.log(error);
+      phoneNumber:
+        profile?.phoneNumber || "",
 
-      setProfileExists(false);
-    }
+      gender:
+        profile?.gender || "",
+
+      dateOfBirth:
+        profile?.dateOfBirth
+          ? profile.dateOfBirth.split("T")[0]
+          : "",
+
+      bio:
+        profile?.bio || "",
+
+      profileImageUrl:
+        profile?.profileImageUrl || "",
+    });
+
+  } catch (error) {
+
+    console.log(
+      "LOAD PROFILE ERROR:",
+      error.response?.data
+    );
+
+    setProfileExists(false);
+
+  } finally {
 
     setLoading(false);
-  };
+
+  }
+};
 
   const handleChange = (e) => {
 
@@ -81,6 +98,7 @@ function ProfilePage() {
   const handleSubmit = async () => {
 
     try {
+
       const payload = {
         ...formData,
         dateOfBirth:
@@ -93,17 +111,21 @@ function ProfilePage() {
 
       if (profileExists) {
 
-        await updateProfile(payload);
+        await updateProfile(
+          payload
+        );
 
-        alert(
+        toast.success(
           "Profile updated successfully"
         );
 
       } else {
 
-        await createProfile(payload);
+        await createProfile(
+          payload
+        );
 
-        alert(
+        toast.success(
           "Profile created successfully"
         );
 
@@ -111,13 +133,13 @@ function ProfilePage() {
       }
 
     } catch (error) {
-      console.log(error);
 
       console.log(
+        "SAVE PROFILE ERROR:",
         error.response?.data
       );
 
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Failed to save profile"
       );
@@ -215,7 +237,9 @@ function ProfilePage() {
           onClick={handleSubmit}
           className="mt-6 bg-primary text-white px-8 py-3 rounded-lg"
         >
-          Save Profile
+          {profileExists
+            ? "Update Profile"
+            : "Create Profile"}
         </button>
 
       </div>

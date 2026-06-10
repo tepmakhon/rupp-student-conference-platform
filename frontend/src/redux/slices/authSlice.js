@@ -10,55 +10,52 @@ const initialState = {
   isAuthenticated: !!token,
 };
 
-const authSlice =
-  createSlice({
-    name: "auth",
+const authSlice = createSlice({
+  name: "auth",
 
-    initialState,
+  initialState,
 
-    reducers: {
+  reducers: {
 
-      loginSuccess:
-        (state, action) => {
+    loginSuccess: (state, action) => {
 
-          state.user =
-            action.payload.user;
+      console.log(
+        "TOKEN SAVED:",
+        action.payload.token
+      );
 
-          state.token =
-            action.payload.token;
+      state.user =
+        action.payload.user;
 
-          state.role =
-            action.payload.user
-              ?.role
-              ?.roleName || null;
+      state.token =
+        action.payload.token;
 
-          state.isAuthenticated =
-            true;
+      state.role =
+        action.payload.user?.role?.roleName ||
+        null;
 
-          localStorage.setItem(
-            "token",
-            action.payload.token
-          );
-        },
+      state.isAuthenticated =
+        true;
 
-      logout:
-        (state) => {
-
-          state.user = null;
-
-          state.token = null;
-
-          state.role = null;
-
-          state.isAuthenticated =
-            false;
-
-          localStorage.removeItem(
-            "token"
-          );
-        },
+      localStorage.setItem(
+        "token",
+        action.payload.token
+      );
     },
-  });
+
+    logout: (state) => {
+
+      state.user = null;
+      state.token = null;
+      state.role = null;
+      state.isAuthenticated = false;
+
+      localStorage.removeItem(
+        "token"
+      );
+    },
+  },
+});
 
 export const {
   loginSuccess,
