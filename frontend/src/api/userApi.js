@@ -8,7 +8,7 @@ export const getMyProfile =
         "/users/profile"
       );
 
-    return response.data;
+    return response.data.data;
 };
 
 export const createProfile =

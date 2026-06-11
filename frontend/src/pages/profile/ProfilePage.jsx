@@ -7,12 +7,20 @@ import {
   createProfile,
   updateProfile,
 } from "../../api/userApi";
+
+import {
+  uploadFile,
+} from "../../api/uploadApi";
+
 import toast from "react-hot-toast";
 
 function ProfilePage() {
 
   const [loading, setLoading] =
     useState(true);
+
+  const [uploading, setUploading] =
+    useState(false);
 
   const [profileExists, setProfileExists] =
     useState(false);
@@ -35,56 +43,59 @@ function ProfilePage() {
 
   try {
 
-    const response =
-      await getMyProfile();
+    const profile =
+     await getMyProfile();
 
     console.log(
       "PROFILE RESPONSE:",
-      response
+      profile
     );
 
-    const profile =
-      response.data;
+    if (!profile) {
+
+      setProfileExists(false);
+
+      return;
+    }
 
     setProfileExists(true);
 
     setFormData({
       fullName:
-        profile?.fullName || "",
+        profile.fullName || "",
 
       phoneNumber:
-        profile?.phoneNumber || "",
+        profile.phoneNumber || "",
 
       gender:
-        profile?.gender || "",
+        profile.gender || "",
 
       dateOfBirth:
-        profile?.dateOfBirth
+        profile.dateOfBirth
           ? profile.dateOfBirth.split("T")[0]
           : "",
 
       bio:
-        profile?.bio || "",
+        profile.bio || "",
 
       profileImageUrl:
-        profile?.profileImageUrl || "",
+        profile.profileImageUrl || "",
     });
 
-  } catch (error) {
+    } catch (error) {
 
-    console.log(
-      "LOAD PROFILE ERROR:",
-      error.response?.data
-    );
+      console.log(
+        "LOAD PROFILE ERROR:",
+        error.response?.data
+      );
 
-    setProfileExists(false);
+      setProfileExists(false);
 
-  } finally {
+    } finally {
 
-    setLoading(false);
-
-  }
-};
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
 
@@ -95,67 +106,157 @@ function ProfilePage() {
     });
   };
 
+  const handleImageUpload =
+    async (e) => {
+
+      const file =
+        e.target.files[0];
+
+      if (!file) return;
+
+      try {
+
+        setUploading(true);
+
+        const response =
+          await uploadFile(file);
+
+        console.log(
+          "UPLOAD RESPONSE:",
+          response
+        );
+
+        const imageUrl =
+          response?.data?.url ||
+          response?.url ||
+          response?.fileUrl ||
+          "";
+
+        setFormData(
+          (prev) => ({
+            ...prev,
+            profileImageUrl:
+              imageUrl,
+          })
+        );
+
+        toast.success(
+          "Image uploaded successfully"
+        );
+
+      } catch (error) {
+
+        console.log(error);
+
+        toast.error(
+          "Failed to upload image"
+        );
+
+      } finally {
+
+        setUploading(false);
+      }
+    };
+
   const handleSubmit = async () => {
 
-    try {
+  try {
 
-      const payload = {
-        ...formData,
-        dateOfBirth:
-          formData.dateOfBirth
-            ? new Date(
-                formData.dateOfBirth
-              ).toISOString()
-            : null,
-      };
+    const payload = {
 
-      if (profileExists) {
+      ...formData,
 
-        await updateProfile(
-          payload
-        );
+      dateOfBirth:
+        formData.dateOfBirth
+          ? new Date(
+              formData.dateOfBirth
+            ).toISOString()
+          : null,
+    };
 
-        toast.success(
-          "Profile updated successfully"
-        );
+    console.log(
+      "PROFILE EXISTS STATE:",
+      profileExists
+    );
 
-      } else {
-
-        await createProfile(
-          payload
-        );
-
-        toast.success(
-          "Profile created successfully"
-        );
-
-        setProfileExists(true);
-      }
-
-    } catch (error) {
+    console.log(
+      "PAYLOAD:",
+      payload
+    );
+    if (profileExists) {
 
       console.log(
-        "SAVE PROFILE ERROR:",
-        error.response?.data
+        "INSIDE UPDATE BLOCK"
       );
 
-      toast.error(
-        error.response?.data?.message ||
-        "Failed to save profile"
+      await updateProfile(payload);
+
+    } else {
+
+      console.log(
+        "INSIDE CREATE BLOCK"
       );
+
+      await createProfile(payload);
+
     }
-  };
+
+    if (profileExists) {
+
+      await updateProfile(
+        payload
+      );
+
+      toast.success(
+        "Profile updated successfully"
+      );
+
+    } else {
+
+      await createProfile(
+        payload
+      );
+
+      toast.success(
+        "Profile created successfully"
+      );
+
+      // Switch button mode
+      setProfileExists(true);
+
+      // Reload latest profile
+      await loadProfile();
+    }
+
+  } catch (error) {
+
+    console.log(
+      "SAVE PROFILE ERROR:",
+      error.response?.data
+    );
+
+    toast.error(
+      error.response?.data?.message ||
+      "Failed to save profile"
+    );
+  }
+};
 
   if (loading) {
 
     return (
       <DashboardLayout>
-        <h1>Loading...</h1>
+
+        <div className="p-8">
+          Loading Profile...
+        </div>
+
       </DashboardLayout>
     );
   }
 
   return (
+
     <DashboardLayout>
 
       <div className="bg-white p-8 rounded-2xl shadow max-w-4xl">
@@ -188,6 +289,7 @@ function ProfilePage() {
             onChange={handleChange}
             className="border p-3 rounded-lg"
           >
+
             <option value="">
               Select Gender
             </option>
@@ -225,21 +327,72 @@ function ProfilePage() {
           rows="5"
         />
 
-        <input
-          name="profileImageUrl"
-          placeholder="Profile Image URL"
-          value={formData.profileImageUrl}
-          onChange={handleChange}
-          className="border p-3 rounded-lg w-full mt-6"
-        />
+        <div className="mt-6">
+
+          <label
+            className="block mb-2 font-medium"
+          >
+            Profile Image
+          </label>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            disabled={uploading}
+            className="w-full border p-3 rounded-lg"
+          />
+
+          {
+            uploading && (
+
+              <p className="mt-2 text-blue-600">
+                Uploading image...
+              </p>
+
+            )
+          }
+
+          {
+            formData.profileImageUrl && (
+
+              <img
+                src={
+                  formData.profileImageUrl
+                }
+                alt="Profile"
+                className="
+                  w-40
+                  h-40
+                  object-cover
+                  rounded-full
+                  border
+                  mt-4
+                "
+              />
+
+            )
+          }
+
+        </div>
 
         <button
           onClick={handleSubmit}
-          className="mt-6 bg-primary text-white px-8 py-3 rounded-lg"
+          className="
+            mt-6
+            bg-primary
+            text-white
+            px-8
+            py-3
+            rounded-lg
+            hover:opacity-90
+          "
         >
+
           {profileExists
             ? "Update Profile"
             : "Create Profile"}
+
         </button>
 
       </div>
