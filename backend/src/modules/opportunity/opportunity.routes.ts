@@ -121,7 +121,7 @@ router.get(
  * @swagger
  * /api/opportunities:
  *   get:
- *     summary: Get All Opportunities
+ *     summary: Get Opportunities
  *     tags: [Opportunities]
  *     parameters:
  *       - in: query
@@ -129,11 +129,35 @@ router.get(
  *         schema:
  *           type: integer
  *         example: 1
+ *
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
  *         example: 10
+ *
+ *       - in: query
+ *         name: keyword
+ *         schema:
+ *           type: string
+ *         example: react
+ *
+ *       - in: query
+ *         name: typeId
+ *         schema:
+ *           type: string
+ *         example: 1
+ *
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - PENDING
+ *             - APPROVED
+ *             - REJECTED
+ *             - CLOSED
+ *
  *     responses:
  *       200:
  *         description: Opportunities retrieved successfully

@@ -49,55 +49,124 @@ export const createOpportunity = async (
 };
 
 export const getAllOpportunities =
-  async (
-    page = 1,
-    limit = 10
-  ) => {
+async ({
+  page = 1,
+  limit = 10,
+  keyword,
+  typeId,
+  status,
+}: any) => {
 
-    if (page < 1 || limit < 1) {
-      throw new AppError(
-        "Invalid pagination values",
-        400
-      );
-    }
+  const skip =
+    (page - 1) * limit;
 
-    const { skip } =
-      getPagination(page, limit);
+  const where: any = {};
 
-    const [
-      opportunities,
-      total,
-    ] = await Promise.all([
-      prisma.opportunity.findMany({
-        include: {
-          organization: true,
-          type: true,
+  /*
+  ------------------------------------
+  Keyword Search
+  ------------------------------------
+  */
+
+  if (keyword) {
+
+    where.OR = [
+
+      {
+        title: {
+          contains: keyword,
+          mode: "insensitive",
         },
-
-        skip,
-        take: limit,
-
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-
-      prisma.opportunity.count(),
-    ]);
-
-    return {
-      opportunities,
-
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages:
-          Math.ceil(total / limit),
       },
-    };
-  };
 
+      {
+        description: {
+          contains: keyword,
+          mode: "insensitive",
+        },
+      },
+
+      {
+        requirements: {
+          contains: keyword,
+          mode: "insensitive",
+        },
+      },
+
+    ];
+  }
+
+  /*
+  ------------------------------------
+  Type Filter
+  ------------------------------------
+  */
+
+  if (typeId) {
+
+    where.typeId =
+      BigInt(typeId);
+  }
+
+  /*
+  ------------------------------------
+  Status Filter
+  ------------------------------------
+  */
+
+  if (status) {
+
+    where.status =
+      status;
+  }
+
+  const [
+    opportunities,
+    total,
+  ] = await Promise.all([
+
+    prisma.opportunity.findMany({
+
+      where,
+
+      include: {
+        organization: true,
+        type: true,
+      },
+
+      skip,
+      take: limit,
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+
+    prisma.opportunity.count({
+      where,
+    }),
+  ]);
+
+  return {
+
+    opportunities,
+
+    filters: {
+      keyword,
+      typeId,
+      status,
+    },
+
+    pagination: {
+      page,
+      limit,
+      total,
+
+      totalPages:
+        Math.ceil(total / limit),
+    },
+  };
+};
 export const getOpportunityById = async (
   opportunityId: bigint
 ) => {

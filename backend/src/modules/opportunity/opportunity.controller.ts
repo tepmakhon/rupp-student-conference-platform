@@ -51,10 +51,24 @@ export const getAllOpportunities = async (
     const limit =
       Number(req.query.limit) || 10;
 
+    const keyword =
+      req.query.keyword as string;
+
+    const typeId =
+      req.query.typeId as string;
+
+    const status =
+      req.query.status as string;
+
     const result =
       await opportunityService.getAllOpportunities(
-        page,
-        limit
+        {
+          page,
+          limit,
+          keyword,
+          typeId,
+          status,
+        }
       );
 
     return successResponse(
