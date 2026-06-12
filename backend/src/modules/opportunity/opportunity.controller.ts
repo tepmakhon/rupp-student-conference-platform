@@ -181,3 +181,146 @@ export const applyOpportunity = async (
 
   }
 };
+
+export const rejectOpportunity = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const id = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
+    const opportunity =
+      await opportunityService.rejectOpportunity(
+        id
+      );
+
+    return successResponse(
+      res,
+      opportunity,
+      "Opportunity rejected"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+  }
+};
+
+export const saveOpportunity = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const user =
+      req.user!;
+
+    const opportunityId = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
+    const result =
+      await opportunityService.saveOpportunity(
+        opportunityId,
+        BigInt(user.id)
+      );
+
+    return successResponse(
+      res,
+      result,
+      "Opportunity saved"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+};
+
+export const unsaveOpportunity = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const user =
+      req.user!;
+
+    const opportunityId = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
+
+    const result =
+      await opportunityService.unsaveOpportunity(
+        opportunityId,
+        BigInt(user.id)
+      );
+
+    return successResponse(
+      res,
+      result,
+      "Opportunity removed from saved list"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+};
+
+export const getSavedOpportunities =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+
+      const user =
+        req.user!;
+
+      const result =
+        await opportunityService.getSavedOpportunities(
+          BigInt(user.id)
+        );
+
+      return successResponse(
+        res,
+        result,
+        "Saved opportunities retrieved"
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+        res,
+        error.message,
+        error.statusCode || 400
+      );
+
+    }
+  };

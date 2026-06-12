@@ -304,3 +304,133 @@ export const applyOpportunity = async (
 
   return application;
 };
+
+export const saveOpportunity = async (
+  opportunityId: bigint,
+  userId: bigint
+) => {
+
+  const student =
+    await prisma.student.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+  if (!student) {
+    throw new AppError(
+      "Student profile not found",
+      404
+    );
+  }
+
+  const opportunity =
+    await prisma.opportunity.findUnique({
+      where: {
+        id: opportunityId,
+      },
+    });
+
+  if (!opportunity) {
+    throw new AppError(
+      "Opportunity not found",
+      404
+    );
+  }
+
+  const existing =
+    await prisma.savedOpportunity.findUnique({
+      where: {
+        studentId_opportunityId: {
+          studentId: student.id,
+          opportunityId,
+        },
+      },
+    });
+
+  if (existing) {
+    throw new AppError(
+      "Already saved",
+      409
+    );
+  }
+
+  return prisma.savedOpportunity.create({
+    data: {
+      studentId: student.id,
+      opportunityId,
+    },
+  });
+};
+
+export const unsaveOpportunity = async (
+  opportunityId: bigint,
+  userId: bigint
+) => {
+
+  const student =
+    await prisma.student.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+  if (!student) {
+    throw new AppError(
+      "Student profile not found",
+      404
+    );
+  }
+
+  await prisma.savedOpportunity.delete({
+    where: {
+      studentId_opportunityId: {
+        studentId: student.id,
+        opportunityId,
+      },
+    },
+  });
+
+  return {
+    success: true,
+  };
+};
+
+export const getSavedOpportunities =
+  async (
+    userId: bigint
+  ) => {
+
+    const student =
+      await prisma.student.findUnique({
+        where: {
+          userId,
+        },
+      });
+
+    if (!student) {
+      throw new AppError(
+        "Student profile not found",
+        404
+      );
+    }
+
+    return prisma.savedOpportunity.findMany({
+      where: {
+        studentId: student.id,
+      },
+
+      include: {
+        opportunity: {
+          include: {
+            organization: true,
+            type: true,
+          },
+        },
+      },
+
+      orderBy: {
+        savedAt: "desc",
+      },
+    });
+  };

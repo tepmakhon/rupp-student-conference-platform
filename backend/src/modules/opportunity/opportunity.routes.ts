@@ -18,6 +18,10 @@ import {
   getOpportunityById,
   approveOpportunity,
   applyOpportunity,
+  rejectOpportunity,
+  saveOpportunity,
+  unsaveOpportunity,
+  getSavedOpportunities,
 } from "./opportunity.controller.js";
 
 const router = Router();
@@ -65,6 +69,13 @@ router.patch(
   approveOpportunity
 );
 
+router.patch(
+  "/:id/reject",
+  authMiddleware,
+  rbac(["ADMIN"]),
+  rejectOpportunity
+);
+
 /*
 |--------------------------------------------------------------------------
 | STUDENT
@@ -76,6 +87,27 @@ router.post(
   authMiddleware,
   rbac(["STUDENT"]),
   applyOpportunity
+);
+
+router.post(
+  "/:id/save",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  saveOpportunity
+);
+
+router.delete(
+  "/:id/save",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  unsaveOpportunity
+);
+
+router.get(
+  "/saved/list",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  getSavedOpportunities
 );
 
 /**
@@ -178,6 +210,27 @@ router.post(
 
 /**
  * @swagger
+ * /api/opportunities/{id}/reject:
+ *   patch:
+ *     summary: Reject Opportunity
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Opportunity rejected successfully
+ *       404:
+ *         description: Opportunity not found
+ */
+
+/**
+ * @swagger
  * /api/opportunities/{id}/apply:
  *   post:
  *     summary: Apply For Opportunity
@@ -202,5 +255,62 @@ router.post(
  *     responses:
  *       201:
  *         description: Application submitted successfully
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/{id}/save:
+ *   post:
+ *     summary: Save Opportunity
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "1"
+ *     responses:
+ *       201:
+ *         description: Opportunity saved
+ *       404:
+ *         description: Opportunity not found
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/{id}/save:
+ *   delete:
+ *     summary: Remove Saved Opportunity
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "1"
+ *     responses:
+ *       200:
+ *         description: Opportunity removed from saved list
+ *       404:
+ *         description: Opportunity not found
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/saved/list:
+ *   get:
+ *     summary: Get Saved Opportunities
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Saved opportunities retrieved
  */
 export default router;
