@@ -12,6 +12,13 @@ import {
   updateStatus,
 } from "./application.controller.js";
 
+import { validate }
+from "../../middlewares/validate.middleware.js";
+
+import {
+  updateApplicationStatusSchema,
+} from "./application.validation.js";
+
 const router = Router();
 
 /*
@@ -44,6 +51,7 @@ router.patch(
   "/:id/status",
   authMiddleware,
   rbac(["ORGANIZATION"]),
+  validate(updateApplicationStatusSchema),
   updateStatus
 );
 
@@ -62,6 +70,17 @@ router.patch(
  *     tags: [Applications]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         example: 10
  *     responses:
  *       200:
  *         description: Applications retrieved successfully
@@ -109,6 +128,11 @@ router.patch(
  *             properties:
  *               status:
  *                 type: string
+ *                 enum:
+ *                    - PENDING
+ *                    - REVIEWING
+ *                    - ACCEPTED
+ *                    - REJECTED
  *                 example: ACCEPTED
  *     responses:
  *       200:

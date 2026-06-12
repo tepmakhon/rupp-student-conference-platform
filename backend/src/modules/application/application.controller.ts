@@ -93,6 +93,8 @@ export const updateStatus = async (
 ) => {
   try {
 
+    const user = req.user!;
+
     const parseId = (
       id: string | string[]
     ) =>
@@ -105,6 +107,7 @@ export const updateStatus = async (
     const application =
       await applicationService.updateApplicationStatus(
         parseId(req.params.id),
+        BigInt(user.id),
         req.body.status
       );
 

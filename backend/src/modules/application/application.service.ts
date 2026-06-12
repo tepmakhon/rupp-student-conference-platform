@@ -128,6 +128,7 @@ export const getApplicantsForOpportunity =
 export const updateApplicationStatus =
   async (
     applicationId: bigint,
+    userId: bigint,
     status: string
   ) => {
 
@@ -137,19 +138,6 @@ export const updateApplicationStatus =
       "ACCEPTED",
       "REJECTED",
     ];
-    const existingApplication =
-      await prisma.application.findUnique({
-        where: {
-          id: applicationId,
-        },
-      });
-
-    if (!existingApplication) {
-      throw new AppError(
-        "Application not found",
-        404
-      );
-    }
 
     if (
       !validStatuses.includes(status)
@@ -160,7 +148,55 @@ export const updateApplicationStatus =
       );
     }
 
+    const organization =
+      await prisma.organization.findUnique({
+        where: {
+          userId,
+        },
+      });
+
+    if (!organization) {
+      throw new AppError(
+        "Organization not found",
+        404
+      );
+    }
+
     const application =
+      await prisma.application.findUnique({
+        where: {
+          id: applicationId,
+        },
+
+        include: {
+          opportunity: true,
+
+          student: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+
+    if (!application) {
+      throw new AppError(
+        "Application not found",
+        404
+      );
+    }
+
+    if (
+      application.opportunity.organizationId !==
+      organization.id
+    ) {
+      throw new AppError(
+        "Not authorized",
+        403
+      );
+    }
+
+    const updatedApplication =
       await prisma.application.update({
         where: {
           id: applicationId,
@@ -172,26 +208,26 @@ export const updateApplicationStatus =
         },
 
         include: {
+          opportunity: true,
+
           student: {
             include: {
               user: true,
             },
           },
-
-          opportunity: true,
         },
       });
 
     await createNotification(
-      application.student.userId,
+      updatedApplication.student.userId,
       `Application ${status}`,
-      `Your application for ${application.opportunity.title} has been ${status}`
+      `Your application for ${updatedApplication.opportunity.title} has been ${status}`
     );
 
     await createAuditLog(
-      application.student.userId,
-      `APPLICATION_${status}:${application.opportunity.title}`
+      updatedApplication.student.userId,
+      `APPLICATION_${status}:${updatedApplication.opportunity.title}`
     );
 
-    return application;
-};
+    return updatedApplication;
+ };
