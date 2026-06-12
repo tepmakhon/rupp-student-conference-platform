@@ -121,24 +121,22 @@ function ProfilePage() {
         const response =
           await uploadFile(file);
 
-        console.log(
-          "UPLOAD RESPONSE:",
-          response
-        );
+          console.log(
+            "UPLOAD RESPONSE:",
+            response
+          );
 
-        const imageUrl =
-          response?.data?.url ||
-          response?.url ||
-          response?.fileUrl ||
-          "";
+          const imageUrl =
+            `http://localhost:5050${response.data.path}`;
 
-        setFormData(
-          (prev) => ({
+          setFormData((prev) => ({
             ...prev,
-            profileImageUrl:
-              imageUrl,
-          })
-        );
+            profileImageUrl: imageUrl,
+          }));
+
+          toast.success(
+            "Image uploaded successfully"
+          );
 
         toast.success(
           "Image uploaded successfully"
@@ -163,7 +161,6 @@ function ProfilePage() {
   try {
 
     const payload = {
-
       ...formData,
 
       dateOfBirth:
@@ -171,11 +168,11 @@ function ProfilePage() {
           ? new Date(
               formData.dateOfBirth
             ).toISOString()
-          : null,
+          : undefined,
     };
 
     console.log(
-      "PROFILE EXISTS STATE:",
+      "PROFILE EXISTS:",
       profileExists
     );
 
@@ -183,23 +180,6 @@ function ProfilePage() {
       "PAYLOAD:",
       payload
     );
-    if (profileExists) {
-
-      console.log(
-        "INSIDE UPDATE BLOCK"
-      );
-
-      await updateProfile(payload);
-
-    } else {
-
-      console.log(
-        "INSIDE CREATE BLOCK"
-      );
-
-      await createProfile(payload);
-
-    }
 
     if (profileExists) {
 
@@ -221,12 +201,10 @@ function ProfilePage() {
         "Profile created successfully"
       );
 
-      // Switch button mode
       setProfileExists(true);
-
-      // Reload latest profile
-      await loadProfile();
     }
+
+    await loadProfile();
 
   } catch (error) {
 
