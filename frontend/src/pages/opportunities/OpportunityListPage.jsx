@@ -45,11 +45,9 @@ function OpportunityListPage() {
         );
 
       } catch (error) {
-
-        console.log(error);
-
-      } finally {
-
+          console.log(error.response?.data);
+          console.log(error.response?.status);
+        }finally {
         setLoading(false);
       }
     };
@@ -105,7 +103,7 @@ function OpportunityListPage() {
                         <img
                           src={
                             opportunity.coverImageUrl ||
-                            "https://via.placeholder.com/600x300"
+                            "https://placehold.co/600x300?text=No+Image"
                           }
                           alt={opportunity.title}
                           className="

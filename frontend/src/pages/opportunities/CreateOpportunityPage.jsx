@@ -4,95 +4,145 @@ import axiosInstance from "../../api/axios";
 
 function CreateOpportunityPage() {
 
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    requirements: "",
-    typeId: "",
-    deadline: "",
-  });
+  const [formData, setFormData] =
+    useState({
+      title: "",
+      description: "",
+      requirements: "",
+      typeId: "",
+      deadline: "",
+    });
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] =
+    useState(null);
+
+  const [loading, setLoading] =
+    useState(false);
 
   const handleChange = (e) => {
 
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]:
+        e.target.value,
     });
 
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange =
+    (e) => {
 
-    setImage(e.target.files[0]);
-
-  };
-
-  const handleSubmit = async (e) => {
-
-    e.preventDefault();
-
-    try {
-
-      const data = new FormData();
-
-      data.append(
-        "title",
-        formData.title
+      setImage(
+        e.target.files[0]
       );
 
-      data.append(
-        "description",
-        formData.description
-      );
+    };
 
-      data.append(
-        "requirements",
-        formData.requirements
-      );
+  const uploadImage =
+    async () => {
 
-      data.append(
-        "typeId",
-        formData.typeId
-      );
-
-      data.append(
-        "deadline",
-        formData.deadline
-      );
-
-      if (image) {
-        data.append(
-          "coverImage",
-          image
-        );
+      if (!image) {
+        return "";
       }
 
-      await axiosInstance.post(
-        "/opportunities",
-        data,
-        {
-          headers: {
-            "Content-Type":
-              "multipart/form-data",
-          },
-        }
+      const cloudinaryData =
+        new FormData();
+
+      cloudinaryData.append(
+        "file",
+        image
       );
 
-      alert(
-        "Opportunity created successfully"
+      cloudinaryData.append(
+        "upload_preset",
+        "rupp_platform_cloudnary"
       );
 
-    } catch (error) {
+      const response =
+        await fetch(
+          "https://api.cloudinary.com/v1_1/dct61ygjw/image/upload",
+          {
+            method: "POST",
+            body: cloudinaryData,
+          }
+        );
 
-      console.error(error);
+      const result =
+        await response.json();
 
-      alert(
-        "Failed to create opportunity"
-      );
-    }
-  };
+      return result.secure_url;
+    };
+
+  const handleSubmit =
+    async (e) => {
+
+      e.preventDefault();
+
+      try {
+
+        setLoading(true);
+
+        const coverImageUrl =
+          await uploadImage();
+
+        const payload = {
+
+          title:
+            formData.title,
+
+          description:
+            formData.description,
+
+          requirements:
+            formData.requirements,
+
+          typeId:
+            formData.typeId,
+
+          deadline:
+            formData.deadline,
+
+          coverImageUrl,
+        };
+
+        console.log(
+          "Payload:",
+          payload
+        );
+
+        await axiosInstance.post(
+          "/opportunities",
+          payload
+        );
+
+        alert(
+          "Opportunity created successfully"
+        );
+
+        setFormData({
+          title: "",
+          description: "",
+          requirements: "",
+          typeId: "",
+          deadline: "",
+        });
+
+        setImage(null);
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Failed to create opportunity"
+        );
+
+      } finally {
+
+        setLoading(false);
+
+      }
+    };
 
   return (
 
@@ -121,6 +171,8 @@ function CreateOpportunityPage() {
           "
         >
 
+          {/* Title */}
+
           <div>
 
             <label
@@ -138,6 +190,7 @@ function CreateOpportunityPage() {
               name="title"
               value={formData.title}
               onChange={handleChange}
+              required
               className="
                 w-full
                 border
@@ -147,6 +200,8 @@ function CreateOpportunityPage() {
             />
 
           </div>
+
+          {/* Description */}
 
           <div>
 
@@ -165,6 +220,7 @@ function CreateOpportunityPage() {
               value={formData.description}
               onChange={handleChange}
               rows="4"
+              required
               className="
                 w-full
                 border
@@ -174,6 +230,8 @@ function CreateOpportunityPage() {
             />
 
           </div>
+
+          {/* Requirements */}
 
           <div>
 
@@ -192,6 +250,7 @@ function CreateOpportunityPage() {
               value={formData.requirements}
               onChange={handleChange}
               rows="4"
+              required
               className="
                 w-full
                 border
@@ -201,6 +260,8 @@ function CreateOpportunityPage() {
             />
 
           </div>
+
+          {/* Opportunity Type */}
 
           <div>
 
@@ -211,23 +272,51 @@ function CreateOpportunityPage() {
                 font-medium
               "
             >
-              Opportunity Type ID
+              Opportunity Type
             </label>
 
-            <input
-              type="number"
+            <select
               name="typeId"
               value={formData.typeId}
               onChange={handleChange}
+              required
               className="
                 w-full
                 border
                 p-3
                 rounded-lg
               "
-            />
+            >
+
+              <option value="">
+                Select Type
+              </option>
+
+              <option value="1">
+                Internship
+              </option>
+
+              <option value="2">
+                Scholarship
+              </option>
+
+              <option value="3">
+                Volunteer
+              </option>
+
+              <option value="4">
+                Part-Time
+              </option>
+
+              <option value="5">
+                Full-Time
+              </option>
+
+            </select>
 
           </div>
+
+          {/* Deadline */}
 
           <div>
 
@@ -255,6 +344,8 @@ function CreateOpportunityPage() {
             />
 
           </div>
+
+          {/* Cover Image */}
 
           <div>
 
@@ -284,15 +375,21 @@ function CreateOpportunityPage() {
 
           <button
             type="submit"
+            disabled={loading}
             className="
               bg-blue-600
               text-white
               px-6
               py-3
               rounded-lg
+              disabled:opacity-50
             "
           >
-            Create Opportunity
+            {
+              loading
+                ? "Creating..."
+                : "Create Opportunity"
+            }
           </button>
 
         </form>
