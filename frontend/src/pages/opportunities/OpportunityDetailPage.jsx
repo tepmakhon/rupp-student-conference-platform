@@ -73,7 +73,10 @@ function OpportunityDetailPage() {
           "
         >
           <img
-            src={opportunity.imageUrl}
+            src={
+              opportunity.coverImageUrl ||
+              "https://via.placeholder.com/1200x600"
+            }
             alt={opportunity.title}
             className="
               w-full

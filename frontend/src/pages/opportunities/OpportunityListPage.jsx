@@ -102,7 +102,20 @@ function OpportunityListPage() {
                           shadow
                         "
                       >
-
+                        <img
+                          src={
+                            opportunity.coverImageUrl ||
+                            "https://via.placeholder.com/600x300"
+                          }
+                          alt={opportunity.title}
+                          className="
+                            w-full
+                            h-48
+                            object-cover
+                            rounded-lg
+                            mb-4
+                          "
+                        />                        
                         <h2
                           className="
                             text-xl

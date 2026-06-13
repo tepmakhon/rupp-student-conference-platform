@@ -70,3 +70,15 @@ export const applyOpportunity =
 
     return response.data;
   };
+
+  export const createOpportunity =
+  async (payload) => {
+
+    const response =
+      await axiosInstance.post(
+        "/opportunities",
+        payload
+      );
+
+    return response.data.data;
+};

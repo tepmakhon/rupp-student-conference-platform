@@ -10,6 +10,7 @@ import ProfilePage from "../pages/profile/ProfilePage";
 
 import OpportunityListPage from "../pages/opportunities/OpportunityListPage";
 import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage";
+import CreateOpportunityPage from "../pages/opportunities/CreateOpportunityPage";
 
 function AppRoutes() {
   return (
@@ -55,6 +56,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <OpportunityDetailPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/opportunities/create"
+          element={
+            <ProtectedRoute>
+              <CreateOpportunityPage />
             </ProtectedRoute>
           }
         />
