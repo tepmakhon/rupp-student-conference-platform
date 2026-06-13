@@ -1,45 +1,78 @@
 import { Link } from "react-router-dom";
 
-function Sidebar() {
+function Sidebar({
+  sidebarOpen,
+  setSidebarOpen,
+}) {
   return (
-    <div className="w-64 h-screen bg-primary text-white fixed left-0 top-0 p-5">
+    <>
+      {/* Mobile Overlay */}
 
-      <h1 className="text-2xl font-bold mb-10 text-gold">
-        RUPP Platform
-      </h1>
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() =>
+            setSidebarOpen(false)
+          }
+        />
+      )}
 
-      <nav className="flex flex-col gap-4">
+      <div
+        className={`
+          fixed top-0 left-0 z-50
+          w-64 h-screen
+          bg-primary text-white
+          p-5
+          transform transition-transform duration-300
 
-        <Link
-          to="/dashboard"
-          className="hover:bg-secondary p-3 rounded-lg transition"
-        >
-          Dashboard
-        </Link>
+          ${
+            sidebarOpen
+              ? "translate-x-0"
+              : "-translate-x-full"
+          }
 
-        <Link
-          to="/events"
-          className="hover:bg-secondary p-3 rounded-lg transition"
-        >
-          Events
-        </Link>
+          md:translate-x-0
+        `}
+      >
 
-        <Link
-          to="/opportunities"
-          className="hover:bg-secondary p-3 rounded-lg transition"
-        >
-          Opportunities
-        </Link>
+        <h1 className="text-2xl font-bold mb-10 text-gold">
+          RUPP Platform
+        </h1>
 
-        <Link
-          to="/profile"
-          className="hover:bg-secondary p-3 rounded-lg transition"
-        >
-          Profile
-        </Link>
+        <nav className="flex flex-col gap-4">
 
-      </nav>
-    </div>
+          <Link
+            to="/dashboard"
+            className="hover:bg-secondary p-3 rounded-lg"
+          >
+            Dashboard
+          </Link>
+
+          <Link
+            to="/events"
+            className="hover:bg-secondary p-3 rounded-lg"
+          >
+            Events
+          </Link>
+
+          <Link
+            to="/opportunities"
+            className="hover:bg-secondary p-3 rounded-lg"
+          >
+            Opportunities
+          </Link>
+
+          <Link
+            to="/profile"
+            className="hover:bg-secondary p-3 rounded-lg"
+          >
+            Profile
+          </Link>
+
+        </nav>
+
+      </div>
+    </>
   );
 }
 

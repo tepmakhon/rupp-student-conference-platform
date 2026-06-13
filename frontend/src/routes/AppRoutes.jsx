@@ -2,9 +2,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
+
 import DashboardPage from "../pages/dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
+
 import ProfilePage from "../pages/profile/ProfilePage";
+
+import OpportunityListPage from "../pages/opportunities/OpportunityListPage";
+import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage";
 
 function AppRoutes() {
   return (
@@ -32,6 +37,24 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+       <Route
+          path="/opportunities"
+          element={
+            <ProtectedRoute>
+              <OpportunityListPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/opportunities/:id"
+          element={
+            <ProtectedRoute>
+              <OpportunityDetailPage />
             </ProtectedRoute>
           }
         />
