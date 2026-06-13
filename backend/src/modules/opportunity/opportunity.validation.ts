@@ -14,6 +14,12 @@ export const createOpportunitySchema =
       .string()
       .min(3, "Requirements are required"),
 
+    coverImageUrl: z
+      .string()
+      .url("Must be a valid URL")
+      .optional()
+      .or(z.literal("")),
+
     typeId: z.string(),
 
     deadline: z.string().optional(),

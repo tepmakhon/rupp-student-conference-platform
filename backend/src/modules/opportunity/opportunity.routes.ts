@@ -203,6 +203,9 @@ router.get(
  *                 type: string
  *               requirements:
  *                 type: string
+ *               coverImageUrl:
+ *                 type: string
+ *                 example: https://images.unsplash.com/photo.jpg
  *               deadline:
  *                 type: string
  *                 format: date

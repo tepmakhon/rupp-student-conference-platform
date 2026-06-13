@@ -338,3 +338,18 @@ export const getSavedOpportunities =
 
     }
   };
+
+export const uploadOpportunityImage =
+async (req: Request, res: Response) => {
+  if (!req.file) {
+    return errorResponse(res, "No file uploaded", 400);
+  }
+  return successResponse(
+    res,
+    {
+      imageUrl:
+        `/uploads/opportunities/${req.file.filename}`
+    },
+    "Image uploaded"
+  );
+};

@@ -30,6 +30,9 @@ export const createOpportunity = async (
         description: data.description,
         requirements: data.requirements,
 
+        coverImageUrl:
+          data.coverImageUrl,
+
         deadline: data.deadline
           ? new Date(data.deadline)
           : null,
