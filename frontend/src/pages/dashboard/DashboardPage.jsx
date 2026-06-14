@@ -1,56 +1,118 @@
-import DashboardLayout from "../../components/layouts/DashboardLayout";
+import {
+  useEffect,
+} from "react";
+
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
+
+import DashboardLayout
+from "../../components/layouts/DashboardLayout";
+
+import {
+  getStudentDashboard,
+} from "../../api/dashboardApi";
+
+import {
+  setDashboardLoading,
+  setDashboardStats,
+  setDashboardError,
+} from "../../redux/slices/dashboardSlice";
+
+import RecentOpportunities from "../../components/dashboard/RecentOpportunities";
 
 function DashboardPage() {
 
-  return (
+  const dispatch =
+    useDispatch();
 
-    <DashboardLayout>
+  const {
+    stats,
+    loading,
+  } = useSelector(
+    (state) => state.dashboard
+  );
 
-      {/* Welcome Banner */}
+  useEffect(() => {
 
-      <div
+    loadDashboard();
+
+  }, []);
+
+  const loadDashboard =
+    async () => {
+
+      try {
+
+        dispatch(
+          setDashboardLoading(true)
+        );
+
+        const data =
+          await getStudentDashboard();
+
+        dispatch(
+          setDashboardStats(data)
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+        dispatch(
+          setDashboardError(
+            "Failed to load dashboard"
+          )
+        );
+
+      } finally {
+
+        dispatch(
+          setDashboardLoading(false)
+        );
+      }
+    };
+
+  if (loading) {
+
+    return (
+
+      <DashboardLayout>
+
+        <div>
+          Loading Dashboard...
+        </div>
+
+      </DashboardLayout>
+    );
+  }
+
+return (
+
+  <DashboardLayout>
+
+    <div>
+
+      <h1
         className="
-          bg-gradient-to-r
-          from-primary
-          to-secondary
-          rounded-3xl
-          p-8
-          text-white
+          text-4xl
+          font-bold
+          text-primary
           mb-8
         "
       >
-
-        <h1
-          className="
-            text-4xl
-            font-bold
-            mb-2
-          "
-        >
-          Welcome Back 👋
-        </h1>
-
-        <p
-          className="
-            text-lg
-            text-green-100
-          "
-        >
-          You have 3 upcoming events and 5 opportunities waiting for you.
-        </p>
-
-      </div>
-
-      {/* Statistics */}
+        Student Dashboard
+      </h1>
+    
+      {/* Statistics Cards */}
 
       <div
         className="
           grid
           grid-cols-1
-          md:grid-cols-2
-          xl:grid-cols-4
+          md:grid-cols-3
           gap-6
-          mb-10
         "
       >
 
@@ -58,114 +120,17 @@ function DashboardPage() {
           className="
             bg-white
             rounded-2xl
-            shadow-sm
             p-6
+            shadow-md
           "
         >
-
-          <p className="text-gray-500">
-            Events Attended
-          </p>
-
-          <h2
-            className="
-              text-4xl
-              font-bold
-              mt-3
-            "
-          >
-            12
-          </h2>
 
           <p
             className="
-              text-green-600
-              mt-2
+              text-gray-500
+              mb-2
             "
           >
-            ↑ 8%
-          </p>
-
-        </div>
-
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            shadow-sm
-            p-6
-          "
-        >
-
-          <p className="text-gray-500">
-            Active Applications
-          </p>
-
-          <h2
-            className="
-              text-4xl
-              font-bold
-              mt-3
-            "
-          >
-            5
-          </h2>
-
-          <p
-            className="
-              text-green-600
-              mt-2
-            "
-          >
-            ↑ 12%
-          </p>
-
-        </div>
-
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            shadow-sm
-            p-6
-          "
-        >
-
-          <p className="text-gray-500">
-            Skills Gained
-          </p>
-
-          <h2
-            className="
-              text-4xl
-              font-bold
-              mt-3
-            "
-          >
-            24
-          </h2>
-
-          <p
-            className="
-              text-green-600
-              mt-2
-            "
-          >
-            ↑ 15%
-          </p>
-
-        </div>
-
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            shadow-sm
-            p-6
-          "
-        >
-
-          <p className="text-gray-500">
             Activity Score
           </p>
 
@@ -174,28 +139,87 @@ function DashboardPage() {
               text-4xl
               font-bold
               text-gold
-              mt-3
             "
           >
-            89
+            {stats?.activityScore || 0}
           </h2>
+
+        </div>
+
+        <div
+          className="
+            bg-white
+            rounded-2xl
+            p-6
+            shadow-md
+          "
+        >
 
           <p
             className="
-              text-green-600
-              mt-2
+              text-gray-500
+              mb-2
             "
           >
-            Excellent
+            Event Registrations
           </p>
+
+          <h2
+            className="
+              text-4xl
+              font-bold
+              text-secondary
+            "
+          >
+            {stats?.totalRegistrations || 0}
+          </h2>
+
+        </div>
+
+        <div
+          className="
+            bg-white
+            rounded-2xl
+            p-6
+            shadow-md
+          "
+        >
+
+          <p
+            className="
+              text-gray-500
+              mb-2
+            "
+          >
+            Applications
+          </p>
+
+          <h2
+            className="
+              text-4xl
+              font-bold
+              text-primary
+            "
+          >
+            {stats?.totalApplications || 0}
+          </h2>
 
         </div>
 
       </div>
 
-    </DashboardLayout>
+      {/* Recent Opportunities */}
 
-  );
+      <div className="mt-8">
+
+        <RecentOpportunities />
+
+      </div>
+
+    </div>
+
+  </DashboardLayout>
+);
 }
 
 export default DashboardPage;

@@ -83,3 +83,14 @@ export const getSavedOpportunities =
 
     return response.data.data;
 };
+
+export const getRecentOpportunities =
+  async () => {
+
+    const response =
+      await axiosInstance.get(
+        "/opportunities/recent"
+      );
+
+    return response.data.data;
+  };
