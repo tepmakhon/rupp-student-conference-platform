@@ -41,6 +41,7 @@ import ProfilePage from "../pages/profile/ProfilePage";
 import OpportunityListPage from "../pages/opportunities/OpportunityListPage";
 import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage";
 import CreateOpportunityPage from "../pages/opportunities/CreateOpportunityPage";
+import SavedOpportunitiesPage from "../pages/opportunities/SavedOpportunitiesPage";
 
 function AppRoutes() {
   return (
@@ -119,6 +120,15 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <OpportunityDetailPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/saved-opportunities"
+          element={
+            <ProtectedRoute>
+              <SavedOpportunitiesPage />
             </ProtectedRoute>
           }
         />

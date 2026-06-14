@@ -103,6 +103,17 @@ function Sidebar({
           </Link>
 
           <Link
+            to="/saved-opportunities"
+            className="
+              hover:bg-secondary
+              p-3
+              rounded-lg
+            "
+          >
+            Saved Opportunities
+          </Link>
+
+          <Link
             to="/opportunities/create"
             className="
               hover:bg-secondary
