@@ -1,16 +1,28 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
-import { useNavigate } from "react-router-dom";
+import {
+  Bars3Icon,
+} from "@heroicons/react/24/outline";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import NotificationDropdown
+from "../notifications/NotificationDropdown";
 
 function Navbar({ setSidebarOpen }) {
 
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout =
+    () => {
 
-    localStorage.removeItem("token");
+      localStorage.removeItem(
+        "token"
+      );
 
-    navigate("/login");
-  };
+      navigate("/login");
+    };
 
   return (
 
@@ -18,7 +30,8 @@ function Navbar({ setSidebarOpen }) {
       className="
         h-16
         bg-white
-        shadow-md
+        shadow-sm
+        border-b
         flex
         items-center
         justify-between
@@ -31,16 +44,25 @@ function Navbar({ setSidebarOpen }) {
 
         <button
           className="md:hidden"
-          onClick={() => setSidebarOpen(true)}
+          onClick={() =>
+            setSidebarOpen(true)
+          }
         >
-          <Bars3Icon className="w-7 h-7" />
+          <Bars3Icon
+            className="
+              w-7
+              h-7
+              text-primary
+            "
+          />
         </button>
 
         <h2
           className="
             text-xl
             md:text-2xl
-            font-semibold
+            font-bold
+            text-primary
           "
         >
           Dashboard
@@ -48,16 +70,42 @@ function Navbar({ setSidebarOpen }) {
 
       </div>
 
-      <div className="flex items-center gap-4">
+      <div
+        className="
+          flex
+          items-center
+          gap-4
+        "
+      >
+
+        <NotificationDropdown />
+
+        <div
+          className="
+            w-10
+            h-10
+            rounded-full
+            bg-secondary
+            flex
+            items-center
+            justify-center
+            text-white
+            font-bold
+          "
+        >
+          U
+        </div>
 
         <button
           onClick={handleLogout}
           className="
-            bg-red-500
+            bg-primary
+            hover:bg-secondary
             text-white
             px-4
             py-2
             rounded-lg
+            transition
           "
         >
           Logout

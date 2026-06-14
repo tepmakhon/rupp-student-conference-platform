@@ -1,14 +1,11 @@
-import {
-  useEffect,
-} from "react";
+import { useEffect } from "react";
 
 import {
   useDispatch,
   useSelector,
 } from "react-redux";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
 import {
   getStudentDashboard,
@@ -24,8 +21,7 @@ import RecentOpportunities from "../../components/dashboard/RecentOpportunities"
 
 function DashboardPage() {
 
-  const dispatch =
-    useDispatch();
+  const dispatch = useDispatch();
 
   const {
     stats,
@@ -40,44 +36,43 @@ function DashboardPage() {
 
   }, []);
 
-  const loadDashboard =
-    async () => {
+  const loadDashboard = async () => {
 
-      try {
+    try {
 
-        dispatch(
-          setDashboardLoading(true)
-        );
+      dispatch(
+        setDashboardLoading(true)
+      );
 
-        const data =
-          await getStudentDashboard();
+      const data =
+        await getStudentDashboard();
 
-        dispatch(
-          setDashboardStats(data)
-        );
+      dispatch(
+        setDashboardStats(data)
+      );
 
-      } catch (error) {
+    } catch (error) {
 
-        console.error(error);
+      console.error(error);
 
-        dispatch(
-          setDashboardError(
-            "Failed to load dashboard"
-          )
-        );
+      dispatch(
+        setDashboardError(
+          "Failed to load dashboard"
+        )
+      );
 
-      } finally {
+    } finally {
 
-        dispatch(
-          setDashboardLoading(false)
-        );
-      }
-    };
+      dispatch(
+        setDashboardLoading(false)
+      );
+
+    }
+  };
 
   if (loading) {
 
     return (
-
       <DashboardLayout>
 
         <div>
@@ -88,138 +83,114 @@ function DashboardPage() {
     );
   }
 
-return (
+  return (
 
-  <DashboardLayout>
+    <DashboardLayout>
 
-    <div>
+      <div>
 
-      <h1
-        className="
-          text-4xl
-          font-bold
-          text-primary
-          mb-8
-        "
-      >
-        Student Dashboard
-      </h1>
-    
-      {/* Statistics Cards */}
-
-      <div
-        className="
-          grid
-          grid-cols-1
-          md:grid-cols-3
-          gap-6
-        "
-      >
+        <h1
+          className="
+            text-4xl
+            font-bold
+            text-primary
+            mb-8
+          "
+        >
+          Student Dashboard
+        </h1>
 
         <div
           className="
-            bg-white
-            rounded-2xl
-            p-6
-            shadow-md
+            grid
+            grid-cols-1
+            md:grid-cols-3
+            gap-6
           "
         >
 
-          <p
+          <div
             className="
-              text-gray-500
-              mb-2
+              bg-white
+              rounded-2xl
+              p-6
+              shadow-md
             "
           >
-            Activity Score
-          </p>
+            <p className="text-gray-500 mb-2">
+              Activity Score
+            </p>
 
-          <h2
+            <h2
+              className="
+                text-4xl
+                font-bold
+                text-gold
+              "
+            >
+              {stats?.activityScore || 0}
+            </h2>
+
+          </div>
+
+          <div
             className="
-              text-4xl
-              font-bold
-              text-gold
+              bg-white
+              rounded-2xl
+              p-6
+              shadow-md
             "
           >
-            {stats?.activityScore || 0}
-          </h2>
+            <p className="text-gray-500 mb-2">
+              Event Registrations
+            </p>
+
+            <h2
+              className="
+                text-4xl
+                font-bold
+                text-secondary
+              "
+            >
+              {stats?.totalRegistrations || 0}
+            </h2>
+
+          </div>
+
+          <div
+            className="
+              bg-white
+              rounded-2xl
+              p-6
+              shadow-md
+            "
+          >
+            <p className="text-gray-500 mb-2">
+              Applications
+            </p>
+
+            <h2
+              className="
+                text-4xl
+                font-bold
+                text-primary
+              "
+            >
+              {stats?.totalApplications || 0}
+            </h2>
+
+          </div>
 
         </div>
 
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            p-6
-            shadow-md
-          "
-        >
-
-          <p
-            className="
-              text-gray-500
-              mb-2
-            "
-          >
-            Event Registrations
-          </p>
-
-          <h2
-            className="
-              text-4xl
-              font-bold
-              text-secondary
-            "
-          >
-            {stats?.totalRegistrations || 0}
-          </h2>
-
-        </div>
-
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            p-6
-            shadow-md
-          "
-        >
-
-          <p
-            className="
-              text-gray-500
-              mb-2
-            "
-          >
-            Applications
-          </p>
-
-          <h2
-            className="
-              text-4xl
-              font-bold
-              text-primary
-            "
-          >
-            {stats?.totalApplications || 0}
-          </h2>
-
+        <div className="mt-8">
+          <RecentOpportunities />
         </div>
 
       </div>
 
-      {/* Recent Opportunities */}
-
-      <div className="mt-8">
-
-        <RecentOpportunities />
-
-      </div>
-
-    </div>
-
-  </DashboardLayout>
-);
+    </DashboardLayout>
+  );
 }
 
 export default DashboardPage;

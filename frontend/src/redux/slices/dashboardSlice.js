@@ -1,19 +1,13 @@
-import {
-  createSlice,
-} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-
   stats: null,
-
   loading: false,
-
   error: null,
 };
 
 const dashboardSlice =
   createSlice({
-
     name: "dashboard",
 
     initialState,
@@ -32,6 +26,8 @@ const dashboardSlice =
 
           state.stats =
             action.payload;
+
+          state.error = null;
         },
 
       setDashboardError:
@@ -44,13 +40,9 @@ const dashboardSlice =
   });
 
 export const {
-
   setDashboardLoading,
-
   setDashboardStats,
-
   setDashboardError,
-
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
