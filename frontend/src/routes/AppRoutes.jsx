@@ -1,12 +1,42 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+
+import ProtectedRoute from "./ProtectedRoute";
+
+/*
+|--------------------------------------------------------------------------
+| Auth Pages
+|--------------------------------------------------------------------------
+*/
 
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
 import DashboardPage from "../pages/dashboard/DashboardPage";
-import ProtectedRoute from "./ProtectedRoute";
+
+/*
+|--------------------------------------------------------------------------
+| Profile
+|--------------------------------------------------------------------------
+*/
 
 import ProfilePage from "../pages/profile/ProfilePage";
+
+/*
+|--------------------------------------------------------------------------
+| Opportunities
+|--------------------------------------------------------------------------
+*/
 
 import OpportunityListPage from "../pages/opportunities/OpportunityListPage";
 import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage";
@@ -18,11 +48,31 @@ function AppRoutes() {
 
       <Routes>
 
-        <Route path="/" element={<h1>Home</h1>} />
+        {/* Redirect Home */}
 
-        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/"
+          element={
+            <Navigate
+              to="/dashboard"
+              replace
+            />
+          }
+        />
 
-        <Route path="/register" element={<RegisterPage />} />
+        {/* Auth */}
+
+        <Route
+          path="/login"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="/register"
+          element={<RegisterPage />}
+        />
+
+        {/* Dashboard */}
 
         <Route
           path="/dashboard"
@@ -33,6 +83,8 @@ function AppRoutes() {
           }
         />
 
+        {/* Profile */}
+
         <Route
           path="/profile"
           element={
@@ -42,11 +94,22 @@ function AppRoutes() {
           }
         />
 
-       <Route
+        {/* Opportunities */}
+
+        <Route
           path="/opportunities"
           element={
             <ProtectedRoute>
               <OpportunityListPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/opportunities/create"
+          element={
+            <ProtectedRoute>
+              <CreateOpportunityPage />
             </ProtectedRoute>
           }
         />
@@ -60,12 +123,15 @@ function AppRoutes() {
           }
         />
 
+        {/* 404 */}
+
         <Route
-          path="/opportunities/create"
+          path="*"
           element={
-            <ProtectedRoute>
-              <CreateOpportunityPage />
-            </ProtectedRoute>
+            <Navigate
+              to="/dashboard"
+              replace
+            />
           }
         />
 

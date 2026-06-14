@@ -3,10 +3,19 @@ import { createSlice } from "@reduxjs/toolkit";
 const token =
   localStorage.getItem("token");
 
+const storedUser =
+  localStorage.getItem("user");
+
+const user =
+  storedUser
+    ? JSON.parse(storedUser)
+    : null;
+
 const initialState = {
-  user: null,
+  user,
   token,
-  role: null,
+  role:
+    user?.role?.roleName || null,
   isAuthenticated: !!token,
 };
 
@@ -17,12 +26,10 @@ const authSlice = createSlice({
 
   reducers: {
 
-    loginSuccess: (state, action) => {
-
-      console.log(
-        "TOKEN SAVED:",
-        action.payload.token
-      );
+    loginSuccess: (
+      state,
+      action
+    ) => {
 
       state.user =
         action.payload.user;
@@ -41,6 +48,13 @@ const authSlice = createSlice({
         "token",
         action.payload.token
       );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(
+          action.payload.user
+        )
+      );
     },
 
     logout: (state) => {
@@ -52,6 +66,10 @@ const authSlice = createSlice({
 
       localStorage.removeItem(
         "token"
+      );
+
+      localStorage.removeItem(
+        "user"
       );
     },
   },
