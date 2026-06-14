@@ -3,15 +3,24 @@ import { Router } from "express";
 import {
   createEventController,
   getApprovedEventsController,
+  getEventByIdController,
   getPendingEventsController,
   approveEventController,
   rejectEventController,
   registerEventController,
 } from "./event.controller.js";
 
-import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { rbac } from "../../middlewares/rbac.middleware.js";
-import { validate } from "../../middlewares/validate.middleware.js";
+import {
+  authMiddleware,
+} from "../../middlewares/auth.middleware.js";
+
+import {
+  rbac,
+} from "../../middlewares/rbac.middleware.js";
+
+import {
+  validate,
+} from "../../middlewares/validate.middleware.js";
 
 import {
   createEventSchema,
@@ -62,13 +71,16 @@ const router = Router();
  *               capacity:
  *                 type: integer
  *                 example: 100
+ *               bannerImageUrl:
+ *                 type: string
+ *                 example: https://example.com/banner.jpg
  *               eventDate:
  *                 type: string
- *                 format: date
+ *                 format: date-time
  *                 example: 2026-06-01T08:00:00.000Z
  *     responses:
  *       201:
- *         description: Event created
+ *         description: Event created successfully
  */
 router.post(
   "/",
@@ -97,7 +109,7 @@ router.post(
  *         example: 10
  *     responses:
  *       200:
- *         description: List approved events
+ *         description: Approved events retrieved successfully
  */
 router.get(
   "/approved",
@@ -114,7 +126,7 @@ router.get(
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List pending events
+ *         description: Pending events retrieved successfully
  *       401:
  *         description: Unauthorized
  *       403:
@@ -125,6 +137,30 @@ router.get(
   authMiddleware,
   rbac(["ADMIN"]),
   getPendingEventsController
+);
+
+/**
+ * @swagger
+ * /api/events/{id}:
+ *   get:
+ *     summary: Get Event By Id
+ *     tags: [Events]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "1"
+ *     responses:
+ *       200:
+ *         description: Event retrieved successfully
+ *       404:
+ *         description: Event not found
+ */
+router.get(
+  "/:id",
+  getEventByIdController
 );
 
 /**
@@ -141,9 +177,10 @@ router.get(
  *         required: true
  *         schema:
  *           type: string
+ *         example: "1"
  *     responses:
  *       200:
- *         description: Event approved
+ *         description: Event approved successfully
  *       401:
  *         description: Unauthorized
  *       403:
@@ -172,9 +209,10 @@ router.patch(
  *         required: true
  *         schema:
  *           type: string
+ *         example: "1"
  *     responses:
  *       200:
- *         description: Event rejected
+ *         description: Event rejected successfully
  *       401:
  *         description: Unauthorized
  *       403:
@@ -203,9 +241,12 @@ router.patch(
  *         required: true
  *         schema:
  *           type: string
+ *         example: "1"
  *     responses:
  *       201:
  *         description: Registration successful
+ *       400:
+ *         description: Already registered or event full
  *       401:
  *         description: Unauthorized
  *       403:
@@ -213,7 +254,6 @@ router.patch(
  *       404:
  *         description: Event not found
  */
-
 router.post(
   "/:id/register",
   authMiddleware,
