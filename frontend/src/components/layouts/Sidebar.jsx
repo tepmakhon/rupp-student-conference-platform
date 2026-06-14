@@ -1,12 +1,75 @@
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+} from "react-router-dom";
+
+import {
+  HomeIcon,
+  CalendarDaysIcon,
+  BriefcaseIcon,
+  BookmarkIcon,
+  PlusCircleIcon,
+  UserCircleIcon,
+  ClipboardDocumentCheckIcon,
+} from "@heroicons/react/24/outline";
 
 function Sidebar({
   sidebarOpen,
   setSidebarOpen,
 }) {
 
-  return (
+  const location =
+    useLocation();
 
+  const menuItems = [
+    {
+      name: "Dashboard",
+      path: "/dashboard",
+      icon: HomeIcon,
+    },
+    {
+      name: "Events",
+      path: "/events",
+      icon: CalendarDaysIcon,
+    },
+    {
+      name: "Pending Events",
+      path: "/admin/events/pending",
+      icon: ClipboardDocumentCheckIcon,
+    },
+    {
+      name: "Opportunities",
+      path: "/opportunities",
+      icon: BriefcaseIcon,
+    },
+    {
+      name: "Saved Opportunities",
+      path: "/saved-opportunities",
+      icon: BookmarkIcon,
+    },
+    {
+      name: "Create Opportunity",
+      path: "/opportunities/create",
+      icon: PlusCircleIcon,
+    },
+    {
+      name: "Profile",
+      path: "/profile",
+      icon: UserCircleIcon,
+    },
+  ];
+
+  const handleCloseSidebar =
+    () => {
+
+      if (
+        window.innerWidth < 768
+      ) {
+        setSidebarOpen(false);
+      }
+    };
+
+  return (
     <>
       {sidebarOpen && (
 
@@ -25,7 +88,7 @@ function Sidebar({
 
       )}
 
-      <div
+      <aside
         className={`
           fixed
           top-0
@@ -35,7 +98,7 @@ function Sidebar({
           h-screen
           bg-primary
           text-white
-          p-5
+          p-6
           transform
           transition-transform
           duration-300
@@ -50,94 +113,103 @@ function Sidebar({
         `}
       >
 
-        <h1
-          className="
-            text-2xl
-            font-bold
-            mb-10
-            text-gold
-          "
-        >
-          RUPP Platform
-        </h1>
+        {/* Logo */}
+
+        <div className="mb-10">
+
+          <h1
+            className="
+              text-2xl
+              font-bold
+              text-gold
+            "
+          >
+            RUPP Platform
+          </h1>
+
+          <p
+            className="
+              text-sm
+              text-gray-300
+              mt-1
+            "
+          >
+            Student Conference &
+            Opportunity Platform
+          </p>
+
+        </div>
+
+        {/* Navigation */}
 
         <nav
           className="
             flex
             flex-col
-            gap-4
+            gap-2
           "
         >
 
-          <Link
-            to="/dashboard"
-            className="
-              hover:bg-secondary
-              p-3
-              rounded-lg
-            "
-          >
-            Dashboard
-          </Link>
+          {menuItems.map(
+            (item) => {
 
-          <Link
-            to="/events"
-            className="
-              hover:bg-secondary
-              p-3
-              rounded-lg
-            "
-          >
-            Events
-          </Link>
+              const Icon =
+                item.icon;
 
-          <Link
-            to="/opportunities"
-            className="
-              hover:bg-secondary
-              p-3
-              rounded-lg
-            "
-          >
-            Opportunities
-          </Link>
+              const isActive =
+                location.pathname ===
+                item.path;
 
-          <Link
-            to="/saved-opportunities"
-            className="
-              hover:bg-secondary
-              p-3
-              rounded-lg
-            "
-          >
-            Saved Opportunities
-          </Link>
+              return (
 
-          <Link
-            to="/opportunities/create"
-            className="
-              hover:bg-secondary
-              p-3
-              rounded-lg
-            "
-          >
-            Create Opportunity
-          </Link>
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={
+                    handleCloseSidebar
+                  }
+                  className={`
+                    flex
+                    items-center
+                    gap-3
+                    p-3
+                    rounded-xl
+                    transition-all
 
-          <Link
-            to="/profile"
-            className="
-              hover:bg-secondary
-              p-3
-              rounded-lg
-            "
-          >
-            Profile
-          </Link>
+                    ${
+                      isActive
+                        ? `
+                          bg-secondary
+                          text-white
+                          shadow-md
+                        `
+                        : `
+                          hover:bg-secondary/70
+                        `
+                    }
+                  `}
+                >
+
+                  <Icon
+                    className="
+                      w-6
+                      h-6
+                    "
+                  />
+
+                  <span>
+                    {item.name}
+                  </span>
+
+                </Link>
+
+              );
+            }
+          )}
 
         </nav>
 
-      </div>
+      </aside>
     </>
   );
 }

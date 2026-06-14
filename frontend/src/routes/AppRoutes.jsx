@@ -43,6 +43,17 @@ import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage"
 import CreateOpportunityPage from "../pages/opportunities/CreateOpportunityPage";
 import SavedOpportunitiesPage from "../pages/opportunities/SavedOpportunitiesPage";
 
+/*
+|--------------------------------------------------------------------------
+| Events
+|--------------------------------------------------------------------------
+*/
+
+import EventListPage from "../pages/events/EventListPage";
+import EventDetailPage from "../pages/events/EventDetailPage";
+//for Admin Pages
+import AdminPendingEventsPage from "../pages/admin/AdminPendingEventsPage";
+
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -130,6 +141,34 @@ function AppRoutes() {
             <ProtectedRoute>
               <SavedOpportunitiesPage />
             </ProtectedRoute>
+          }
+        />
+
+        {/* Events */}
+        
+        <Route
+          path="/events"
+          element={
+            <ProtectedRoute>
+              <EventListPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/events/:id"
+          element={
+            <ProtectedRoute>
+              <EventDetailPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin */}
+        <Route
+          path="/admin/events/pending"
+          element={
+            <AdminPendingEventsPage />
           }
         />
 
