@@ -338,3 +338,19 @@ export const getSavedOpportunities =
 
     }
   };
+
+  export const getRecentOpportunities =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    const data =
+      await opportunityService.getRecentOpportunities();
+
+    return successResponse(
+      res,
+      data,
+      "Recent opportunities retrieved"
+    );
+  };

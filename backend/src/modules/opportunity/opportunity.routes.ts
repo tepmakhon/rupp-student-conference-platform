@@ -22,6 +22,7 @@ import {
   saveOpportunity,
   unsaveOpportunity,
   getSavedOpportunities,
+  getRecentOpportunities
 } from "./opportunity.controller.js";
 
 const router = Router();
@@ -36,6 +37,12 @@ router.get(
   "/",
   getAllOpportunities
 );
+
+router.get(
+  "/recent",
+  getRecentOpportunities
+);
+
 
 router.get(
   "/:id",
@@ -180,6 +187,71 @@ router.get(
  *         description: Opportunity retrieved successfully
  *       404:
  *         description: Opportunity not found
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/recent:
+ *   get:
+ *     summary: Get Recent Opportunities
+ *     tags: [Opportunities]
+ *     description: Returns the latest approved opportunities for dashboard display.
+ *     responses:
+ *       200:
+ *         description: Recent opportunities retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Recent opportunities retrieved
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "1"
+ *                       title:
+ *                         type: string
+ *                         example: Software Engineer Intern
+ *                       description:
+ *                         type: string
+ *                         example: Internship opportunity for students.
+ *                       coverImageUrl:
+ *                         type: string
+ *                         nullable: true
+ *                         example: https://res.cloudinary.com/demo/image/upload/sample.jpg
+ *                       deadline:
+ *                         type: string
+ *                         format: date-time
+ *                       status:
+ *                         type: string
+ *                         example: APPROVED
+ *                       organization:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "1"
+ *                           organizationName:
+ *                             type: string
+ *                             example: OpenAI Cambodia
+ *                       type:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "1"
+ *                           typeName:
+ *                             type: string
+ *                             example: Internship
  */
 
 /**

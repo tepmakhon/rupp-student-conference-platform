@@ -506,3 +506,25 @@ export const getSavedOpportunities =
       },
     });
   };
+  
+  export const getRecentOpportunities =
+  async () => {
+
+    return prisma.opportunity.findMany({
+
+      where: {
+        status: "APPROVED",
+      },
+
+      include: {
+        organization: true,
+        type: true,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+      take: 5,
+    });
+  };
