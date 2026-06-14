@@ -64,92 +64,212 @@ function OpportunityDetailPage() {
 
       ) : (
         
-        <div
+<div
+  className="
+    bg-white
+    rounded-2xl
+    shadow-lg
+    overflow-hidden
+  "
+>
+
+  {opportunity.coverImageUrl && (
+
+    <img
+      src={opportunity.coverImageUrl}
+      alt={opportunity.title}
+      className="
+        w-full
+        h-80
+        object-cover
+      "
+    />
+
+  )}
+
+  <div className="p-8">
+
+    <div
+      className="
+        flex
+        justify-between
+        items-start
+        mb-6
+      "
+    >
+
+      <div>
+
+        <h1
           className="
-            bg-white
-            p-6
-            rounded-xl
-            shadow-md
+            text-4xl
+            font-bold
+            text-primary
           "
         >
-          <img
-            src={
-              opportunity.coverImageUrl ||
-              "https://via.placeholder.com/1200x600"
-            }
-            alt={opportunity.title}
-            className="
-              w-full
-              h-48
-              object-cover
-              rounded-t-xl
-            "
-          />
+          {opportunity.title}
+        </h1>
 
-          <h1
-            className="
-              text-3xl
-              font-bold
-              mb-4
-            "
-          >
-            {opportunity.title}
-          </h1>
+        <p
+          className="
+            text-gray-500
+            mt-2
+          "
+        >
+          {
+            opportunity.organization
+              ?.organizationName
+          }
+        </p>
 
-          <p
-            className="
-              text-gray-700
-              mb-6
-            "
-          >
-            {opportunity.description}
-          </p>
+      </div>
 
-          <div className="space-y-3">
+    </div>
 
-            <p>
-              <strong>
-                Type:
-              </strong>{" "}
-              {
-                opportunity.type
-                  ?.typeName
-              }
-            </p>
+    <div
+      className="
+        grid
+        md:grid-cols-2
+        gap-4
+        mb-8
+      "
+    >
 
-            <p>
-              <strong>
-                Organization:
-              </strong>{" "}
-              {
-                opportunity.organization
-                  ?.organizationName
-              }
-            </p>
+      <div
+        className="
+          bg-gray-50
+          p-4
+          rounded-xl
+        "
+      >
 
-            <p>
-              <strong>
-                Location:
-              </strong>{" "}
-              {
-                opportunity.location
-              }
-            </p>
+        <p className="text-gray-500">
+          Opportunity Type
+        </p>
 
-            <p>
-              <strong>
-                Deadline:
-              </strong>{" "}
-              {
-                new Date(
+        <p className="font-semibold">
+          {
+            opportunity.type
+              ?.typeName
+          }
+        </p>
+
+      </div>
+
+      <div
+        className="
+          bg-gray-50
+          p-4
+          rounded-xl
+        "
+      >
+
+        <p className="text-gray-500">
+          Deadline
+        </p>
+
+        <p className="font-semibold">
+
+          {
+            opportunity.deadline
+              ? new Date(
                   opportunity.deadline
                 ).toLocaleDateString()
-              }
-            </p>
+              : "No Deadline"
+          }
 
-          </div>
+        </p>
 
-        </div>
+      </div>
+
+    </div>
+
+    <h2
+      className="
+        text-2xl
+        font-bold
+        text-primary
+        mb-3
+      "
+    >
+      Description
+    </h2>
+
+    <p
+      className="
+        text-gray-700
+        leading-relaxed
+        mb-8
+      "
+    >
+      {
+        opportunity.description
+      }
+    </p>
+
+    <h2
+      className="
+        text-2xl
+        font-bold
+        text-primary
+        mb-3
+      "
+    >
+      Requirements
+    </h2>
+
+    <p
+      className="
+        text-gray-700
+        whitespace-pre-line
+        leading-relaxed
+      "
+    >
+      {
+        opportunity.requirements ||
+        "No requirements provided."
+      }
+    </p>
+
+    <div
+      className="
+        mt-10
+        flex
+        gap-4
+      "
+    >
+
+      <button
+        className="
+          bg-primary
+          hover:bg-secondary
+          text-white
+          px-6
+          py-3
+          rounded-xl
+        "
+      >
+        Apply Now
+      </button>
+
+      <button
+        className="
+          border
+          border-primary
+          text-primary
+          px-6
+          py-3
+          rounded-xl
+        "
+      >
+        Save Opportunity
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
       )}
 

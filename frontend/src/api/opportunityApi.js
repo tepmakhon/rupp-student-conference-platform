@@ -4,6 +4,7 @@ export const getOpportunities = async (
   page = 1,
   limit = 10
 ) => {
+
   const response =
     await axiosInstance.get(
       `/opportunities?page=${page}&limit=${limit}`
@@ -21,40 +22,19 @@ export const getOpportunityById =
       );
 
     return response.data.data;
-  };
+};
 
-export const saveOpportunity =
-  async (id) => {
+export const createOpportunity =
+  async (payload) => {
 
     const response =
       await axiosInstance.post(
-        `/opportunities/${id}/save`
-      );
-
-    return response.data;
-  };
-
-export const unsaveOpportunity =
-  async (id) => {
-
-    const response =
-      await axiosInstance.delete(
-        `/opportunities/${id}/save`
-      );
-
-    return response.data;
-  };
-
-export const getSavedOpportunities =
-  async () => {
-
-    const response =
-      await axiosInstance.get(
-        "/opportunities/saved/list"
+        "/opportunities",
+        payload
       );
 
     return response.data.data;
-  };
+};
 
 export const applyOpportunity =
   async (
@@ -69,15 +49,36 @@ export const applyOpportunity =
       );
 
     return response.data;
-  };
+};
 
-  export const createOpportunity =
-  async (payload) => {
+export const saveOpportunity =
+  async (id) => {
 
     const response =
       await axiosInstance.post(
-        "/opportunities",
-        payload
+        `/opportunities/${id}/save`
+      );
+
+    return response.data;
+};
+
+export const unsaveOpportunity =
+  async (id) => {
+
+    const response =
+      await axiosInstance.delete(
+        `/opportunities/${id}/save`
+      );
+
+    return response.data;
+};
+
+export const getSavedOpportunities =
+  async () => {
+
+    const response =
+      await axiosInstance.get(
+        "/opportunities/saved/list"
       );
 
     return response.data.data;

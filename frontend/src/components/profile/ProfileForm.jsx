@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 import {
   getMyProfile,
@@ -11,8 +12,14 @@ function ProfileForm() {
   const [loading, setLoading] =
     useState(true);
 
+  const [saving, setSaving] =
+    useState(false);
+
   const [hasProfile, setHasProfile] =
     useState(false);
+
+  const [image, setImage] =
+    useState(null);
 
   const [formData, setFormData] =
     useState({
@@ -34,13 +41,11 @@ function ProfileForm() {
 
     try {
 
-      const response =
+      const profile =
         await getMyProfile();
 
-      const profile =
-        response.data;
-
       setFormData({
+
         fullName:
           profile.fullName || "",
 
@@ -67,10 +72,6 @@ function ProfileForm() {
 
     } catch (error) {
 
-      console.log(
-        "No profile found"
-      );
-
       setHasProfile(false);
 
     } finally {
@@ -87,6 +88,7 @@ function ProfileForm() {
       [e.target.name]:
         e.target.value,
     });
+
   };
 
   const handleSubmit =
@@ -94,10 +96,54 @@ function ProfileForm() {
 
       e.preventDefault();
 
+      if (
+        !formData.fullName.trim()
+      ) {
+
+        alert(
+          "Full name is required"
+        );
+
+        return;
+      }
+
       try {
 
+        setSaving(true);
+
+        let profileImageUrl =
+          formData.profileImageUrl;
+
+        if (image) {
+
+          const cloudData =
+            new FormData();
+
+          cloudData.append(
+            "file",
+            image
+          );
+
+          cloudData.append(
+            "upload_preset",
+            "rupp_platform_cloudnary"
+          );
+
+          const uploadRes =
+            await axios.post(
+              "https://api.cloudinary.com/v1_1/dct61ygjw/image/upload",
+              cloudData
+            );
+
+          profileImageUrl =
+            uploadRes.data.secure_url;
+        }
+
         const payload = {
+
           ...formData,
+
+          profileImageUrl,
 
           dateOfBirth:
             formData.dateOfBirth
@@ -137,6 +183,11 @@ function ProfileForm() {
         alert(
           "Failed to save profile"
         );
+
+      } finally {
+
+        setSaving(false);
+
       }
     };
 
@@ -150,48 +201,58 @@ function ProfileForm() {
   }
 
   return (
+
     <form
-      onSubmit={
-        handleSubmit
-      }
-      className="bg-white p-8 rounded-2xl shadow"
+      onSubmit={handleSubmit}
+      className="
+        bg-white
+        p-8
+        rounded-2xl
+        shadow
+      "
     >
 
-      <div className="grid grid-cols-2 gap-6">
+      <div
+        className="
+          grid
+          grid-cols-2
+          gap-6
+        "
+      >
 
         <input
           name="fullName"
           placeholder="Full Name"
-          value={
-            formData.fullName
-          }
-          onChange={
-            handleChange
-          }
-          className="border p-3 rounded-lg"
+          value={formData.fullName}
+          onChange={handleChange}
+          className="
+            border
+            p-3
+            rounded-lg
+          "
         />
 
         <input
           name="phoneNumber"
           placeholder="Phone Number"
-          value={
-            formData.phoneNumber
-          }
-          onChange={
-            handleChange
-          }
-          className="border p-3 rounded-lg"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          className="
+            border
+            p-3
+            rounded-lg
+          "
         />
 
         <select
           name="gender"
-          value={
-            formData.gender
-          }
-          onChange={
-            handleChange
-          }
-          className="border p-3 rounded-lg"
+          value={formData.gender}
+          onChange={handleChange}
+          className="
+            border
+            p-3
+            rounded-lg
+          "
         >
           <option value="MALE">
             Male
@@ -204,18 +265,19 @@ function ProfileForm() {
           <option value="OTHER">
             Other
           </option>
+
         </select>
 
         <input
           type="date"
           name="dateOfBirth"
-          value={
-            formData.dateOfBirth
-          }
-          onChange={
-            handleChange
-          }
-          className="border p-3 rounded-lg"
+          value={formData.dateOfBirth}
+          onChange={handleChange}
+          className="
+            border
+            p-3
+            rounded-lg
+          "
         />
 
       </div>
@@ -226,19 +288,62 @@ function ProfileForm() {
         value={formData.bio}
         onChange={handleChange}
         rows="5"
-        className="border p-3 rounded-lg w-full mt-6"
+        className="
+          border
+          p-3
+          rounded-lg
+          w-full
+          mt-6
+        "
       />
+
+      <div className="mt-6">
+
+        <label
+          className="
+            block
+            mb-2
+            font-medium
+          "
+        >
+          Profile Image
+        </label>
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) =>
+            setImage(
+              e.target.files[0]
+            )
+          }
+        />
+
+      </div>
 
       <button
         type="submit"
-        className="mt-6 bg-primary text-white px-6 py-3 rounded-lg"
+        disabled={saving}
+        className="
+          mt-6
+          bg-primary
+          text-white
+          px-6
+          py-3
+          rounded-lg
+        "
       >
-        {hasProfile
-          ? "Update Profile"
-          : "Create Profile"}
+        {
+          saving
+            ? "Saving..."
+            : hasProfile
+              ? "Update Profile"
+              : "Create Profile"
+        }
       </button>
 
     </form>
+
   );
 }
 

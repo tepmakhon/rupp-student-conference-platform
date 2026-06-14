@@ -15,7 +15,6 @@ import notificationRoutes from "./modules/notification/notification.routes.js";
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js";
 import auditRoutes from "./modules/audit/audit.routes.js";
 import { setupBigIntSerialization } from "./utils/bigint.js";
-import uploadRoutes from "./modules/upload/upload.routes.js";
 import swaggerUi from "swagger-ui-express"; import { swaggerSpec } from "./config/swagger.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { AppError } from "./utils/AppError.js";
@@ -98,8 +97,6 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/audit", auditRoutes);
-
-app.use("/api/upload", uploadRoutes);
 
 
 /*

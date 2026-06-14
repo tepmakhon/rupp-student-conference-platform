@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { loginSuccess } from "../../redux/slices/authSlice";
+import toast from "react-hot-toast";
 
 import { loginUser } from "../../api/authApi";
-import toast from "react-hot-toast";
+import { loginSuccess } from "../../redux/slices/authSlice";
 
 function LoginPage() {
 
@@ -22,15 +22,28 @@ function LoginPage() {
   const [loading, setLoading] =
     useState(false);
 
-  const handleLogin = async () => {
+  const handleSubmit = async (e) => {
 
-    if (!email) {
-      toast.error("Email is required");
+    e.preventDefault();
+
+    const emailValue =
+      email.trim();
+
+    if (!emailValue) {
+
+      toast.error(
+        "Please enter your email"
+      );
+
       return;
     }
 
     if (!password) {
-      toast.error("Password is required");
+
+      toast.error(
+        "Please enter your password"
+      );
+
       return;
     }
 
@@ -40,14 +53,9 @@ function LoginPage() {
 
       const data =
         await loginUser({
-          email,
+          email: emailValue,
           password,
         });
-
-      console.log(
-        "LOGIN RESPONSE:",
-        data
-      );
 
       dispatch(
         loginSuccess({
@@ -64,77 +72,199 @@ function LoginPage() {
 
     } catch (error) {
 
-      console.log(
-        "LOGIN ERROR:",
-        error
-      );
+      console.error(error);
 
       toast.error(
-        error.response?.data?.message ||
-        "Invalid credentials"
+        error?.response?.data?.message ||
+        "Invalid email or password"
       );
 
     } finally {
 
       setLoading(false);
+
     }
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
 
-      <div className="bg-white p-10 rounded-2xl shadow-lg w-[450px]">
+    <div
+      className="
+        min-h-screen
+        flex
+        items-center
+        justify-center
+        bg-gray-50
+      "
+    >
 
-        <h1 className="text-3xl font-bold text-primary mb-6 text-center">
-          Login
-        </h1>
+      <div
+        className="
+          bg-white
+          shadow-md
+          rounded-2xl
+          p-10
+          w-full
+          max-w-md
+        "
+      >
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-          className="w-full border p-3 rounded-lg mb-4"
-        />
+        <div className="text-center mb-8">
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-          className="w-full border p-3 rounded-lg mb-6"
-        />
+          <h1
+            className="
+              text-3xl
+              font-bold
+              text-primary
+            "
+          >
+            RUPP Platform
+          </h1>
 
-        <button
-          onClick={handleLogin}
-          disabled={loading}
-          className="w-full bg-primary text-white p-3 rounded-lg hover:bg-secondary transition"
+          <p
+            className="
+              text-gray-500
+              mt-2
+            "
+          >
+            Sign in to continue
+          </p>
+
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5"
         >
-          {
-            loading
-              ? "Signing In..."
-              : "Login"
-          }
-        </button>
 
-        <p className="text-center mt-4">
+          <div>
+
+            <label
+              className="
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-gray-700
+              "
+            >
+              Email
+            </label>
+
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                border
+                border-gray-300
+                rounded-xl
+                px-4
+                py-3
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+            />
+
+          </div>
+
+          <div>
+
+            <label
+              className="
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-gray-700
+              "
+            >
+              Password
+            </label>
+
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) =>
+                setPassword(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                border
+                border-gray-300
+                rounded-xl
+                px-4
+                py-3
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+            />
+
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="
+              w-full
+              bg-primary
+              hover:bg-secondary
+              text-white
+              py-3
+              rounded-xl
+              transition
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+            "
+          >
+
+            {
+              loading
+                ? "Signing In..."
+                : "Login"
+            }
+
+          </button>
+
+        </form>
+
+        <div
+          className="
+            mt-6
+            text-center
+            text-gray-600
+          "
+        >
 
           Don't have an account?
 
-          <span
+          <button
             onClick={() =>
-              navigate("/register")
+              navigate(
+                "/register"
+              )
             }
-            className="text-primary ml-2 cursor-pointer font-semibold"
+            className="
+              ml-2
+              text-secondary
+              font-semibold
+            "
           >
             Register
-          </span>
+          </button>
 
-        </p>
+        </div>
 
       </div>
 

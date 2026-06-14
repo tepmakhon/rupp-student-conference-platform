@@ -1,7 +1,10 @@
 import { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
-import { registerUser } from "../../api/authApi";
+
 import toast from "react-hot-toast";
+
+import { registerUser } from "../../api/authApi";
 
 function RegisterPage() {
 
@@ -13,144 +16,305 @@ function RegisterPage() {
   const [password, setPassword] =
     useState("");
 
-  const [confirmPassword,
-    setConfirmPassword] =
-    useState("");
+  const [
+    confirmPassword,
+    setConfirmPassword,
+  ] = useState("");
 
-  const [loading,
-    setLoading] =
+  const [loading, setLoading] =
     useState(false);
 
-  const handleRegister =
-    async () => {
+  const handleSubmit = async (e) => {
 
-      if (!email) {
-        alert("Email is required");
-        return;
-      }
+    e.preventDefault();
 
-      if (!password) {
-        alert("Password is required");
-        return;
-      }
+    const emailValue =
+      email.trim();
 
-      if (password.length < 8) {
-        toast.error(
-          "Password must be at least 8 characters"
-        );
-        return;
-      }
+    if (!emailValue) {
 
-      if (
-        password !== confirmPassword
-      ) {
-        toast.error(
-          "Passwords do not match"
-        );
-        return;
-      }
+      toast.error(
+        "Please enter your email"
+      );
 
-      try {
+      return;
+    }
 
-        setLoading(true);
+    if (!password) {
 
-        const response =
-          await registerUser({
-            email,
-            password,
-          });
+      toast.error(
+        "Please enter a password"
+      );
 
-        console.log(
-          "REGISTER RESPONSE:",
-          response
-        );
+      return;
+    }
 
-        toast.success(
-          "Registration successful"
-        );
+    if (password.length < 8) {
 
-        navigate("/login");
+      toast.error(
+        "Password must be at least 8 characters"
+      );
 
-      } catch (error) {
+      return;
+    }
 
-        console.log(error);
+    if (
+      password !== confirmPassword
+    ) {
 
-        toast.error(
-          error.response?.data?.message ||
-          "Registration failed"
-        );
+      toast.error(
+        "Passwords do not match"
+      );
 
-      } finally {
+      return;
+    }
 
-        setLoading(false);
-      }
-    };
+    try {
+
+      setLoading(true);
+
+      await registerUser({
+        email: emailValue,
+        password,
+      });
+
+      toast.success(
+        "Account created successfully"
+      );
+
+      navigate("/login");
+
+    } catch (error) {
+
+      console.error(error);
+
+      toast.error(
+        error?.response?.data?.message ||
+        "Unable to create account"
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
 
-      <div className="bg-white p-10 rounded-2xl shadow-lg w-[450px]">
+    <div
+      className="
+        min-h-screen
+        flex
+        items-center
+        justify-center
+        bg-gray-50
+      "
+    >
 
-        <h1 className="text-3xl font-bold text-primary text-center mb-6">
-          Register
-        </h1>
+      <div
+        className="
+          bg-white
+          shadow-md
+          rounded-2xl
+          p-10
+          w-full
+          max-w-md
+        "
+      >
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-          className="w-full border p-3 rounded-lg mb-4"
-        />
+        <div className="text-center mb-8">
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) =>
-            setPassword(e.target.value)
-          }
-          className="w-full border p-3 rounded-lg mb-4"
-        />
+          <h1
+            className="
+              text-3xl
+              font-bold
+              text-primary
+            "
+          >
+            RUPP Platform
+          </h1>
 
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) =>
-            setConfirmPassword(
-              e.target.value
-            )
-          }
-          className="w-full border p-3 rounded-lg mb-6"
-        />
+          <p
+            className="
+              text-gray-500
+              mt-2
+            "
+          >
+            Create your account
+          </p>
 
-        <button
-          onClick={handleRegister}
-          disabled={loading}
-          className="w-full bg-primary text-white p-3 rounded-lg"
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5"
         >
-          {loading
-            ? "Creating Account..."
-            : "Register"}
-        </button>
 
-        <p className="text-center mt-4">
+          <div>
+
+            <label
+              className="
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-gray-700
+              "
+            >
+              Email
+            </label>
+
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) =>
+                setEmail(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                border
+                border-gray-300
+                rounded-xl
+                px-4
+                py-3
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+            />
+
+          </div>
+
+          <div>
+
+            <label
+              className="
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-gray-700
+              "
+            >
+              Password
+            </label>
+
+            <input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) =>
+                setPassword(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                border
+                border-gray-300
+                rounded-xl
+                px-4
+                py-3
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+            />
+
+          </div>
+
+          <div>
+
+            <label
+              className="
+                block
+                mb-2
+                text-sm
+                font-medium
+                text-gray-700
+              "
+            >
+              Confirm Password
+            </label>
+
+            <input
+              type="password"
+              placeholder="Confirm password"
+              value={confirmPassword}
+              onChange={(e) =>
+                setConfirmPassword(
+                  e.target.value
+                )
+              }
+              className="
+                w-full
+                border
+                border-gray-300
+                rounded-xl
+                px-4
+                py-3
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+            />
+
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="
+              w-full
+              bg-primary
+              hover:bg-secondary
+              text-white
+              py-3
+              rounded-xl
+              transition
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+            "
+          >
+
+            {
+              loading
+                ? "Creating Account..."
+                : "Register"
+            }
+
+          </button>
+
+        </form>
+
+        <div
+          className="
+            mt-6
+            text-center
+            text-gray-600
+          "
+        >
 
           Already have an account?
 
-          <span
+          <button
             onClick={() =>
               navigate("/login")
             }
-            className="text-primary ml-2 cursor-pointer font-semibold"
+            className="
+              ml-2
+              text-secondary
+              font-semibold
+            "
           >
             Login
-          </span>
+          </button>
 
-        </p>
+        </div>
 
       </div>
 

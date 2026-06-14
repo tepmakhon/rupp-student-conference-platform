@@ -41,14 +41,23 @@ function OpportunityListPage() {
           await getOpportunities();
 
         setOpportunities(
-          data.opportunities
+          data.opportunities || []
         );
 
       } catch (error) {
-          console.log(error.response?.data);
-          console.log(error.response?.status);
-        }finally {
+
+        console.log(
+          error.response?.data
+        );
+
+        console.log(
+          error.response?.status
+        );
+
+      } finally {
+
         setLoading(false);
+
       }
     };
 
@@ -56,68 +65,165 @@ function OpportunityListPage() {
 
     <DashboardLayout>
 
-      <div className="p-6">
+      <div className="max-w-7xl mx-auto">
 
-        <h1
-          className="
-            text-3xl
-            font-bold
-            mb-6
-          "
-        >
-          Opportunities
-        </h1>
+        <div className="mb-8">
+
+          <h1
+            className="
+              text-4xl
+              font-bold
+              text-primary
+            "
+          >
+            Opportunities
+          </h1>
+
+          <p
+            className="
+              text-gray-600
+              mt-2
+            "
+          >
+            Discover internships,
+            scholarships,
+            volunteer programs,
+            part-time jobs,
+            and full-time careers.
+          </p>
+
+        </div>
 
         {
-          loading
-            ? (
-              <p>
-                Loading...
-              </p>
-            )
-            : (
-              <div
+          loading ? (
+
+            <div
+              className="
+                flex
+                justify-center
+                items-center
+                py-20
+              "
+            >
+              <p
                 className="
-                  grid
-                  gap-4
+                  text-lg
+                  text-gray-500
                 "
               >
+                Loading opportunities...
+              </p>
+            </div>
 
-                {
-                  opportunities.map(
-                    (
-                      opportunity
-                    ) => (
+          ) : opportunities.length === 0 ? (
 
-                      <div
-                        key={
-                          opportunity.id
+            <div
+              className="
+                bg-white
+                rounded-2xl
+                shadow-md
+                p-12
+                text-center
+              "
+            >
+              <h2
+                className="
+                  text-2xl
+                  font-bold
+                  text-primary
+                "
+              >
+                No Opportunities Found
+              </h2>
+
+              <p
+                className="
+                  text-gray-600
+                  mt-3
+                "
+              >
+                There are currently
+                no opportunities
+                available.
+              </p>
+
+            </div>
+
+          ) : (
+
+            <div
+              className="
+                grid
+                grid-cols-1
+                md:grid-cols-2
+                xl:grid-cols-3
+                gap-8
+              "
+            >
+
+              {
+                opportunities.map(
+                  (
+                    opportunity
+                  ) => (
+
+                    <div
+                      key={
+                        opportunity.id
+                      }
+                      className="
+                        bg-white
+                        rounded-2xl
+                        shadow-lg
+                        overflow-hidden
+                        hover:shadow-xl
+                        transition-all
+                        duration-300
+                      "
+                    >
+
+                      <img
+                        src={
+                          opportunity.coverImageUrl ||
+                          "https://placehold.co/600x300?text=Opportunity"
+                        }
+                        alt={
+                          opportunity.title
                         }
                         className="
-                          bg-white
-                          p-5
-                          rounded-xl
-                          shadow
+                          w-full
+                          h-56
+                          object-cover
                         "
-                      >
-                        <img
-                          src={
-                            opportunity.coverImageUrl ||
-                            "https://placehold.co/600x300?text=No+Image"
-                          }
-                          alt={opportunity.title}
+                      />
+
+                      <div className="p-6">
+
+                        <span
                           className="
-                            w-full
-                            h-48
-                            object-cover
-                            rounded-lg
-                            mb-4
+                            inline-block
+                            bg-secondary/10
+                            text-secondary
+                            px-3
+                            py-1
+                            rounded-full
+                            text-sm
+                            font-medium
                           "
-                        />                        
+                        >
+                          {
+                            opportunity.type
+                              ?.typeName ||
+                            "Opportunity"
+                          }
+                        </span>
+
                         <h2
                           className="
                             text-xl
                             font-bold
+                            text-primary
+                            mt-3
                           "
                         >
                           {
@@ -128,7 +234,8 @@ function OpportunityListPage() {
                         <p
                           className="
                             text-gray-600
-                            mt-2
+                            mt-3
+                            line-clamp-3
                           "
                         >
                           {
@@ -139,37 +246,63 @@ function OpportunityListPage() {
                         <div
                           className="
                             mt-4
+                            space-y-2
                           "
                         >
 
-                          <Link
-                            to={`/opportunities/${opportunity.id}`}
+                          <p
                             className="
-                              bg-blue-600
-                              text-white
-                              px-4
-                              py-2
-                              rounded-lg
+                              text-sm
+                              text-gray-500
                             "
                           >
-                            View Details
-                          </Link>
+                            Deadline:
+                            {" "}
+                            {
+                              opportunity.deadline
+                                ? new Date(
+                                    opportunity.deadline
+                                  ).toLocaleDateString()
+                                : "No Deadline"
+                            }
+                          </p>
 
                         </div>
 
+                        <Link
+                          to={`/opportunities/${opportunity.id}`}
+                          className="
+                            mt-5
+                            inline-block
+                            bg-primary
+                            hover:bg-secondary
+                            text-white
+                            px-5
+                            py-3
+                            rounded-xl
+                            transition
+                          "
+                        >
+                          View Details
+                        </Link>
+
                       </div>
 
-                    )
-                  )
-                }
+                    </div>
 
-              </div>
-            )
+                  )
+                )
+              }
+
+            </div>
+
+          )
         }
 
       </div>
 
     </DashboardLayout>
+
   );
 }
 
