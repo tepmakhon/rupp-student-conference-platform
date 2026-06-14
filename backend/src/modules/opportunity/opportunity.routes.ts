@@ -16,13 +16,14 @@ import {
   createOpportunity,
   getAllOpportunities,
   getOpportunityById,
+  getPendingOpportunities,
   approveOpportunity,
   applyOpportunity,
   rejectOpportunity,
   saveOpportunity,
   unsaveOpportunity,
   getSavedOpportunities,
-  getRecentOpportunities
+  getRecentOpportunities,
 } from "./opportunity.controller.js";
 
 const router = Router();
@@ -68,6 +69,13 @@ router.post(
 | ADMIN
 |--------------------------------------------------------------------------
 */
+
+router.get(
+  "/pending",
+  authMiddleware,
+  rbac(["ADMIN"]),
+  getPendingOpportunities
+);
 
 router.patch(
   "/:id/approve",
@@ -286,6 +294,23 @@ router.get(
  *     responses:
  *       201:
  *         description: Opportunity created successfully
+ */
+
+/**
+ * @swagger
+ * /api/opportunities/pending:
+ *   get:
+ *     summary: Get Pending Opportunities
+ *     tags: [Opportunities]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Pending opportunities retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
  */
 
 /**

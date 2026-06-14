@@ -60,10 +60,12 @@ async ({
   status,
 }: any) => {
 
-  const skip =
-    (page - 1) * limit;
+const { skip } =
+  getPagination(page, limit);
 
-  const where: any = {};
+  const where: any = {
+    status: status || "APPROVED",
+  };
 
   /*
   ------------------------------------
@@ -196,6 +198,30 @@ export const getOpportunityById = async (
   return opportunity;
 };
 
+/*
+|--------------------------------------------------------------------------
+| Get Pending Opportunities
+|--------------------------------------------------------------------------
+*/
+
+export const getPendingOpportunities = async () => {
+
+  return prisma.opportunity.findMany({
+    where: {
+      status: "PENDING",
+    } as any,
+
+    include: {
+      organization: true,
+      type: true,
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
 export const approveOpportunity = async (
   opportunityId: bigint
 ) => {
@@ -233,7 +259,8 @@ export const approveOpportunity = async (
   await createNotification(
     opportunity.organization.userId,
     "Opportunity Approved",
-    `${opportunity.title} has been approved by admin`
+    `${opportunity.title} has been approved by admin`,
+    "OPPORTUNITY"
   );
 
   await createAuditLog(
@@ -280,7 +307,8 @@ export const rejectOpportunity = async (
   await createNotification(
     opportunity.organization.userId,
     "Opportunity Rejected",
-    `${opportunity.title} has been rejected by admin`
+    `${opportunity.title} has been rejected by admin`,
+    "OPPORTUNITY"
   );
 
   await createAuditLog(
@@ -366,7 +394,8 @@ export const applyOpportunity = async (
   await createNotification(
     opportunity.organization.userId,
     "New Application",
-    `A student applied for ${opportunity.title}`
+    `A student applied for ${opportunity.title}`,
+    "OPPORTUNITY"
   );
 
   await createAuditLog(
@@ -507,24 +536,34 @@ export const getSavedOpportunities =
     });
   };
   
-  export const getRecentOpportunities =
-  async () => {
+export const getRecentOpportunities = async () => {
 
-    return prisma.opportunity.findMany({
+  return prisma.opportunity.findMany({
+    where: {
+      status: "APPROVED",
+    },
 
-      where: {
-        status: "APPROVED",
+    include: {
+      organization: {
+        select: {
+          id: true,
+          organizationName: true,
+          logoUrl: true,
+        },
       },
 
-      include: {
-        organization: true,
-        type: true,
+      type: {
+        select: {
+          id: true,
+          typeName: true,
+        },
       },
+    },
 
-      orderBy: {
-        createdAt: "desc",
-      },
+    orderBy: {
+      createdAt: "desc",
+    },
 
-      take: 5,
-    });
-  };
+    take: 5,
+  });
+};

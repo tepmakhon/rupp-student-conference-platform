@@ -122,6 +122,32 @@ export const getOpportunityById = async (
   }
 };
 
+export const getPendingOpportunities = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+
+    const opportunities =
+      await opportunityService.getPendingOpportunities();
+
+    return successResponse(
+      res,
+      opportunities,
+      "Pending opportunities retrieved"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
+
+  }
+};
+
 export const approveOpportunity = async (
   req: Request,
   res: Response
@@ -339,11 +365,11 @@ export const getSavedOpportunities =
     }
   };
 
-  export const getRecentOpportunities =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const getRecentOpportunities = async (
+  req: Request,
+  res: Response
+) => {
+  try {
 
     const data =
       await opportunityService.getRecentOpportunities();
@@ -353,4 +379,14 @@ export const getSavedOpportunities =
       data,
       "Recent opportunities retrieved"
     );
-  };
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 500
+    );
+
+  }
+};
