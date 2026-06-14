@@ -2,11 +2,18 @@ import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 import { getPagination } from "../../utils/pagination.js";
 
+/*
+|--------------------------------------------------------------------------
+| Get My Notifications
+|--------------------------------------------------------------------------
+*/
+
 export const getMyNotifications = async (
   userId: bigint,
   page = 1,
-  limit = 10,
+  limit = 10
 ) => {
+
   if (page < 1 || limit < 1) {
     throw new AppError(
       "Invalid pagination values",
@@ -17,7 +24,11 @@ export const getMyNotifications = async (
   const { skip } =
     getPagination(page, limit);
 
-  const [userNotifications, total] = await Promise.all([
+  const [
+    userNotifications,
+    total,
+  ] = await Promise.all([
+
     prisma.userNotification.findMany({
       where: {
         userId,
@@ -43,23 +54,31 @@ export const getMyNotifications = async (
       },
     }),
   ]);
-  return {
-      userNotifications,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages:
-          Math.ceil(total / limit),
-      },
 
-    };
+  return {
+    userNotifications,
+
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages:
+        Math.ceil(total / limit),
+    },
+  };
 };
+
+/*
+|--------------------------------------------------------------------------
+| Mark Notification As Read
+|--------------------------------------------------------------------------
+*/
 
 export const markAsRead = async (
   notificationId: bigint,
   userId: bigint
 ) => {
+
   const notification =
     await prisma.userNotification.findFirst({
       where: {
@@ -75,10 +94,9 @@ export const markAsRead = async (
     );
   }
 
-  return prisma.userNotification.updateMany({
+  return prisma.userNotification.update({
     where: {
       id: notificationId,
-      userId,
     },
 
     data: {
@@ -86,6 +104,12 @@ export const markAsRead = async (
     },
   });
 };
+
+/*
+|--------------------------------------------------------------------------
+| Mark All Notifications As Read
+|--------------------------------------------------------------------------
+*/
 
 export const markAllAsRead = async (
   userId: bigint
@@ -105,20 +129,26 @@ export const markAllAsRead = async (
 
 /*
 |--------------------------------------------------------------------------
-| Helper
+| Create Notification Helper
 |--------------------------------------------------------------------------
 */
 
 export const createNotification = async (
   userId: bigint,
   title: string,
-  message: string
+  message: string,
+  type:
+    | "EVENT"
+    | "OPPORTUNITY"
+    | "SYSTEM" = "SYSTEM"
 ) => {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
+
+  const user =
+    await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
 
   if (!user) {
     throw new AppError(
@@ -132,13 +162,15 @@ export const createNotification = async (
       data: {
         title,
         message,
-      }as any,
+        type,
+      },
     });
 
   await prisma.userNotification.create({
     data: {
       userId,
-      notificationId: notification.id,
+      notificationId:
+        notification.id,
     },
   });
 

@@ -20,7 +20,6 @@ export const createEvent = async (
   data: any,
   user: any
 ) => {
-
   const organization =
     await prisma.organization.findUnique({
       where: {
@@ -30,7 +29,7 @@ export const createEvent = async (
 
   if (!organization) {
     throw new AppError(
-      "Only organization can create events",
+      "Only organizations can create events",
       403
     );
   }
@@ -43,7 +42,7 @@ export const createEvent = async (
         location: data.location,
         eventDate: new Date(data.eventDate),
         categoryId: BigInt(data.categoryId),
-        capacity: data.capacity,
+        capacity: data.capacity || null,
         bannerImageUrl:
           data.bannerImageUrl || null,
         organizationId:
@@ -69,17 +68,15 @@ export const getApprovedEvents = async (
   page = 1,
   limit = 10
 ) => {
-
   const { skip } =
     getPagination(page, limit);
 
   const [events, total] =
     await Promise.all([
-
       prisma.event.findMany({
         where: {
           status: "APPROVED",
-        } as any,
+        },
 
         include: {
           organization: true,
@@ -97,12 +94,13 @@ export const getApprovedEvents = async (
       prisma.event.count({
         where: {
           status: "APPROVED",
-        } as any,
+        },
       }),
     ]);
 
   return {
     events,
+
     pagination: {
       page,
       limit,
@@ -115,14 +113,13 @@ export const getApprovedEvents = async (
 
 /*
 |--------------------------------------------------------------------------
-| Get Event By Id
+| Get Event By ID
 |--------------------------------------------------------------------------
 */
 
 export const getEventById = async (
   eventId: bigint
 ) => {
-
   const event =
     await prisma.event.findUnique({
       where: {
@@ -132,6 +129,7 @@ export const getEventById = async (
       include: {
         organization: true,
         category: true,
+        registrations: true,
       },
     });
 
@@ -147,24 +145,26 @@ export const getEventById = async (
 
 /*
 |--------------------------------------------------------------------------
-| Pending Events
+| Get Pending Events
 |--------------------------------------------------------------------------
 */
 
-export const getPendingEvents =
-  async () => {
+export const getPendingEvents = async () => {
+  return prisma.event.findMany({
+    where: {
+      status: "PENDING",
+    },
 
-    return prisma.event.findMany({
-      where: {
-        status: "PENDING",
-      } as any,
+    include: {
+      organization: true,
+      category: true,
+    },
 
-      include: {
-        organization: true,
-        category: true,
-      },
-    });
-  };
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -175,7 +175,6 @@ export const getPendingEvents =
 export const approveEvent = async (
   eventId: bigint
 ) => {
-
   const existingEvent =
     await prisma.event.findUnique({
       where: {
@@ -199,7 +198,7 @@ export const approveEvent = async (
       data: {
         status: "APPROVED",
         approvedAt: new Date(),
-      } as any,
+      },
 
       include: {
         organization: true,
@@ -209,7 +208,8 @@ export const approveEvent = async (
   await createNotification(
     event.organization.userId,
     "Event Approved",
-    `${event.title} has been approved by admin`
+    `${event.title} has been approved by admin`,
+    "EVENT"
   );
 
   await createAuditLog(
@@ -229,7 +229,6 @@ export const approveEvent = async (
 export const rejectEvent = async (
   eventId: bigint
 ) => {
-
   const existingEvent =
     await prisma.event.findUnique({
       where: {
@@ -253,7 +252,7 @@ export const rejectEvent = async (
       data: {
         status: "REJECTED",
         approvedAt: new Date(),
-      } as any,
+      },
 
       include: {
         organization: true,
@@ -263,7 +262,8 @@ export const rejectEvent = async (
   await createNotification(
     event.organization.userId,
     "Event Rejected",
-    `${event.title} has been rejected by admin`
+    `${event.title} has been rejected by admin`,
+    "EVENT"
   );
 
   await createAuditLog(
@@ -284,7 +284,6 @@ export const registerForEvent = async (
   eventId: bigint,
   userId: bigint
 ) => {
-
   const student =
     await prisma.student.findUnique({
       where: {
@@ -342,7 +341,8 @@ export const registerForEvent = async (
 
   if (
     event.capacity &&
-    event.registrations.length >= event.capacity
+    event.registrations.length >=
+      event.capacity
   ) {
     throw new AppError(
       "Event is full",
@@ -355,14 +355,16 @@ export const registerForEvent = async (
       data: {
         eventId,
         studentId: student.id,
-        registrationStatus: "APPROVED",
+        registrationStatus:
+          "APPROVED",
       },
     });
 
   await createNotification(
     event.organization.userId,
     "New Event Registration",
-    "A student registered for your event"
+    `A student registered for ${event.title}`,
+    "EVENT"
   );
 
   await createAuditLog(
