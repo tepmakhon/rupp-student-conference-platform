@@ -60,6 +60,15 @@ function Sidebar({
     },
 
     {
+      name: "My Opportunities",
+
+      path:
+        "/organization/opportunities",
+
+      icon: BriefcaseIcon,
+    },
+
+    {
       name: "Create Opportunity",
       path: "/opportunities/create",
       icon: PlusCircleIcon,

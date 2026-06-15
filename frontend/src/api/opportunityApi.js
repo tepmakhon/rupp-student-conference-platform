@@ -126,3 +126,16 @@ export const rejectOpportunity =
 
     return response.data.data;
 };
+
+export const getMyOpportunities =
+  async () => {
+
+    const response =
+
+      await axiosInstance.get(
+        "/opportunities/my"
+      );
+
+    return response.data.data;
+
+};
