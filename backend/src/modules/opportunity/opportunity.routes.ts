@@ -6,7 +6,8 @@ from "../../middlewares/auth.middleware.js";
 import { rbac }
 from "../../middlewares/rbac.middleware.js";
 
-import { validate } from "../../middlewares/validate.middleware.js";
+import { validate }
+from "../../middlewares/validate.middleware.js";
 
 import {
   createOpportunitySchema,
@@ -18,8 +19,8 @@ import {
   getOpportunityById,
   getPendingOpportunities,
   approveOpportunity,
-  applyOpportunity,
   rejectOpportunity,
+  applyOpportunity,
   saveOpportunity,
   unsaveOpportunity,
   getSavedOpportunities,
@@ -44,9 +45,51 @@ router.get(
   getRecentOpportunities
 );
 
+/*
+|--------------------------------------------------------------------------
+| ADMIN
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/pending",
+
+  authMiddleware,
+
+  rbac([
+    "ADMIN",
+  ]),
+
+  getPendingOpportunities
+);
+
+/*
+|--------------------------------------------------------------------------
+| STUDENT
+|--------------------------------------------------------------------------
+*/
+
+router.get(
+  "/saved/list",
+
+  authMiddleware,
+
+  rbac([
+    "STUDENT",
+  ]),
+
+  getSavedOpportunities
+);
+
+/*
+|--------------------------------------------------------------------------
+| SINGLE OPPORTUNITY
+|--------------------------------------------------------------------------
+*/
 
 router.get(
   "/:id",
+
   getOpportunityById
 );
 
@@ -58,71 +101,90 @@ router.get(
 
 router.post(
   "/",
+
   authMiddleware,
-  rbac(["ORGANIZATION"]),
-  validate(createOpportunitySchema),
+
+  rbac([
+    "ORGANIZATION",
+  ]),
+
+  validate(
+    createOpportunitySchema
+  ),
+
   createOpportunity
 );
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN
+| ADMIN ACTIONS
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/pending",
-  authMiddleware,
-  rbac(["ADMIN"]),
-  getPendingOpportunities
-);
-
 router.patch(
   "/:id/approve",
+
   authMiddleware,
-  rbac(["ADMIN"]),
+
+  rbac([
+    "ADMIN",
+  ]),
+
   approveOpportunity
 );
 
 router.patch(
   "/:id/reject",
+
   authMiddleware,
-  rbac(["ADMIN"]),
+
+  rbac([
+    "ADMIN",
+  ]),
+
   rejectOpportunity
 );
 
 /*
 |--------------------------------------------------------------------------
-| STUDENT
+| STUDENT ACTIONS
 |--------------------------------------------------------------------------
 */
 
 router.post(
   "/:id/apply",
+
   authMiddleware,
-  rbac(["STUDENT"]),
+
+  rbac([
+    "STUDENT",
+  ]),
+
   applyOpportunity
 );
 
 router.post(
   "/:id/save",
+
   authMiddleware,
-  rbac(["STUDENT"]),
+
+  rbac([
+    "STUDENT",
+  ]),
+
   saveOpportunity
 );
 
 router.delete(
   "/:id/save",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  unsaveOpportunity
-);
 
-router.get(
-  "/saved/list",
   authMiddleware,
-  rbac(["STUDENT"]),
-  getSavedOpportunities
+
+  rbac([
+    "STUDENT",
+  ]),
+
+  unsaveOpportunity
 );
 
 /**
