@@ -94,3 +94,35 @@ export const getRecentOpportunities =
 
     return response.data.data;
   };
+  export const getPendingOpportunities =
+  async () => {
+
+    const response =
+      await axiosInstance.get(
+        "/opportunities/pending"
+      );
+
+    return response.data.data;
+};
+
+export const approveOpportunity =
+  async (id) => {
+
+    const response =
+      await axiosInstance.patch(
+        `/opportunities/${id}/approve`
+      );
+
+    return response.data.data;
+};
+
+export const rejectOpportunity =
+  async (id) => {
+
+    const response =
+      await axiosInstance.patch(
+        `/opportunities/${id}/reject`
+      );
+
+    return response.data.data;
+};

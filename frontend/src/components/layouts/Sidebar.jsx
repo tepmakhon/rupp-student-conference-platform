@@ -22,41 +22,55 @@ function Sidebar({
     useLocation();
 
   const menuItems = [
+
     {
       name: "Dashboard",
       path: "/dashboard",
       icon: HomeIcon,
     },
+
     {
       name: "Events",
       path: "/events",
       icon: CalendarDaysIcon,
     },
+
     {
       name: "Pending Events",
       path: "/admin/events/pending",
       icon: ClipboardDocumentCheckIcon,
     },
+
     {
       name: "Opportunities",
       path: "/opportunities",
       icon: BriefcaseIcon,
     },
+
+    {
+      name: "Pending Opportunities",
+      path: "/admin/opportunities/pending",
+      icon: ClipboardDocumentCheckIcon,
+    },
+
     {
       name: "Saved Opportunities",
       path: "/saved-opportunities",
       icon: BookmarkIcon,
     },
+
     {
       name: "Create Opportunity",
       path: "/opportunities/create",
       icon: PlusCircleIcon,
     },
+
     {
       name: "Profile",
       path: "/profile",
       icon: UserCircleIcon,
     },
+
   ];
 
   const handleCloseSidebar =

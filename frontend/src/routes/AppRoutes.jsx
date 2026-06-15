@@ -13,8 +13,11 @@ import ProtectedRoute from "./ProtectedRoute";
 |--------------------------------------------------------------------------
 */
 
-import LoginPage from "../pages/auth/LoginPage";
-import RegisterPage from "../pages/auth/RegisterPage";
+import LoginPage
+from "../pages/auth/LoginPage";
+
+import RegisterPage
+from "../pages/auth/RegisterPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -22,7 +25,8 @@ import RegisterPage from "../pages/auth/RegisterPage";
 |--------------------------------------------------------------------------
 */
 
-import DashboardPage from "../pages/dashboard/DashboardPage";
+import DashboardPage
+from "../pages/dashboard/DashboardPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +34,8 @@ import DashboardPage from "../pages/dashboard/DashboardPage";
 |--------------------------------------------------------------------------
 */
 
-import ProfilePage from "../pages/profile/ProfilePage";
+import ProfilePage
+from "../pages/profile/ProfilePage";
 
 /*
 |--------------------------------------------------------------------------
@@ -38,10 +43,26 @@ import ProfilePage from "../pages/profile/ProfilePage";
 |--------------------------------------------------------------------------
 */
 
-import OpportunityListPage from "../pages/opportunities/OpportunityListPage";
-import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage";
-import CreateOpportunityPage from "../pages/opportunities/CreateOpportunityPage";
-import SavedOpportunitiesPage from "../pages/opportunities/SavedOpportunitiesPage";
+import OpportunityListPage
+from "../pages/opportunities/OpportunityListPage";
+
+import OpportunityDetailPage
+from "../pages/opportunities/OpportunityDetailPage";
+
+import CreateOpportunityPage
+from "../pages/opportunities/CreateOpportunityPage";
+
+import SavedOpportunitiesPage
+from "../pages/opportunities/SavedOpportunitiesPage";
+
+/*
+|--------------------------------------------------------------------------
+| Admin Opportunity Pages
+|--------------------------------------------------------------------------
+*/
+
+import AdminPendingOpportunitiesPage
+from "../pages/admin/AdminPendingOpportunitiesPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -49,18 +70,30 @@ import SavedOpportunitiesPage from "../pages/opportunities/SavedOpportunitiesPag
 |--------------------------------------------------------------------------
 */
 
-import EventListPage from "../pages/events/EventListPage";
-import EventDetailPage from "../pages/events/EventDetailPage";
-//for Admin Pages
-import AdminPendingEventsPage from "../pages/admin/AdminPendingEventsPage";
+import EventListPage
+from "../pages/events/EventListPage";
+
+import EventDetailPage
+from "../pages/events/EventDetailPage";
+
+/*
+|--------------------------------------------------------------------------
+| Admin Event Pages
+|--------------------------------------------------------------------------
+*/
+
+import AdminPendingEventsPage
+from "../pages/admin/AdminPendingEventsPage";
 
 function AppRoutes() {
+
   return (
+
     <BrowserRouter>
 
       <Routes>
 
-        {/* Redirect Home */}
+        {/* Home */}
 
         <Route
           path="/"
@@ -76,12 +109,16 @@ function AppRoutes() {
 
         <Route
           path="/login"
-          element={<LoginPage />}
+          element={
+            <LoginPage />
+          }
         />
 
         <Route
           path="/register"
-          element={<RegisterPage />}
+          element={
+            <RegisterPage />
+          }
         />
 
         {/* Dashboard */}
@@ -90,7 +127,9 @@ function AppRoutes() {
           path="/dashboard"
           element={
             <ProtectedRoute>
+
               <DashboardPage />
+
             </ProtectedRoute>
           }
         />
@@ -101,7 +140,9 @@ function AppRoutes() {
           path="/profile"
           element={
             <ProtectedRoute>
+
               <ProfilePage />
+
             </ProtectedRoute>
           }
         />
@@ -112,7 +153,9 @@ function AppRoutes() {
           path="/opportunities"
           element={
             <ProtectedRoute>
+
               <OpportunityListPage />
+
             </ProtectedRoute>
           }
         />
@@ -121,7 +164,9 @@ function AppRoutes() {
           path="/opportunities/create"
           element={
             <ProtectedRoute>
+
               <CreateOpportunityPage />
+
             </ProtectedRoute>
           }
         />
@@ -130,27 +175,48 @@ function AppRoutes() {
           path="/opportunities/:id"
           element={
             <ProtectedRoute>
+
               <OpportunityDetailPage />
+
             </ProtectedRoute>
           }
         />
+
+        {/* Saved Opportunities */}
 
         <Route
           path="/saved-opportunities"
           element={
             <ProtectedRoute>
+
               <SavedOpportunitiesPage />
+
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin Opportunity */}
+
+        <Route
+          path="/admin/opportunities/pending"
+          element={
+            <ProtectedRoute>
+
+              <AdminPendingOpportunitiesPage />
+
             </ProtectedRoute>
           }
         />
 
         {/* Events */}
-        
+
         <Route
           path="/events"
           element={
             <ProtectedRoute>
+
               <EventListPage />
+
             </ProtectedRoute>
           }
         />
@@ -159,16 +225,23 @@ function AppRoutes() {
           path="/events/:id"
           element={
             <ProtectedRoute>
+
               <EventDetailPage />
+
             </ProtectedRoute>
           }
         />
 
-        {/* Admin */}
+        {/* Admin Event */}
+
         <Route
           path="/admin/events/pending"
           element={
-            <AdminPendingEventsPage />
+            <ProtectedRoute>
+
+              <AdminPendingEventsPage />
+
+            </ProtectedRoute>
           }
         />
 
@@ -187,6 +260,7 @@ function AppRoutes() {
       </Routes>
 
     </BrowserRouter>
+
   );
 }
 
