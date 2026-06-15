@@ -390,3 +390,85 @@ export const getRecentOpportunities = async (
 
   }
 };
+
+export const getOrganizationOpportunities =
+async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const user =
+      req.user!;
+
+    const data =
+      await opportunityService.getOrganizationOpportunities(
+        BigInt(user.id)
+      );
+
+    return successResponse(
+      res,
+      data,
+      "Organization opportunities retrieved"
+    );
+
+  } catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Get My Opportunities
+|--------------------------------------------------------------------------
+*/
+
+export const getMyOpportunities =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+
+      const user =
+        req.user!;
+
+      const data =
+        await opportunityService.getMyOpportunities(
+          BigInt(user.id)
+        );
+
+      return successResponse(
+
+        res,
+
+        data,
+
+        "My opportunities retrieved"
+
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 500
+
+      );
+
+    }
+
+  };

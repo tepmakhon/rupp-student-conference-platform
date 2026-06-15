@@ -17,6 +17,7 @@ import {
   createOpportunity,
   getAllOpportunities,
   getOpportunityById,
+  getMyOpportunities,
   getPendingOpportunities,
   approveOpportunity,
   rejectOpportunity,
@@ -25,6 +26,7 @@ import {
   unsaveOpportunity,
   getSavedOpportunities,
   getRecentOpportunities,
+  getOrganizationOpportunities,
 } from "./opportunity.controller.js";
 
 const router = Router();
@@ -63,6 +65,13 @@ router.get(
   getPendingOpportunities
 );
 
+router.get(
+  "/my",
+  authMiddleware,
+  rbac(["ORGANIZATION"]),
+  getMyOpportunities
+);
+
 /*
 |--------------------------------------------------------------------------
 | STUDENT
@@ -88,8 +97,16 @@ router.get(
 */
 
 router.get(
-  "/:id",
+  "/organization/me",
+  authMiddleware,
+  rbac([
+    "ORGANIZATION",
+  ]),
+  getOrganizationOpportunities
+);
 
+router.get(
+  "/:id",
   getOpportunityById
 );
 

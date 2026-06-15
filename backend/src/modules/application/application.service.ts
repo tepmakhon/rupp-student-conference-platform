@@ -220,8 +220,12 @@ export const updateApplicationStatus =
 
     await createNotification(
       updatedApplication.student.userId,
+
       `Application ${status}`,
-      `Your application for ${updatedApplication.opportunity.title} has been ${status}`
+
+      `Your application for ${updatedApplication.opportunity.title} has been ${status}`,
+
+      "OPPORTUNITY"
     );
 
     await createAuditLog(

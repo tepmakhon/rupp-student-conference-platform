@@ -567,3 +567,108 @@ export const getRecentOpportunities = async () => {
     take: 5,
   });
 };
+
+export const getOrganizationOpportunities =
+async (
+  userId: bigint
+) => {
+
+  const organization =
+    await prisma.organization.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+  if (!organization) {
+
+    throw new AppError(
+      "Organization not found",
+      404
+    );
+
+  }
+
+  return prisma.opportunity.findMany({
+
+    where: {
+      organizationId:
+        organization.id,
+    },
+
+    include: {
+      type: true,
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+
+  });
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Get My Opportunities
+|--------------------------------------------------------------------------
+*/
+
+export const getMyOpportunities =
+  async (
+    userId: bigint
+  ) => {
+
+    const organization =
+      await prisma.organization.findUnique({
+        where: {
+          userId,
+        },
+      });
+
+    if (!organization) {
+
+      throw new AppError(
+        "Organization not found",
+        404
+      );
+
+    }
+
+    return prisma.opportunity.findMany({
+
+      where: {
+        organizationId:
+          organization.id,
+      },
+
+      include: {
+
+        organization: {
+
+          select: {
+            id: true,
+            organizationName: true,
+            logoUrl: true,
+          },
+
+        },
+
+        type: {
+
+          select: {
+            id: true,
+            typeName: true,
+          },
+
+        },
+
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+    });
+
+  };
