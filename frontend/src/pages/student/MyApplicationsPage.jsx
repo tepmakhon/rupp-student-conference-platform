@@ -1,28 +1,45 @@
 import {
+
   useEffect,
+
   useState,
+
 } from "react";
 
-import toast
-from "react-hot-toast";
-
 import DashboardLayout
+
 from "../../components/layouts/DashboardLayout";
 
+import ApplicationCard
+
+from "../../components/student/ApplicationCard";
+
 import {
+
   getMyApplications,
+
 } from "../../api/applicationApi";
+
+import toast
+
+from "react-hot-toast";
 
 function MyApplicationsPage() {
 
   const [
+
     applications,
+
     setApplications,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
 
   useEffect(() => {
@@ -44,29 +61,25 @@ function MyApplicationsPage() {
 
         setApplications(
 
-          data?.applications ||
-
-          data ||
-
-          []
+          data.applications || []
 
         );
 
-      }
-
-      catch (error) {
+      } catch (error) {
 
         console.error(
+
           error
+
         );
 
         toast.error(
+
           "Failed to load applications"
+
         );
 
-      }
-
-      finally {
+      } finally {
 
         setLoading(false);
 
@@ -78,16 +91,40 @@ function MyApplicationsPage() {
 
     <DashboardLayout>
 
-      <div className="max-w-7xl mx-auto">
+      <div
 
-        <div className="mb-8">
+        className="
+
+          max-w-7xl
+
+          mx-auto
+
+        "
+
+      >
+
+        <div
+
+          className="
+
+            mb-8
+
+          "
+
+        >
 
           <h1
+
             className="
+
               text-4xl
+
               font-bold
+
               text-primary
+
             "
+
           >
 
             My Applications
@@ -95,13 +132,18 @@ function MyApplicationsPage() {
           </h1>
 
           <p
+
             className="
-              text-gray-500
+
+              text-gray-600
+
               mt-2
+
             "
+
           >
 
-            Track all your applications.
+            Track all your submitted applications.
 
           </p>
 
@@ -114,10 +156,17 @@ function MyApplicationsPage() {
           ? (
 
             <div
+
               className="
-                text-center
+
+                flex
+
+                justify-center
+
                 py-20
+
               "
+
             >
 
               Loading...
@@ -131,26 +180,56 @@ function MyApplicationsPage() {
           ? (
 
             <div
+
               className="
+
                 bg-white
+
                 rounded-2xl
+
                 shadow-md
+
                 p-10
+
                 text-center
+
               "
+
             >
 
               <h2
+
                 className="
+
                   text-2xl
+
                   font-bold
+
                   text-primary
+
                 "
+
               >
 
                 No Applications Yet
 
               </h2>
+
+              <p
+
+                className="
+
+                  text-gray-500
+
+                  mt-2
+
+                "
+
+              >
+
+                Start applying for opportunities.
+
+              </p>
 
             </div>
 
@@ -159,10 +238,15 @@ function MyApplicationsPage() {
           : (
 
             <div
+
               className="
+
                 grid
+
                 gap-6
+
               "
+
             >
 
               {
@@ -170,71 +254,26 @@ function MyApplicationsPage() {
                 applications.map(
 
                   (
+
                     application
+
                   ) => (
 
-                    <div
+                    <ApplicationCard
 
                       key={
+
                         application.id
+
                       }
 
-                      className="
-                        bg-white
-                        rounded-2xl
-                        shadow-md
-                        p-6
-                      "
+                      application={
 
-                    >
+                        application
 
-                      <h2
-                        className="
-                          text-xl
-                          font-bold
-                          text-primary
-                        "
-                      >
+                      }
 
-                        {
-
-                          application
-                          .opportunity
-                          ?.title
-
-                        }
-
-                      </h2>
-
-                      <p
-                        className="
-                          text-gray-500
-                          mt-2
-                        "
-                      >
-
-                        Status:
-
-                        {" "}
-
-                        <span
-                          className="
-                            font-semibold
-                          "
-                        >
-
-                          {
-
-                            application
-                            .status
-
-                          }
-
-                        </span>
-
-                      </p>
-
-                    </div>
+                    />
 
                   )
 

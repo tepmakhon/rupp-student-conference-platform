@@ -1,5 +1,4 @@
-import axiosInstance
-from "./axios";
+import axiosInstance from "./axios";
 
 export const getMyApplications =
   async (
@@ -8,6 +7,7 @@ export const getMyApplications =
   ) => {
 
     const response =
+
       await axiosInstance.get(
 
         `/applications/me?page=${page}&limit=${limit}`
@@ -24,6 +24,7 @@ export const getApplicants =
   ) => {
 
     const response =
+
       await axiosInstance.get(
 
         `/applications/opportunity/${opportunityId}`
@@ -41,6 +42,7 @@ export const updateApplicationStatus =
   ) => {
 
     const response =
+
       await axiosInstance.patch(
 
         `/applications/${id}/status`,

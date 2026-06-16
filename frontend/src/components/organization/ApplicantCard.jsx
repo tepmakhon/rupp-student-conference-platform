@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import toast from "react-hot-toast";
 
 import {
@@ -5,32 +7,30 @@ import {
 } from "../../api/applicationApi";
 
 function ApplicantCard({
-
   applicant,
-
   onUpdate,
-
 }) {
 
+  const [loading, setLoading] =
+    useState(false);
+
+  const profile =
+    applicant.student?.user?.profile;
+
   const handleStatus =
-    async (
-      status
-    ) => {
+    async (status) => {
 
       try {
 
+        setLoading(true);
+
         await updateApplicationStatus(
-
           applicant.id,
-
           status
-
         );
 
         toast.success(
-
           `Application ${status.toLowerCase()}`
-
         );
 
         onUpdate();
@@ -40,144 +40,203 @@ function ApplicantCard({
         console.error(error);
 
         toast.error(
+
+          error?.response?.data?.message ||
+
           "Failed to update application"
+
         );
 
-      }
+      } finally {
 
+        setLoading(false);
+
+      }
     };
 
   return (
+    
 
     <div
-
       className="
         bg-white
         rounded-2xl
         shadow-md
         p-6
       "
-
     >
 
       <div
         className="
           flex
-          justify-between
-          items-start
+          flex-col
+          lg:flex-row
+          lg:justify-between
+          lg:items-center
           gap-6
-          flex-wrap
         "
       >
 
-        <div>
+        <div
+          className="
+            flex
+            items-start
+            gap-5
+          "
+        >
 
-          <h2
-            className="
-              text-2xl
-              font-bold
-              text-primary
-            "
-          >
+          <img
 
-            {
+            src={
+              profile?.profileImageUrl ||
 
-              applicant.student.user.fullName
-
+              "https://placehold.co/120x120?text=User"
             }
 
-          </h2>
+            alt="Applicant"
 
-          <p
             className="
-              text-gray-600
-              mt-2
+              w-20
+              h-20
+              rounded-full
+              object-cover
             "
-          >
+          />
 
-            {
+          <div>
 
-              applicant.student.user.email
+            <h2
+              className="
+                text-2xl
+                font-bold
+                text-primary
+              "
+            >
 
-            }
+              {
 
-          </p>
+                profile?.fullName ||
 
-          <p
-            className="
-              text-gray-500
-              mt-2
-            "
-          >
+                applicant.student?.user?.email
 
-            Applied:
+              }
 
-            {" "}
+            </h2>
 
-            {
+            <p
+              className="
+                text-gray-500
+                mt-1
+              "
+            >
 
-              new Date(
+              {
 
-                applicant.appliedAt
+                applicant.student?.user?.email
 
-              ).toLocaleDateString()
+              }
 
-            }
+            </p>
 
-          </p>
+            <div
+              className="
+                mt-3
+                text-sm
+                text-gray-600
+                space-y-1
+              "
+            >
 
-          {
+              <p>
 
-            applicant.cvUrl && (
+                University:
 
-              <a
+                {" "}
 
-                href={
-                  applicant.cvUrl
+                {
+
+                  applicant.student?.university?.name ||
+
+                  "-"
+
                 }
 
-                target="_blank"
+              </p>
 
-                rel="noreferrer"
+              <p>
 
-                className="
-                  inline-block
-                  mt-4
-                  text-secondary
-                  font-semibold
-                "
+                Faculty:
 
-              >
+                {" "}
 
-                View CV
+                {
 
-              </a>
+                  applicant.student?.faculty?.name ||
 
-            )
+                  "-"
 
-          }
+                }
+
+              </p>
+
+              <p>
+
+                Major:
+
+                {" "}
+
+                {
+
+                  applicant.student?.major?.name ||
+
+                  "-"
+
+                }
+
+              </p>
+
+              <p>
+
+                Applied:
+
+                {" "}
+
+                {
+
+                  new Date(
+
+                    applicant.appliedAt
+
+                  ).toLocaleDateString()
+
+                }
+
+              </p>
+
+            </div>
+
+          </div>
 
         </div>
 
         <div
           className="
             flex
-            flex-col
+            flex-wrap
             gap-3
+            items-center
           "
         >
 
           <span
-
             className="
               px-4
               py-2
               rounded-full
               bg-gray-100
-              text-center
-              font-semibold
+              text-gray-700
+              font-medium
             "
-
           >
 
             {
@@ -195,21 +254,22 @@ function ApplicantCard({
               handleStatus(
                 "REVIEWING"
               )
-
             }
 
+            disabled={loading}
+
             className="
-              bg-blue-500
-              hover:bg-blue-600
+              bg-yellow-500
+              hover:bg-yellow-600
               text-white
               px-4
               py-2
               rounded-xl
+              disabled:opacity-50
             "
-
           >
 
-            Reviewing
+            Review
 
           </button>
 
@@ -220,8 +280,9 @@ function ApplicantCard({
               handleStatus(
                 "ACCEPTED"
               )
-
             }
+
+            disabled={loading}
 
             className="
               bg-green-600
@@ -230,8 +291,8 @@ function ApplicantCard({
               px-4
               py-2
               rounded-xl
+              disabled:opacity-50
             "
-
           >
 
             Accept
@@ -245,8 +306,9 @@ function ApplicantCard({
               handleStatus(
                 "REJECTED"
               )
-
             }
+
+            disabled={loading}
 
             className="
               bg-red-600
@@ -255,8 +317,8 @@ function ApplicantCard({
               px-4
               py-2
               rounded-xl
+              disabled:opacity-50
             "
-
           >
 
             Reject
@@ -270,7 +332,6 @@ function ApplicantCard({
     </div>
 
   );
-
 }
 
 export default ApplicantCard;
