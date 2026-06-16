@@ -163,7 +163,19 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+                "STUDENT",
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <DashboardPage />
 
@@ -181,7 +193,19 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+                "STUDENT",
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <ProfilePage />
 
@@ -199,7 +223,19 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+                "STUDENT",
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <EventListPage />
 
@@ -215,7 +251,19 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+                "STUDENT",
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <EventDetailPage />
 
@@ -233,7 +281,19 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+                "STUDENT",
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <OpportunityListPage />
 
@@ -249,7 +309,19 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+                "STUDENT",
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <OpportunityDetailPage />
 
@@ -311,127 +383,127 @@ function AppRoutes() {
 
         {/* Organization */}
 
-        <Route
+      <Route
 
-          path="/opportunities/create"
+        path="/opportunities/create"
 
-          element={
+        element={
 
-            <ProtectedRoute
+          <ProtectedRoute
 
-              allowedRoles={[
+            allowedRoles={[
 
-                "ORGANIZATION",
+              "ORGANIZATION",
 
-              ]}
+            ]}
 
-            >
+          >
 
-              <CreateOpportunityPage />
+            <CreateOpportunityPage />
 
-            </ProtectedRoute>
+          </ProtectedRoute>
 
-          }
+        }
 
-        />
+      />
 
-        <Route
+      <Route
 
-          path="/organization/opportunities"
+        path="/organization/opportunities"
 
-          element={
+        element={
 
-            <ProtectedRoute
+          <ProtectedRoute
 
-              allowedRoles={[
+            allowedRoles={[
 
-                "ORGANIZATION",
+              "ORGANIZATION",
 
-              ]}
+            ]}
 
-            >
+          >
 
-              <MyOpportunitiesPage />
+            <MyOpportunitiesPage />
 
-            </ProtectedRoute>
+          </ProtectedRoute>
 
-          }
+        }
 
-        />
+      />
 
-        <Route
+      <Route
 
-          path="/organization/opportunities/:id/applicants"
+        path="/organization/opportunities/:id/applicants"
 
-          element={
+        element={
 
-            <ProtectedRoute
+          <ProtectedRoute
 
-              allowedRoles={[
+            allowedRoles={[
 
-                "ORGANIZATION",
+              "ORGANIZATION",
 
-              ]}
+            ]}
 
-            >
+          >
 
-              <OpportunityApplicantsPage />
+            <OpportunityApplicantsPage />
 
-            </ProtectedRoute>
+          </ProtectedRoute>
 
-          }
+        }
 
-        />
+      />
 
         {/* Admin */}
 
-        <Route
+      <Route
 
-          path="/admin/events/pending"
+        path="/admin/events/pending"
 
-          element={
+        element={
 
-            <ProtectedRoute
+          <ProtectedRoute
 
-              allowedRoles={[
+            allowedRoles={[
 
-                "ADMIN",
+              "ADMIN",
 
-              ]}
+            ]}
 
-            >
+          >
 
-              <AdminPendingEventsPage />
+            <AdminPendingEventsPage />
 
-            </ProtectedRoute>
+          </ProtectedRoute>
 
-          }
+        }
 
-        />
+      />
 
-        <Route
+      <Route
 
-          path="/admin/opportunities/pending"
+        path="/admin/opportunities/pending"
 
-          element={
+        element={
 
-            <ProtectedRoute
+          <ProtectedRoute
 
-              allowedRoles={[
+            allowedRoles={[
 
-                "ADMIN",
+              "ADMIN",
 
-              ]}
+            ]}
 
-            >
+          >
 
-              <AdminPendingOpportunitiesPage />
+            <AdminPendingOpportunitiesPage />
 
-            </ProtectedRoute>
+          </ProtectedRoute>
 
-          }
+        }
 
-        />
+      />
 
         {/* 404 */}
 

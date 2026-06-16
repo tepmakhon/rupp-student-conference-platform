@@ -22,7 +22,9 @@ function ProtectedRoute({
 
   } = useSelector(
 
-    (state) => state.auth
+    (state) =>
+
+      state.auth
 
   );
 
