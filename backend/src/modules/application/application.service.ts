@@ -110,19 +110,41 @@ export const getApplicantsForOpportunity =
       );
     }
 
-    return prisma.application.findMany({
-      where: {
-        opportunityId,
-      },
+  return prisma.application.findMany({
+    where: {
+      opportunityId,
+    },
 
-      include: {
-        student: {
-          include: {
-            user: true,
+    orderBy: {
+      appliedAt: "desc",
+    },
+
+    include: {
+      student: {
+        include: {
+          university: true,
+
+          faculty: true,
+
+          major: true,
+
+          user: {
+            include: {
+              profile: true,
+            },
           },
         },
       },
-    });
+
+      opportunity: {
+        select: {
+          id: true,
+
+          title: true,
+        },
+      },
+    },
+  });
 };
 
 export const updateApplicationStatus =
