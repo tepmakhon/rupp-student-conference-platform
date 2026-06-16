@@ -15,6 +15,7 @@ from "../../components/layouts/DashboardLayout";
 
 import {
   getMyEvents,
+  deleteEvent,
 } from "../../api/eventApi";
 
 function MyEventsPage() {
@@ -64,15 +65,70 @@ function MyEventsPage() {
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          error
+        );
 
         toast.error(
+
           "Failed to load events"
+
         );
 
       } finally {
 
         setLoading(false);
+
+      }
+
+    };
+
+  const handleDelete =
+    async (id) => {
+
+      try {
+
+        const confirmed =
+
+          window.confirm(
+
+            "Delete this event?"
+
+          );
+
+        if (
+
+          !confirmed
+
+        ) {
+
+          return;
+
+        }
+
+        await deleteEvent(
+          id
+        );
+
+        toast.success(
+          "Event deleted"
+        );
+
+        loadEvents();
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        toast.error(
+
+          error?.response?.data?.message ||
+
+          "Failed to delete event"
+
+        );
 
       }
 
@@ -89,11 +145,16 @@ function MyEventsPage() {
         "
       >
 
+        {/* Header */}
+
         <div
           className="
             flex
-            justify-between
-            items-center
+            flex-col
+            md:flex-row
+            md:justify-between
+            md:items-center
+            gap-6
             mb-8
           "
         >
@@ -119,7 +180,7 @@ function MyEventsPage() {
               "
             >
 
-              Manage your events.
+              Manage all your events.
 
             </p>
 
@@ -133,9 +194,10 @@ function MyEventsPage() {
               bg-primary
               hover:bg-secondary
               text-white
-              px-5
+              px-6
               py-3
               rounded-xl
+              transition
             "
           >
 
@@ -190,6 +252,17 @@ function MyEventsPage() {
 
               </h2>
 
+              <p
+                className="
+                  text-gray-500
+                  mt-3
+                "
+              >
+
+                Create your first event.
+
+              </p>
+
             </div>
 
           )
@@ -228,8 +301,11 @@ function MyEventsPage() {
                       <div
                         className="
                           flex
-                          justify-between
-                          items-center
+                          flex-col
+                          md:flex-row
+                          md:justify-between
+                          md:items-center
+                          gap-6
                         "
                       >
 
@@ -260,32 +336,114 @@ function MyEventsPage() {
 
                             {
 
-                              event.status
+                              event.location
 
                             }
 
                           </p>
 
+                          <p
+                            className="
+                              text-sm
+                              text-gray-500
+                              mt-2
+                            "
+                          >
+
+                            {
+
+                              event.eventDate
+
+                              ?
+
+                              new Date(
+
+                                event.eventDate
+
+                              ).toLocaleDateString()
+
+                              :
+
+                              ""
+
+                            }
+
+                          </p>
+
+                          <span
+                            className="
+                              inline-block
+                              mt-3
+                              px-3
+                              py-1
+                              rounded-full
+                              bg-gray-100
+                              text-gray-700
+                              text-sm
+                            "
+                          >
+
+                            {
+
+                              event.status
+
+                            }
+
+                          </span>
+
                         </div>
 
-                        <Link
-
-                          to={
-                            `/organization/events/${event.id}/registrations`
-                          }
-
+                        <div
                           className="
-                            bg-secondary
-                            text-white
-                            px-4
-                            py-2
-                            rounded-xl
+                            flex
+                            gap-3
                           "
                         >
 
-                          View Registrations
+                          <button
 
-                        </Link>
+                            className="
+                              bg-secondary
+                              text-white
+                              px-4
+                              py-2
+                              rounded-xl
+                            "
+
+                          >
+
+                            Edit
+
+                          </button>
+
+                          <button
+
+                            onClick={() =>
+
+                              handleDelete(
+
+                                event.id
+
+                              )
+
+                            }
+
+                            className="
+                              bg-red-600
+                              hover:bg-red-700
+                              text-white
+                              px-4
+                              py-2
+                              rounded-xl
+                            "
+
+                          >
+
+                            Delete
+
+                          </button>
+
+                        </div>
 
                       </div>
 

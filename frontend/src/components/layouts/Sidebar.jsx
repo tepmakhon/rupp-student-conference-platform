@@ -130,6 +130,26 @@ function Sidebar({
     {
       name:
 
+        "My Events",
+
+      path:
+
+        "/my-events",
+
+      icon:
+
+        CalendarDaysIcon,
+
+      roles: [
+
+        "STUDENT",
+
+      ],
+    },
+
+    {
+      name:
+
         "My Applications",
 
       path:

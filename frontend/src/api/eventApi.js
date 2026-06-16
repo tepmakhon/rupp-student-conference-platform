@@ -1,5 +1,11 @@
 import axiosInstance from "./axios";
 
+/*
+|--------------------------------------------------------------------------
+| Public Events
+|--------------------------------------------------------------------------
+*/
+
 export const getApprovedEvents =
   async (
     page = 1,
@@ -12,6 +18,7 @@ export const getApprovedEvents =
       );
 
     return response.data.data;
+
 };
 
 export const getEventById =
@@ -23,7 +30,14 @@ export const getEventById =
       );
 
     return response.data.data;
+
 };
+
+/*
+|--------------------------------------------------------------------------
+| Student
+|--------------------------------------------------------------------------
+*/
 
 export const registerForEvent =
   async (id) => {
@@ -34,65 +48,118 @@ export const registerForEvent =
       );
 
     return response.data;
+
 };
 
-export const getPendingEvents =
-
+export const getMyRegisteredEvents =
   async () => {
 
     const response =
-
       await axiosInstance.get(
-
-        "/events/pending"
-
+        "/events/my-registrations"
       );
 
     return response.data.data;
 
-  };
+};
 
-export const approveEvent =
+/*
+|--------------------------------------------------------------------------
+| Organization
+|--------------------------------------------------------------------------
+*/
 
-  async (id) => {
-
-    const response =
-
-      await axiosInstance.patch(
-
-        `/events/${id}/approve`
-
-      );
-
-    return response.data;
-
-  };
-
-export const rejectEvent =
-
-  async (id) => {
-
-    const response =
-
-      await axiosInstance.patch(
-
-        `/events/${id}/reject`
-
-      );
-
-    return response.data;
-
-  };
-
-  export const getMyEvents =
+export const getMyEvents =
   async () => {
 
     const response =
-
       await axiosInstance.get(
         "/events/my-events"
       );
 
     return response.data.data;
+
+};
+
+export const createEvent =
+  async (payload) => {
+
+    const response =
+      await axiosInstance.post(
+        "/events",
+        payload
+      );
+
+    return response.data.data;
+
+};
+
+export const updateEvent =
+  async (
+    id,
+    payload
+  ) => {
+
+    const response =
+      await axiosInstance.patch(
+        `/events/${id}`,
+        payload
+      );
+
+    return response.data.data;
+
+};
+
+export const deleteEvent =
+  async (id) => {
+
+    const response =
+      await axiosInstance.delete(
+        `/events/${id}`
+      );
+
+    return response.data.data;
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Admin
+|--------------------------------------------------------------------------
+*/
+
+export const getPendingEvents =
+  async () => {
+
+    const response =
+      await axiosInstance.get(
+        "/events/pending"
+      );
+
+    return response.data.data;
+
+};
+
+export const approveEvent =
+  async (id) => {
+
+    const response =
+      await axiosInstance.patch(
+        `/events/${id}/approve`
+      );
+
+    return response.data;
+
+};
+
+export const rejectEvent =
+  async (id) => {
+
+    const response =
+      await axiosInstance.patch(
+        `/events/${id}/reject`
+      );
+
+    return response.data;
 
 };
