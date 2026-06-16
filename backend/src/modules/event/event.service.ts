@@ -420,3 +420,295 @@ export const registerForEvent = async (
 
   return registration;
 };
+
+export const getMyRegistrations =
+  async (
+    userId: bigint
+  ) => {
+
+    const student =
+
+      await prisma.student.findUnique({
+
+        where: {
+
+          userId,
+
+        },
+
+      });
+
+    if (!student) {
+
+      throw new AppError(
+
+        "Student not found",
+
+        404
+
+      );
+
+    }
+
+    return prisma.eventRegistration.findMany({
+
+      where: {
+
+        studentId:
+
+          student.id,
+
+      },
+
+      include: {
+
+        event: {
+
+          include: {
+
+            organization: true,
+
+            category: true,
+
+          },
+
+        },
+
+      },
+
+      orderBy: {
+
+        registeredAt: "desc",
+
+      },
+
+    });
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Update Event
+|--------------------------------------------------------------------------
+*/
+
+export const updateEvent =
+  async (
+    eventId: bigint,
+    userId: bigint,
+    data: any
+  ) => {
+
+    const organization =
+
+      await prisma.organization.findUnique({
+
+        where: {
+
+          userId,
+
+        },
+
+      });
+
+    if (!organization) {
+
+      throw new AppError(
+
+        "Organization not found",
+
+        404
+
+      );
+
+    }
+
+    const event =
+
+      await prisma.event.findUnique({
+
+        where: {
+
+          id: eventId,
+
+        },
+
+      });
+
+    if (!event) {
+
+      throw new AppError(
+
+        "Event not found",
+
+        404
+
+      );
+
+    }
+
+    if (
+
+      event.organizationId !==
+
+      organization.id
+
+    ) {
+
+      throw new AppError(
+
+        "Not authorized",
+
+        403
+
+      );
+
+    }
+
+    return prisma.event.update({
+
+      where: {
+
+        id: eventId,
+
+      },
+
+      data: {
+
+        title:
+
+          data.title,
+
+        description:
+
+          data.description,
+
+        location:
+
+          data.location,
+
+        categoryId:
+
+          data.categoryId
+
+          ? BigInt(data.categoryId)
+
+          : undefined,
+
+        capacity:
+
+          data.capacity,
+
+        bannerImageUrl:
+
+          data.bannerImageUrl,
+
+        eventDate:
+
+          data.eventDate
+
+          ? new Date(
+
+              data.eventDate
+
+            )
+
+          : undefined,
+
+      },
+
+    });
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Delete Event
+|--------------------------------------------------------------------------
+*/
+
+export const deleteEvent =
+  async (
+    eventId: bigint,
+    userId: bigint
+  ) => {
+
+    const organization =
+
+      await prisma.organization.findUnique({
+
+        where: {
+
+          userId,
+
+        },
+
+      });
+
+    if (!organization) {
+
+      throw new AppError(
+
+        "Organization not found",
+
+        404
+
+      );
+
+    }
+
+    const event =
+
+      await prisma.event.findUnique({
+
+        where: {
+
+          id: eventId,
+
+        },
+
+      });
+
+    if (!event) {
+
+      throw new AppError(
+
+        "Event not found",
+
+        404
+
+      );
+
+    }
+
+    if (
+
+      event.organizationId !==
+
+      organization.id
+
+    ) {
+
+      throw new AppError(
+
+        "Not authorized",
+
+        403
+
+      );
+
+    }
+
+    await prisma.event.delete({
+
+      where: {
+
+        id: eventId,
+
+      },
+
+    });
+
+    return true;
+
+};

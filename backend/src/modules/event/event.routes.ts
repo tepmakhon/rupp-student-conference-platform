@@ -9,6 +9,9 @@ import {
   rejectEventController,
   registerEventController,
   getMyEventsController,
+  getMyRegistrationsController,
+  updateEventController,
+  deleteEventController,
 } from "./event.controller.js";
 
 import {
@@ -25,6 +28,7 @@ import {
 
 import {
   createEventSchema,
+  updateEventSchema,
 } from "./event.validation.js";
 
 const router = Router();
@@ -161,6 +165,15 @@ router.get(
  */
 
 router.get(
+  "/my-registrations",
+  authMiddleware,
+  rbac([
+    "STUDENT",
+  ]),
+  getMyRegistrationsController
+);
+
+router.get(
   "/my-events",
   authMiddleware,
   rbac([
@@ -265,6 +278,28 @@ router.patch(
  *       404:
  *         description: Event not found
  */
+
+router.patch(
+  "/:id",
+  authMiddleware,
+  rbac([
+    "ORGANIZATION",
+  ]),
+  validate(
+    updateEventSchema
+  ),
+  updateEventController
+);
+
+router.delete(
+  "/:id",
+  authMiddleware,
+  rbac([
+    "ORGANIZATION",
+  ]),
+  deleteEventController
+);
+
 router.post(
   "/:id/register",
   authMiddleware,

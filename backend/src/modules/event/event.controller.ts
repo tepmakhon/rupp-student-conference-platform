@@ -9,6 +9,8 @@ import {
   approveEvent,
   rejectEvent,
   registerForEvent,
+  updateEvent,
+  deleteEvent,
 } from "./event.service.js";
 
 import {
@@ -349,6 +351,152 @@ export const registerEventController =
         error.message,
 
         error.statusCode || 500
+
+      );
+
+    }
+
+};
+
+export const getMyRegistrationsController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+
+      const user =
+        req.user!;
+
+      const events =
+
+        await eventService.getMyRegistrations(
+
+          BigInt(user.id)
+
+        );
+
+      return successResponse(
+
+        res,
+
+        events,
+
+        "Registered events retrieved"
+
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 500
+
+      );
+
+    }
+
+};
+
+export const updateEventController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+
+      const user =
+        req.user!;
+
+      const event =
+
+        await eventService.updateEvent(
+
+          BigInt(
+            Array.isArray(req.params.id)
+              ? req.params.id[0]
+              : req.params.id
+          ),
+          BigInt(user.id),
+
+          req.body
+
+        );
+
+      return successResponse(
+
+        res,
+
+        event,
+
+        "Event updated"
+
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 400
+
+      );
+
+    }
+
+};
+
+export const deleteEventController =
+  async (
+    req:Request,
+    res:Response
+  ) => {
+
+    try {
+
+      const user =
+        req.user!;
+
+      await eventService.deleteEvent(
+
+        BigInt(
+          Array.isArray(req.params.id)
+            ? req.params.id[0]
+            : req.params.id
+        ),
+
+        BigInt(user.id)
+
+      );
+
+      return successResponse(
+
+        res,
+
+        null,
+
+        "Event deleted"
+
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 400
 
       );
 

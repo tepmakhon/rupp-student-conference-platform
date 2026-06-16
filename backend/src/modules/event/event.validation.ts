@@ -13,3 +13,39 @@ export const createEventSchema = z.object({
 
   eventDate: z.string(),
 });
+
+export const updateEventSchema = z.object({
+
+  title:
+
+    z.string().min(3).optional(),
+
+  description:
+
+    z.string().min(10).optional(),
+
+  location:
+
+    z.string().min(3).optional(),
+
+  categoryId:
+
+    z.string().optional(),
+
+  capacity:
+
+    z.number().optional(),
+
+  bannerImageUrl:
+
+    z.string()
+
+      .url()
+
+      .optional(),
+
+  eventDate:
+
+    z.string().optional(),
+
+});
