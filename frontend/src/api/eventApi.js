@@ -83,3 +83,16 @@ export const rejectEvent =
     return response.data;
 
   };
+
+  export const getMyEvents =
+  async () => {
+
+    const response =
+
+      await axiosInstance.get(
+        "/events/my-events"
+      );
+
+    return response.data.data;
+
+};

@@ -3,35 +3,45 @@ import {
   useState,
 } from "react";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
-
 import {
-  getMyApplications,
-} from "../../api/applicationApi";
+  Link,
+} from "react-router-dom";
 
 import toast
 from "react-hot-toast";
 
-function MyApplicationsPage() {
+import DashboardLayout
+from "../../components/layouts/DashboardLayout";
+
+import {
+  getMyEvents,
+} from "../../api/eventApi";
+
+function MyEventsPage() {
 
   const [
-    applications,
-    setApplications,
+
+    events,
+
+    setEvents,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
 
   useEffect(() => {
 
-    loadApplications();
+    loadEvents();
 
   }, []);
 
-  const loadApplications =
+  const loadEvents =
     async () => {
 
       try {
@@ -39,10 +49,17 @@ function MyApplicationsPage() {
         setLoading(true);
 
         const data =
-          await getMyApplications();
 
-        setApplications(
-          data.applications || []
+          await getMyEvents();
+
+        setEvents(
+
+          Array.isArray(data)
+
+          ? data
+
+          : []
+
         );
 
       } catch (error) {
@@ -50,7 +67,7 @@ function MyApplicationsPage() {
         console.error(error);
 
         toast.error(
-          "Failed to load applications"
+          "Failed to load events"
         );
 
       } finally {
@@ -60,22 +77,6 @@ function MyApplicationsPage() {
       }
 
     };
-
-  const statusColor = {
-
-    PENDING:
-      "bg-gray-100 text-gray-700",
-
-    REVIEWING:
-      "bg-yellow-100 text-yellow-700",
-
-    ACCEPTED:
-      "bg-green-100 text-green-700",
-
-    REJECTED:
-      "bg-red-100 text-red-700",
-
-  };
 
   return (
 
@@ -90,32 +91,57 @@ function MyApplicationsPage() {
 
         <div
           className="
+            flex
+            justify-between
+            items-center
             mb-8
           "
         >
 
-          <h1
+          <div>
+
+            <h1
+              className="
+                text-4xl
+                font-bold
+                text-primary
+              "
+            >
+
+              My Events
+
+            </h1>
+
+            <p
+              className="
+                text-gray-500
+                mt-2
+              "
+            >
+
+              Manage your events.
+
+            </p>
+
+          </div>
+
+          <Link
+
+            to="/events/create"
+
             className="
-              text-4xl
-              font-bold
-              text-primary
+              bg-primary
+              hover:bg-secondary
+              text-white
+              px-5
+              py-3
+              rounded-xl
             "
           >
 
-            My Applications
+            Create Event
 
-          </h1>
-
-          <p
-            className="
-              text-gray-500
-              mt-2
-            "
-          >
-
-            Track all your applications.
-
-          </p>
+          </Link>
 
         </div>
 
@@ -138,7 +164,7 @@ function MyApplicationsPage() {
 
           )
 
-          : applications.length === 0
+          : events.length === 0
 
           ? (
 
@@ -160,20 +186,9 @@ function MyApplicationsPage() {
                 "
               >
 
-                No Applications Yet
+                No Events Yet
 
               </h2>
-
-              <p
-                className="
-                  text-gray-500
-                  mt-2
-                "
-              >
-
-                Start applying for opportunities.
-
-              </p>
 
             </div>
 
@@ -190,16 +205,16 @@ function MyApplicationsPage() {
 
               {
 
-                applications.map(
+                events.map(
 
                   (
-                    application
+                    event
                   ) => (
 
                     <div
 
                       key={
-                        application.id
+                        event.id
                       }
 
                       className="
@@ -214,8 +229,7 @@ function MyApplicationsPage() {
                         className="
                           flex
                           justify-between
-                          items-start
-                          gap-6
+                          items-center
                         "
                       >
 
@@ -231,9 +245,7 @@ function MyApplicationsPage() {
 
                             {
 
-                              application
-                              .opportunity
-                              .title
+                              event.title
 
                             }
 
@@ -248,34 +260,7 @@ function MyApplicationsPage() {
 
                             {
 
-                              application
-                              .opportunity
-                              .organization
-                              ?.organizationName
-
-                            }
-
-                          </p>
-
-                          <p
-                            className="
-                              text-sm
-                              text-gray-500
-                              mt-3
-                            "
-                          >
-
-                            Applied:
-
-                            {" "}
-
-                            {
-
-                              new Date(
-
-                                application.appliedAt
-
-                              ).toLocaleDateString()
+                              event.status
 
                             }
 
@@ -283,37 +268,24 @@ function MyApplicationsPage() {
 
                         </div>
 
-                        <span
+                        <Link
 
-                          className={`
-
-                            px-4
-
-                            py-2
-
-                            rounded-full
-
-                            font-medium
-
-                            ${
-
-                              statusColor[
-                                application.applicationStatus
-                              ]
-
-                            }
-
-                          `}
-
-                        >
-
-                          {
-
-                            application.applicationStatus
-
+                          to={
+                            `/organization/events/${event.id}/registrations`
                           }
 
-                        </span>
+                          className="
+                            bg-secondary
+                            text-white
+                            px-4
+                            py-2
+                            rounded-xl
+                          "
+                        >
+
+                          View Registrations
+
+                        </Link>
 
                       </div>
 
@@ -339,4 +311,4 @@ function MyApplicationsPage() {
 
 }
 
-export default MyApplicationsPage;
+export default MyEventsPage;

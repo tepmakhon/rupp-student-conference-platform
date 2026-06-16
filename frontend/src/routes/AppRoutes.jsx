@@ -89,6 +89,9 @@ from "../pages/organization/MyOpportunitiesPage";
 import OpportunityApplicantsPage
 from "../pages/organization/OpportunityApplicantsPage";
 
+import MyEventsPage
+from "../pages/organization/MyEventsPage";
+
 /*
 |--------------------------------------------------------------------------
 | Admin
@@ -448,6 +451,22 @@ function AppRoutes() {
           >
 
             <OpportunityApplicantsPage />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+      <Route
+
+        path="/organization/events"
+
+        element={
+
+          <ProtectedRoute>
+
+            <MyEventsPage />
 
           </ProtectedRoute>
 

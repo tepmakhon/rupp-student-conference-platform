@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-
+import * as eventService
+from "./event.service.js";
 import {
   createEvent,
   getApprovedEvents,
@@ -309,3 +310,48 @@ export const registerEventController =
 
     }
   };
+
+  export const getMyEventsController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+
+      const user =
+        req.user!;
+
+      const events =
+
+        await eventService.getMyEvents(
+
+          BigInt(user.id)
+
+        );
+
+      return successResponse(
+
+        res,
+
+        events,
+
+        "Events retrieved"
+
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 500
+
+      );
+
+    }
+
+};

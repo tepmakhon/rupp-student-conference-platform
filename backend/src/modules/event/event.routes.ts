@@ -8,6 +8,7 @@ import {
   approveEventController,
   rejectEventController,
   registerEventController,
+  getMyEventsController,
 } from "./event.controller.js";
 
 import {
@@ -158,6 +159,16 @@ router.get(
  *       404:
  *         description: Event not found
  */
+
+router.get(
+  "/my-events",
+  authMiddleware,
+  rbac([
+    "ORGANIZATION",
+  ]),
+  getMyEventsController
+);
+
 router.get(
   "/:id",
   getEventByIdController

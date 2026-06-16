@@ -154,23 +154,25 @@ function Sidebar({
     */
 
     {
+
       name:
 
-        "Create Opportunity",
+        "My Events",
 
       path:
 
-        "/opportunities/create",
+        "/organization/events",
 
       icon:
 
-        PlusCircleIcon,
+        CalendarDaysIcon,
 
       roles: [
 
         "ORGANIZATION",
 
       ],
+
     },
 
     {

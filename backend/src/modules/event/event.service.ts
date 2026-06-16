@@ -117,6 +117,52 @@ export const getApprovedEvents = async (
 |--------------------------------------------------------------------------
 */
 
+export const getMyEvents = async (
+  userId: bigint
+) => {
+
+  const organization =
+
+    await prisma.organization.findUnique({
+
+      where: {
+        userId,
+      },
+
+    });
+
+  if (!organization) {
+
+    throw new AppError(
+
+      "Organization not found",
+
+      404
+
+    );
+
+  }
+
+  return prisma.event.findMany({
+
+    where: {
+
+      organizationId:
+
+        organization.id,
+
+    },
+
+    orderBy: {
+
+      createdAt: "desc",
+
+    },
+
+  });
+
+};
+
 export const getEventById = async (
   eventId: bigint
 ) => {
