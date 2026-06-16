@@ -1,17 +1,22 @@
 import { useState } from "react";
 
 import { useDispatch } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
 import { loginUser } from "../../api/authApi";
+
 import { loginSuccess } from "../../redux/slices/authSlice";
 
 function LoginPage() {
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const dispatch =
+    useDispatch();
+
+  const navigate =
+    useNavigate();
 
   const [email, setEmail] =
     useState("");
@@ -22,69 +27,135 @@ function LoginPage() {
   const [loading, setLoading] =
     useState(false);
 
-  const handleSubmit = async (e) => {
+  const redirectByRole =
+    (role) => {
 
-    e.preventDefault();
+      switch (role) {
 
-    const emailValue =
-      email.trim();
+        case "ADMIN":
 
-    if (!emailValue) {
+        case "STUDENT":
 
-      toast.error(
-        "Please enter your email"
-      );
+        case "ORGANIZATION":
 
-      return;
-    }
+          navigate(
+            "/dashboard",
+            {
+              replace: true,
+            }
+          );
 
-    if (!password) {
+          break;
 
-      toast.error(
-        "Please enter your password"
-      );
+        default:
 
-      return;
-    }
+          navigate(
+            "/dashboard",
+            {
+              replace: true,
+            }
+          );
+      }
 
-    try {
+    };
 
-      setLoading(true);
+  const handleSubmit =
+    async (e) => {
 
-      const data =
-        await loginUser({
-          email: emailValue,
-          password,
-        });
+      e.preventDefault();
 
-      dispatch(
-        loginSuccess({
-          user: data.user,
-          token: data.token,
-        })
-      );
+      if (loading) {
 
-      toast.success(
-        "Login successful"
-      );
+        return;
+      }
 
-      navigate("/dashboard");
+      const emailValue =
+        email.trim();
 
-    } catch (error) {
+      const passwordValue =
+        password.trim();
 
-      console.error(error);
+      if (!emailValue) {
 
-      toast.error(
-        error?.response?.data?.message ||
-        "Invalid email or password"
-      );
+        toast.error(
+          "Please enter your email"
+        );
 
-    } finally {
+        return;
+      }
 
-      setLoading(false);
+      if (!passwordValue) {
 
-    }
-  };
+        toast.error(
+          "Please enter your password"
+        );
+
+        return;
+      }
+
+      try {
+
+        setLoading(true);
+
+        const data =
+          await loginUser({
+
+            email:
+              emailValue,
+
+            password:
+              passwordValue,
+
+          });
+
+        dispatch(
+
+          loginSuccess({
+
+            user:
+              data.user,
+
+            token:
+              data.token,
+
+          })
+
+        );
+
+        toast.success(
+          "Login successful"
+        );
+
+        redirectByRole(
+
+          data.user?.role?.roleName
+
+        );
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        toast.error(
+
+          error?.response
+            ?.data?.message ||
+
+          "Invalid email or password"
+
+        );
+
+      } finally {
+
+        setLoading(
+          false
+        );
+
+      }
+
+    };
 
   return (
 
@@ -95,21 +166,27 @@ function LoginPage() {
         items-center
         justify-center
         bg-gray-50
+        px-4
       "
     >
 
       <div
         className="
-          bg-white
-          shadow-md
-          rounded-2xl
-          p-10
           w-full
           max-w-md
+          bg-white
+          rounded-2xl
+          shadow-md
+          p-10
         "
       >
 
-        <div className="text-center mb-8">
+        <div
+          className="
+            text-center
+            mb-8
+          "
+        >
 
           <h1
             className="
@@ -118,7 +195,9 @@ function LoginPage() {
               text-primary
             "
           >
+
             RUPP Platform
+
           </h1>
 
           <p
@@ -127,14 +206,23 @@ function LoginPage() {
               mt-2
             "
           >
+
             Sign in to continue
+
           </p>
 
         </div>
 
         <form
-          onSubmit={handleSubmit}
-          className="space-y-5"
+
+          onSubmit={
+            handleSubmit
+          }
+
+          className="
+            space-y-5
+          "
+
         >
 
           <div>
@@ -148,18 +236,29 @@ function LoginPage() {
                 text-gray-700
               "
             >
+
               Email
+
             </label>
 
             <input
+
               type="email"
+
+              autoComplete="email"
+
               placeholder="Enter your email"
+
               value={email}
+
               onChange={(e) =>
+
                 setEmail(
                   e.target.value
                 )
+
               }
+
               className="
                 w-full
                 border
@@ -171,6 +270,7 @@ function LoginPage() {
                 focus:ring-2
                 focus:ring-secondary
               "
+
             />
 
           </div>
@@ -186,18 +286,29 @@ function LoginPage() {
                 text-gray-700
               "
             >
+
               Password
+
             </label>
 
             <input
+
               type="password"
+
+              autoComplete="current-password"
+
               placeholder="Enter your password"
+
               value={password}
+
               onChange={(e) =>
+
                 setPassword(
                   e.target.value
                 )
+
               }
+
               className="
                 w-full
                 border
@@ -209,13 +320,17 @@ function LoginPage() {
                 focus:ring-2
                 focus:ring-secondary
               "
+
             />
 
           </div>
 
           <button
+
             type="submit"
+
             disabled={loading}
+
             className="
               w-full
               bg-primary
@@ -227,12 +342,17 @@ function LoginPage() {
               disabled:opacity-50
               disabled:cursor-not-allowed
             "
+
           >
 
             {
+
               loading
-                ? "Signing In..."
-                : "Login"
+
+              ? "Signing In..."
+
+              : "Login"
+
             }
 
           </button>
@@ -250,18 +370,25 @@ function LoginPage() {
           Don't have an account?
 
           <button
+
             onClick={() =>
+
               navigate(
                 "/register"
               )
+
             }
+
             className="
               ml-2
               text-secondary
               font-semibold
             "
+
           >
+
             Register
+
           </button>
 
         </div>
@@ -269,7 +396,9 @@ function LoginPage() {
       </div>
 
     </div>
+
   );
+
 }
 
 export default LoginPage;

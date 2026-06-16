@@ -4,118 +4,316 @@ import {
 
 import {
   useNavigate,
+  useLocation,
 } from "react-router-dom";
+
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
 
 import NotificationDropdown
 from "../notifications/NotificationDropdown";
 
-function Navbar({ setSidebarOpen }) {
+import {
+  logout,
+} from "../../redux/slices/authSlice";
+
+function Navbar({
+
+  setSidebarOpen,
+
+}) {
+
+  const dispatch =
+    useDispatch();
 
   const navigate =
     useNavigate();
 
+  const location =
+    useLocation();
+
+  const user =
+    useSelector(
+
+      (state) =>
+
+        state.auth.user
+
+    );
+
+  const userName =
+
+    user?.fullName ||
+
+    user?.email ||
+
+    "User";
+
+  const pageTitles = {
+
+    "/dashboard":
+
+      "Dashboard",
+
+    "/events":
+
+      "Events",
+
+    "/opportunities":
+
+      "Opportunities",
+
+    "/saved-opportunities":
+
+      "Saved Opportunities",
+
+    "/my-applications":
+
+      "My Applications",
+
+    "/organization/opportunities":
+
+      "My Opportunities",
+
+    "/admin/events/pending":
+
+      "Pending Events",
+
+    "/admin/opportunities/pending":
+
+      "Pending Opportunities",
+
+    "/profile":
+
+      "Profile",
+
+  };
+
+  const currentTitle =
+
+    pageTitles[
+      location.pathname
+    ]
+
+    ||
+
+    "RUPP Platform";
+
   const handleLogout =
+
     () => {
 
-      localStorage.removeItem(
-        "token"
+      dispatch(
+        logout()
       );
 
-      navigate("/login");
+      navigate(
+        "/login",
+        {
+          replace: true,
+        }
+      );
+
     };
 
   return (
 
-    <div
+    <header
+
       className="
+
+        sticky
+
+        top-0
+
+        z-30
+
         h-16
+
         bg-white
-        shadow-sm
+
         border-b
-        flex
-        items-center
-        justify-between
+
+        shadow-sm
+
         px-4
+
         md:px-8
+
+        flex
+
+        items-center
+
+        justify-between
+
       "
+
     >
 
-      <div className="flex items-center gap-3">
+      <div
+
+        className="
+
+          flex
+
+          items-center
+
+          gap-3
+
+        "
+
+      >
 
         <button
-          className="md:hidden"
+
+          className="
+
+            md:hidden
+
+          "
+
           onClick={() =>
-            setSidebarOpen(true)
+
+            setSidebarOpen(
+              true
+            )
+
           }
+
         >
+
           <Bars3Icon
+
             className="
+
               w-7
+
               h-7
+
               text-primary
+
             "
+
           />
+
         </button>
 
         <h2
+
           className="
+
             text-xl
+
             md:text-2xl
+
             font-bold
+
             text-primary
+
           "
+
         >
-          Dashboard
+
+          {
+
+            currentTitle
+
+          }
+
         </h2>
 
       </div>
 
       <div
+
         className="
+
           flex
+
           items-center
+
           gap-4
+
         "
+
       >
 
         <NotificationDropdown />
 
         <div
+
           className="
+
             w-10
+
             h-10
+
             rounded-full
+
             bg-secondary
-            flex
-            items-center
-            justify-center
+
             text-white
+
             font-bold
+
+            flex
+
+            items-center
+
+            justify-center
+
+            uppercase
+
           "
+
         >
-          U
+
+          {
+
+            userName[0]
+
+          }
+
         </div>
 
         <button
-          onClick={handleLogout}
+
+          onClick={
+            handleLogout
+          }
+
           className="
+
             bg-primary
+
             hover:bg-secondary
+
             text-white
+
             px-4
+
             py-2
+
             rounded-lg
+
             transition
+
           "
+
         >
+
           Logout
+
         </button>
 
       </div>
 
-    </div>
+    </header>
 
   );
+
 }
 
 export default Navbar;

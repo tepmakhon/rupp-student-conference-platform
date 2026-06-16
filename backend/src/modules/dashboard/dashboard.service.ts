@@ -1,58 +1,123 @@
 import { prisma } from "../../config/prisma.js";
+
 import { AppError } from "../../utils/AppError.js";
 
-export const getAdminDashboard = async () => {
+/*
+|--------------------------------------------------------------------------
+| Admin Dashboard
+|--------------------------------------------------------------------------
+*/
 
-const [
-  totalStudents,
-  totalOrganizations,
-  totalEvents,
-  approvedEvents,
-  pendingEvents,
-  rejectedEvents,
-  totalOpportunities,
-  approvedOpportunities,
-  totalApplications,
-] = await Promise.all([
-  prisma.student.count(),
+export const getAdminDashboard =
+  async () => {
 
-  prisma.organization.count(),
+    const [
 
-  prisma.event.count(),
+      totalStudents,
 
-  prisma.event.count({
-    where: { status: "APPROVED" },
-  }),
+      totalOrganizations,
 
-  prisma.event.count({
-    where: { status: "PENDING" },
-  }),
+      totalEvents,
 
-  prisma.event.count({
-    where: { status: "REJECTED" },
-  }),
+      approvedEvents,
 
-  prisma.opportunity.count(),
+      pendingEvents,
 
-  prisma.opportunity.count({
-    where: { status: "APPROVED" } as any,
-  }),
+      rejectedEvents,
 
-  prisma.application.count(),
-]);
+      totalOpportunities,
 
-  return {
-    totalStudents,
-    totalOrganizations,
-    totalEvents,
-    pendingEvents,
-    totalOpportunities,
-    totalApplications,
-    approvedEvents,
-    rejectedEvents,
-    approvedOpportunities,
+      approvedOpportunities,
+
+      totalApplications,
+
+    ] = await Promise.all([
+
+      prisma.student.count(),
+
+      prisma.organization.count(),
+
+      prisma.event.count(),
+
+      prisma.event.count({
+
+        where: {
+
+          status:
+            "APPROVED",
+
+        },
+
+      }),
+
+      prisma.event.count({
+
+        where: {
+
+          status:
+            "PENDING",
+
+        },
+
+      }),
+
+      prisma.event.count({
+
+        where: {
+
+          status:
+            "REJECTED",
+
+        },
+
+      }),
+
+      prisma.opportunity.count(),
+
+      prisma.opportunity.count({
+
+        where: {
+
+          status:
+            "APPROVED",
+
+        },
+
+      }),
+
+      prisma.application.count(),
+
+    ]);
+
+    return {
+
+      totalStudents,
+
+      totalOrganizations,
+
+      totalEvents,
+
+      approvedEvents,
+
+      pendingEvents,
+
+      rejectedEvents,
+
+      totalOpportunities,
+
+      approvedOpportunities,
+
+      totalApplications,
+
+    };
+
   };
-};
+
+/*
+|--------------------------------------------------------------------------
+| Organization Dashboard
+|--------------------------------------------------------------------------
+*/
 
 export const getOrganizationDashboard =
   async (
@@ -60,62 +125,118 @@ export const getOrganizationDashboard =
   ) => {
 
     const organization =
+
       await prisma.organization.findUnique({
+
         where: {
+
           userId,
+
         },
+
       });
 
     if (!organization) {
+
       throw new AppError(
+
         "Organization not found",
+
         404
+
       );
+
     }
 
-    const totalEvents =
-      await prisma.event.count({
-        where: {
-          organizationId:
-            organization.id,
-        },
-      });
+    const [
 
-    const totalOpportunities =
-      await prisma.opportunity.count({
-        where: {
-          organizationId:
-            organization.id,
-        },
-      });
+      totalEvents,
 
-    const totalRegistrations =
-      await prisma.eventRegistration.count({
+      totalOpportunities,
+
+      totalRegistrations,
+
+      totalApplicants,
+
+    ] = await Promise.all([
+
+      prisma.event.count({
+
         where: {
+
+          organizationId:
+
+            organization.id,
+
+        },
+
+      }),
+
+      prisma.opportunity.count({
+
+        where: {
+
+          organizationId:
+
+            organization.id,
+
+        },
+
+      }),
+
+      prisma.eventRegistration.count({
+
+        where: {
+
           event: {
-            organizationId:
-              organization.id,
-          },
-        },
-      });
 
-    const totalApplicants =
-      await prisma.application.count({
-        where: {
-          opportunity: {
             organizationId:
+
               organization.id,
+
           },
+
         },
-      });
+
+      }),
+
+      prisma.application.count({
+
+        where: {
+
+          opportunity: {
+
+            organizationId:
+
+              organization.id,
+
+          },
+
+        },
+
+      }),
+
+    ]);
 
     return {
+
       totalEvents,
+
       totalOpportunities,
+
       totalRegistrations,
+
       totalApplicants,
+
     };
-};
+
+  };
+
+/*
+|--------------------------------------------------------------------------
+| Student Dashboard
+|--------------------------------------------------------------------------
+*/
 
 export const getStudentDashboard =
   async (
@@ -123,41 +244,73 @@ export const getStudentDashboard =
   ) => {
 
     const student =
+
       await prisma.student.findUnique({
+
         where: {
+
           userId,
+
         },
+
       });
 
     if (!student) {
+
       throw new AppError(
+
         "Student not found",
+
         404
+
       );
+
     }
 
-    const totalRegistrations =
-      await prisma.eventRegistration.count({
-        where: {
-          studentId:
-            student.id,
-        },
-      });
+    const [
 
-    const totalApplications =
-      await prisma.application.count({
+      totalRegistrations,
+
+      totalApplications,
+
+    ] = await Promise.all([
+
+      prisma.eventRegistration.count({
+
         where: {
+
           studentId:
+
             student.id,
+
         },
-      });
+
+      }),
+
+      prisma.application.count({
+
+        where: {
+
+          studentId:
+
+            student.id,
+
+        },
+
+      }),
+
+    ]);
 
     return {
+
       activityScore:
+
         student.activityScore,
 
       totalRegistrations,
 
       totalApplications,
+
     };
-};
+
+  };

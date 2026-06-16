@@ -1,5 +1,10 @@
-import axiosInstance
-from "./axios";
+import axiosInstance from "./axios";
+
+/*
+|--------------------------------------------------------------------------
+| Student Dashboard
+|--------------------------------------------------------------------------
+*/
 
 export const getStudentDashboard =
   async () => {
@@ -14,6 +19,12 @@ export const getStudentDashboard =
 
   };
 
+/*
+|--------------------------------------------------------------------------
+| Organization Dashboard
+|--------------------------------------------------------------------------
+*/
+
 export const getOrganizationDashboard =
   async () => {
 
@@ -27,6 +38,12 @@ export const getOrganizationDashboard =
 
   };
 
+/*
+|--------------------------------------------------------------------------
+| Admin Dashboard
+|--------------------------------------------------------------------------
+*/
+
 export const getAdminDashboard =
   async () => {
 
@@ -39,3 +56,5 @@ export const getAdminDashboard =
     return response.data.data;
 
   };
+
+  

@@ -1,3 +1,5 @@
+import { useSelector } from "react-redux";
+
 import StudentDashboardPage
 from "./StudentDashboardPage";
 
@@ -9,36 +11,35 @@ from "./AdminDashboardPage";
 
 function DashboardPage() {
 
-  const user = JSON.parse(
-    localStorage.getItem(
-      "user"
-    )
-  );
-
   const role =
-    user?.role?.roleName;
-
-  if (role === "ADMIN") {
-
-    return (
-      <AdminDashboardPage />
+    useSelector(
+      (state) =>
+        state.auth.role
     );
 
+  switch (role) {
+
+    case "ADMIN":
+
+      return (
+        <AdminDashboardPage />
+      );
+
+    case "ORGANIZATION":
+
+      return (
+        <OrganizationDashboardPage />
+      );
+
+    case "STUDENT":
+
+    default:
+
+      return (
+        <StudentDashboardPage />
+      );
+
   }
-
-  if (
-    role === "ORGANIZATION"
-  ) {
-
-    return (
-      <OrganizationDashboardPage />
-    );
-
-  }
-
-  return (
-    <StudentDashboardPage />
-  );
 
 }
 
