@@ -1,10 +1,10 @@
 import {
-  useState,
-} from "react";
 
-import {
-  useNavigate,
-} from "react-router-dom";
+  useEffect,
+
+  useState,
+
+} from "react";
 
 import toast
 from "react-hot-toast";
@@ -13,19 +13,54 @@ import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
 import {
+
   createEvent,
+
 } from "../../api/eventApi";
+
+import {
+
+  getEventCategories,
+
+} from "../../api/eventCategoryApi";
+
+import {
+
+  uploadToCloudinary,
+
+} from "../../utils/cloudinaryUpload";
 
 function CreateEventPage() {
 
-  const navigate =
-    useNavigate();
+  const [
+
+    categories,
+
+    setCategories,
+
+  ] = useState([]);
 
   const [
 
-    formData,
+    loading,
 
-    setFormData,
+    setLoading,
+
+  ] = useState(false);
+
+  const [
+
+    imageUploading,
+
+    setImageUploading,
+
+  ] = useState(false);
+
+  const [
+
+    form,
+
+    setForm,
 
   ] = useState({
 
@@ -39,32 +74,119 @@ function CreateEventPage() {
 
     capacity: "",
 
-    bannerImageUrl: "",
-
     eventDate: "",
+
+    bannerImageUrl: "",
 
   });
 
-  const [
+  useEffect(() => {
 
-    loading,
+    loadCategories();
 
-    setLoading,
+  }, []);
 
-  ] = useState(false);
+  const loadCategories =
+    async () => {
+
+      try {
+
+        const data =
+
+          await getEventCategories();
+
+        setCategories(
+          data
+        );
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        toast.error(
+          "Failed to load categories"
+        );
+
+      }
+
+    };
 
   const handleChange =
     (e) => {
 
-      setFormData({
+      setForm({
 
-        ...formData,
+        ...form,
 
-        [e.target.name]:
+        [
 
-          e.target.value,
+          e.target.name
+
+        ]:
+
+        e.target.value,
 
       });
+
+    };
+
+  const handleImage =
+    async (e) => {
+
+      const file =
+
+        e.target.files[0];
+
+      if (!file) return;
+
+      try {
+
+        setImageUploading(
+          true
+        );
+
+        const url =
+
+          await uploadToCloudinary(
+            file
+          );
+
+        setForm(
+
+          (prev) => ({
+
+            ...prev,
+
+            bannerImageUrl:
+              url,
+
+          })
+
+        );
+
+        toast.success(
+          "Image uploaded"
+        );
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        toast.error(
+          "Upload failed"
+        );
+
+      } finally {
+
+        setImageUploading(
+          false
+        );
+
+      }
 
     };
 
@@ -77,35 +199,31 @@ function CreateEventPage() {
 
         setLoading(true);
 
-        await createEvent({
-
-          ...formData,
-
-          capacity:
-
-            formData.capacity
-
-            ? Number(
-
-                formData.capacity
-
-              )
-
-            : null,
-
-        });
+        await createEvent(
+          form
+        );
 
         toast.success(
-
           "Event created"
-
         );
 
-        navigate(
+        setForm({
 
-          "/organization/events"
+          title: "",
 
-        );
+          description: "",
+
+          location: "",
+
+          categoryId: "",
+
+          capacity: "",
+
+          eventDate: "",
+
+          bannerImageUrl: "",
+
+        });
 
       } catch (error) {
 
@@ -115,7 +233,9 @@ function CreateEventPage() {
 
         toast.error(
 
-          error?.response?.data?.message ||
+          error?.response
+
+            ?.data?.message ||
 
           "Failed to create event"
 
@@ -133,222 +253,438 @@ function CreateEventPage() {
 
     <DashboardLayout>
 
-      <div
-        className="
-          max-w-3xl
-          mx-auto
-        "
-      >
+      <div className="max-w-5xl mx-auto">
 
-        <h1
-          className="
-            text-4xl
-            font-bold
-            text-primary
-            mb-8
-          "
-        >
+        <div className="mb-10">
 
-          Create Event
+          <h1
+            className="
+              text-4xl
+              font-bold
+              text-primary
+            "
+          >
 
-        </h1>
+            Create Event
+
+          </h1>
+
+          <p
+            className="
+              text-gray-500
+              mt-3
+            "
+          >
+
+            Publish a conference,
+            workshop,
+            seminar,
+            competition,
+            or campus activity.
+
+          </p>
+
+        </div>
 
         <form
 
-          onSubmit={
-            handleSubmit
-          }
+          onSubmit={handleSubmit}
 
           className="
             bg-white
-            rounded-2xl
+            rounded-3xl
             shadow-md
-            p-8
-            space-y-6
+            p-10
+            space-y-8
           "
+
         >
 
-          <input
-
-            name="title"
-
-            placeholder="Title"
-
-            value={
-              formData.title
-            }
-
-            onChange={
-              handleChange
-            }
-
-            required
-
+          <div
             className="
-              w-full
-              border
-              p-3
-              rounded-xl
+              grid
+              md:grid-cols-2
+              gap-6
             "
+          >
 
-          />
+            {/* Title */}
 
-          <textarea
+            <div>
 
-            name="description"
+              <label
+                className="
+                  block
+                  mb-2
+                  font-semibold
+                  text-gray-700
+                "
+              >
 
-            placeholder="Description"
+                Event Title
 
-            value={
-              formData.description
-            }
+              </label>
 
-            onChange={
-              handleChange
-            }
+              <input
 
-            required
+                name="title"
 
-            rows={5}
+                value={form.title}
 
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-            "
+                onChange={handleChange}
 
-          />
+                placeholder="Google Developer Workshop"
 
-          <input
+                className="
+                  w-full
+                  border
+                  border-gray-300
+                  rounded-xl
+                  p-4
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-secondary
+                "
 
-            name="location"
+              />
 
-            placeholder="Location"
+            </div>
 
-            value={
-              formData.location
-            }
+            {/* Category */}
 
-            onChange={
-              handleChange
-            }
+            <div>
 
-            required
+              <label
+                className="
+                  block
+                  mb-2
+                  font-semibold
+                  text-gray-700
+                "
+              >
 
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-            "
+                Category
 
-          />
+              </label>
 
-          <input
+              <select
 
-            name="categoryId"
+                name="categoryId"
 
-            placeholder="Category ID"
+                value={form.categoryId}
 
-            value={
-              formData.categoryId
-            }
+                onChange={handleChange}
 
-            onChange={
-              handleChange
-            }
+                className="
+                  w-full
+                  border
+                  border-gray-300
+                  rounded-xl
+                  p-4
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-secondary
+                "
 
-            required
+              >
 
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-            "
+                <option value="">
 
-          />
+                  Select category
 
-          <input
+                </option>
 
-            name="capacity"
+                {
 
-            type="number"
+                  categories.map(
 
-            placeholder="Capacity"
+                    (category) => (
 
-            value={
-              formData.capacity
-            }
+                      <option
 
-            onChange={
-              handleChange
-            }
+                        key={category.id}
 
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-            "
+                        value={category.id}
 
-          />
+                      >
 
-          <input
+                        {category.categoryName}
 
-            name="bannerImageUrl"
+                      </option>
 
-            placeholder="Banner Image URL"
+                    )
 
-            value={
-              formData.bannerImageUrl
-            }
+                  )
 
-            onChange={
-              handleChange
-            }
+                }
 
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-            "
+              </select>
 
-          />
+            </div>
 
-          <input
+            {/* Location */}
 
-            name="eventDate"
+            <div>
 
-            type="datetime-local"
+              <label
+                className="
+                  block
+                  mb-2
+                  font-semibold
+                  text-gray-700
+                "
+              >
 
-            value={
-              formData.eventDate
-            }
+                Location
 
-            onChange={
-              handleChange
-            }
+              </label>
 
-            required
+              <input
 
-            className="
-              w-full
-              border
-              p-3
-              rounded-xl
-            "
+                name="location"
 
-          />
+                value={form.location}
+
+                onChange={handleChange}
+
+                placeholder="RUPP Conference Hall"
+
+                className="
+                  w-full
+                  border
+                  border-gray-300
+                  rounded-xl
+                  p-4
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-secondary
+                "
+
+              />
+
+            </div>
+
+            {/* Capacity */}
+
+            <div>
+
+              <label
+                className="
+                  block
+                  mb-2
+                  font-semibold
+                  text-gray-700
+                "
+              >
+
+                Capacity
+
+              </label>
+
+              <input
+
+                type="number"
+
+                name="capacity"
+
+                value={form.capacity}
+
+                onChange={handleChange}
+
+                placeholder="100"
+
+                className="
+                  w-full
+                  border
+                  border-gray-300
+                  rounded-xl
+                  p-4
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-secondary
+                "
+
+              />
+
+            </div>
+
+          </div>
+
+          {/* Event Date */}
+
+          <div>
+
+            <label
+              className="
+                block
+                mb-2
+                font-semibold
+                text-gray-700
+              "
+            >
+
+              Event Date
+
+            </label>
+
+            <input
+
+              type="datetime-local"
+
+              name="eventDate"
+
+              value={form.eventDate}
+
+              onChange={handleChange}
+
+              className="
+                w-full
+                border
+                border-gray-300
+                rounded-xl
+                p-4
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+
+            />
+
+          </div>
+
+          {/* Description */}
+
+          <div>
+
+            <label
+              className="
+                block
+                mb-2
+                font-semibold
+                text-gray-700
+              "
+            >
+
+              Description
+
+            </label>
+
+            <textarea
+
+              name="description"
+
+              rows={6}
+
+              value={form.description}
+
+              onChange={handleChange}
+
+              placeholder="Describe your event..."
+
+              className="
+                w-full
+                border
+                border-gray-300
+                rounded-xl
+                p-4
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+
+            />
+
+          </div>
+
+          {/* Banner */}
+
+          <div>
+
+            <label
+              className="
+                block
+                mb-3
+                font-semibold
+                text-gray-700
+              "
+            >
+
+              Event Banner
+
+            </label>
+
+            <div
+              className="
+                border-2
+                border-dashed
+                border-gray-300
+                rounded-2xl
+                p-6
+              "
+            >
+
+              <input
+
+                type="file"
+
+                accept="image/*"
+
+                onChange={handleImage}
+
+              />
+
+              <p
+                className="
+                  text-sm
+                  text-gray-500
+                  mt-3
+                "
+              >
+
+                Recommended:
+                1200 x 600 px
+
+              </p>
+
+            </div>
+
+          </div>
+
+          {
+
+            form.bannerImageUrl && (
+
+              <div>
+
+                <img
+
+                  src={form.bannerImageUrl}
+
+                  alt="Banner"
+
+                  className="
+                    w-full
+                    h-80
+                    object-cover
+                    rounded-2xl
+                  "
+
+                />
+
+              </div>
+
+            )
+
+          }
 
           <button
 
             type="submit"
 
             disabled={
-              loading
+              loading ||
+
+              imageUploading
             }
 
             className="
@@ -356,23 +692,27 @@ function CreateEventPage() {
               bg-primary
               hover:bg-secondary
               text-white
-              py-3
-              rounded-xl
+              py-4
+              rounded-2xl
+              text-lg
+              font-semibold
+              transition
+              disabled:opacity-50
             "
 
           >
 
             {
 
-              loading
+              imageUploading
 
-              ?
+              ? "Uploading Image..."
 
-              "Creating..."
+              : loading
 
-              :
+              ? "Creating Event..."
 
-              "Create Event"
+              : "Create Event"
 
             }
 
