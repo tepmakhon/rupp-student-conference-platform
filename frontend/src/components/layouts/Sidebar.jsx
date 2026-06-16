@@ -75,6 +75,18 @@ function Sidebar({
     },
 
     {
+      name:
+        "My Applications",
+      path:
+        "/my-applications",
+      icon:
+        BriefcaseIcon,
+      roles: [
+        "STUDENT",
+      ],
+    },
+
+    {
       name: "Profile",
       path: "/profile",
       icon: UserCircleIcon,

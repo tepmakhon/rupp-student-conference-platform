@@ -70,6 +70,15 @@ from "../pages/opportunities/SavedOpportunitiesPage";
 
 /*
 |--------------------------------------------------------------------------
+| Student
+|--------------------------------------------------------------------------
+*/
+
+import MyApplicationsPage
+from "../pages/student/MyApplicationsPage";
+
+/*
+|--------------------------------------------------------------------------
 | Organization
 |--------------------------------------------------------------------------
 */
@@ -236,22 +245,6 @@ function AppRoutes() {
 
         <Route
 
-          path="/opportunities/create"
-
-          element={
-
-            <ProtectedRoute>
-
-              <CreateOpportunityPage />
-
-            </ProtectedRoute>
-
-          }
-
-        />
-
-        <Route
-
           path="/opportunities/:id"
 
           element={
@@ -274,9 +267,41 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "STUDENT",
+
+              ]}
+
+            >
 
               <SavedOpportunitiesPage />
+
+            </ProtectedRoute>
+
+          }
+
+        />
+
+        <Route
+
+          path="/my-applications"
+
+          element={
+
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "STUDENT",
+
+              ]}
+
+            >
+
+              <MyApplicationsPage />
 
             </ProtectedRoute>
 
@@ -288,11 +313,43 @@ function AppRoutes() {
 
         <Route
 
+          path="/opportunities/create"
+
+          element={
+
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
+
+              <CreateOpportunityPage />
+
+            </ProtectedRoute>
+
+          }
+
+        />
+
+        <Route
+
           path="/organization/opportunities"
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <MyOpportunitiesPage />
 
@@ -308,7 +365,15 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ORGANIZATION",
+
+              ]}
+
+            >
 
               <OpportunityApplicantsPage />
 
@@ -326,7 +391,15 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+              ]}
+
+            >
 
               <AdminPendingEventsPage />
 
@@ -342,7 +415,15 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute>
+            <ProtectedRoute
+
+              allowedRoles={[
+
+                "ADMIN",
+
+              ]}
+
+            >
 
               <AdminPendingOpportunitiesPage />
 
