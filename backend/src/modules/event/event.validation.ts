@@ -1,51 +1,101 @@
 import { z } from "zod";
 
 export const createEventSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
 
-  description: z.string().min(1),
+  title:
 
-  location: z.string().min(1),
+    z.string()
 
-  categoryId: z.string(),
+    .min(3),
 
-  capacity: z.number().positive(),
+  description:
 
-  eventDate: z.string(),
+    z.string()
+
+    .min(1),
+
+  location:
+
+    z.string()
+
+    .min(1),
+
+  categoryId:
+
+    z.string(),
+
+  capacity:
+
+    z.coerce.number()
+
+    .positive()
+
+    .optional(),
+
+  bannerImageUrl:
+
+    z.string()
+
+    .optional(),
+
+  eventDate:
+
+    z.string(),
+
 });
 
 export const updateEventSchema = z.object({
 
   title:
 
-    z.string().min(3).optional(),
+    z.string()
+
+    .min(3)
+
+    .optional(),
 
   description:
 
-    z.string().min(10).optional(),
+    z.string()
+
+    .min(10)
+
+    .optional(),
 
   location:
 
-    z.string().min(3).optional(),
+    z.string()
+
+    .min(3)
+
+    .optional(),
 
   categoryId:
 
-    z.string().optional(),
+    z.string()
+
+    .optional(),
 
   capacity:
 
-    z.number().optional(),
+    z.coerce.number()
+
+    .positive()
+
+    .optional(),
 
   bannerImageUrl:
 
     z.string()
 
-      .url()
+    .url()
 
-      .optional(),
+    .optional(),
 
   eventDate:
 
-    z.string().optional(),
+    z.string()
+
+    .optional(),
 
 });

@@ -20,6 +20,7 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 import { AppError } from "./utils/AppError.js";
 import { successResponse } from "./utils/apiResponse.js";
 import userRoutes from "./modules/user/user.routes.js";
+import eventCategoryRoutes from "./modules/eventCategory/eventCategory.route.js";
 
 setupBigIntSerialization();
 
@@ -98,6 +99,10 @@ app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/audit", auditRoutes);
 
+app.use(
+  "/api/event-categories",
+  eventCategoryRoutes
+);
 
 /*
 |--------------------------------------------------------------------------
