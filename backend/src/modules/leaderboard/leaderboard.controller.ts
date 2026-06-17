@@ -8,28 +8,58 @@ import {
   errorResponse,
 } from "../../utils/apiResponse.js";
 
-export const getLeaderboard = async (
-  req: Request,
-  res: Response
-) => {
-  try {
+export const getLeaderboard =
+  async (
+    req: Request,
+    res: Response
+  ) => {
 
-    const students =
-      await leaderboardService.getLeaderboard();
+    try {
 
-    return successResponse(
-      res,
-      students,
-      "Leaderboard retrieved"
-    );
+      const page =
 
-  } catch (error: any) {
+        Number(req.query.page)
 
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 500
-    );
+        || 1;
 
-  }
+      const limit =
+
+        Number(req.query.limit)
+
+        || 10;
+
+      const data =
+
+        await leaderboardService.getLeaderboard(
+
+          page,
+
+          limit
+
+        );
+
+      return successResponse(
+
+        res,
+
+        data,
+
+        "Leaderboard retrieved"
+
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 500
+
+      );
+
+    }
+
 };

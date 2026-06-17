@@ -10,6 +10,9 @@ import {
   createAuditLog,
 } from "../audit/audit.service.js";
 
+import {
+  addActivityScore,
+} from "../activity/activityScore.service.js";
 /*
 |--------------------------------------------------------------------------
 | Create Event
@@ -405,6 +408,14 @@ export const registerForEvent = async (
           "APPROVED",
       },
     });
+  
+  await addActivityScore(
+    student.id,
+    
+    10,
+
+    `Registered for ${event.title}`
+  );
 
   await createNotification(
     event.organization.userId,

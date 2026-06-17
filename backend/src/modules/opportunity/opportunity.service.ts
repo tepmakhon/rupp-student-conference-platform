@@ -3,6 +3,9 @@ import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
 import { AppError } from "../../utils/AppError.js";
 import { getPagination } from "../../utils/pagination.js";
+import {
+  addActivityScore,
+} from "../activity/activityScore.service.js";
 
 export const createOpportunity = async (
   data: any,
@@ -390,7 +393,12 @@ export const applyOpportunity = async (
         cvUrl: data.cvUrl || null,
       },
     });
-
+    
+  await addActivityScore(
+    student.id,
+    15,
+    `Applied for ${opportunity.title}`
+  );
   await createNotification(
     opportunity.organization.userId,
     "New Application",

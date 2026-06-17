@@ -21,6 +21,7 @@ import { AppError } from "./utils/AppError.js";
 import { successResponse } from "./utils/apiResponse.js";
 import userRoutes from "./modules/user/user.routes.js";
 import eventCategoryRoutes from "./modules/eventCategory/eventCategory.route.js";
+import activityRoutes from "./modules/activity/activity.routes.js";
 
 setupBigIntSerialization();
 
@@ -102,6 +103,11 @@ app.use("/api/audit", auditRoutes);
 app.use(
   "/api/event-categories",
   eventCategoryRoutes
+);
+
+app.use(
+  "/api/activity",
+  activityRoutes
 );
 
 /*

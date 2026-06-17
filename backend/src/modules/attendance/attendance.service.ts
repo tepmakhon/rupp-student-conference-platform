@@ -2,6 +2,9 @@ import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 import { createAuditLog } from "../audit/audit.service.js";
 import { createNotification } from "../notification/notification.service.js";
+import {
+  addActivityScore,
+} from "../activity/activityScore.service.js";
 
 export const checkInEvent = async (
   eventId: bigint,
@@ -70,25 +73,11 @@ export const checkInEvent = async (
           },
         });
 
-      await tx.student.update({
-        where: {
-          id: student.id,
-        },
-
-        data: {
-          activityScore: {
-            increment: 10,
-          },
-        },
-      });
-
-      await tx.activityScoreHistory.create({
-        data: {
-          studentId: student.id,
-          scoreChange: 10,
-          reason: `Attended ${registration.event.title}`,
-        },
-      });
+      await addActivityScore(
+        student.id,
+        20,
+        `Attended ${registration.event.title}`
+      );
 
       return attendance;
     }

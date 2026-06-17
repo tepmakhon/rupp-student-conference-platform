@@ -4,9 +4,17 @@ import {
   getLeaderboard,
 } from "./leaderboard.controller.js";
 
+import {
+  authMiddleware,
+} from "../../middlewares/auth.middleware.js";
+
 const router = Router();
 
-router.get("/", getLeaderboard);
+router.get(
+  "/",
+  authMiddleware,
+  getLeaderboard
+);
 
 /**
  * @swagger
