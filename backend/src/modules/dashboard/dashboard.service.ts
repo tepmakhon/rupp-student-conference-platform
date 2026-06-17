@@ -129,9 +129,7 @@ export const getOrganizationDashboard =
       await prisma.organization.findUnique({
 
         where: {
-
           userId,
-
         },
 
       });
@@ -152,7 +150,15 @@ export const getOrganizationDashboard =
 
       totalEvents,
 
+      approvedEvents,
+
+      pendingEvents,
+
       totalOpportunities,
+
+      approvedOpportunities,
+
+      pendingOpportunities,
 
       totalRegistrations,
 
@@ -172,6 +178,38 @@ export const getOrganizationDashboard =
 
       }),
 
+      prisma.event.count({
+
+        where: {
+
+          organizationId:
+
+            organization.id,
+
+          status:
+
+            "APPROVED",
+
+        },
+
+      }),
+
+      prisma.event.count({
+
+        where: {
+
+          organizationId:
+
+            organization.id,
+
+          status:
+
+            "PENDING",
+
+        },
+
+      }),
+
       prisma.opportunity.count({
 
         where: {
@@ -179,6 +217,38 @@ export const getOrganizationDashboard =
           organizationId:
 
             organization.id,
+
+        },
+
+      }),
+
+      prisma.opportunity.count({
+
+        where: {
+
+          organizationId:
+
+            organization.id,
+
+          status:
+
+            "APPROVED",
+
+        },
+
+      }),
+
+      prisma.opportunity.count({
+
+        where: {
+
+          organizationId:
+
+            organization.id,
+
+          status:
+
+            "PENDING",
 
         },
 
@@ -222,7 +292,15 @@ export const getOrganizationDashboard =
 
       totalEvents,
 
+      approvedEvents,
+
+      pendingEvents,
+
       totalOpportunities,
+
+      approvedOpportunities,
+
+      pendingOpportunities,
 
       totalRegistrations,
 
@@ -230,8 +308,7 @@ export const getOrganizationDashboard =
 
     };
 
-  };
-
+};
 /*
 |--------------------------------------------------------------------------
 | Student Dashboard
@@ -273,6 +350,8 @@ export const getStudentDashboard =
 
       totalApplications,
 
+      savedOpportunities,
+
     ] = await Promise.all([
 
       prisma.eventRegistration.count({
@@ -299,6 +378,18 @@ export const getStudentDashboard =
 
       }),
 
+      prisma.savedOpportunity.count({
+
+        where: {
+
+          studentId:
+
+            student.id,
+
+        },
+
+      }),
+
     ]);
 
     return {
@@ -311,6 +402,8 @@ export const getStudentDashboard =
 
       totalApplications,
 
+      savedOpportunities,
+
     };
 
-  };
+};

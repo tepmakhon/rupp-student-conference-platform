@@ -1,17 +1,42 @@
 import {
+
   useEffect,
+
 } from "react";
 
 import {
+
   useDispatch,
+
   useSelector,
+
 } from "react-redux";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
+import DashboardHeader
+from "../../components/dashboard/DashboardHeader";
+
+import DashboardLoading
+from "../../components/dashboard/DashboardLoading";
+
+import DashboardError
+from "../../components/dashboard/DashboardError";
+
+import DashboardStatsGrid
+from "../../components/dashboard/DashboardStatsGrid";
+
+import DashboardStatCard
+from "../../components/dashboard/DashboardStatCard";
+
+import RecentOpportunities
+from "../../components/dashboard/RecentOpportunities";
+
 import {
+
   getStudentDashboard,
+
 } from "../../api/dashboardApi";
 
 import {
@@ -23,9 +48,6 @@ import {
   setDashboardError,
 
 } from "../../redux/slices/dashboardSlice";
-
-import RecentOpportunities
-from "../../components/dashboard/RecentOpportunities";
 
 function StudentDashboardPage() {
 
@@ -121,71 +143,50 @@ function StudentDashboardPage() {
 
     <DashboardLayout>
 
-      <div className="max-w-7xl mx-auto">
+      <div
+        className="
+          max-w-7xl
+          mx-auto
+        "
+      >
 
-        <h1
+        <DashboardHeader
 
-          className="
+          title="Student Dashboard"
 
-            text-4xl
+          subtitle="Track your activities and opportunities."
 
-            font-bold
+          loading={
+            loading
+          }
 
-            text-primary
+          onRefresh={
+            loadDashboard
+          }
 
-            mb-8
-
-          "
-
-        >
-
-          Student Dashboard
-
-        </h1>
+        />
 
         {
 
-          loading && (
+          loading &&
 
-            <div>
-
-              Loading dashboard...
-
-            </div>
-
-          )
+          <DashboardLoading />
 
         }
 
         {
 
+          !loading &&
+
           error && (
 
-            <div
+            <DashboardError
 
-              className="
+              message={
+                error
+              }
 
-                bg-red-50
-
-                border
-
-                border-red-200
-
-                text-red-600
-
-                rounded-2xl
-
-                p-6
-
-                mb-8
-
-              "
-
-            >
-
-              {error}
-
-            </div>
+            />
 
           )
 
@@ -199,161 +200,60 @@ function StudentDashboardPage() {
 
             <>
 
-              <div
+              <DashboardStatsGrid>
 
-                className="
+                <DashboardStatCard
 
-                  grid
+                  title="Activity Score"
 
-                  md:grid-cols-3
+                  value={
 
-                  gap-6
+                    stats?.activityScore
 
-                "
+                  }
 
-              >
+                />
 
-                <div
+                <DashboardStatCard
 
-                  className="
+                  title="Registrations"
 
-                    bg-white
+                  value={
 
-                    p-6
+                    stats?.totalRegistrations
 
-                    rounded-2xl
+                  }
 
-                    shadow-md
+                />
 
-                  "
+                <DashboardStatCard
 
-                >
+                  title="Applications"
 
-                  <p>
+                  value={
 
-                    Activity Score
+                    stats?.totalApplications
 
-                  </p>
+                  }
 
-                  <h2
+                />
 
-                    className="
+                <DashboardStatCard
 
-                      text-4xl
+                  title="Saved Opportunities"
 
-                      font-bold
+                  value={
 
-                    "
+                    stats?.savedOpportunities
 
-                  >
+                  }
 
-                    {
+                />
 
-                      stats
-                        ?.activityScore || 0
-
-                    }
-
-                  </h2>
-
-                </div>
-
-                <div
-
-                  className="
-
-                    bg-white
-
-                    p-6
-
-                    rounded-2xl
-
-                    shadow-md
-
-                  "
-
-                >
-
-                  <p>
-
-                    Event Registrations
-
-                  </p>
-
-                  <h2
-
-                    className="
-
-                      text-4xl
-
-                      font-bold
-
-                    "
-
-                  >
-
-                    {
-
-                      stats
-                        ?.totalRegistrations || 0
-
-                    }
-
-                  </h2>
-
-                </div>
-
-                <div
-
-                  className="
-
-                    bg-white
-
-                    p-6
-
-                    rounded-2xl
-
-                    shadow-md
-
-                  "
-
-                >
-
-                  <p>
-
-                    Applications
-
-                  </p>
-
-                  <h2
-
-                    className="
-
-                      text-4xl
-
-                      font-bold
-
-                    "
-
-                  >
-
-                    {
-
-                      stats
-                        ?.totalApplications || 0
-
-                    }
-
-                  </h2>
-
-                </div>
-
-              </div>
+              </DashboardStatsGrid>
 
               <div
-
-                className="mt-8"
-
+                className="mt-10"
               >
 
                 <RecentOpportunities />

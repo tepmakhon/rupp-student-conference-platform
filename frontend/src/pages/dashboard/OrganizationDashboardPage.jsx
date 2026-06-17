@@ -1,17 +1,55 @@
 import {
+
   useEffect,
+
 } from "react";
 
 import {
+
+  Link,
+
+} from "react-router-dom";
+
+import {
+
+  PlusCircleIcon,
+
+  CalendarDaysIcon,
+
+  BriefcaseIcon,
+
+} from "@heroicons/react/24/outline";
+
+import {
+
   useDispatch,
+
   useSelector,
+
 } from "react-redux";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
+import DashboardHeader
+from "../../components/dashboard/DashboardHeader";
+
+import DashboardLoading
+from "../../components/dashboard/DashboardLoading";
+
+import DashboardError
+from "../../components/dashboard/DashboardError";
+
+import DashboardStatsGrid
+from "../../components/dashboard/DashboardStatsGrid";
+
+import DashboardStatCard
+from "../../components/dashboard/DashboardStatCard";
+
 import {
+
   getOrganizationDashboard,
+
 } from "../../api/dashboardApi";
 
 import {
@@ -94,7 +132,7 @@ function OrganizationDashboardPage() {
 
           setDashboardError(
 
-            "Failed to load organization dashboard"
+            "Failed to load dashboard"
 
           )
 
@@ -119,136 +157,33 @@ function OrganizationDashboardPage() {
     <DashboardLayout>
 
       <div
-
         className="
-
           max-w-7xl
-
           mx-auto
-
         "
-
       >
 
-        <div
+        <DashboardHeader
 
-          className="
+          title="Organization Dashboard"
 
-            flex
+          subtitle="Manage your events and opportunities."
 
-            justify-between
+          loading={
+            loading
+          }
 
-            items-center
+          onRefresh={
+            loadDashboard
+          }
 
-            mb-8
-
-          "
-
-        >
-
-          <div>
-
-            <h1
-
-              className="
-
-                text-4xl
-
-                font-bold
-
-                text-primary
-
-              "
-
-            >
-
-              Organization Dashboard
-
-            </h1>
-
-            <p
-
-              className="
-
-                text-gray-500
-
-                mt-2
-
-              "
-
-            >
-
-              Manage your events and opportunities.
-
-            </p>
-
-          </div>
-
-          <button
-
-            onClick={
-              loadDashboard
-            }
-
-            disabled={
-              loading
-            }
-
-            className="
-
-              bg-primary
-
-              hover:bg-secondary
-
-              text-white
-
-              px-5
-
-              py-3
-
-              rounded-xl
-
-              transition
-
-              disabled:opacity-50
-
-            "
-
-          >
-
-            Refresh
-
-          </button>
-
-        </div>
+        />
 
         {
 
-          loading && (
+          loading &&
 
-            <div
-
-              className="
-
-                bg-white
-
-                rounded-2xl
-
-                shadow-md
-
-                p-12
-
-                text-center
-
-              "
-
-            >
-
-              Loading dashboard...
-
-            </div>
-
-          )
+          <DashboardLoading />
 
         }
 
@@ -258,31 +193,13 @@ function OrganizationDashboardPage() {
 
           error && (
 
-            <div
+            <DashboardError
 
-              className="
+              message={
+                error
+              }
 
-                bg-red-50
-
-                border
-
-                border-red-200
-
-                text-red-600
-
-                rounded-2xl
-
-                p-6
-
-                mb-8
-
-              "
-
-            >
-
-              {error}
-
-            </div>
+            />
 
           )
 
@@ -294,253 +211,224 @@ function OrganizationDashboardPage() {
 
           !error && (
 
-            <div
+            <>
 
-              className="
+              <DashboardStatsGrid>
 
-                grid
+                <DashboardStatCard
 
-                grid-cols-1
+                  title="Total Events"
 
-                md:grid-cols-2
+                  value={
 
-                xl:grid-cols-4
+                    stats?.totalEvents
 
-                gap-6
+                  }
 
-              "
+                />
 
-            >
+                <DashboardStatCard
+
+                  title="Approved Events"
+
+                  value={
+
+                    stats?.approvedEvents
+
+                  }
+
+                />
+
+                <DashboardStatCard
+
+                  title="Pending Events"
+
+                  value={
+
+                    stats?.pendingEvents
+
+                  }
+
+                />
+
+                <DashboardStatCard
+
+                  title="Total Opportunities"
+
+                  value={
+
+                    stats?.totalOpportunities
+
+                  }
+
+                />
+
+                <DashboardStatCard
+
+                  title="Approved Opportunities"
+
+                  value={
+
+                    stats?.approvedOpportunities
+
+                  }
+
+                />
+
+                <DashboardStatCard
+
+                  title="Pending Opportunities"
+
+                  value={
+
+                    stats?.pendingOpportunities
+
+                  }
+
+                />
+
+                <DashboardStatCard
+
+                  title="Applicants"
+
+                  value={
+
+                    stats?.totalApplicants
+
+                  }
+
+                />
+
+                <DashboardStatCard
+
+                  title="Registrations"
+
+                  value={
+
+                    stats?.totalRegistrations
+
+                  }
+
+                />
+
+              </DashboardStatsGrid>
 
               <div
-
                 className="
-
-                  bg-white
-
-                  rounded-2xl
-
-                  shadow-md
-
-                  p-6
-
+                  mt-12
                 "
-
               >
 
-                <p
-
-                  className="
-
-                    text-gray-500
-
-                    mb-2
-
-                  "
-
-                >
-
-                  Total Events
-
-                </p>
-
                 <h2
-
                   className="
-
-                    text-4xl
-
+                    text-2xl
                     font-bold
-
                     text-primary
-
+                    mb-6
                   "
-
                 >
 
-                  {
-
-                    stats
-                      ?.totalEvents || 0
-
-                  }
+                  Quick Actions
 
                 </h2>
 
-              </div>
-
-              <div
-
-                className="
-
-                  bg-white
-
-                  rounded-2xl
-
-                  shadow-md
-
-                  p-6
-
-                "
-
-              >
-
-                <p
-
+                <div
                   className="
-
-                    text-gray-500
-
-                    mb-2
-
+                    grid
+                    md:grid-cols-3
+                    gap-6
                   "
-
                 >
 
-                  Opportunities
+                  <Link
 
-                </p>
+                    to="/events/create"
 
-                <h2
+                    className="
+                      bg-white
+                      shadow-md
+                      rounded-2xl
+                      p-6
+                      flex
+                      items-center
+                      gap-4
+                    "
+                  >
 
-                  className="
+                    <PlusCircleIcon
 
-                    text-4xl
+                      className="
+                        w-8
+                        h-8
+                        text-primary
+                      "
+                    />
 
-                    font-bold
+                    Create Event
 
-                    text-secondary
+                  </Link>
 
-                  "
+                  <Link
 
-                >
+                    to="/opportunities/create"
 
-                  {
+                    className="
+                      bg-white
+                      shadow-md
+                      rounded-2xl
+                      p-6
+                      flex
+                      items-center
+                      gap-4
+                    "
+                  >
 
-                    stats
-                      ?.totalOpportunities || 0
+                    <BriefcaseIcon
 
-                  }
+                      className="
+                        w-8
+                        h-8
+                        text-primary
+                      "
+                    />
 
-                </h2>
+                    Create Opportunity
 
-              </div>
+                  </Link>
 
-              <div
+                  <Link
 
-                className="
+                    to="/organization/events"
 
-                  bg-white
+                    className="
+                      bg-white
+                      shadow-md
+                      rounded-2xl
+                      p-6
+                      flex
+                      items-center
+                      gap-4
+                    "
+                  >
 
-                  rounded-2xl
+                    <CalendarDaysIcon
 
-                  shadow-md
+                      className="
+                        w-8
+                        h-8
+                        text-primary
+                      "
+                    />
 
-                  p-6
+                    Manage Events
 
-                "
+                  </Link>
 
-              >
-
-                <p
-
-                  className="
-
-                    text-gray-500
-
-                    mb-2
-
-                  "
-
-                >
-
-                  Event Registrations
-
-                </p>
-
-                <h2
-
-                  className="
-
-                    text-4xl
-
-                    font-bold
-
-                    text-gold
-
-                  "
-
-                >
-
-                  {
-
-                    stats
-                      ?.totalRegistrations || 0
-
-                  }
-
-                </h2>
+                </div>
 
               </div>
 
-              <div
-
-                className="
-
-                  bg-white
-
-                  rounded-2xl
-
-                  shadow-md
-
-                  p-6
-
-                "
-
-              >
-
-                <p
-
-                  className="
-
-                    text-gray-500
-
-                    mb-2
-
-                  "
-
-                >
-
-                  Applicants
-
-                </p>
-
-                <h2
-
-                  className="
-
-                    text-4xl
-
-                    font-bold
-
-                    text-primary
-
-                  "
-
-                >
-
-                  {
-
-                    stats
-                      ?.totalApplicants || 0
-
-                  }
-
-                </h2>
-
-              </div>
-
-            </div>
+            </>
 
           )
 

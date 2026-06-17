@@ -1,5 +1,7 @@
 import {
+
   useEffect,
+
 } from "react";
 
 import {
@@ -10,8 +12,25 @@ import {
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
+import DashboardHeader
+from "../../components/dashboard/DashboardHeader";
+
+import DashboardLoading
+from "../../components/dashboard/DashboardLoading";
+
+import DashboardError
+from "../../components/dashboard/DashboardError";
+
+import DashboardStatsGrid
+from "../../components/dashboard/DashboardStatsGrid";
+
+import DashboardStatCard
+from "../../components/dashboard/DashboardStatCard";
+
 import {
+
   getAdminDashboard,
+
 } from "../../api/dashboardApi";
 
 import {
@@ -94,7 +113,7 @@ function AdminDashboardPage() {
 
           setDashboardError(
 
-            "Failed to load admin dashboard"
+            "Failed to load dashboard"
 
           )
 
@@ -119,136 +138,33 @@ function AdminDashboardPage() {
     <DashboardLayout>
 
       <div
-
         className="
-
           max-w-7xl
-
           mx-auto
-
         "
-
       >
 
-        <div
+        <DashboardHeader
 
-          className="
+          title="Admin Dashboard"
 
-            flex
+          subtitle="Platform overview and analytics."
 
-            justify-between
+          loading={
+            loading
+          }
 
-            items-center
+          onRefresh={
+            loadDashboard
+          }
 
-            mb-8
-
-          "
-
-        >
-
-          <div>
-
-            <h1
-
-              className="
-
-                text-4xl
-
-                font-bold
-
-                text-primary
-
-              "
-
-            >
-
-              Admin Dashboard
-
-            </h1>
-
-            <p
-
-              className="
-
-                text-gray-500
-
-                mt-2
-
-              "
-
-            >
-
-              Platform overview and analytics.
-
-            </p>
-
-          </div>
-
-          <button
-
-            onClick={
-              loadDashboard
-            }
-
-            disabled={
-              loading
-            }
-
-            className="
-
-              bg-primary
-
-              hover:bg-secondary
-
-              text-white
-
-              px-5
-
-              py-3
-
-              rounded-xl
-
-              transition
-
-              disabled:opacity-50
-
-            "
-
-          >
-
-            Refresh
-
-          </button>
-
-        </div>
+        />
 
         {
 
-          loading && (
+          loading &&
 
-            <div
-
-              className="
-
-                bg-white
-
-                rounded-2xl
-
-                shadow-md
-
-                p-12
-
-                text-center
-
-              "
-
-            >
-
-              Loading dashboard...
-
-            </div>
-
-          )
+          <DashboardLoading />
 
         }
 
@@ -258,31 +174,13 @@ function AdminDashboardPage() {
 
           error && (
 
-            <div
+            <DashboardError
 
-              className="
+              message={
+                error
+              }
 
-                bg-red-50
-
-                border
-
-                border-red-200
-
-                text-red-600
-
-                rounded-2xl
-
-                p-6
-
-                mb-8
-
-              "
-
-            >
-
-              {error}
-
-            </div>
+            />
 
           )
 
@@ -294,25 +192,9 @@ function AdminDashboardPage() {
 
           !error && (
 
-            <div
+            <DashboardStatsGrid>
 
-              className="
-
-                grid
-
-                grid-cols-1
-
-                md:grid-cols-2
-
-                xl:grid-cols-3
-
-                gap-6
-
-              "
-
-            >
-
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Students"
 
@@ -322,7 +204,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Organizations"
 
@@ -332,7 +214,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Events"
 
@@ -342,7 +224,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Pending Events"
 
@@ -352,7 +234,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Approved Events"
 
@@ -362,7 +244,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Rejected Events"
 
@@ -372,7 +254,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Opportunities"
 
@@ -382,7 +264,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Approved Opportunities"
 
@@ -392,7 +274,7 @@ function AdminDashboardPage() {
 
               />
 
-              <DashboardCard
+              <DashboardStatCard
 
                 title="Applications"
 
@@ -402,7 +284,7 @@ function AdminDashboardPage() {
 
               />
 
-            </div>
+            </DashboardStatsGrid>
 
           )
 
@@ -411,72 +293,6 @@ function AdminDashboardPage() {
       </div>
 
     </DashboardLayout>
-
-  );
-
-}
-
-function DashboardCard({
-
-  title,
-
-  value,
-
-}) {
-
-  return (
-
-    <div
-
-      className="
-
-        bg-white
-
-        rounded-2xl
-
-        shadow-md
-
-        p-6
-
-      "
-
-    >
-
-      <p
-
-        className="
-
-          text-gray-500
-
-          mb-2
-
-        "
-
-      >
-
-        {title}
-
-      </p>
-
-      <h2
-
-        className="
-
-          text-4xl
-
-          font-bold
-
-          text-primary
-
-        "
-
-      >
-
-        {value || 0}
-
-      </h2>
-
-    </div>
 
   );
 
