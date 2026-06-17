@@ -1,19 +1,22 @@
-import axiosInstance from "./axios";
+import axiosInstance
+from "./axios";
 
-export const getEventCategories =
+export const getFaculties =
 async () => {
 
   const response =
 
     await axiosInstance.get(
-      "/event-categories"
+
+      "/faculties"
+
     );
 
   return response.data.data;
 
 };
 
-export const createEventCategory =
+export const createFaculty =
 async (
   payload
 ) => {
@@ -22,7 +25,7 @@ async (
 
     await axiosInstance.post(
 
-      "/event-categories",
+      "/faculties",
 
       payload
 
@@ -32,7 +35,7 @@ async (
 
 };
 
-export const updateEventCategory =
+export const updateFaculty =
 async (
 
   id,
@@ -45,7 +48,7 @@ async (
 
     await axiosInstance.patch(
 
-      `/event-categories/${id}`,
+      `/faculties/${id}`,
 
       payload
 
@@ -55,7 +58,7 @@ async (
 
 };
 
-export const deleteEventCategory =
+export const deleteFaculty =
 async (
   id
 ) => {
@@ -64,7 +67,7 @@ async (
 
     await axiosInstance.delete(
 
-      `/event-categories/${id}`
+      `/faculties/${id}`
 
     );
 

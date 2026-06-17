@@ -128,6 +128,24 @@ from "../pages/admin/AdminPendingEventsPage";
 import AdminPendingOpportunitiesPage
 from "../pages/admin/AdminPendingOpportunitiesPage";
 
+import AdminEventCategoriesPage
+from "../pages/admin/AdminEventCategoriesPage";
+
+import AdminOpportunityTypesPage
+from "../pages/admin/AdminOpportunityTypesPage";
+
+import AdminUniversitiesPage
+from "../pages/admin/AdminUniversitiesPage";
+
+import AdminFacultiesPage
+from "../pages/admin/AdminFacultiesPage";
+
+import AdminMajorsPage
+from "../pages/admin/AdminMajorsPage";
+
+import AdminSkillsPage
+from "../pages/admin/AdminSkillsPage";
+
 function AppRoutes() {
 
   return (
@@ -698,6 +716,150 @@ function AppRoutes() {
           >
 
             <AdminPendingOpportunitiesPage />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+      <Route
+
+      path="/admin/event-categories"
+
+      element={
+
+        <ProtectedRoute
+
+          allowedRoles={[
+
+            "ADMIN",
+
+          ]}
+
+        >
+
+          <AdminEventCategoriesPage />
+
+        </ProtectedRoute>
+
+      }
+
+    />
+
+    <Route
+
+      path="/admin/opportunity-types"
+
+      element={
+
+        <ProtectedRoute
+
+          allowedRoles={[
+
+            "ADMIN",
+
+          ]}
+
+        >
+
+          <AdminOpportunityTypesPage />
+
+        </ProtectedRoute>
+
+      }
+
+    />
+
+    <Route
+
+      path="/admin/universities"
+
+      element={
+
+        <ProtectedRoute
+
+          allowedRoles={[
+
+            "ADMIN",
+
+          ]}
+
+        >
+
+          <AdminUniversitiesPage />
+
+        </ProtectedRoute>
+
+      }
+
+    />
+
+    <Route
+
+      path="/admin/faculties"
+
+      element={
+
+        <ProtectedRoute
+
+          allowedRoles={[
+
+            "ADMIN",
+
+          ]}
+
+        >
+
+          <AdminFacultiesPage />
+
+        </ProtectedRoute>
+
+      }
+
+    />
+
+      <Route
+
+        path="/admin/majors"
+
+        element={
+
+          <ProtectedRoute
+
+            allowedRoles={[
+
+              "ADMIN",
+
+            ]}
+
+          >
+
+            <AdminMajorsPage />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+      <Route
+
+        path="/admin/skills"
+
+        element={
+
+          <ProtectedRoute
+
+            allowedRoles={[
+
+              "ADMIN",
+
+            ]}
+
+          >
+
+            <AdminSkillsPage />
 
           </ProtectedRoute>
 

@@ -1,19 +1,20 @@
-import axiosInstance from "./axios";
+import axiosInstance
+from "./axios";
 
-export const getEventCategories =
+export const getMajors =
 async () => {
 
   const response =
 
     await axiosInstance.get(
-      "/event-categories"
+      "/majors"
     );
 
   return response.data.data;
 
 };
 
-export const createEventCategory =
+export const createMajor =
 async (
   payload
 ) => {
@@ -22,7 +23,7 @@ async (
 
     await axiosInstance.post(
 
-      "/event-categories",
+      "/majors",
 
       payload
 
@@ -32,7 +33,7 @@ async (
 
 };
 
-export const updateEventCategory =
+export const updateMajor =
 async (
 
   id,
@@ -45,7 +46,7 @@ async (
 
     await axiosInstance.patch(
 
-      `/event-categories/${id}`,
+      `/majors/${id}`,
 
       payload
 
@@ -55,7 +56,7 @@ async (
 
 };
 
-export const deleteEventCategory =
+export const deleteMajor =
 async (
   id
 ) => {
@@ -64,7 +65,7 @@ async (
 
     await axiosInstance.delete(
 
-      `/event-categories/${id}`
+      `/majors/${id}`
 
     );
 

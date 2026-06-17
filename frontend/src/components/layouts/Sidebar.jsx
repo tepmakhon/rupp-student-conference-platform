@@ -311,6 +311,66 @@ function Sidebar({
       ],
     },
 
+    {
+      name: "Event Categories",
+
+      path: "/admin/event-categories",
+
+      icon: ClipboardDocumentCheckIcon,
+
+      roles: ["ADMIN"],
+    },
+
+    {
+      name: "Opportunity Types",
+
+      path: "/admin/opportunity-types",
+
+      icon: ClipboardDocumentCheckIcon,
+
+      roles: ["ADMIN"],
+    },
+
+    {
+      name: "Universities",
+
+      path: "/admin/universities",
+
+      icon: ClipboardDocumentCheckIcon,
+
+      roles: ["ADMIN"],
+    },
+
+    {
+      name: "Faculties",
+
+      path: "/admin/faculties",
+
+      icon: ClipboardDocumentCheckIcon,
+
+      roles: ["ADMIN"],
+    },
+
+    {
+      name: "Majors",
+
+      path: "/admin/majors",
+
+      icon: ClipboardDocumentCheckIcon,
+
+      roles: ["ADMIN"],
+    },
+
+    {
+      name: "Skills",
+
+      path: "/admin/skills",
+
+      icon: ClipboardDocumentCheckIcon,
+
+      roles: ["ADMIN"],
+    },
+
     /*
     |--------------------------------------------------------------------------
     | Profile
