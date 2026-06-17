@@ -1,8 +1,8 @@
 import { Request, Response }
 from "express";
 
-import * as eventCategoryService
-from "./eventCategory.service.js";
+import * as service
+from "./opportunityType.service.js";
 
 import {
 
@@ -10,9 +10,11 @@ import {
 
   errorResponse,
 
-} from "../../utils/apiResponse.js";
+}
 
-export const getAllCategories =
+from "../../utils/apiResponse.js";
+
+export const getAllTypes =
 async (
 
   req: Request,
@@ -23,23 +25,21 @@ async (
 
   try {
 
-    const categories =
+    const data =
 
-      await eventCategoryService.getAllCategories();
+      await service.getAllTypes();
 
     return successResponse(
 
       res,
 
-      categories,
+      data,
 
-      "Categories retrieved"
+      "Types retrieved"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -55,7 +55,7 @@ async (
 
 };
 
-export const createCategory =
+export const createType =
 async (
 
   req: Request,
@@ -66,9 +66,9 @@ async (
 
   try {
 
-    const category =
+    const data =
 
-      await eventCategoryService.createCategory(
+      await service.createType(
 
         req.body
 
@@ -78,17 +78,15 @@ async (
 
       res,
 
-      category,
+      data,
 
-      "Category created",
+      "Type created",
 
       201
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -104,7 +102,7 @@ async (
 
 };
 
-export const updateCategory =
+export const updateType =
 async (
 
   req: Request,
@@ -115,9 +113,9 @@ async (
 
   try {
 
-    const category =
+    const data =
 
-      await eventCategoryService.updateCategory(
+      await service.updateType(
 
         BigInt(req.params.id as string),
 
@@ -129,15 +127,13 @@ async (
 
       res,
 
-      category,
+      data,
 
-      "Category updated"
+      "Type updated"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -153,7 +149,7 @@ async (
 
 };
 
-export const deleteCategory =
+export const deleteType =
 async (
 
   req: Request,
@@ -164,7 +160,7 @@ async (
 
   try {
 
-    await eventCategoryService.deleteCategory(
+    await service.deleteType(
 
       BigInt(req.params.id as string)
 
@@ -176,13 +172,11 @@ async (
 
       null,
 
-      "Category deleted"
+      "Type deleted"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 

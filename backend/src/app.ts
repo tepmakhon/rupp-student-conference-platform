@@ -22,6 +22,11 @@ import { successResponse } from "./utils/apiResponse.js";
 import userRoutes from "./modules/user/user.routes.js";
 import eventCategoryRoutes from "./modules/eventCategory/eventCategory.route.js";
 import activityRoutes from "./modules/activity/activity.routes.js";
+import opportunityTypeRoutes from "./modules/opportunity-type/opportunityType.routes.js";
+import universityRoutes from "./modules/university/university.routes.js";
+import facultyRoutes from "./modules/faculty/faculty.routes.js";
+import majorRoutes from "./modules/major/major.routes.js";
+import skillRoutes from "./modules/skill/skill.routes.js";
 
 setupBigIntSerialization();
 
@@ -110,6 +115,30 @@ app.use(
   activityRoutes
 );
 
+app.use(
+  "/api/opportunity-types",
+  opportunityTypeRoutes
+);
+
+app.use(
+  "/api/universities",
+  universityRoutes
+);
+
+app.use(
+  "/api/faculties",
+  facultyRoutes
+);
+
+app.use(
+  "/api/majors",
+  majorRoutes
+);
+
+app.use(
+  "/api/skills",
+  skillRoutes
+);
 /*
 |--------------------------------------------------------------------------
 | Swagger Documentation

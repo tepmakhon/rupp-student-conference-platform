@@ -1,8 +1,8 @@
 import { Request, Response }
 from "express";
 
-import * as eventCategoryService
-from "./eventCategory.service.js";
+import * as service
+from "./faculty.service.js";
 
 import {
 
@@ -10,36 +10,33 @@ import {
 
   errorResponse,
 
-} from "../../utils/apiResponse.js";
+}
 
-export const getAllCategories =
+from "../../utils/apiResponse.js";
+
+export const getAllFaculties =
 async (
-
-  req: Request,
-
+  req:Request,
   res: Response
-
 ) => {
 
   try {
 
-    const categories =
+    const data =
 
-      await eventCategoryService.getAllCategories();
+      await service.getAllFaculties();
 
     return successResponse(
 
       res,
 
-      categories,
+      data,
 
-      "Categories retrieved"
+      "Faculties retrieved"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -55,20 +52,17 @@ async (
 
 };
 
-export const createCategory =
+export const createFaculty =
 async (
-
   req: Request,
-
   res: Response
-
 ) => {
 
   try {
 
-    const category =
+    const data =
 
-      await eventCategoryService.createCategory(
+      await service.createFaculty(
 
         req.body
 
@@ -78,17 +72,15 @@ async (
 
       res,
 
-      category,
+      data,
 
-      "Category created",
+      "Faculty created",
 
       201
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -104,22 +96,21 @@ async (
 
 };
 
-export const updateCategory =
+export const updateFaculty =
 async (
-
   req: Request,
-
   res: Response
-
 ) => {
 
   try {
 
-    const category =
+    const data =
 
-      await eventCategoryService.updateCategory(
+      await service.updateFaculty(
 
-        BigInt(req.params.id as string),
+        BigInt(
+          req.params.id as string
+        ),
 
         req.body
 
@@ -129,15 +120,13 @@ async (
 
       res,
 
-      category,
+      data,
 
-      "Category updated"
+      "Faculty updated"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -153,20 +142,19 @@ async (
 
 };
 
-export const deleteCategory =
+export const deleteFaculty =
 async (
-
   req: Request,
-
   res: Response
-
 ) => {
 
   try {
 
-    await eventCategoryService.deleteCategory(
+    await service.deleteFaculty(
 
-      BigInt(req.params.id as string)
+      BigInt(
+        req.params.id as string
+      )
 
     );
 
@@ -176,13 +164,11 @@ async (
 
       null,
 
-      "Category deleted"
+      "Faculty deleted"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 

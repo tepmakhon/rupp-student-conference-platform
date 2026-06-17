@@ -1,8 +1,8 @@
 import { Request, Response }
 from "express";
 
-import * as eventCategoryService
-from "./eventCategory.service.js";
+import * as service
+from "./major.service.js";
 
 import {
 
@@ -10,9 +10,11 @@ import {
 
   errorResponse,
 
-} from "../../utils/apiResponse.js";
+}
 
-export const getAllCategories =
+from "../../utils/apiResponse.js";
+
+export const getAllMajors =
 async (
 
   req: Request,
@@ -23,23 +25,21 @@ async (
 
   try {
 
-    const categories =
+    const data =
 
-      await eventCategoryService.getAllCategories();
+      await service.getAllMajors();
 
     return successResponse(
 
       res,
 
-      categories,
+      data,
 
-      "Categories retrieved"
+      "Majors retrieved"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -55,7 +55,7 @@ async (
 
 };
 
-export const createCategory =
+export const createMajor =
 async (
 
   req: Request,
@@ -66,9 +66,9 @@ async (
 
   try {
 
-    const category =
+    const data =
 
-      await eventCategoryService.createCategory(
+      await service.createMajor(
 
         req.body
 
@@ -78,17 +78,15 @@ async (
 
       res,
 
-      category,
+      data,
 
-      "Category created",
+      "Major created",
 
       201
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -104,7 +102,7 @@ async (
 
 };
 
-export const updateCategory =
+export const updateMajor =
 async (
 
   req: Request,
@@ -115,11 +113,13 @@ async (
 
   try {
 
-    const category =
+    const data =
 
-      await eventCategoryService.updateCategory(
+      await service.updateMajor(
 
-        BigInt(req.params.id as string),
+        BigInt(
+          req.params.id as string
+        ),
 
         req.body
 
@@ -129,15 +129,13 @@ async (
 
       res,
 
-      category,
+      data,
 
-      "Category updated"
+      "Major updated"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
@@ -153,7 +151,7 @@ async (
 
 };
 
-export const deleteCategory =
+export const deleteMajor =
 async (
 
   req: Request,
@@ -164,9 +162,11 @@ async (
 
   try {
 
-    await eventCategoryService.deleteCategory(
+    await service.deleteMajor(
 
-      BigInt(req.params.id as string)
+      BigInt(
+        req.params.id as string
+      )
 
     );
 
@@ -176,13 +176,11 @@ async (
 
       null,
 
-      "Category deleted"
+      "Major deleted"
 
     );
 
-  }
-
-  catch (error:any) {
+  } catch (error: any) {
 
     return errorResponse(
 
