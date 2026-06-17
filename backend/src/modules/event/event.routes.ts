@@ -12,6 +12,7 @@ import {
   getMyRegistrationsController,
   updateEventController,
   deleteEventController,
+  getEventRegistrationsController,
 } from "./event.controller.js";
 
 import {
@@ -212,6 +213,16 @@ router.get(
  *       404:
  *         description: Event not found
  */
+
+router.get(
+  "/:id/registrations",
+  authMiddleware,
+  rbac([
+    "ORGANIZATION",
+  ]),
+  getEventRegistrationsController
+);
+
 router.patch(
   "/:id/approve",
   authMiddleware,

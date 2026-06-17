@@ -10,6 +10,8 @@ import {
 
   useNavigate,
 
+  useParams,
+
 } from "react-router-dom";
 
 import toast
@@ -21,12 +23,13 @@ import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
 import EventForm
-
 from "../../components/events/EventForm";
 
 import {
 
-  createEvent,
+  getEventById,
+
+  updateEvent,
 
 } from "../../api/eventApi";
 
@@ -36,11 +39,23 @@ import {
 
 } from "../../api/eventCategoryApi";
 
-function CreateEventPage() {
+function EditEventPage() {
+
+  const { id } =
+
+    useParams();
 
   const navigate =
 
     useNavigate();
+
+  const [
+
+    loading,
+
+    setLoading,
+
+  ] = useState(true);
 
   const [
 
@@ -52,33 +67,99 @@ function CreateEventPage() {
 
   const [
 
-    loading,
+    initialData,
 
-    setLoading,
+    setInitialData,
 
-  ] = useState(true);
+  ] = useState(null);
 
   useEffect(() => {
 
-    loadCategories();
+    loadPage();
 
   }, []);
 
-  const loadCategories =
+  const loadPage =
 
     async () => {
 
       try {
 
-        const data =
+        const [
 
-          await getEventCategories();
+          event,
+
+          categoriesData,
+
+        ] = await Promise.all([
+
+          getEventById(id),
+
+          getEventCategories(),
+
+        ]);
 
         setCategories(
 
-          data
+          categoriesData
 
         );
+
+        setInitialData({
+
+          title:
+
+            event.title || "",
+
+          description:
+
+            event.description || "",
+
+          location:
+
+            event.location || "",
+
+          categoryId:
+
+            String(
+
+              event.categoryId
+
+            ),
+
+          capacity:
+
+            event.capacity || "",
+
+          eventDate:
+
+            event.eventDate
+
+            ?
+
+            new Date(
+
+              event.eventDate
+
+            )
+
+            .toISOString()
+
+            .slice(
+
+              0,
+
+              16
+
+            )
+
+            : "",
+
+          bannerImageUrl:
+
+            event.bannerImageUrl || "",
+
+        });
 
       } catch (error) {
 
@@ -90,7 +171,7 @@ function CreateEventPage() {
 
         toast.error(
 
-          "Failed to load categories"
+          "Failed to load event"
 
         );
 
@@ -106,13 +187,15 @@ function CreateEventPage() {
 
     };
 
-  const handleCreate =
+  const handleUpdate =
 
     async (form) => {
 
       try {
 
-        await createEvent(
+        await updateEvent(
+
+          id,
 
           form
 
@@ -120,7 +203,7 @@ function CreateEventPage() {
 
         toast.success(
 
-          "Event created"
+          "Event updated"
 
         );
 
@@ -142,7 +225,7 @@ function CreateEventPage() {
 
           error?.response?.data?.message ||
 
-          "Failed to create event"
+          "Failed to update event"
 
         );
 
@@ -175,7 +258,7 @@ function CreateEventPage() {
             "
           >
 
-            Create Event
+            Edit Event
 
           </h1>
 
@@ -186,7 +269,7 @@ function CreateEventPage() {
             "
           >
 
-            Publish a new event for students.
+            Update your event information.
 
           </p>
 
@@ -215,15 +298,19 @@ function CreateEventPage() {
 
             <EventForm
 
+              initialData={
+                initialData
+              }
+
               categories={
                 categories
               }
 
               onSubmit={
-                handleCreate
+                handleUpdate
               }
 
-              submitText="Create Event"
+              submitText="Save Changes"
 
             />
 
@@ -239,4 +326,4 @@ function CreateEventPage() {
 
 }
 
-export default CreateEventPage;
+export default EditEventPage;

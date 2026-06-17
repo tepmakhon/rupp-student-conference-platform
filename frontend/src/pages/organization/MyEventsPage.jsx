@@ -396,25 +396,58 @@ function MyEventsPage() {
                         <div
                           className="
                             flex
+                            flex-wrap
                             gap-3
                           "
                         >
 
-                          <button
+                          <Link
+
+                            to={
+
+                              `/organization/events/${event.id}/registrations`
+
+                            }
 
                             className="
-                              bg-secondary
+                              bg-primary
+                              hover:bg-secondary
                               text-white
                               px-4
                               py-2
                               rounded-xl
+                              transition
+                            "
+
+                          >
+
+                            Registrations
+
+                          </Link>
+
+                          <Link
+
+                            to={
+
+                              `/organization/events/${event.id}/edit`
+
+                            }
+
+                            className="
+                              bg-secondary
+                              hover:bg-secondary/90
+                              text-white
+                              px-4
+                              py-2
+                              rounded-xl
+                              transition
                             "
 
                           >
 
                             Edit
 
-                          </button>
+                          </Link>
 
                           <button
 
@@ -435,6 +468,7 @@ function MyEventsPage() {
                               px-4
                               py-2
                               rounded-xl
+                              transition
                             "
 
                           >

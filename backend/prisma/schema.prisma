@@ -326,14 +326,13 @@ model EventRegistration {
 
   registeredAt DateTime @default(now()) @map("registered_at")
 
-  event Event @relation(fields: [eventId], references: [id])
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
   student Student @relation(fields: [studentId], references: [id])
 
   attendanceRecord AttendanceRecord?
 
   @@unique([eventId, studentId])
-
   @@map("event_registrations")
 }
 
@@ -365,10 +364,10 @@ model Opportunity {
   id BigInt @id @default(autoincrement()) @db.BigInt
 
   organizationId BigInt @map("organization_id") @db.BigInt
-  typeId BigInt @map("type_id") @db.BigInt
+  typeId         BigInt @map("type_id") @db.BigInt
 
-  title String @db.VarChar(255)
-  description String?
+  title        String  @db.VarChar(255)
+  description  String?
   requirements String?
 
   coverImageUrl String? @map("cover_image_url")
@@ -378,12 +377,12 @@ model Opportunity {
   status OpportunityStatus @default(PENDING)
 
   approvedAt DateTime? @map("approved_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
 
-  organization Organization @relation(fields: [organizationId], references: [id])
-  type OpportunityType @relation(fields: [typeId], references: [id])
+  organization Organization    @relation(fields: [organizationId], references: [id])
+  type         OpportunityType @relation(fields: [typeId], references: [id])
 
-  applications Application[]
+  applications    Application[]
   savedByStudents SavedOpportunity[]
 
   @@map("opportunities")
@@ -407,7 +406,6 @@ model Application {
   student Student @relation(fields: [studentId], references: [id])
 
   @@unique([opportunityId, studentId])
-
   @@map("applications")
 }
 

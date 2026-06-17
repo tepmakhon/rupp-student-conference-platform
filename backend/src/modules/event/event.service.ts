@@ -699,6 +699,28 @@ export const deleteEvent =
 
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Delete child records first
+    |--------------------------------------------------------------------------
+    */
+
+    await prisma.eventRegistration.deleteMany({
+
+      where: {
+
+        eventId,
+
+      },
+
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Delete event
+    |--------------------------------------------------------------------------
+    */
+
     await prisma.event.delete({
 
       where: {
@@ -710,5 +732,107 @@ export const deleteEvent =
     });
 
     return true;
+
+};
+
+export const getEventRegistrations =
+  async (
+    eventId: bigint,
+    userId: bigint
+  ) => {
+
+    const organization =
+
+      await prisma.organization.findUnique({
+
+        where: {
+          userId,
+        },
+
+      });
+
+    if (!organization) {
+
+      throw new AppError(
+
+        "Organization not found",
+
+        404
+
+      );
+
+    }
+
+    const event =
+
+      await prisma.event.findUnique({
+
+        where: {
+          id: eventId,
+        },
+
+      });
+
+    if (
+
+      !event ||
+
+      event.organizationId !==
+
+      organization.id
+
+    ) {
+
+      throw new AppError(
+
+        "Not authorized",
+
+        403
+
+      );
+
+    }
+
+    return prisma.eventRegistration.findMany({
+
+      where: {
+        eventId,
+      },
+
+      include: {
+
+        student: {
+
+          include: {
+
+            user: {
+
+              include: {
+
+                profile: true,
+
+              },
+
+            },
+
+            university: true,
+
+            faculty: true,
+
+            major: true,
+
+          },
+
+        },
+
+      },
+
+      orderBy: {
+
+        registeredAt: "desc",
+
+      },
+
+    });
 
 };

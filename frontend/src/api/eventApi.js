@@ -69,6 +69,21 @@ export const getMyRegisteredEvents =
 |--------------------------------------------------------------------------
 */
 
+export const getEventRegistrations =
+  async (id) => {
+
+    const response =
+
+      await axiosInstance.get(
+
+        `/events/${id}/registrations`
+
+      );
+
+    return response.data.data;
+
+};
+
 export const getMyEvents =
   async () => {
 

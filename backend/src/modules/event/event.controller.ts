@@ -503,3 +503,55 @@ export const deleteEventController =
     }
 
 };
+
+export const getEventRegistrationsController =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+
+      const user =
+        req.user!;
+
+      const registrations =
+
+        await eventService.getEventRegistrations(
+
+          BigInt(
+            Array.isArray(req.params.id)
+              ? req.params.id[0]
+              : req.params.id
+          ),
+
+
+          BigInt(user.id)
+
+        );
+
+      return successResponse(
+
+        res,
+
+        registrations,
+
+        "Registrations retrieved"
+
+      );
+
+    } catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 400
+
+      );
+
+    }
+
+};

@@ -89,11 +89,17 @@ from "../pages/student/MyEventsPage";
 import MyOpportunitiesPage
 from "../pages/organization/MyOpportunitiesPage";
 
+import EventRegistrationsPage
+from "../pages/organization/EventRegistrationsPage";
+
 import OpportunityApplicantsPage
 from "../pages/organization/OpportunityApplicantsPage";
 
 import CreateEventPage
 from "../pages/events/CreateEventPage";
+
+import EditEventPage
+from "../pages/organization/EditEventPage";
 
 import OrganizationMyEventsPage
 from "../pages/organization/MyEventsPage";
@@ -442,6 +448,30 @@ function AppRoutes() {
 
       <Route
 
+        path="/organization/events/:id/registrations"
+
+        element={
+
+          <ProtectedRoute
+
+            allowedRoles={[
+
+              "ORGANIZATION",
+
+            ]}
+
+          >
+
+            <EventRegistrationsPage />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+      <Route
+
         path="/events/create"
 
         element={
@@ -457,6 +487,30 @@ function AppRoutes() {
           >
 
             <CreateEventPage />
+
+          </ProtectedRoute>
+
+        }
+
+      />
+
+      <Route
+
+        path="/organization/events/:id/edit"
+
+        element={
+
+          <ProtectedRoute
+
+            allowedRoles={[
+
+              "ORGANIZATION",
+
+            ]}
+
+          >
+
+            <EditEventPage />
 
           </ProtectedRoute>
 
