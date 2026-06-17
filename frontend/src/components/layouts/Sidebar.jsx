@@ -23,6 +23,10 @@ import {
 
   ClipboardDocumentCheckIcon,
 
+  TrophyIcon,
+
+  ClockIcon,
+
 } from "@heroicons/react/24/outline";
 
 function Sidebar({
@@ -63,6 +67,31 @@ function Sidebar({
         "ORGANIZATION",
 
       ],
+    },
+
+    {
+      name:
+
+        "Leaderboard",
+
+      path:
+
+        "/leaderboard",
+
+      icon:
+
+        TrophyIcon,
+
+      roles: [
+
+        "ADMIN",
+
+        "STUDENT",
+
+        "ORGANIZATION",
+
+      ],
+
     },
 
     {
@@ -165,6 +194,27 @@ function Sidebar({
         "STUDENT",
 
       ],
+    },
+
+    {
+      name:
+
+        "Activity History",
+
+      path:
+
+        "/activity-history",
+
+      icon:
+
+        ClockIcon,
+
+      roles: [
+
+        "STUDENT",
+
+      ],
+
     },
 
     /*

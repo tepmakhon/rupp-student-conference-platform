@@ -31,6 +31,15 @@ from "../pages/dashboard/DashboardPage";
 
 /*
 |--------------------------------------------------------------------------
+| Leaderboard
+|--------------------------------------------------------------------------
+*/
+
+import LeaderboardPage
+from "../pages/leaderboard/LeaderboardPage";
+
+/*
+|--------------------------------------------------------------------------
 | Profile
 |--------------------------------------------------------------------------
 */
@@ -79,6 +88,9 @@ from "../pages/student/MyApplicationsPage";
 
 import StudentMyEventsPage
 from "../pages/student/MyEventsPage";
+
+import ActivityHistoryPage
+from "../pages/student/ActivityHistoryPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -199,6 +211,35 @@ function AppRoutes() {
           }
 
         />
+        {/* Leaderboard */}
+
+      <Route
+
+        path="/leaderboard"
+
+        element={
+
+          <ProtectedRoute
+
+            allowedRoles={[
+
+              "ADMIN",
+
+              "STUDENT",
+
+              "ORGANIZATION",
+
+            ]}
+
+          >
+
+            <LeaderboardPage />
+
+          </ProtectedRoute>
+
+        }
+
+      />
 
         {/* Profile */}
 
@@ -419,6 +460,30 @@ function AppRoutes() {
         }
 
       />
+
+      <Route
+
+      path="/activity-history"
+
+      element={
+
+        <ProtectedRoute
+
+          allowedRoles={[
+
+            "STUDENT",
+
+          ]}
+
+        >
+
+          <ActivityHistoryPage />
+
+        </ProtectedRoute>
+
+      }
+
+    />
 
         {/* Organization */}
 
