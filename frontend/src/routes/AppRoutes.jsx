@@ -8,6 +8,11 @@ import {
 import ProtectedRoute
 from "./ProtectedRoute";
 
+import {
+  ROLES,
+  ALL_ROLES,
+} from "../constants/roles";
+
 /*
 |--------------------------------------------------------------------------
 | Auth
@@ -101,6 +106,9 @@ from "../pages/student/ActivityHistoryPage";
 import MyOpportunitiesPage
 from "../pages/organization/MyOpportunitiesPage";
 
+import EditOpportunityPage
+from "../pages/organization/EditOpportunityPage";
+
 import EventRegistrationsPage
 from "../pages/organization/EventRegistrationsPage";
 
@@ -147,6 +155,30 @@ import AdminSkillsPage
 from "../pages/admin/AdminSkillsPage";
 
 function AppRoutes() {
+
+  const protect = (
+
+    element,
+
+    allowedRoles
+
+  ) => (
+
+    <ProtectedRoute
+
+      allowedRoles={
+
+        allowedRoles
+
+      }
+
+    >
+
+      {element}
+
+    </ProtectedRoute>
+
+  );
 
   return (
 
@@ -200,7 +232,7 @@ function AppRoutes() {
 
         />
 
-        {/* Dashboard */}
+        {/* Shared */}
 
         <Route
 
@@ -208,58 +240,35 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <DashboardPage />,
 
-                "ADMIN",
+              ALL_ROLES
 
-                "STUDENT",
-
-                "ORGANIZATION",
-
-              ]}
-
-            >
-
-              <DashboardPage />
-
-            </ProtectedRoute>
+            )
 
           }
 
         />
-        {/* Leaderboard */}
 
-      <Route
+        <Route
 
-        path="/leaderboard"
+          path="/leaderboard"
 
-        element={
+          element={
 
-          <ProtectedRoute
+            protect(
 
-            allowedRoles={[
+              <LeaderboardPage />,
 
-              "ADMIN",
+              ALL_ROLES
 
-              "STUDENT",
+            )
 
-              "ORGANIZATION",
+          }
 
-            ]}
-
-          >
-
-            <LeaderboardPage />
-
-          </ProtectedRoute>
-
-        }
-
-      />
-
-        {/* Profile */}
+        />
 
         <Route
 
@@ -267,29 +276,17 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <ProfilePage />,
 
-                "ADMIN",
+              ALL_ROLES
 
-                "STUDENT",
-
-                "ORGANIZATION",
-
-              ]}
-
-            >
-
-              <ProfilePage />
-
-            </ProtectedRoute>
+            )
 
           }
 
         />
-
-        {/* Events */}
 
         <Route
 
@@ -297,23 +294,35 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <EventListPage />,
 
-                "ADMIN",
+              ALL_ROLES
 
-                "STUDENT",
+            )
 
-                "ORGANIZATION",
+          }
 
-              ]}
+        />
 
-            >
+        <Route
 
-              <EventListPage />
+          path="/events/create"
 
-            </ProtectedRoute>
+          element={
+
+            protect(
+
+              <CreateEventPage />,
+
+              [
+
+                ROLES.ORGANIZATION,
+
+              ]
+
+            )
 
           }
 
@@ -325,29 +334,17 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <EventDetailPage />,
 
-                "ADMIN",
+              ALL_ROLES
 
-                "STUDENT",
-
-                "ORGANIZATION",
-
-              ]}
-
-            >
-
-              <EventDetailPage />
-
-            </ProtectedRoute>
+            )
 
           }
 
         />
-
-        {/* Opportunities */}
 
         <Route
 
@@ -355,23 +352,35 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <OpportunityListPage />,
 
-                "ADMIN",
+              ALL_ROLES
 
-                "STUDENT",
+            )
 
-                "ORGANIZATION",
+          }
 
-              ]}
+        />
 
-            >
+        <Route
 
-              <OpportunityListPage />
+          path="/opportunities/create"
 
-            </ProtectedRoute>
+          element={
+
+            protect(
+
+              <CreateOpportunityPage />,
+
+              [
+
+                ROLES.ORGANIZATION,
+
+              ]
+
+            )
 
           }
 
@@ -383,23 +392,13 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <OpportunityDetailPage />,
 
-                "ADMIN",
+              ALL_ROLES
 
-                "STUDENT",
-
-                "ORGANIZATION",
-
-              ]}
-
-            >
-
-              <OpportunityDetailPage />
-
-            </ProtectedRoute>
+            )
 
           }
 
@@ -413,19 +412,17 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <SavedOpportunitiesPage />,
 
-                "STUDENT",
+              [
 
-              ]}
+                ROLES.STUDENT,
 
-            >
+              ]
 
-              <SavedOpportunitiesPage />
-
-            </ProtectedRoute>
+            )
 
           }
 
@@ -437,435 +434,377 @@ function AppRoutes() {
 
           element={
 
-            <ProtectedRoute
+            protect(
 
-              allowedRoles={[
+              <MyApplicationsPage />,
 
-                "STUDENT",
+              [
 
-              ]}
+                ROLES.STUDENT,
 
-            >
+              ]
 
-              <MyApplicationsPage />
-
-            </ProtectedRoute>
+            )
 
           }
-        
+
         />
 
-      <Route
+        <Route
 
-        path="/my-events"
+          path="/my-events"
 
-        element={
+          element={
 
-          <ProtectedRoute
+            protect(
 
-            allowedRoles={[
+              <StudentMyEventsPage />,
 
-              "STUDENT",
+              [
 
-            ]}
+                ROLES.STUDENT,
 
-          >
+              ]
 
-            <StudentMyEventsPage />
+            )
 
-          </ProtectedRoute>
+          }
 
-        }
+        />
 
-      />
+        <Route
 
-      <Route
+          path="/activity-history"
 
-      path="/activity-history"
+          element={
 
-      element={
+            protect(
 
-        <ProtectedRoute
+              <ActivityHistoryPage />,
 
-          allowedRoles={[
+              [
 
-            "STUDENT",
+                ROLES.STUDENT,
 
-          ]}
+              ]
 
-        >
+            )
 
-          <ActivityHistoryPage />
+          }
 
-        </ProtectedRoute>
-
-      }
-
-    />
+        />
 
         {/* Organization */}
 
-      <Route
+        <Route
 
-        path="/opportunities/create"
+          path="/organization/events"
 
-        element={
+          element={
 
-          <ProtectedRoute
+            protect(
 
-            allowedRoles={[
+              <OrganizationMyEventsPage />,
 
-              "ORGANIZATION",
+              [
 
-            ]}
+                ROLES.ORGANIZATION,
 
-          >
+              ]
 
-            <CreateOpportunityPage />
+            )
 
-          </ProtectedRoute>
+          }
 
-        }
+        />
 
-      />
+        <Route
 
-      <Route
+          path="/organization/events/:id/edit"
 
-        path="/organization/events/:id/registrations"
+          element={
 
-        element={
+            protect(
 
-          <ProtectedRoute
+              <EditEventPage />,
 
-            allowedRoles={[
+              [
 
-              "ORGANIZATION",
+                ROLES.ORGANIZATION,
 
-            ]}
+              ]
 
-          >
+            )
 
-            <EventRegistrationsPage />
+          }
 
-          </ProtectedRoute>
+        />
 
-        }
+        <Route
 
-      />
+          path="/organization/events/:id/registrations"
 
-      <Route
+          element={
 
-        path="/events/create"
+            protect(
 
-        element={
+              <EventRegistrationsPage />,
 
-          <ProtectedRoute
+              [
 
-            allowedRoles={[
+                ROLES.ORGANIZATION,
 
-              "ORGANIZATION",
+              ]
 
-            ]}
+            )
 
-          >
+          }
 
-            <CreateEventPage />
+        />
 
-          </ProtectedRoute>
+        <Route
 
-        }
+          path="/organization/opportunities"
 
-      />
+          element={
 
-      <Route
+            protect(
 
-        path="/organization/events/:id/edit"
+              <MyOpportunitiesPage />,
 
-        element={
+              [
 
-          <ProtectedRoute
+                ROLES.ORGANIZATION,
 
-            allowedRoles={[
+              ]
 
-              "ORGANIZATION",
+            )
 
-            ]}
+          }
 
-          >
+        />
 
-            <EditEventPage />
+        <Route
 
-          </ProtectedRoute>
+          path="/organization/opportunities/:id/edit"
 
-        }
+          element={
 
-      />
+            protect(
 
-      <Route
+              <EditOpportunityPage />,
 
-        path="/organization/opportunities"
+              [
 
-        element={
+                ROLES.ORGANIZATION,
 
-          <ProtectedRoute
+              ]
 
-            allowedRoles={[
+            )
 
-              "ORGANIZATION",
+          }
 
-            ]}
+        />
 
-          >
+        <Route
 
-            <MyOpportunitiesPage />
+          path="/organization/opportunities/:id/applicants"
 
-          </ProtectedRoute>
+          element={
 
-        }
+            protect(
 
-      />
+              <OpportunityApplicantsPage />,
 
-      <Route
+              [
 
-        path="/organization/opportunities/:id/applicants"
+                ROLES.ORGANIZATION,
 
-        element={
+              ]
 
-          <ProtectedRoute
+            )
 
-            allowedRoles={[
+          }
 
-              "ORGANIZATION",
-
-            ]}
-
-          >
-
-            <OpportunityApplicantsPage />
-
-          </ProtectedRoute>
-
-        }
-
-      />
-
-      <Route
-
-        path="/organization/events"
-
-        element={
-
-          <ProtectedRoute
-
-            allowedRoles={[
-
-              "ORGANIZATION",
-
-            ]}
-
-          >
-
-            <OrganizationMyEventsPage />
-
-          </ProtectedRoute>
-
-        }
-
-      />
+        />
 
         {/* Admin */}
 
-      <Route
+        <Route
 
-        path="/admin/events/pending"
+          path="/admin/events/pending"
 
-        element={
+          element={
 
-          <ProtectedRoute
+            protect(
 
-            allowedRoles={[
+              <AdminPendingEventsPage />,
 
-              "ADMIN",
+              [
 
-            ]}
+                ROLES.ADMIN,
 
-          >
+              ]
 
-            <AdminPendingEventsPage />
+            )
 
-          </ProtectedRoute>
+          }
 
-        }
+        />
 
-      />
+        <Route
 
-      <Route
+          path="/admin/opportunities/pending"
 
-        path="/admin/opportunities/pending"
+          element={
 
-        element={
+            protect(
 
-          <ProtectedRoute
+              <AdminPendingOpportunitiesPage />,
 
-            allowedRoles={[
+              [
 
-              "ADMIN",
+                ROLES.ADMIN,
 
-            ]}
+              ]
 
-          >
+            )
 
-            <AdminPendingOpportunitiesPage />
+          }
 
-          </ProtectedRoute>
+        />
 
-        }
+        <Route
 
-      />
+          path="/admin/event-categories"
 
-      <Route
+          element={
 
-      path="/admin/event-categories"
+            protect(
 
-      element={
+              <AdminEventCategoriesPage />,
 
-        <ProtectedRoute
+              [
 
-          allowedRoles={[
+                ROLES.ADMIN,
 
-            "ADMIN",
+              ]
 
-          ]}
+            )
 
-        >
+          }
 
-          <AdminEventCategoriesPage />
+        />
 
-        </ProtectedRoute>
+        <Route
 
-      }
+          path="/admin/opportunity-types"
 
-    />
+          element={
 
-    <Route
+            protect(
 
-      path="/admin/opportunity-types"
+              <AdminOpportunityTypesPage />,
 
-      element={
+              [
 
-        <ProtectedRoute
+                ROLES.ADMIN,
 
-          allowedRoles={[
+              ]
 
-            "ADMIN",
+            )
 
-          ]}
+          }
 
-        >
+        />
 
-          <AdminOpportunityTypesPage />
+        <Route
 
-        </ProtectedRoute>
+          path="/admin/universities"
 
-      }
+          element={
 
-    />
+            protect(
 
-    <Route
+              <AdminUniversitiesPage />,
 
-      path="/admin/universities"
+              [
 
-      element={
+                ROLES.ADMIN,
 
-        <ProtectedRoute
+              ]
 
-          allowedRoles={[
+            )
 
-            "ADMIN",
+          }
 
-          ]}
+        />
 
-        >
+        <Route
 
-          <AdminUniversitiesPage />
+          path="/admin/faculties"
 
-        </ProtectedRoute>
+          element={
 
-      }
+            protect(
 
-    />
+              <AdminFacultiesPage />,
 
-    <Route
+              [
 
-      path="/admin/faculties"
+                ROLES.ADMIN,
 
-      element={
+              ]
 
-        <ProtectedRoute
+            )
 
-          allowedRoles={[
+          }
 
-            "ADMIN",
+        />
 
-          ]}
+        <Route
 
-        >
+          path="/admin/majors"
 
-          <AdminFacultiesPage />
+          element={
 
-        </ProtectedRoute>
+            protect(
 
-      }
+              <AdminMajorsPage />,
 
-    />
+              [
 
-      <Route
+                ROLES.ADMIN,
 
-        path="/admin/majors"
+              ]
 
-        element={
+            )
 
-          <ProtectedRoute
+          }
 
-            allowedRoles={[
+        />
 
-              "ADMIN",
+        <Route
 
-            ]}
+          path="/admin/skills"
 
-          >
+          element={
 
-            <AdminMajorsPage />
+            protect(
 
-          </ProtectedRoute>
+              <AdminSkillsPage />,
 
-        }
+              [
 
-      />
+                ROLES.ADMIN,
 
-      <Route
+              ]
 
-        path="/admin/skills"
+            )
 
-        element={
+          }
 
-          <ProtectedRoute
-
-            allowedRoles={[
-
-              "ADMIN",
-
-            ]}
-
-          >
-
-            <AdminSkillsPage />
-
-          </ProtectedRoute>
-
-        }
-
-      />
+        />
 
         {/* 404 */}
 

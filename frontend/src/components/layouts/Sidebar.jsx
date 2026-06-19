@@ -1,33 +1,20 @@
 import {
+
   Link,
+
   useLocation,
+
 } from "react-router-dom";
 
 import {
+
   useSelector,
+
 } from "react-redux";
 
-import {
+import sidebarMenu
 
-  HomeIcon,
-
-  CalendarDaysIcon,
-
-  BriefcaseIcon,
-
-  BookmarkIcon,
-
-  PlusCircleIcon,
-
-  UserCircleIcon,
-
-  ClipboardDocumentCheckIcon,
-
-  TrophyIcon,
-
-  ClockIcon,
-
-} from "@heroicons/react/24/outline";
+from "../../constants/sidebarMenu";
 
 function Sidebar({
 
@@ -38,9 +25,11 @@ function Sidebar({
 }) {
 
   const location =
+
     useLocation();
 
   const role =
+
     useSelector(
 
       (state) =>
@@ -49,368 +38,16 @@ function Sidebar({
 
     );
 
-  const allMenus = [
-
-    {
-      name: "Dashboard",
-
-      path: "/dashboard",
-
-      icon: HomeIcon,
-
-      roles: [
-
-        "ADMIN",
-
-        "STUDENT",
-
-        "ORGANIZATION",
-
-      ],
-    },
-
-    {
-      name:
-
-        "Leaderboard",
-
-      path:
-
-        "/leaderboard",
-
-      icon:
-
-        TrophyIcon,
-
-      roles: [
-
-        "ADMIN",
-
-        "STUDENT",
-
-        "ORGANIZATION",
-
-      ],
-
-    },
-
-    {
-      name: "Events",
-
-      path: "/events",
-
-      icon: CalendarDaysIcon,
-
-      roles: [
-
-        "ADMIN",
-
-        "STUDENT",
-
-        "ORGANIZATION",
-
-      ],
-    },
-
-    {
-      name: "Opportunities",
-
-      path: "/opportunities",
-
-      icon: BriefcaseIcon,
-
-      roles: [
-
-        "ADMIN",
-
-        "STUDENT",
-
-        "ORGANIZATION",
-
-      ],
-    },
-
-    /*
-    |--------------------------------------------------------------------------
-    | Student
-    |--------------------------------------------------------------------------
-    */
-
-    {
-      name:
-
-        "Saved Opportunities",
-
-      path:
-
-        "/saved-opportunities",
-
-      icon:
-
-        BookmarkIcon,
-
-      roles: [
-
-        "STUDENT",
-
-      ],
-    },
-
-    {
-      name:
-
-        "My Events",
-
-      path:
-
-        "/my-events",
-
-      icon:
-
-        CalendarDaysIcon,
-
-      roles: [
-
-        "STUDENT",
-
-      ],
-    },
-
-    {
-      name:
-
-        "My Applications",
-
-      path:
-
-        "/my-applications",
-
-      icon:
-
-        BriefcaseIcon,
-
-      roles: [
-
-        "STUDENT",
-
-      ],
-    },
-
-    {
-      name:
-
-        "Activity History",
-
-      path:
-
-        "/activity-history",
-
-      icon:
-
-        ClockIcon,
-
-      roles: [
-
-        "STUDENT",
-
-      ],
-
-    },
-
-    /*
-    |--------------------------------------------------------------------------
-    | Organization
-    |--------------------------------------------------------------------------
-    */
-
-    {
-
-      name:
-
-        "My Events",
-
-      path:
-
-        "/organization/events",
-
-      icon:
-
-        CalendarDaysIcon,
-
-      roles: [
-
-        "ORGANIZATION",
-
-      ],
-
-    },
-
-    {
-      name:
-
-        "My Opportunities",
-
-      path:
-
-        "/organization/opportunities",
-
-      icon:
-
-        BriefcaseIcon,
-
-      roles: [
-
-        "ORGANIZATION",
-
-      ],
-    },
-
-    /*
-    |--------------------------------------------------------------------------
-    | Admin
-    |--------------------------------------------------------------------------
-    */
-
-    {
-      name:
-
-        "Pending Events",
-
-      path:
-
-        "/admin/events/pending",
-
-      icon:
-
-        ClipboardDocumentCheckIcon,
-
-      roles: [
-
-        "ADMIN",
-
-      ],
-    },
-
-    {
-      name:
-
-        "Pending Opportunities",
-
-      path:
-
-        "/admin/opportunities/pending",
-
-      icon:
-
-        ClipboardDocumentCheckIcon,
-
-      roles: [
-
-        "ADMIN",
-
-      ],
-    },
-
-    {
-      name: "Event Categories",
-
-      path: "/admin/event-categories",
-
-      icon: ClipboardDocumentCheckIcon,
-
-      roles: ["ADMIN"],
-    },
-
-    {
-      name: "Opportunity Types",
-
-      path: "/admin/opportunity-types",
-
-      icon: ClipboardDocumentCheckIcon,
-
-      roles: ["ADMIN"],
-    },
-
-    {
-      name: "Universities",
-
-      path: "/admin/universities",
-
-      icon: ClipboardDocumentCheckIcon,
-
-      roles: ["ADMIN"],
-    },
-
-    {
-      name: "Faculties",
-
-      path: "/admin/faculties",
-
-      icon: ClipboardDocumentCheckIcon,
-
-      roles: ["ADMIN"],
-    },
-
-    {
-      name: "Majors",
-
-      path: "/admin/majors",
-
-      icon: ClipboardDocumentCheckIcon,
-
-      roles: ["ADMIN"],
-    },
-
-    {
-      name: "Skills",
-
-      path: "/admin/skills",
-
-      icon: ClipboardDocumentCheckIcon,
-
-      roles: ["ADMIN"],
-    },
-
-    /*
-    |--------------------------------------------------------------------------
-    | Profile
-    |--------------------------------------------------------------------------
-    */
-
-    {
-      name:
-
-        "Profile",
-
-      path:
-
-        "/profile",
-
-      icon:
-
-        UserCircleIcon,
-
-      roles: [
-
-        "ADMIN",
-
-        "STUDENT",
-
-        "ORGANIZATION",
-
-      ],
-    },
-
-  ];
-
   const menuItems =
 
-    allMenus.filter(
+    sidebarMenu.filter(
 
       (menu) =>
 
         menu.roles.includes(
+
           role
+
         )
 
     );
@@ -422,6 +59,7 @@ function Sidebar({
       return (
 
         location.pathname ===
+
         path
 
         ||
@@ -447,7 +85,9 @@ function Sidebar({
       ) {
 
         setSidebarOpen(
+
           false
+
         );
 
       }
@@ -481,7 +121,9 @@ function Sidebar({
             onClick={() =>
 
               setSidebarOpen(
+
                 false
+
               )
 
             }
@@ -526,9 +168,13 @@ function Sidebar({
 
             sidebarOpen
 
-            ? "translate-x-0"
+            ?
 
-            : "-translate-x-full"
+            "translate-x-0"
+
+            :
+
+            "-translate-x-full"
 
           }
 
@@ -538,9 +184,11 @@ function Sidebar({
 
       >
 
-        {/* Logo */}
+        <div
 
-        <div className="mb-10">
+          className="mb-10"
+
+        >
 
           <h1
 
@@ -549,8 +197,6 @@ function Sidebar({
               text-2xl
 
               font-bold
-
-              text-gold
 
             "
 
@@ -582,8 +228,6 @@ function Sidebar({
 
         </div>
 
-        {/* Navigation */}
-
         <nav
 
           className="
@@ -605,6 +249,7 @@ function Sidebar({
               (item) => {
 
                 const Icon =
+
                   item.icon;
 
                 return (
@@ -612,15 +257,21 @@ function Sidebar({
                   <Link
 
                     key={
+
                       item.path
+
                     }
 
                     to={
+
                       item.path
+
                     }
 
                     onClick={
+
                       handleCloseSidebar
+
                     }
 
                     className={`
@@ -635,9 +286,7 @@ function Sidebar({
 
                       rounded-xl
 
-                      transition-all
-
-                      duration-200
+                      transition
 
                       ${
 
@@ -649,21 +298,11 @@ function Sidebar({
 
                         ?
 
-                        `
-
-                        bg-secondary
-
-                        shadow-md
-
-                        `
+                        "bg-secondary shadow-md"
 
                         :
 
-                        `
-
-                        hover:bg-secondary/70
-
-                        `
+                        "hover:bg-secondary/70"
 
                       }
 

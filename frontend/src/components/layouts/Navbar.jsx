@@ -1,23 +1,39 @@
 import {
+
   Bars3Icon,
+
 } from "@heroicons/react/24/outline";
 
 import {
+
   useNavigate,
+
   useLocation,
+
 } from "react-router-dom";
 
 import {
+
   useDispatch,
+
   useSelector,
+
 } from "react-redux";
 
 import NotificationDropdown
 from "../notifications/NotificationDropdown";
 
 import {
+
   logout,
+
 } from "../../redux/slices/authSlice";
+
+import pageTitles
+from "../../constants/pageTitles";
+
+import getInitials
+from "../../utils/getInitials";
 
 function Navbar({
 
@@ -26,15 +42,19 @@ function Navbar({
 }) {
 
   const dispatch =
+
     useDispatch();
 
   const navigate =
+
     useNavigate();
 
   const location =
+
     useLocation();
 
   const user =
+
     useSelector(
 
       (state) =>
@@ -51,50 +71,12 @@ function Navbar({
 
     "User";
 
-  const pageTitles = {
-
-    "/dashboard":
-
-      "Dashboard",
-
-    "/events":
-
-      "Events",
-
-    "/opportunities":
-
-      "Opportunities",
-
-    "/saved-opportunities":
-
-      "Saved Opportunities",
-
-    "/my-applications":
-
-      "My Applications",
-
-    "/organization/opportunities":
-
-      "My Opportunities",
-
-    "/admin/events/pending":
-
-      "Pending Events",
-
-    "/admin/opportunities/pending":
-
-      "Pending Opportunities",
-
-    "/profile":
-
-      "Profile",
-
-  };
-
   const currentTitle =
 
     pageTitles[
+
       location.pathname
+
     ]
 
     ||
@@ -106,14 +88,21 @@ function Navbar({
     () => {
 
       dispatch(
+
         logout()
+
       );
 
       navigate(
+
         "/login",
+
         {
+
           replace: true,
+
         }
+
       );
 
     };
@@ -177,7 +166,9 @@ function Navbar({
           onClick={() =>
 
             setSidebarOpen(
+
               true
+
             )
 
           }
@@ -264,15 +255,17 @@ function Navbar({
 
             justify-center
 
-            uppercase
-
           "
 
         >
 
           {
 
-            userName[0]
+            getInitials(
+
+              userName
+
+            )
 
           }
 
@@ -281,7 +274,9 @@ function Navbar({
         <button
 
           onClick={
+
             handleLogout
+
           }
 
           className="

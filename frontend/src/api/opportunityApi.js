@@ -139,3 +139,31 @@ export const getMyOpportunities =
     return response.data.data;
 
 };
+
+export const updateOpportunity =
+  async (
+    id,
+    payload
+  ) => {
+
+    const response =
+      await axiosInstance.patch(
+        `/opportunities/${id}`,
+        payload
+      );
+
+    return response.data.data;
+
+};
+
+export const deleteOpportunity =
+  async (id) => {
+
+    const response =
+      await axiosInstance.delete(
+        `/opportunities/${id}`
+      );
+
+    return response.data.data;
+
+};
