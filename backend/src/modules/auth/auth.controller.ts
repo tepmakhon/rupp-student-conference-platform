@@ -1,68 +1,115 @@
-import { Request, Response } from "express";
+import {
+
+  Request,
+
+  Response,
+
+  NextFunction,
+
+}
+
+from "express";
 
 import {
+
   registerUser,
+
   loginUser,
-} from "./auth.service.js";
+
+}
+
+from "./auth.service.js";
 
 import {
+
   successResponse,
-  errorResponse,
-} from "../../utils/apiResponse.js";
 
-export const registerController = async (
+}
+
+from "../../utils/apiResponse.js";
+
+export const register =
+
+async (
+
   req: Request,
-  res: Response
-) => {
-  try {
-    const result = await registerUser(req.body);
 
-    return successResponse(
-      res,
-      {
-        user: result.user,
-        token: result.token,
-      },
-      "Registration successful",
-      201
+  res: Response,
+
+  next: NextFunction
+
+) => {
+
+  try {
+
+    const data =
+
+    await registerUser(
+
+      req.body
+
     );
 
-  } catch (error: any) {
+    return successResponse(
 
-    return errorResponse(
       res,
-      error.message,
-      error.statusCode || 400
+
+      data,
+
+      "Registration successful",
+
+      201
+
     );
 
   }
+
+  catch (error) {
+
+    next(error);
+
+  }
+
 };
 
-export const loginController = async (
+export const login =
+
+async (
+
   req: Request,
-  res: Response
+
+  res: Response,
+
+  next: NextFunction
+
 ) => {
+
   try {
 
-    const result = await loginUser(req.body);
+    const data =
 
-    return successResponse(
-      res,
-      {
-        user: result.user,
-        token: result.token,
-      },
-      "Login successful",
-      200
+    await loginUser(
+
+      req.body
+
     );
 
-  } catch (error: any) {
+    return successResponse(
 
-    return errorResponse(
       res,
-      error.message,
-      error.statusCode || 400
+
+      data,
+
+      "Login successful"
+
     );
 
   }
+
+  catch (error) {
+
+    next(error);
+
+  }
+
 };

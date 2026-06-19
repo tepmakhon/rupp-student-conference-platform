@@ -1,199 +1,229 @@
-import { useState } from "react";
+import {
 
-import { useDispatch } from "react-redux";
+  useState,
 
-import { useNavigate } from "react-router-dom";
+} from "react";
 
-import toast from "react-hot-toast";
+import {
 
-import { loginUser } from "../../api/authApi";
+  useDispatch,
 
-import { loginSuccess } from "../../redux/slices/authSlice";
+} from "react-redux";
+
+import {
+
+  useNavigate,
+
+} from "react-router-dom";
+
+import toast
+
+from "react-hot-toast";
+
+import {
+
+  loginUser,
+
+} from "../../api/authApi";
+
+import {
+
+  loginSuccess,
+
+} from "../../redux/slices/authSlice";
 
 function LoginPage() {
 
   const dispatch =
+
     useDispatch();
 
   const navigate =
+
     useNavigate();
 
-  const [email, setEmail] =
-    useState("");
+  const [
 
-  const [password, setPassword] =
-    useState("");
+    loading,
 
-  const [loading, setLoading] =
-    useState(false);
+    setLoading,
 
-  const redirectByRole =
-    (role) => {
+  ] = useState(false);
 
-      switch (role) {
+  const [
 
-        case "ADMIN":
+    email,
 
-        case "STUDENT":
+    setEmail,
 
-        case "ORGANIZATION":
+  ] = useState("");
 
-          navigate(
-            "/dashboard",
-            {
-              replace: true,
-            }
-          );
+  const [
 
-          break;
+    password,
 
-        default:
+    setPassword,
 
-          navigate(
-            "/dashboard",
-            {
-              replace: true,
-            }
-          );
-      }
-
-    };
+  ] = useState("");
 
   const handleSubmit =
-    async (e) => {
 
-      e.preventDefault();
+  async (e) => {
 
-      if (loading) {
+    e.preventDefault();
 
-        return;
-      }
+    try {
 
-      const emailValue =
-        email.trim();
+      if (!email) {
 
-      const passwordValue =
-        password.trim();
+        return toast.error(
 
-      if (!emailValue) {
+          "Email is required"
 
-        toast.error(
-          "Please enter your email"
-        );
-
-        return;
-      }
-
-      if (!passwordValue) {
-
-        toast.error(
-          "Please enter your password"
-        );
-
-        return;
-      }
-
-      try {
-
-        setLoading(true);
-
-        const data =
-          await loginUser({
-
-            email:
-              emailValue,
-
-            password:
-              passwordValue,
-
-          });
-
-        dispatch(
-
-          loginSuccess({
-
-            user:
-              data.user,
-
-            token:
-              data.token,
-
-          })
-
-        );
-
-        toast.success(
-          "Login successful"
-        );
-
-        redirectByRole(
-
-          data.user?.role?.roleName
-
-        );
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-
-        toast.error(
-
-          error?.response
-            ?.data?.message ||
-
-          "Invalid email or password"
-
-        );
-
-      } finally {
-
-        setLoading(
-          false
         );
 
       }
 
-    };
+      if (!password) {
+
+        return toast.error(
+
+          "Password is required"
+
+        );
+
+      }
+
+      setLoading(true);
+
+      const data =
+
+      await loginUser({
+
+        email:
+
+        email.trim(),
+
+        password,
+
+      });
+
+      dispatch(
+
+        loginSuccess({
+
+          user:
+
+          data.user,
+
+          token:
+
+          data.token,
+
+        })
+
+      );
+
+      toast.success(
+
+        "Login successful"
+
+      );
+
+      navigate(
+
+        "/dashboard",
+
+        {
+
+          replace: true,
+
+        }
+
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      toast.error(
+
+        error?.response
+
+        ?.data?.message ||
+
+        "Login failed"
+
+      );
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
+  };
 
   return (
 
     <div
+
       className="
-        min-h-screen
-        flex
-        items-center
-        justify-center
-        bg-gray-50
-        px-4
+
+      min-h-screen
+
+      flex
+
+      items-center
+
+      justify-center
+
+      bg-gray-50
+
+      px-4
+
       "
+
     >
 
       <div
+
         className="
-          w-full
-          max-w-md
-          bg-white
-          rounded-2xl
-          shadow-md
-          p-10
+
+        w-full
+
+        max-w-md
+
+        bg-white
+
+        rounded-3xl
+
+        shadow-lg
+
+        p-10
+
         "
+
       >
 
-        <div
-          className="
-            text-center
-            mb-8
-          "
-        >
+        <div className="text-center mb-8">
 
           <h1
+
             className="
-              text-3xl
-              font-bold
-              text-primary
+
+            text-4xl
+
+            font-bold
+
+            text-primary
+
             "
+
           >
 
             RUPP Platform
@@ -201,13 +231,18 @@ function LoginPage() {
           </h1>
 
           <p
+
             className="
-              text-gray-500
-              mt-2
+
+            text-gray-500
+
+            mt-3
+
             "
+
           >
 
-            Sign in to continue
+            Welcome back
 
           </p>
 
@@ -216,25 +251,29 @@ function LoginPage() {
         <form
 
           onSubmit={
+
             handleSubmit
+
           }
 
-          className="
-            space-y-5
-          "
+          className="space-y-5"
 
         >
 
           <div>
 
             <label
+
               className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-gray-700
+
+              block
+
+              mb-2
+
+              font-medium
+
               "
+
             >
 
               Email
@@ -245,30 +284,32 @@ function LoginPage() {
 
               type="email"
 
-              autoComplete="email"
-
-              placeholder="Enter your email"
-
               value={email}
 
-              onChange={(e) =>
+              onChange={(e)=>
 
                 setEmail(
+
                   e.target.value
+
                 )
 
               }
 
+              placeholder="Enter email"
+
               className="
-                w-full
-                border
-                border-gray-300
-                rounded-xl
-                px-4
-                py-3
-                focus:outline-none
-                focus:ring-2
-                focus:ring-secondary
+
+              w-full
+
+              border
+
+              rounded-xl
+
+              px-4
+
+              py-3
+
               "
 
             />
@@ -278,13 +319,17 @@ function LoginPage() {
           <div>
 
             <label
+
               className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-gray-700
+
+              block
+
+              mb-2
+
+              font-medium
+
               "
+
             >
 
               Password
@@ -295,30 +340,32 @@ function LoginPage() {
 
               type="password"
 
-              autoComplete="current-password"
-
-              placeholder="Enter your password"
-
               value={password}
 
-              onChange={(e) =>
+              onChange={(e)=>
 
                 setPassword(
+
                   e.target.value
+
                 )
 
               }
 
+              placeholder="Enter password"
+
               className="
-                w-full
-                border
-                border-gray-300
-                rounded-xl
-                px-4
-                py-3
-                focus:outline-none
-                focus:ring-2
-                focus:ring-secondary
+
+              w-full
+
+              border
+
+              rounded-xl
+
+              px-4
+
+              py-3
+
               "
 
             />
@@ -327,20 +374,24 @@ function LoginPage() {
 
           <button
 
-            type="submit"
-
             disabled={loading}
 
             className="
-              w-full
-              bg-primary
-              hover:bg-secondary
-              text-white
-              py-3
-              rounded-xl
-              transition
-              disabled:opacity-50
-              disabled:cursor-not-allowed
+
+            w-full
+
+            bg-primary
+
+            hover:bg-secondary
+
+            text-white
+
+            py-3
+
+            rounded-xl
+
+            transition
+
             "
 
           >
@@ -349,9 +400,13 @@ function LoginPage() {
 
               loading
 
-              ? "Signing In..."
+              ?
 
-              : "Login"
+              "Signing In..."
+
+              :
+
+              "Login"
 
             }
 
@@ -360,29 +415,39 @@ function LoginPage() {
         </form>
 
         <div
+
           className="
-            mt-6
-            text-center
-            text-gray-600
+
+          mt-8
+
+          text-center
+
           "
+
         >
 
           Don't have an account?
 
           <button
 
-            onClick={() =>
+            onClick={()=>
 
               navigate(
+
                 "/register"
+
               )
 
             }
 
             className="
-              ml-2
-              text-secondary
-              font-semibold
+
+            ml-2
+
+            text-secondary
+
+            font-semibold
+
             "
 
           >

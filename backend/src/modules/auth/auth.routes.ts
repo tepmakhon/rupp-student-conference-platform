@@ -1,17 +1,38 @@
-import { Router } from "express";
-import { validate } from "../../middlewares/validate.middleware.js";
+import {
+
+  Router,
+
+}
+
+from "express";
 
 import {
-  registerController,
-  loginController,
-} from "./auth.controller.js";
 
-import {
-  registerSchema,
-  loginSchema,
-} from "./auth.validation.js";
+  login,
+
+  register,
+
+}
+
+from "./auth.controller.js";
 
 const router = Router();
+
+router.post(
+
+  "/register",
+
+  register
+
+);
+
+router.post(
+
+  "/login",
+
+  login
+
+);
 
 /**
  * @swagger
@@ -20,11 +41,6 @@ const router = Router();
  *   description: Authentication APIs
  */
 
-router.post(
-  "/register",
-  validate(registerSchema),
-  registerController
-);
 /**
  * @swagger
  * /api/auth/register:
@@ -64,11 +80,7 @@ router.post(
  *         description: Validation error or user already exists
  */
 
-router.post(
-  "/login",
-  validate(loginSchema),
-  loginController
-);
+
 /**
  * @swagger
  * /api/auth/login:

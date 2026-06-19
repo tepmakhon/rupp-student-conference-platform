@@ -1,325 +1,633 @@
-import { useState } from "react";
+import {
 
-import { useNavigate } from "react-router-dom";
+  useEffect,
 
-import toast from "react-hot-toast";
+  useState,
 
-import { registerUser } from "../../api/authApi";
+} from "react";
+
+import {
+
+  useNavigate,
+
+} from "react-router-dom";
+
+import toast
+
+from "react-hot-toast";
+
+import {
+
+  registerUser,
+
+} from "../../api/authApi";
+
+import {
+
+  getUniversities,
+
+} from "../../api/universityApi";
+
+import {
+
+  getFaculties,
+
+} from "../../api/facultyApi";
+
+import {
+
+  getMajors,
+
+} from "../../api/majorApi";
+
+import RoleSelector
+
+from "../../components/auth/RoleSelector";
+
+import StudentRegisterForm
+
+from "../../components/auth/StudentRegisterForm";
+
+import OrganizationRegisterForm
+
+from "../../components/auth/OrganizationRegisterForm";
 
 function RegisterPage() {
 
-  const navigate = useNavigate();
+  const navigate =
 
-  const [email, setEmail] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
+  useNavigate();
 
   const [
-    confirmPassword,
-    setConfirmPassword,
-  ] = useState("");
 
-  const [loading, setLoading] =
-    useState(false);
+    role,
 
-  const handleSubmit = async (e) => {
+    setRole,
 
-    e.preventDefault();
+  ] = useState(
 
-    const emailValue =
-      email.trim();
+    "STUDENT"
 
-    if (!emailValue) {
+  );
 
-      toast.error(
-        "Please enter your email"
-      );
+  const [
 
-      return;
-    }
+    loading,
 
-    if (!password) {
+    setLoading,
 
-      toast.error(
-        "Please enter a password"
-      );
+  ] = useState(false);
 
-      return;
-    }
+  const [
 
-    if (password.length < 8) {
+    universities,
 
-      toast.error(
-        "Password must be at least 8 characters"
-      );
+    setUniversities,
 
-      return;
-    }
+  ] = useState([]);
 
-    if (
-      password !== confirmPassword
-    ) {
+  const [
 
-      toast.error(
-        "Passwords do not match"
-      );
+    faculties,
 
-      return;
-    }
+    setFaculties,
+
+  ] = useState([]);
+
+  const [
+
+    majors,
+
+    setMajors,
+
+  ] = useState([]);
+
+  const [
+
+    form,
+
+    setForm,
+
+  ] = useState({
+
+    email: "",
+
+    password: "",
+
+    confirmPassword: "",
+
+    fullName: "",
+
+    universityId: "",
+
+    facultyId: "",
+
+    majorId: "",
+
+    academicYear: "",
+
+    organizationName: "",
+
+    description: "",
+
+  });
+
+  useEffect(() => {
+
+    loadData();
+
+  }, []);
+
+  const loadData =
+
+  async () => {
 
     try {
 
-      setLoading(true);
+      const [
 
-      await registerUser({
-        email: emailValue,
-        password,
-      });
+        universityData,
 
-      toast.success(
-        "Account created successfully"
+        facultyData,
+
+        majorData,
+
+      ] = await Promise.all([
+
+        getUniversities(),
+
+        getFaculties(),
+
+        getMajors(),
+
+      ]);
+
+      setUniversities(
+
+        universityData
+
       );
 
-      navigate("/login");
+      setFaculties(
 
-    } catch (error) {
+        facultyData
+
+      );
+
+      setMajors(
+
+        majorData
+
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
+  const handleSubmit =
+
+  async (e) => {
+
+    e.preventDefault();
+    
+    try {
+
+      if (
+
+        form.password !==
+
+        form.confirmPassword
+
+      ) {
+
+        return toast.error(
+
+          "Passwords do not match"
+
+        );
+
+      }
+
+      setLoading(true);
+
+      const payload = {
+
+        email:
+
+        form.email,
+
+        password:
+
+        form.password,
+
+        roleName:
+
+        role,
+
+      };
+
+      if (
+
+        role ===
+
+        "STUDENT"
+
+      ) {
+
+        Object.assign(
+
+          payload,
+
+          {
+
+            fullName:
+
+            form.fullName,
+
+            universityId:
+
+            form.universityId,
+
+            facultyId:
+
+            form.facultyId,
+
+            majorId:
+
+            form.majorId,
+
+            academicYear:
+
+            form.academicYear,
+
+          }
+
+        );
+
+      }
+
+      if (
+
+        role ===
+
+        "ORGANIZATION"
+
+      ) {
+
+        Object.assign(
+
+          payload,
+
+          {
+
+            organizationName:
+
+            form.organizationName,
+
+            description:
+
+            form.description,
+
+          }
+
+        );
+
+      }
+
+      await registerUser(
+
+        payload
+
+      );
+
+      toast.success(
+
+        "Account created"
+
+      );
+
+      navigate(
+
+        "/login"
+
+      );
+
+    }
+
+    catch (error) {
 
       console.error(error);
 
       toast.error(
-        error?.response?.data?.message ||
-        "Unable to create account"
+
+        error?.response
+
+        ?.data?.message ||
+
+        "Registration failed"
+
       );
 
-    } finally {
+    }
+
+    finally {
 
       setLoading(false);
 
     }
+
   };
 
   return (
 
     <div
+
       className="
-        min-h-screen
-        flex
-        items-center
-        justify-center
-        bg-gray-50
+
+      min-h-screen
+
+      bg-gray-50
+
+      flex
+
+      items-center
+
+      justify-center
+
+      px-4
+
+      py-10
+
       "
+
     >
 
       <div
+
         className="
-          bg-white
-          shadow-md
-          rounded-2xl
-          p-10
-          w-full
-          max-w-md
+
+        w-full
+
+        max-w-2xl
+
+        bg-white
+
+        rounded-3xl
+
+        shadow-lg
+
+        p-10
+
         "
+
       >
 
         <div className="text-center mb-8">
 
           <h1
-            className="
-              text-3xl
-              font-bold
-              text-primary
-            "
-          >
-            RUPP Platform
-          </h1>
 
-          <p
             className="
-              text-gray-500
-              mt-2
+
+            text-4xl
+
+            font-bold
+
+            text-primary
+
             "
+
           >
-            Create your account
-          </p>
+
+            Create Account
+
+          </h1>
 
         </div>
 
         <form
-          onSubmit={handleSubmit}
+
+          onSubmit={
+
+            handleSubmit
+
+          }
+
           className="space-y-5"
+
         >
 
-          <div>
+          <RoleSelector
 
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-gray-700
-              "
-            >
-              Email
-            </label>
+            role={role}
 
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) =>
-                setEmail(
-                  e.target.value
-                )
-              }
-              className="
-                w-full
-                border
-                border-gray-300
-                rounded-xl
-                px-4
-                py-3
-                focus:outline-none
-                focus:ring-2
-                focus:ring-secondary
-              "
-            />
+            setRole={setRole}
 
-          </div>
+          />
 
-          <div>
+          <input
 
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-gray-700
-              "
-            >
-              Password
-            </label>
+            type="email"
 
-            <input
-              type="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) =>
-                setPassword(
-                  e.target.value
-                )
-              }
-              className="
-                w-full
-                border
-                border-gray-300
-                rounded-xl
-                px-4
-                py-3
-                focus:outline-none
-                focus:ring-2
-                focus:ring-secondary
-              "
-            />
+            placeholder="Email"
 
-          </div>
+            value={form.email}
 
-          <div>
+            onChange={(e)=>
 
-            <label
-              className="
-                block
-                mb-2
-                text-sm
-                font-medium
-                text-gray-700
-              "
-            >
-              Confirm Password
-            </label>
+              setForm({
 
-            <input
-              type="password"
-              placeholder="Confirm password"
-              value={confirmPassword}
-              onChange={(e) =>
-                setConfirmPassword(
-                  e.target.value
-                )
-              }
-              className="
-                w-full
-                border
-                border-gray-300
-                rounded-xl
-                px-4
-                py-3
-                focus:outline-none
-                focus:ring-2
-                focus:ring-secondary
-              "
-            />
+                ...form,
 
-          </div>
+                email:
+
+                e.target.value,
+
+              })
+
+            }
+
+            className="
+
+            w-full
+
+            border
+
+            rounded-xl
+
+            px-4
+
+            py-3
+
+            "
+
+          />
+
+          <input
+
+            type="password"
+
+            placeholder="Password"
+
+            value={form.password}
+
+            onChange={(e)=>
+
+              setForm({
+
+                ...form,
+
+                password:
+
+                e.target.value,
+
+              })
+
+            }
+
+            className="
+
+            w-full
+
+            border
+
+            rounded-xl
+
+            px-4
+
+            py-3
+
+            "
+
+          />
+
+          <input
+
+            type="password"
+
+            placeholder="Confirm Password"
+
+            value={form.confirmPassword}
+
+            onChange={(e)=>
+
+              setForm({
+
+                ...form,
+
+                confirmPassword:
+
+                e.target.value,
+
+              })
+
+            }
+
+            className="
+
+            w-full
+
+            border
+
+            rounded-xl
+
+            px-4
+
+            py-3
+
+            "
+
+          />
+
+          {
+
+            role ===
+
+            "STUDENT"
+
+            ? (
+
+              <StudentRegisterForm
+
+                form={form}
+
+                setForm={setForm}
+
+                universities={universities}
+
+                faculties={faculties}
+
+                majors={majors}
+
+              />
+
+            )
+
+            : (
+
+              <OrganizationRegisterForm
+
+                form={form}
+
+                setForm={setForm}
+
+              />
+
+            )
+
+          }
 
           <button
-            type="submit"
+
             disabled={loading}
+
             className="
-              w-full
-              bg-primary
-              hover:bg-secondary
-              text-white
-              py-3
-              rounded-xl
-              transition
-              disabled:opacity-50
-              disabled:cursor-not-allowed
+
+            w-full
+
+            bg-primary
+
+            hover:bg-secondary
+
+            text-white
+
+            py-3
+
+            rounded-xl
+
             "
+
           >
 
             {
+
               loading
-                ? "Creating Account..."
-                : "Register"
+
+              ?
+
+              "Creating..."
+
+              :
+
+              "Create Account"
+
             }
 
           </button>
 
         </form>
 
-        <div
-          className="
-            mt-6
-            text-center
-            text-gray-600
-          "
-        >
-
-          Already have an account?
-
-          <button
-            onClick={() =>
-              navigate("/login")
-            }
-            className="
-              ml-2
-              text-secondary
-              font-semibold
-            "
-          >
-            Login
-          </button>
-
-        </div>
-
       </div>
 
     </div>
+
   );
+
 }
 
 export default RegisterPage;
