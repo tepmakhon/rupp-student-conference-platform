@@ -52,6 +52,9 @@ from "../pages/leaderboard/LeaderboardPage";
 import ProfilePage
 from "../pages/profile/ProfilePage";
 
+import EditProfilePage
+from "../pages/profile/EditProfilePage";
+
 /*
 |--------------------------------------------------------------------------
 | Events
@@ -283,6 +286,18 @@ function AppRoutes() {
               ALL_ROLES
 
             )
+
+          }
+
+        />
+
+        <Route
+
+          path="/profile/edit"
+
+          element={
+
+            <EditProfilePage />
 
           }
 

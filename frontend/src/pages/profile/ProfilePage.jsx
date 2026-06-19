@@ -1,40 +1,60 @@
-import { useEffect, useState } from "react";
+import {
+
+  useEffect,
+
+  useState,
+
+} from "react";
+
+import toast
+
+from "react-hot-toast";
+
+import {
+
+  Link,
+
+} from "react-router-dom";
 
 import DashboardLayout
+
 from "../../components/layouts/DashboardLayout";
 
 import {
+
   getMyProfile,
-  createProfile,
-  updateProfile,
-} from "../../api/userApi";
 
-import {
-  uploadToCloudinary,
-} from "../../utils/cloudinaryUpload";
+} from "../../api/profileApi";
 
-import toast from "react-hot-toast";
+import ProfileAvatar
+
+from "../../components/profile/ProfileAvatar";
+
+import ProfileCard
+
+from "../../components/profile/ProfileCard";
+
+import ProfileInfoItem
+
+from "../../components/profile/ProfileInfoItem";
 
 function ProfilePage() {
 
-  const [loading, setLoading] =
-    useState(true);
+  const [
 
-  const [uploading, setUploading] =
-    useState(false);
+    profile,
 
-  const [profileExists, setProfileExists] =
-    useState(false);
+    setProfile,
 
-  const [formData, setFormData] =
-    useState({
-      fullName: "",
-      phoneNumber: "",
-      gender: "",
-      dateOfBirth: "",
-      bio: "",
-      profileImageUrl: "",
-    });
+  ] = useState(null);
+
+  const [
+
+    loading,
+
+    setLoading,
+
+  ] = useState(true);
 
   useEffect(() => {
 
@@ -43,168 +63,40 @@ function ProfilePage() {
   }, []);
 
   const loadProfile =
-    async () => {
 
-      try {
+  async () => {
 
-        const profile =
-          await getMyProfile();
+    try {
 
-        if (!profile) {
+      setLoading(true);
 
-          setProfileExists(false);
+      const data =
 
-          return;
-        }
+      await getMyProfile();
 
-        setProfileExists(true);
+      setProfile(data);
 
-        setFormData({
+    }
 
-          fullName:
-            profile.fullName || "",
+    catch(error){
 
-          phoneNumber:
-            profile.phoneNumber || "",
+      console.error(error);
 
-          gender:
-            profile.gender || "",
+      toast.error(
 
-          dateOfBirth:
-            profile.dateOfBirth
-              ? profile.dateOfBirth
-                  .split("T")[0]
-              : "",
+        "Failed to load profile"
 
-          bio:
-            profile.bio || "",
+      );
 
-          profileImageUrl:
-            profile.profileImageUrl || "",
+    }
 
-        });
+    finally{
 
-      } catch (error) {
+      setLoading(false);
 
-        console.log(error);
+    }
 
-        setProfileExists(false);
-
-      } finally {
-
-        setLoading(false);
-
-      }
-    };
-
-  const handleChange =
-    (e) => {
-
-      setFormData({
-        ...formData,
-        [e.target.name]:
-          e.target.value,
-      });
-
-    };
-
-  const handleImageUpload =
-    async (e) => {
-
-      const file =
-        e.target.files[0];
-
-      if (!file) return;
-
-      try {
-
-        setUploading(true);
-
-        const imageUrl =
-          await uploadToCloudinary(
-            file
-          );
-
-        setFormData((prev) => ({
-          ...prev,
-          profileImageUrl:
-            imageUrl,
-        }));
-
-        toast.success(
-          "Profile image uploaded successfully"
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          "Failed to upload image"
-        );
-
-      } finally {
-
-        setUploading(false);
-
-      }
-    };
-
-  const handleSubmit =
-    async () => {
-
-      try {
-
-        const payload = {
-
-          ...formData,
-
-          dateOfBirth:
-            formData.dateOfBirth
-              ? new Date(
-                  formData.dateOfBirth
-                ).toISOString()
-              : undefined,
-
-        };
-
-        if (profileExists) {
-
-          await updateProfile(
-            payload
-          );
-
-          toast.success(
-            "Profile updated successfully"
-          );
-
-        } else {
-
-          await createProfile(
-            payload
-          );
-
-          toast.success(
-            "Profile created successfully"
-          );
-
-          setProfileExists(true);
-
-        }
-
-        await loadProfile();
-
-      } catch (error) {
-
-        console.log(error);
-
-        toast.error(
-          error?.response?.data?.message ||
-          "Failed to save profile"
-        );
-
-      }
-    };
+  };
 
   if (loading) {
 
@@ -213,19 +105,65 @@ function ProfilePage() {
       <DashboardLayout>
 
         <div
+
           className="
-            flex
-            justify-center
-            items-center
-            h-64
+
+          flex
+
+          justify-center
+
+          items-center
+
+          py-24
+
+          text-gray-500
+
           "
+
         >
-          Loading Profile...
+
+          Loading profile...
+
         </div>
 
       </DashboardLayout>
 
     );
+
+  }
+
+  if (!profile) {
+
+    return (
+
+      <DashboardLayout>
+
+        <div
+
+          className="
+
+          flex
+
+          justify-center
+
+          items-center
+
+          py-24
+
+          text-gray-500
+
+          "
+
+        >
+
+          Profile not found
+
+        </div>
+
+      </DashboardLayout>
+
+    );
+
   }
 
   return (
@@ -233,245 +171,533 @@ function ProfilePage() {
     <DashboardLayout>
 
       <div
+
         className="
-          max-w-5xl
-          mx-auto
+
+        max-w-7xl
+
+        mx-auto
+
+        space-y-8
+
         "
+
       >
 
-        <div className="mb-8">
-
-          <h1
-            className="
-              text-4xl
-              font-bold
-              text-primary
-            "
-          >
-            My Profile
-          </h1>
-
-          <p
-            className="
-              text-gray-600
-              mt-2
-            "
-          >
-            Manage your personal
-            information and profile.
-          </p>
-
-        </div>
+        {/* HEADER */}
 
         <div
+
           className="
-            bg-white
-            rounded-2xl
-            shadow-lg
-            p-8
+
+          flex
+
+          flex-col
+
+          md:flex-row
+
+          md:justify-between
+
+          md:items-center
+
+          gap-6
+
           "
+
         >
 
-          <div
-            className="
-              flex
-              flex-col
-              items-center
-              mb-8
-            "
-          >
+          <div>
 
-            <img
-              src={
-                formData.profileImageUrl ||
-                "https://placehold.co/200x200?text=Profile"
-              }
-              alt="Profile"
-              className="
-                w-40
-                h-40
-                rounded-full
-                object-cover
-                border-4
-                border-gold
-                shadow-lg
-              "
-            />
+            <h1
 
-            <label
               className="
-                mt-4
-                cursor-pointer
-                bg-secondary
-                text-white
-                px-4
-                py-2
-                rounded-xl
+
+              text-4xl
+
+              font-bold
+
+              text-primary
+
               "
+
             >
-              {
-                uploading
-                  ? "Uploading..."
-                  : "Change Photo"
-              }
 
-              <input
-                type="file"
-                accept="image/*"
-                hidden
-                onChange={
-                  handleImageUpload
-                }
-              />
+              My Profile
 
-            </label>
+            </h1>
+
+            <p
+
+              className="
+
+              text-gray-500
+
+              mt-2
+
+              "
+
+            >
+
+              Manage your account information
+
+            </p>
 
           </div>
 
-          <div
+          <Link
+
+            to="/profile/edit"
+
             className="
-              grid
-              grid-cols-1
-              md:grid-cols-2
-              gap-6
+
+            bg-primary
+
+            hover:bg-secondary
+
+            text-white
+
+            px-6
+
+            py-3
+
+            rounded-xl
+
+            transition
+
             "
+
           >
 
-            <input
-              name="fullName"
-              placeholder="Full Name"
-              value={
-                formData.fullName
-              }
-              onChange={
-                handleChange
-              }
-              className="
-                border
-                rounded-xl
-                p-3
-              "
-            />
+            Edit Profile
 
-            <input
-              name="phoneNumber"
-              placeholder="Phone Number"
-              value={
-                formData.phoneNumber
-              }
-              onChange={
-                handleChange
-              }
-              className="
-                border
-                rounded-xl
-                p-3
-              "
-            />
-
-            <select
-              name="gender"
-              value={
-                formData.gender
-              }
-              onChange={
-                handleChange
-              }
-              className="
-                border
-                rounded-xl
-                p-3
-              "
-            >
-
-              <option value="">
-                Select Gender
-              </option>
-
-              <option value="MALE">
-                Male
-              </option>
-
-              <option value="FEMALE">
-                Female
-              </option>
-
-              <option value="OTHER">
-                Other
-              </option>
-
-            </select>
-
-            <input
-              type="date"
-              name="dateOfBirth"
-              value={
-                formData.dateOfBirth
-              }
-              onChange={
-                handleChange
-              }
-              className="
-                border
-                rounded-xl
-                p-3
-              "
-            />
-
-          </div>
-
-          <textarea
-            name="bio"
-            placeholder="Tell us about yourself..."
-            value={
-              formData.bio
-            }
-            onChange={
-              handleChange
-            }
-            rows="5"
-            className="
-              w-full
-              border
-              rounded-xl
-              p-3
-              mt-6
-            "
-          />
-
-          <button
-            onClick={
-              handleSubmit
-            }
-            className="
-              mt-8
-              bg-primary
-              hover:bg-secondary
-              text-white
-              px-8
-              py-3
-              rounded-xl
-              font-semibold
-              transition-all
-              shadow-md
-            "
-          >
-
-            {
-              profileExists
-                ? "Update Profile"
-                : "Create Profile"
-            }
-
-          </button>
+          </Link>
 
         </div>
+
+        {/* PROFILE CARD */}
+
+        <ProfileCard>
+
+          <div
+
+            className="
+
+            flex
+
+            flex-col
+
+            lg:flex-row
+
+            gap-10
+
+            "
+
+          >
+
+            {/* LEFT */}
+
+            <div
+
+              className="
+
+              flex
+
+              flex-col
+
+              items-center
+
+              lg:w-72
+
+              "
+
+            >
+
+              <ProfileAvatar
+
+                size="xl"
+
+                value={
+
+                  profile.profile
+
+                  ?.profileImageUrl
+
+                }
+
+                fullName={
+
+                  profile.profile
+
+                  ?.fullName
+
+                }
+
+              />
+
+              <h2
+
+                className="
+
+                text-2xl
+
+                font-bold
+
+                mt-6
+
+                text-primary
+
+                text-center
+
+                "
+
+              >
+
+                {
+
+                  profile.profile
+
+                  ?.fullName ||
+
+                  "Unknown User"
+
+                }
+
+              </h2>
+
+              <p
+
+                className="
+
+                text-gray-500
+
+                mt-2
+
+                "
+
+              >
+
+                {
+
+                  profile.role
+
+                  ?.roleName ||
+
+                  "User"
+
+                }
+
+              </p>
+
+            </div>
+
+            {/* RIGHT */}
+
+            <div
+
+              className="
+
+              flex-1
+
+              grid
+
+              md:grid-cols-2
+
+              gap-8
+
+              "
+
+            >
+
+              <ProfileInfoItem
+
+                label="Email"
+
+                value={
+
+                  profile.email
+
+                }
+
+              />
+
+              <ProfileInfoItem
+
+                label="Phone Number"
+
+                value={
+
+                  profile.profile
+
+                  ?.phoneNumber
+
+                }
+
+              />
+
+              <ProfileInfoItem
+
+                label="Gender"
+
+                value={
+
+                  profile.profile
+
+                  ?.gender
+
+                }
+
+              />
+
+              <ProfileInfoItem
+
+                label="Date Of Birth"
+
+                value={
+
+                  profile.profile
+
+                  ?.dateOfBirth
+
+                  ?
+
+                  new Date(
+
+                    profile.profile.dateOfBirth
+
+                  )
+
+                  .toLocaleDateString()
+
+                  :
+
+                  "-"
+
+                }
+
+              />
+
+              <div
+
+                className="
+
+                md:col-span-2
+
+                "
+
+              >
+
+                <ProfileInfoItem
+
+                  label="Bio"
+
+                  value={
+
+                    profile.profile
+
+                    ?.bio
+
+                  }
+
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </ProfileCard>
+
+        {/* STUDENT */}
+
+        {
+
+          profile.student && (
+
+          <ProfileCard
+
+            title="Academic Information"
+
+          >
+
+            <div
+
+              className="
+
+              grid
+
+              md:grid-cols-2
+
+              gap-8
+
+              "
+
+            >
+
+              <ProfileInfoItem
+
+                label="University"
+
+                value={
+
+                  profile.student
+
+                  ?.university
+
+                  ?.universityName
+
+                }
+
+              />
+
+              <ProfileInfoItem
+
+                label="Faculty"
+
+                value={
+
+                  profile.student
+
+                  ?.faculty
+
+                  ?.facultyName
+
+                }
+
+              />
+
+              <ProfileInfoItem
+
+                label="Major"
+
+                value={
+
+                  profile.student
+
+                  ?.major
+
+                  ?.majorName
+
+                }
+
+              />
+
+              <ProfileInfoItem
+
+                label="Academic Year"
+
+                value={
+
+                  profile.student
+
+                  ?.academicYear
+
+                }
+
+              />
+
+            </div>
+
+          </ProfileCard>
+
+          )
+
+        }
+
+        {/* ORGANIZATION */}
+
+        {
+
+          profile.organization && (
+
+          <ProfileCard
+
+            title="Organization Information"
+
+          >
+
+            <div
+
+              className="
+
+              grid
+
+              md:grid-cols-2
+
+              gap-8
+
+              "
+
+            >
+
+              <ProfileInfoItem
+
+                label="Organization Name"
+
+                value={
+
+                  profile.organization
+
+                  ?.organizationName
+
+                }
+
+              />
+
+              <ProfileInfoItem
+
+                label="Website"
+
+                value={
+
+                  profile.organization
+
+                  ?.websiteUrl
+
+                }
+
+              />
+
+              <div
+
+                className="
+
+                md:col-span-2
+
+                "
+
+              >
+
+                <ProfileInfoItem
+
+                  label="Description"
+
+                  value={
+
+                    profile.organization
+
+                    ?.description
+
+                  }
+
+                />
+
+              </div>
+
+            </div>
+
+          </ProfileCard>
+
+          )
+
+        }
 
       </div>
 
     </DashboardLayout>
 
   );
+
 }
 
 export default ProfilePage;

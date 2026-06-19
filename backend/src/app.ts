@@ -27,6 +27,8 @@ import universityRoutes from "./modules/university/university.routes.js";
 import facultyRoutes from "./modules/faculty/faculty.routes.js";
 import majorRoutes from "./modules/major/major.routes.js";
 import skillRoutes from "./modules/skill/skill.routes.js";
+import profileRoutes from "./modules/profile/profile.routes.js";
+
 
 setupBigIntSerialization();
 
@@ -138,6 +140,11 @@ app.use(
 app.use(
   "/api/skills",
   skillRoutes
+);
+
+app.use(
+ "/api/profile",
+ profileRoutes
 );
 /*
 |--------------------------------------------------------------------------
