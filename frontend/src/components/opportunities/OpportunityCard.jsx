@@ -1,24 +1,26 @@
 import {
 
+  BriefcaseIcon,
+
+  CalendarDaysIcon,
+
+} from "@heroicons/react/24/outline";
+
+import {
+
   Link,
 
 } from "react-router-dom";
 
 import {
 
-  Briefcase,
+  formatDate,
 
-  Calendar,
-
-  Building2,
-
-} from "lucide-react";
+} from "../../utils/formatDate";
 
 function OpportunityCard({
 
   opportunity,
-
-  children,
 
 }) {
 
@@ -32,81 +34,145 @@ function OpportunityCard({
 
         rounded-2xl
 
-        shadow-md
+        border
 
-        p-6
+        shadow-sm
+
+        overflow-hidden
+
+        hover:shadow-lg
+
+        transition
 
       "
 
     >
 
+      <img
+
+        src={
+
+          opportunity.coverImageUrl
+
+          ||
+
+          "https://placehold.co/800x400?text=Opportunity"
+
+        }
+
+        alt={
+
+          opportunity.title
+
+        }
+
+        className="
+
+          w-full
+
+          h-56
+
+          object-cover
+
+        "
+
+      />
+
       <div
 
         className="
 
-          flex
-
-          flex-col
-
-          gap-5
+          p-6
 
         "
 
       >
 
-        <div>
+        <span
 
-          <h2
+          className="
+
+            inline-flex
+
+            items-center
+
+            gap-2
+
+            px-3
+
+            py-1
+
+            rounded-full
+
+            bg-secondary/10
+
+            text-secondary
+
+            text-sm
+
+          "
+
+        >
+
+          <BriefcaseIcon
 
             className="
 
-              text-2xl
+              w-4
 
-              font-bold
-
-              text-primary
+              h-4
 
             "
 
-          >
+          />
 
-            {
+          {
 
-              opportunity.title
+            opportunity.type
 
-            }
+            ?.typeName
 
-          </h2>
+            ||
 
-          <p
+            "Opportunity"
 
-            className="
+          }
 
-              text-gray-500
+        </span>
 
-              mt-1
+        <h2
 
-            "
+          className="
 
-          >
+            text-xl
 
-            {
+            font-bold
 
-              opportunity.organization
+            text-primary
 
-              ?.organizationName
+            mt-4
 
-            }
+          "
 
-          </p>
+        >
 
-        </div>
+          {
+
+            opportunity.title
+
+          }
+
+        </h2>
 
         <p
 
           className="
 
             text-gray-600
+
+            mt-3
+
+            line-clamp-3
 
           "
 
@@ -124,191 +190,87 @@ function OpportunityCard({
 
           className="
 
-            space-y-3
-
-            text-gray-600
-
-          "
-
-        >
-
-          {
-
-            opportunity.type && (
-
-              <div
-
-                className="
-
-                  flex
-
-                  items-center
-
-                  gap-2
-
-                "
-
-              >
-
-                <Briefcase
-
-                  size={18}
-
-                />
-
-                <span>
-
-                  {
-
-                    opportunity.type
-
-                    .typeName
-
-                  }
-
-                </span>
-
-              </div>
-
-            )
-
-          }
-
-          {
-
-            opportunity.organization && (
-
-              <div
-
-                className="
-
-                  flex
-
-                  items-center
-
-                  gap-2
-
-                "
-
-              >
-
-                <Building2
-
-                  size={18}
-
-                />
-
-                <span>
-
-                  {
-
-                    opportunity.organization
-
-                    .organizationName
-
-                  }
-
-                </span>
-
-              </div>
-
-            )
-
-          }
-
-          {
-
-            opportunity.deadline && (
-
-              <div
-
-                className="
-
-                  flex
-
-                  items-center
-
-                  gap-2
-
-                "
-
-              >
-
-                <Calendar
-
-                  size={18}
-
-                />
-
-                <span>
-
-                  {
-
-                    new Date(
-
-                      opportunity.deadline
-
-                    )
-
-                    .toLocaleDateString()
-
-                  }
-
-                </span>
-
-              </div>
-
-            )
-
-          }
-
-        </div>
-
-        <div
-
-          className="
-
             flex
 
-            flex-wrap
+            items-center
 
-            gap-3
+            gap-2
+
+            text-gray-500
+
+            mt-5
 
           "
 
         >
 
-          <Link
-
-            to={`/opportunities/${opportunity.id}`}
+          <CalendarDaysIcon
 
             className="
 
-              bg-primary
+              w-5
 
-              hover:bg-secondary
-
-              text-white
-
-              px-4
-
-              py-2
-
-              rounded-xl
-
-              transition
+              h-5
 
             "
 
-          >
+          />
 
-            View Details
+          {
 
-          </Link>
+            opportunity.deadline
 
-          {children}
+            ?
+
+            formatDate(
+
+              opportunity.deadline
+
+            )
+
+            :
+
+            "No deadline"
+
+          }
 
         </div>
+
+        <Link
+
+          to={`/opportunities/${opportunity.id}`}
+
+          className="
+
+            inline-flex
+
+            items-center
+
+            justify-center
+
+            mt-6
+
+            bg-primary
+
+            hover:bg-secondary
+
+            text-white
+
+            px-5
+
+            py-3
+
+            rounded-xl
+
+            transition
+
+          "
+
+        >
+
+          View Details
+
+        </Link>
 
       </div>
 

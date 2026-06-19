@@ -2,12 +2,37 @@ import {
 
   useEffect,
 
+  useCallback,
+
 } from "react";
 
 import {
+
   useDispatch,
+
   useSelector,
+
 } from "react-redux";
+
+import {
+
+  UsersIcon,
+
+  BuildingOffice2Icon,
+
+  CalendarDaysIcon,
+
+  ClockIcon,
+
+  CheckCircleIcon,
+
+  XCircleIcon,
+
+  BriefcaseIcon,
+
+  DocumentTextIcon,
+
+} from "@heroicons/react/24/outline";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
@@ -46,6 +71,7 @@ import {
 function AdminDashboardPage() {
 
   const dispatch =
+
     useDispatch();
 
   const {
@@ -64,84 +90,268 @@ function AdminDashboardPage() {
 
   );
 
+  const loadDashboard =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          dispatch(
+
+            setDashboardLoading(
+
+              true
+
+            )
+
+          );
+
+          dispatch(
+
+            setDashboardError(
+
+              null
+
+            )
+
+          );
+
+          const data =
+
+            await getAdminDashboard();
+
+          dispatch(
+
+            setDashboardStats(
+
+              data
+
+            )
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          dispatch(
+
+            setDashboardError(
+
+              "Failed to load dashboard"
+
+            )
+
+          );
+
+        }
+
+        finally {
+
+          dispatch(
+
+            setDashboardLoading(
+
+              false
+
+            )
+
+          );
+
+        }
+
+      },
+
+      [
+
+        dispatch,
+
+      ]
+
+    );
+
   useEffect(() => {
 
     loadDashboard();
 
-  }, []);
+  },
 
-  const loadDashboard =
-    async () => {
+  [
 
-      try {
+    loadDashboard,
 
-        dispatch(
+  ]);
 
-          setDashboardLoading(
-            true
-          )
+  const dashboardCards = [
 
-        );
+    {
 
-        dispatch(
+      title:
 
-          setDashboardError(
-            null
-          )
+      "Students",
 
-        );
+      value:
 
-        const data =
+      stats?.totalStudents,
 
-          await getAdminDashboard();
+      icon:
 
-        dispatch(
+      UsersIcon,
 
-          setDashboardStats(
-            data
-          )
+    },
 
-        );
+    {
 
-      } catch (error) {
+      title:
 
-        console.error(
-          error
-        );
+      "Organizations",
 
-        dispatch(
+      value:
 
-          setDashboardError(
+      stats?.totalOrganizations,
 
-            "Failed to load dashboard"
+      icon:
 
-          )
+      BuildingOffice2Icon,
 
-        );
+    },
 
-      } finally {
+    {
 
-        dispatch(
+      title:
 
-          setDashboardLoading(
-            false
-          )
+      "Events",
 
-        );
+      value:
 
-      }
+      stats?.totalEvents,
 
-    };
+      icon:
+
+      CalendarDaysIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Pending Events",
+
+      value:
+
+      stats?.pendingEvents,
+
+      icon:
+
+      ClockIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Approved Events",
+
+      value:
+
+      stats?.approvedEvents,
+
+      icon:
+
+      CheckCircleIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Rejected Events",
+
+      value:
+
+      stats?.rejectedEvents,
+
+      icon:
+
+      XCircleIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Opportunities",
+
+      value:
+
+      stats?.totalOpportunities,
+
+      icon:
+
+      BriefcaseIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Approved Opportunities",
+
+      value:
+
+      stats?.approvedOpportunities,
+
+      icon:
+
+      CheckCircleIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Applications",
+
+      value:
+
+      stats?.totalApplications,
+
+      icon:
+
+      DocumentTextIcon,
+
+    },
+
+  ];
 
   return (
 
     <DashboardLayout>
 
       <div
+
         className="
+
           max-w-7xl
+
           mx-auto
+
         "
+
       >
 
         <DashboardHeader
@@ -151,11 +361,15 @@ function AdminDashboardPage() {
           subtitle="Platform overview and analytics."
 
           loading={
+
             loading
+
           }
 
           onRefresh={
+
             loadDashboard
+
           }
 
         />
@@ -170,14 +384,22 @@ function AdminDashboardPage() {
 
         {
 
-          !loading &&
+          !loading
 
-          error && (
+          &&
+
+          error
+
+          &&
+
+          (
 
             <DashboardError
 
               message={
+
                 error
+
               }
 
             />
@@ -188,101 +410,61 @@ function AdminDashboardPage() {
 
         {
 
-          !loading &&
+          !loading
 
-          !error && (
+          &&
+
+          !error
+
+          &&
+
+          (
 
             <DashboardStatsGrid>
 
-              <DashboardStatCard
+              {
 
-                title="Students"
+                dashboardCards.map(
 
-                value={
-                  stats?.totalStudents
-                }
+                  (
 
-              />
+                    card
 
-              <DashboardStatCard
+                  ) => (
 
-                title="Organizations"
+                    <DashboardStatCard
 
-                value={
-                  stats?.totalOrganizations
-                }
+                      key={
 
-              />
+                        card.title
 
-              <DashboardStatCard
+                      }
 
-                title="Events"
+                      title={
 
-                value={
-                  stats?.totalEvents
-                }
+                        card.title
 
-              />
+                      }
 
-              <DashboardStatCard
+                      value={
 
-                title="Pending Events"
+                        card.value
 
-                value={
-                  stats?.pendingEvents
-                }
+                      }
 
-              />
+                      icon={
 
-              <DashboardStatCard
+                        card.icon
 
-                title="Approved Events"
+                      }
 
-                value={
-                  stats?.approvedEvents
-                }
+                    />
 
-              />
+                  )
 
-              <DashboardStatCard
+                )
 
-                title="Rejected Events"
-
-                value={
-                  stats?.rejectedEvents
-                }
-
-              />
-
-              <DashboardStatCard
-
-                title="Opportunities"
-
-                value={
-                  stats?.totalOpportunities
-                }
-
-              />
-
-              <DashboardStatCard
-
-                title="Approved Opportunities"
-
-                value={
-                  stats?.approvedOpportunities
-                }
-
-              />
-
-              <DashboardStatCard
-
-                title="Applications"
-
-                value={
-                  stats?.totalApplications
-                }
-
-              />
+              }
 
             </DashboardStatsGrid>
 

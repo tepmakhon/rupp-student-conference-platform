@@ -8,6 +8,9 @@ import {
 
 } from "@heroicons/react/24/outline";
 
+import Input
+from "../ui/Input";
+
 function AdminDataTable({
 
   columns,
@@ -28,9 +31,29 @@ function AdminDataTable({
 
   return (
 
-    <div className="space-y-5">
+    <div
 
-      <div className="relative">
+      className="
+
+        space-y-6
+
+      "
+
+    >
+
+      {/* Search */}
+
+      <div
+
+        className="
+
+          relative
+
+          max-w-md
+
+        "
+
+      >
 
         <MagnifyingGlassIcon
 
@@ -40,7 +63,9 @@ function AdminDataTable({
 
             left-4
 
-            top-3.5
+            top-1/2
+
+            -translate-y-1/2
 
             w-5
 
@@ -48,13 +73,21 @@ function AdminDataTable({
 
             text-gray-400
 
+            z-10
+
           "
 
         />
 
-        <input
+        <Input
 
-          value={search}
+          value={
+
+            search
+
+          }
+
+          placeholder="Search..."
 
           onChange={(e) =>
 
@@ -66,21 +99,9 @@ function AdminDataTable({
 
           }
 
-          placeholder="Search..."
-
           className="
 
-            w-full
-
-            border
-
-            rounded-xl
-
-            py-3
-
             pl-12
-
-            pr-4
 
           "
 
@@ -88,303 +109,167 @@ function AdminDataTable({
 
       </div>
 
+      {/* Table */}
+
       <div
 
         className="
 
-          overflow-x-auto
+          overflow-hidden
 
           bg-white
 
           rounded-2xl
 
-          shadow-md
+          border
+
+          border-gray-100
+
+          shadow-sm
 
         "
 
       >
 
-        <table
+        <div
 
           className="
 
-            w-full
+            overflow-x-auto
 
           "
 
         >
 
-          <thead>
+          <table
 
-            <tr
+            className="
 
-              className="
+              w-full
 
-                bg-gray-100
+            "
 
-              "
+          >
 
-            >
+            <thead>
 
-              {
-
-                columns.map(
-
-                  (column) => (
-
-                    <th
-
-                      key={column.key}
-
-                      className="
-
-                        p-4
-
-                        text-left
-
-                      "
-
-                    >
-
-                      {
-
-                        column.label
-
-                      }
-
-                    </th>
-
-                  )
-
-                )
-
-              }
-
-              <th
+              <tr
 
                 className="
 
-                  p-4
-
-                  text-center
+                  bg-gray-50
 
                 "
 
               >
 
-                Actions
+                {
 
-              </th>
+                  columns.map(
 
-            </tr>
+                    (column) => (
 
-          </thead>
+                      <th
 
-          <tbody>
+                        key={
 
-            {
+                          column.key
 
-              loading
-
-              ? (
-
-                <tr>
-
-                  <td
-
-                    colSpan={
-
-                      columns.length + 1
-
-                    }
-
-                    className="
-
-                      p-10
-
-                      text-center
-
-                    "
-
-                  >
-
-                    Loading...
-
-                  </td>
-
-                </tr>
-
-              )
-
-              :
-
-              data.length === 0
-
-              ? (
-
-                <tr>
-
-                  <td
-
-                    colSpan={
-
-                      columns.length + 1
-
-                    }
-
-                    className="
-
-                      p-10
-
-                      text-center
-
-                    "
-
-                  >
-
-                    No data found
-
-                  </td>
-
-                </tr>
-
-              )
-
-              :
-
-              data.map(
-
-                (item) => (
-
-                  <tr
-
-                    key={item.id}
-
-                    className="
-
-                      border-t
-
-                    "
-
-                  >
-
-                    {
-
-                      columns.map(
-
-                        (column) => (
-
-                          <td
-
-                            key={column.key}
-
-                            className="
-
-                              p-4
-
-                            "
-
-                          >
-
-                            {
-
-                              column.render
-
-                              ?
-
-                              column.render(item)
-
-                              :
-
-                              item[column.key]
-
-                            }
-
-                          </td>
-
-                        )
-
-                      )
-
-                    }
-
-                    <td
-
-                      className="
-
-                        p-4
-
-                      "
-
-                    >
-
-                      <div
+                        }
 
                         className="
 
-                          flex
+                          px-6
 
-                          justify-center
+                          py-4
 
-                          gap-3
+                          text-left
+
+                          text-sm
+
+                          font-semibold
+
+                          text-gray-700
 
                         "
 
                       >
 
-                        <button
+                        {
 
-                          onClick={() =>
+                          column.label
 
-                            onEdit(item)
+                        }
 
-                          }
+                      </th>
 
-                        >
+                    )
 
-                          <PencilSquareIcon
+                  )
 
-                            className="
+                }
 
-                              w-6
+                <th
 
-                              h-6
+                  className="
 
-                              text-blue-600
+                    px-6
 
-                            "
+                    py-4
 
-                          />
+                    text-center
 
-                        </button>
+                    text-sm
 
-                        <button
+                    font-semibold
 
-                          onClick={() =>
+                    text-gray-700
 
-                            onDelete(item)
+                  "
 
-                          }
+                >
 
-                        >
+                  Actions
 
-                          <TrashIcon
+                </th>
 
-                            className="
+              </tr>
 
-                              w-6
+            </thead>
 
-                              h-6
+            <tbody>
 
-                              text-red-600
+              {
 
-                            "
+                loading
 
-                          />
+                ? (
 
-                        </button>
+                  <tr>
 
-                      </div>
+                    <td
+
+                      colSpan={
+
+                        columns.length
+
+                        + 1
+
+                      }
+
+                      className="
+
+                        py-16
+
+                        text-center
+
+                        text-gray-500
+
+                      "
+
+                    >
+
+                      Loading...
 
                     </td>
 
@@ -392,13 +277,257 @@ function AdminDataTable({
 
                 )
 
-              )
+                :
 
-            }
+                data.length === 0
 
-          </tbody>
+                ? (
 
-        </table>
+                  <tr>
+
+                    <td
+
+                      colSpan={
+
+                        columns.length
+
+                        + 1
+
+                      }
+
+                      className="
+
+                        py-16
+
+                        text-center
+
+                        text-gray-500
+
+                      "
+
+                    >
+
+                      No data found
+
+                    </td>
+
+                  </tr>
+
+                )
+
+                :
+
+                data.map(
+
+                  (item) => (
+
+                    <tr
+
+                      key={
+
+                        item.id
+
+                      }
+
+                      className="
+
+                        border-t
+
+                        hover:bg-gray-50
+
+                        transition
+
+                      "
+
+                    >
+
+                      {
+
+                        columns.map(
+
+                          (column) => (
+
+                            <td
+
+                              key={
+
+                                column.key
+
+                              }
+
+                              className="
+
+                                px-6
+
+                                py-5
+
+                                text-gray-700
+
+                              "
+
+                            >
+
+                              {
+
+                                column.render
+
+                                ?
+
+                                column.render(
+
+                                  item
+
+                                )
+
+                                :
+
+                                item[
+
+                                  column.key
+
+                                ]
+
+                              }
+
+                            </td>
+
+                          )
+
+                        )
+
+                      }
+
+                      <td
+
+                        className="
+
+                          px-6
+
+                          py-5
+
+                        "
+
+                      >
+
+                        <div
+
+                          className="
+
+                            flex
+
+                            justify-center
+
+                            gap-3
+
+                          "
+
+                        >
+
+                          <button
+
+                            type="button"
+
+                            onClick={() =>
+
+                              onEdit(
+
+                                item
+
+                              )
+
+                            }
+
+                            className="
+
+                              p-2
+
+                              rounded-lg
+
+                              hover:bg-blue-100
+
+                              transition
+
+                            "
+
+                          >
+
+                            <PencilSquareIcon
+
+                              className="
+
+                                w-5
+
+                                h-5
+
+                                text-blue-600
+
+                              "
+
+                            />
+
+                          </button>
+
+                          <button
+
+                            type="button"
+
+                            onClick={() =>
+
+                              onDelete(
+
+                                item
+
+                              )
+
+                            }
+
+                            className="
+
+                              p-2
+
+                              rounded-lg
+
+                              hover:bg-red-100
+
+                              transition
+
+                            "
+
+                          >
+
+                            <TrashIcon
+
+                              className="
+
+                                w-5
+
+                                h-5
+
+                                text-red-600
+
+                              "
+
+                            />
+
+                          </button>
+
+                        </div>
+
+                      </td>
+
+                    </tr>
+
+                  )
+
+                )
+
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       </div>
 

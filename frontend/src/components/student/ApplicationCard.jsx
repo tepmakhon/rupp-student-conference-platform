@@ -1,8 +1,42 @@
+import {
+
+  CalendarDaysIcon,
+
+  BuildingOfficeIcon,
+
+} from "@heroicons/react/24/outline";
+
+import {
+
+  formatDate,
+
+} from "../../utils/formatDate";
+
 function ApplicationCard({
 
   application,
 
 }) {
+
+  const statusColor = {
+
+    PENDING:
+
+      "bg-gray-100 text-gray-700",
+
+    REVIEWING:
+
+      "bg-yellow-100 text-yellow-700",
+
+    ACCEPTED:
+
+      "bg-green-100 text-green-700",
+
+    REJECTED:
+
+      "bg-red-100 text-red-700",
+
+  };
 
   return (
 
@@ -14,7 +48,13 @@ function ApplicationCard({
 
         rounded-2xl
 
-        shadow-md
+        border
+
+        shadow-sm
+
+        hover:shadow-md
+
+        transition
 
         p-6
 
@@ -28,19 +68,25 @@ function ApplicationCard({
 
           flex
 
-          flex-col
+          justify-between
 
-          md:flex-row
+          items-start
 
-          md:justify-between
-
-          gap-4
+          gap-6
 
         "
 
       >
 
-        <div>
+        <div
+
+          className="
+
+            flex-1
+
+          "
+
+        >
 
           <h2
 
@@ -60,121 +106,145 @@ function ApplicationCard({
 
               application.opportunity
 
-                ?.title
+              ?.title
 
             }
 
           </h2>
 
-          <p
+          <div
 
             className="
 
+              flex
+
+              items-center
+
+              gap-2
+
               text-gray-500
 
-              mt-1
+              mt-3
 
             "
 
           >
 
-            {
+            <BuildingOfficeIcon
 
-              application.opportunity
+              className="
+
+                w-5
+
+                h-5
+
+              "
+
+            />
+
+            <span>
+
+              {
+
+                application.opportunity
 
                 ?.organization
 
                 ?.organizationName
 
-            }
+              }
 
-          </p>
+            </span>
 
-        </div>
+          </div>
 
-        <div>
-
-          <span
+          <div
 
             className="
 
-              bg-secondary/10
+              flex
 
-              text-secondary
+              items-center
 
-              px-4
+              gap-2
 
-              py-2
+              text-gray-500
 
-              rounded-full
-
-              font-medium
+              mt-3
 
             "
 
           >
 
-            {
+            <CalendarDaysIcon
 
-              application.applicationStatus
+              className="
 
-            }
+                w-5
 
-          </span>
+                h-5
+
+              "
+
+            />
+
+            <span>
+
+              Applied:
+
+              {" "}
+
+              {
+
+                formatDate(
+
+                  application.appliedAt
+
+                )
+
+              }
+
+            </span>
+
+          </div>
 
         </div>
 
-      </div>
+        <span
 
-      <div
+          className={`
 
-        className="
+            px-4
 
-          mt-4
+            py-2
 
-          text-gray-600
+            rounded-full
 
-        "
+            text-sm
 
-      >
+            font-semibold
 
-        {
+            ${
 
-          application.opportunity
+              statusColor[
 
-            ?.description
+                application.applicationStatus
 
-        }
+              ]
 
-      </div>
+            }
 
-      <div
+          `}
 
-        className="
+        >
 
-          mt-4
+          {
 
-          text-sm
+            application.applicationStatus
 
-          text-gray-500
+          }
 
-        "
-
-      >
-
-        Applied:
-
-        {" "}
-
-        {
-
-          new Date(
-
-            application.appliedAt
-
-          ).toLocaleDateString()
-
-        }
+        </span>
 
       </div>
 

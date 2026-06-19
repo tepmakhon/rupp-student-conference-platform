@@ -1,3 +1,14 @@
+import {
+
+  ExclamationTriangleIcon,
+
+  XMarkIcon,
+
+} from "@heroicons/react/24/outline";
+
+import Button
+from "../ui/Button";
+
 function DeleteConfirmationModal({
 
   open,
@@ -26,7 +37,7 @@ function DeleteConfirmationModal({
 
         inset-0
 
-        bg-black/50
+        z-50
 
         flex
 
@@ -34,7 +45,9 @@ function DeleteConfirmationModal({
 
         justify-center
 
-        z-50
+        bg-black/50
+
+        p-4
 
       "
 
@@ -44,53 +57,23 @@ function DeleteConfirmationModal({
 
         className="
 
+          w-full
+
+          max-w-md
+
           bg-white
 
           rounded-2xl
 
-          p-8
+          shadow-xl
 
-          w-full
-
-          max-w-md
+          overflow-hidden
 
         "
 
       >
 
-        <h2
-
-          className="
-
-            text-2xl
-
-            font-bold
-
-            mb-4
-
-          "
-
-        >
-
-          Delete Item
-
-        </h2>
-
-        <p
-
-          className="
-
-            text-gray-500
-
-            mb-8
-
-          "
-
-        >
-
-          Delete {title} ?
-
-        </p>
+        {/* Header */}
 
         <div
 
@@ -98,57 +81,241 @@ function DeleteConfirmationModal({
 
             flex
 
-            gap-4
+            items-center
+
+            justify-between
+
+            border-b
+
+            px-6
+
+            py-5
 
           "
 
         >
 
+          <div
+
+            className="
+
+              flex
+
+              items-center
+
+              gap-3
+
+            "
+
+          >
+
+            <div
+
+              className="
+
+                p-2
+
+                rounded-full
+
+                bg-red-100
+
+              "
+
+            >
+
+              <ExclamationTriangleIcon
+
+                className="
+
+                  w-6
+
+                  h-6
+
+                  text-red-600
+
+                "
+
+              />
+
+            </div>
+
+            <h2
+
+              className="
+
+                text-xl
+
+                font-bold
+
+                text-gray-800
+
+              "
+
+            >
+
+              Delete Item
+
+            </h2>
+
+          </div>
+
           <button
+
+            type="button"
 
             onClick={onClose}
 
             className="
 
-              flex-1
+              p-2
 
-              border
+              rounded-lg
 
-              py-3
+              hover:bg-gray-100
 
-              rounded-xl
+              transition
 
             "
+
+          >
+
+            <XMarkIcon
+
+              className="
+
+                w-5
+
+                h-5
+
+                text-gray-500
+
+              "
+
+            />
+
+          </button>
+
+        </div>
+
+        {/* Body */}
+
+        <div
+
+          className="
+
+            px-6
+
+            py-8
+
+          "
+
+        >
+
+          <p
+
+            className="
+
+              text-gray-600
+
+              leading-relaxed
+
+            "
+
+          >
+
+            Are you sure you want to delete
+
+            <span
+
+              className="
+
+                font-semibold
+
+                text-gray-900
+
+                mx-1
+
+              "
+
+            >
+
+              {title}
+
+            </span>
+
+            ?
+
+          </p>
+
+          <p
+
+            className="
+
+              text-sm
+
+              text-gray-400
+
+              mt-2
+
+            "
+
+          >
+
+            This action cannot be undone.
+
+          </p>
+
+        </div>
+
+        {/* Footer */}
+
+        <div
+
+          className="
+
+            flex
+
+            justify-end
+
+            gap-4
+
+            border-t
+
+            px-6
+
+            py-5
+
+          "
+
+        >
+
+          <Button
+
+            type="button"
+
+            variant="outline"
+
+            onClick={onClose}
 
           >
 
             Cancel
 
-          </button>
+          </Button>
 
-          <button
+          <Button
+
+            type="button"
+
+            variant="danger"
 
             onClick={onConfirm}
-
-            className="
-
-              flex-1
-
-              bg-red-600
-
-              text-white
-
-              py-3
-
-              rounded-xl
-
-            "
 
           >
 
             Delete
 
-          </button>
+          </Button>
 
         </div>
 

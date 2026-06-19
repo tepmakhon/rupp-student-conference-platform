@@ -1,217 +1,323 @@
 import {
+
   useEffect,
+
   useState,
+
   useCallback,
+
 } from "react";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
-import {
-  getPendingEvents,
-} from "../../api/eventApi";
+import PageHeader
+from "../../components/common/PageHeader";
+
+import LoadingState
+from "../../components/common/LoadingState";
+
+import ErrorState
+from "../../components/common/ErrorState";
+
+import EmptyState
+from "../../components/common/EmptyState";
 
 import PendingEventCard
 from "../../components/admin/PendingEventCard";
 
+import {
+
+  getPendingEvents,
+
+} from "../../api/eventApi";
+
 function AdminPendingEventsPage() {
 
   const [
+
     events,
+
     setEvents,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
 
   const [
+
     error,
+
     setError,
+
   ] = useState("");
 
   const loadEvents =
-    useCallback(async () => {
 
-      try {
+    useCallback(
 
-        setLoading(true);
-        setError("");
+      async () => {
 
-        const data =
-          await getPendingEvents();
+        try {
 
-        setEvents(
-          Array.isArray(data)
-            ? data
-            : []
-        );
+          setLoading(
 
-      } catch (error) {
+            true
 
-        console.error(error);
+          );
 
-        setError(
-          "Failed to load pending events"
-        );
+          setError(
 
-      } finally {
+            ""
 
-        setLoading(false);
-      }
+          );
 
-    }, []);
+          const data =
+
+            await getPendingEvents();
+
+          setEvents(
+
+            Array.isArray(
+
+              data
+
+            )
+
+            ?
+
+            data
+
+            :
+
+            []
+
+          );
+
+        }
+
+        catch (
+
+          error
+
+        ) {
+
+          console.error(
+
+            error
+
+          );
+
+          setError(
+
+            "Failed to load pending events"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
 
   useEffect(() => {
 
     loadEvents();
 
-  }, [loadEvents]);
+  },
+
+  [
+
+    loadEvents,
+
+  ]);
 
   return (
 
     <DashboardLayout>
 
       <div
+
         className="
-          flex
-          items-center
-          justify-between
-          mb-8
+
+          max-w-7xl
+
+          mx-auto
+
+          space-y-8
+
         "
+
       >
 
-        <div>
+        <PageHeader
 
-          <h1
-            className="
-              text-4xl
-              font-bold
-              text-primary
-            "
-          >
-            Pending Events
-          </h1>
+          title="Pending Events"
 
-          <p
-            className="
-              text-gray-500
-              mt-2
-            "
-          >
-            Review and manage
-            event approval requests.
-          </p>
+          description="Review and manage event approval requests."
 
-        </div>
+        />
+
+        {
+
+          loading
+
+          &&
+
+          <LoadingState
+
+            message="Loading pending events..."
+
+          />
+
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          error
+
+          &&
+
+          <ErrorState
+
+            message={
+
+              error
+
+            }
+
+          />
+
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          events.length === 0
+
+          && (
+
+            <EmptyState
+
+              title="No Pending Events"
+
+              description="All event requests have been reviewed."
+
+            />
+
+          )
+
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          events.length > 0
+
+          && (
+
+            <div
+
+              className="
+
+                grid
+
+                grid-cols-1
+
+                lg:grid-cols-2
+
+                gap-6
+
+              "
+
+            >
+
+              {
+
+                events.map(
+
+                  (
+
+                    event
+
+                  ) => (
+
+                    <PendingEventCard
+
+                      key={
+
+                        event.id
+
+                      }
+
+                      event={
+
+                        event
+
+                      }
+
+                      onAction={
+
+                        loadEvents
+
+                      }
+
+                    />
+
+                  )
+
+                )
+
+              }
+
+            </div>
+
+          )
+
+        }
 
       </div>
 
-      {loading && (
-
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            shadow-md
-            p-8
-            text-center
-          "
-        >
-          Loading pending events...
-        </div>
-
-      )}
-
-      {!loading && error && (
-
-        <div
-          className="
-            bg-red-50
-            border
-            border-red-200
-            text-red-600
-            rounded-2xl
-            p-6
-          "
-        >
-          {error}
-        </div>
-
-      )}
-
-      {!loading &&
-        !error &&
-        events.length === 0 && (
-
-        <div
-          className="
-            bg-white
-            rounded-2xl
-            shadow-md
-            p-10
-            text-center
-          "
-        >
-
-          <h2
-            className="
-              text-xl
-              font-semibold
-              text-primary
-            "
-          >
-            No Pending Events
-          </h2>
-
-          <p
-            className="
-              text-gray-500
-              mt-2
-            "
-          >
-            All event requests
-            have been reviewed.
-          </p>
-
-        </div>
-
-      )}
-
-      {!loading &&
-        !error &&
-        events.length > 0 && (
-
-        <div
-          className="
-            grid
-            grid-cols-1
-            lg:grid-cols-2
-            gap-6
-          "
-        >
-
-          {events.map(
-            (event) => (
-
-              <PendingEventCard
-                key={event.id}
-                event={event}
-                onAction={
-                  loadEvents
-                }
-              />
-
-            )
-          )}
-
-        </div>
-
-      )}
-
     </DashboardLayout>
+
   );
+
 }
 
 export default AdminPendingEventsPage;

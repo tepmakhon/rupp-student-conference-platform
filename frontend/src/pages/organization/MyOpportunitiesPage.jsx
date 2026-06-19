@@ -1,70 +1,230 @@
 import {
+
   useEffect,
+
   useState,
+
+  useCallback,
+
 } from "react";
 
 import {
+
   Link,
+
 } from "react-router-dom";
 
-import toast from "react-hot-toast";
+import toast
+from "react-hot-toast";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
+import PageHeader
+from "../../components/common/PageHeader";
+
+import LoadingState
+from "../../components/common/LoadingState";
+
+import EmptyState
+from "../../components/common/EmptyState";
+
+import DeleteConfirmationModal
+from "../../components/admin/DeleteConfirmationModal";
+
 import {
+
+  PlusCircleIcon,
+
+  UserGroupIcon,
+
+  PencilSquareIcon,
+
+  TrashIcon,
+
+  CalendarDaysIcon,
+
+  BriefcaseIcon,
+
+} from "@heroicons/react/24/outline";
+
+import {
+
+  formatDate,
+
+} from "../../utils/formatDate";
+
+import {
+
   getMyOpportunities,
+
+  deleteOpportunity,
+
 } from "../../api/opportunityApi";
 
 function MyOpportunitiesPage() {
 
   const [
+
     opportunities,
+
     setOpportunities,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
+
+  const [
+
+    selected,
+
+    setSelected,
+
+  ] = useState(null);
+
+  const [
+
+    deleteOpen,
+
+    setDeleteOpen,
+
+  ] = useState(false);
+
+  const loadOpportunities =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          const data =
+
+            await getMyOpportunities();
+
+          setOpportunities(
+
+            Array.isArray(
+
+              data
+
+            )
+
+            ?
+
+            data
+
+            :
+
+            []
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          toast.error(
+
+            "Failed to load opportunities"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
 
   useEffect(() => {
 
-    loadMyOpportunities();
+    loadOpportunities();
 
-  }, []);
+  },
 
-  const loadMyOpportunities =
+  [
+
+    loadOpportunities,
+
+  ]);
+
+  const handleDelete =
+
     async () => {
 
       try {
 
-        setLoading(true);
+        await deleteOpportunity(
 
-        const data =
-          await getMyOpportunities();
-
-        setOpportunities(
-
-          Array.isArray(data)
-
-          ? data
-
-          : []
+          selected.id
 
         );
 
-      } catch (error) {
+        toast.success(
 
-        console.error(error);
+          "Opportunity deleted"
+
+        );
+
+        setDeleteOpen(
+
+          false
+
+        );
+
+        loadOpportunities();
+
+      }
+
+      catch (error) {
+
+        console.error(
+
+          error
+
+        );
 
         toast.error(
-          "Failed to load opportunities"
+
+          error?.response
+
+          ?.data?.message
+
+          ||
+
+          "Delete failed"
+
         );
-
-      } finally {
-
-        setLoading(false);
 
       }
 
@@ -74,32 +234,95 @@ function MyOpportunitiesPage() {
 
     <DashboardLayout>
 
-      <div className="max-w-7xl mx-auto">
+      <div
 
-        <div className="mb-8">
+        className="
 
-          <h1
+          max-w-7xl
+
+          mx-auto
+
+        "
+
+      >
+
+        <div
+
+          className="
+
+            flex
+
+            flex-col
+
+            md:flex-row
+
+            md:items-center
+
+            md:justify-between
+
+            gap-6
+
+          "
+
+        >
+
+          <PageHeader
+
+            title="My Opportunities"
+
+            description="Manage all opportunities created by your organization."
+
+          />
+
+          <Link
+
+            to="/opportunities/create"
+
             className="
-              text-4xl
-              font-bold
-              text-primary
+
+              flex
+
+              items-center
+
+              gap-2
+
+              bg-primary
+
+              hover:bg-secondary
+
+              text-white
+
+              px-6
+
+              py-3
+
+              rounded-xl
+
+              transition
+
+              font-medium
+
+              h-fit
+
             "
+
           >
 
-            My Opportunities
+            <PlusCircleIcon
 
-          </h1>
+              className="
 
-          <p
-            className="
-              text-gray-500
-              mt-2
-            "
-          >
+                w-5
 
-            Manage your opportunities.
+                h-5
 
-          </p>
+              "
+
+            />
+
+            Create Opportunity
+
+          </Link>
 
         </div>
 
@@ -107,58 +330,58 @@ function MyOpportunitiesPage() {
 
           loading
 
-          ? (
+          &&
 
-            <div
-              className="
-                text-center
-                py-20
-              "
-            >
+          <LoadingState />
 
-              Loading...
+        }
 
-            </div>
+        {
 
-          )
+          !loading
 
-          : opportunities.length === 0
+          &&
 
-          ? (
+          opportunities.length === 0
 
-            <div
-              className="
-                bg-white
-                rounded-2xl
-                shadow-md
-                p-10
-                text-center
-              "
-            >
+          &&
 
-              <h2
-                className="
-                  text-2xl
-                  font-bold
-                  text-primary
-                "
-              >
+          (
 
-                No Opportunities
+            <EmptyState
 
-              </h2>
+              title="No Opportunities Yet"
 
-            </div>
+              description="Create your first opportunity."
+
+            />
 
           )
 
-          : (
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          opportunities.length > 0
+
+          &&
+
+          (
 
             <div
+
               className="
+
                 grid
+
                 gap-6
+
               "
+
             >
 
               {
@@ -166,78 +389,428 @@ function MyOpportunitiesPage() {
                 opportunities.map(
 
                   (
+
                     opportunity
+
                   ) => (
 
                     <div
 
                       key={
+
                         opportunity.id
+
                       }
 
                       className="
+
                         bg-white
+
+                        border
+
                         rounded-2xl
-                        shadow-md
+
+                        shadow-sm
+
                         p-6
+
+                        hover:shadow-lg
+
+                        transition
+
                       "
 
                     >
 
-                      <h2
-                        className="
-                          text-2xl
-                          font-bold
-                          text-primary
-                        "
-                      >
-
-                        {
-                          opportunity.title
-                        }
-
-                      </h2>
-
-                      <p
-                        className="
-                          text-gray-600
-                          mt-3
-                        "
-                      >
-
-                        {
-                          opportunity.description
-                        }
-
-                      </p>
-
                       <div
+
                         className="
+
                           flex
-                          gap-4
-                          mt-6
+
+                          flex-col
+
+                          lg:flex-row
+
+                          lg:justify-between
+
+                          gap-8
+
                         "
+
                       >
 
-                        <Link
+                        <div>
 
-                          to={`/organization/opportunities/${opportunity.id}/applicants`}
+                          <div
+
+                            className="
+
+                              flex
+
+                              items-center
+
+                              gap-3
+
+                            "
+
+                          >
+
+                            <h2
+
+                              className="
+
+                                text-2xl
+
+                                font-bold
+
+                                text-primary
+
+                              "
+
+                            >
+
+                              {
+
+                                opportunity.title
+
+                              }
+
+                            </h2>
+
+                            {
+
+                              opportunity.type
+
+                              &&
+
+                              (
+
+                                <span
+
+                                  className="
+
+                                    px-3
+
+                                    py-1
+
+                                    bg-secondary/10
+
+                                    text-secondary
+
+                                    rounded-full
+
+                                    text-xs
+
+                                    font-medium
+
+                                  "
+
+                                >
+
+                                  {
+
+                                    opportunity.type
+
+                                    ?.typeName
+
+                                  }
+
+                                </span>
+
+                              )
+
+                            }
+
+                          </div>
+
+                          <p
+
+                            className="
+
+                              text-gray-600
+
+                              mt-4
+
+                              line-clamp-3
+
+                            "
+
+                          >
+
+                            {
+
+                              opportunity.description
+
+                            }
+
+                          </p>
+
+                          <div
+
+                            className="
+
+                              flex
+
+                              flex-wrap
+
+                              gap-5
+
+                              mt-5
+
+                              text-sm
+
+                              text-gray-500
+
+                            "
+
+                          >
+
+                            <div
+
+                              className="
+
+                                flex
+
+                                items-center
+
+                                gap-2
+
+                              "
+
+                            >
+
+                              <BriefcaseIcon
+
+                                className="
+
+                                  w-5
+
+                                  h-5
+
+                                "
+
+                              />
+
+                              {
+
+                                opportunity.status
+
+                              }
+
+                            </div>
+
+                            {
+
+                              opportunity.deadline
+
+                              &&
+
+                              (
+
+                                <div
+
+                                  className="
+
+                                    flex
+
+                                    items-center
+
+                                    gap-2
+
+                                  "
+
+                                >
+
+                                  <CalendarDaysIcon
+
+                                    className="
+
+                                      w-5
+
+                                      h-5
+
+                                    "
+
+                                  />
+
+                                  {
+
+                                    formatDate(
+
+                                      opportunity.deadline
+
+                                    )
+
+                                  }
+
+                                </div>
+
+                              )
+
+                            }
+
+                          </div>
+
+                        </div>
+
+                        <div
 
                           className="
-                            bg-primary
-                            hover:bg-secondary
-                            text-white
-                            px-5
-                            py-2
-                            rounded-xl
-                            transition
+
+                            flex
+
+                            flex-wrap
+
+                            gap-3
+
+                            h-fit
+
                           "
 
                         >
 
-                          View Applicants
+                          <Link
 
-                        </Link>
+                            to={`/organization/opportunities/${opportunity.id}/applicants`}
+
+                            className="
+
+                              flex
+
+                              items-center
+
+                              gap-2
+
+                              bg-primary
+
+                              text-white
+
+                              px-4
+
+                              py-3
+
+                              rounded-xl
+
+                            "
+
+                          >
+
+                            <UserGroupIcon
+
+                              className="
+
+                                w-5
+
+                                h-5
+
+                              "
+
+                            />
+
+                            Applicants
+
+                          </Link>
+
+                          <Link
+
+                            to={`/organization/opportunities/${opportunity.id}/edit`}
+
+                            className="
+
+                              flex
+
+                              items-center
+
+                              gap-2
+
+                              bg-secondary
+
+                              text-white
+
+                              px-4
+
+                              py-3
+
+                              rounded-xl
+
+                            "
+
+                          >
+
+                            <PencilSquareIcon
+
+                              className="
+
+                                w-5
+
+                                h-5
+
+                              "
+
+                            />
+
+                            Edit
+
+                          </Link>
+
+                          <button
+
+                            onClick={() => {
+
+                              setSelected(
+
+                                opportunity
+
+                              );
+
+                              setDeleteOpen(
+
+                                true
+
+                              );
+
+                            }}
+
+                            className="
+
+                              flex
+
+                              items-center
+
+                              gap-2
+
+                              bg-red-600
+
+                              text-white
+
+                              px-4
+
+                              py-3
+
+                              rounded-xl
+
+                            "
+
+                          >
+
+                            <TrashIcon
+
+                              className="
+
+                                w-5
+
+                                h-5
+
+                              "
+
+                            />
+
+                            Delete
+
+                          </button>
+
+                        </div>
 
                       </div>
 
@@ -254,6 +827,38 @@ function MyOpportunitiesPage() {
           )
 
         }
+
+        <DeleteConfirmationModal
+
+          open={
+
+            deleteOpen
+
+          }
+
+          title={
+
+            selected?.title
+
+          }
+
+          onClose={() =>
+
+            setDeleteOpen(
+
+              false
+
+            )
+
+          }
+
+          onConfirm={
+
+            handleDelete
+
+          }
+
+        />
 
       </div>
 

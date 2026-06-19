@@ -1,42 +1,28 @@
 import {
 
-  Link,
+  CalendarDaysIcon,
 
-} from "react-router-dom";
+  BuildingOffice2Icon,
+
+} from "@heroicons/react/24/outline";
 
 import {
 
-  MapPin,
+  Link,
 
-  Calendar,
-
-  Tag,
-
-} from "lucide-react";
+} from "react-router-dom";
 
 function EventCard({
 
   event,
 
-  children,
-
 }) {
 
   return (
 
-    <div
+    <Link
 
-      className="
-
-        bg-white
-
-        rounded-2xl
-
-        shadow-md
-
-        p-6
-
-      "
+      to={`/events/${event.id}`}
 
     >
 
@@ -44,23 +30,73 @@ function EventCard({
 
         className="
 
-          flex
+          bg-white
 
-          flex-col
+          rounded-2xl
 
-          gap-5
+          border
+
+          shadow-sm
+
+          hover:shadow-lg
+
+          overflow-hidden
+
+          transition
+
+          duration-300
 
         "
 
       >
 
-        <div>
+        <img
+
+          src={
+
+            event.bannerImageUrl
+
+            ||
+
+            "https://placehold.co/800x400?text=Event"
+
+          }
+
+          alt={
+
+            event.title
+
+          }
+
+          className="
+
+            w-full
+
+            h-52
+
+            object-cover
+
+          "
+
+        />
+
+        <div
+
+          className="
+
+            p-6
+
+            space-y-4
+
+          "
+
+        >
 
           <h2
 
             className="
 
-              text-2xl
+              text-xl
 
               font-bold
 
@@ -70,25 +106,37 @@ function EventCard({
 
           >
 
-            {
-
-              event.title
-
-            }
+            {event.title}
 
           </h2>
 
-          <p
+          <div
 
             className="
 
-              text-gray-500
+              flex
 
-              mt-1
+              items-center
+
+              gap-2
+
+              text-gray-500
 
             "
 
           >
+
+            <BuildingOffice2Icon
+
+              className="
+
+                w-5
+
+                h-5
+
+              "
+
+            />
 
             {
 
@@ -98,113 +146,15 @@ function EventCard({
 
             }
 
-          </p>
-
-        </div>
-
-        <p
-
-          className="
-
-            text-gray-600
-
-          "
-
-        >
-
-          {
-
-            event.description
-
-          }
-
-        </p>
-
-        <div
-
-          className="
-
-            space-y-3
-
-            text-gray-600
-
-          "
-
-        >
-
-          <div
-
-            className="
-
-              flex
-
-              items-center
-
-              gap-2
-
-            "
-
-          >
-
-            <MapPin
-
-              size={18}
-
-            />
-
-            <span>
-
-              {
-
-                event.location
-
-              }
-
-            </span>
-
-          </div>
-
-          <div
-
-            className="
-
-              flex
-
-              items-center
-
-              gap-2
-
-            "
-
-          >
-
-            <Calendar
-
-              size={18}
-
-            />
-
-            <span>
-
-              {
-
-                new Date(
-
-                  event.eventDate
-
-                )
-
-                .toLocaleDateString()
-
-              }
-
-            </span>
-
           </div>
 
           {
 
-            event.category && (
+            event.eventDate
+
+            &&
+
+            (
 
               <div
 
@@ -216,27 +166,33 @@ function EventCard({
 
                   gap-2
 
+                  text-gray-500
+
                 "
 
               >
 
-                <Tag
+                <CalendarDaysIcon
 
-                  size={18}
+                  className="
+
+                    w-5
+
+                    h-5
+
+                  "
 
                 />
 
-                <span>
+                {
 
-                  {
+                  new Date(
 
-                    event.category
+                    event.eventDate
 
-                    .categoryName
+                  ).toLocaleDateString()
 
-                  }
-
-                </span>
+                }
 
               </div>
 
@@ -246,55 +202,9 @@ function EventCard({
 
         </div>
 
-        <div
-
-          className="
-
-            flex
-
-            flex-wrap
-
-            gap-3
-
-          "
-
-        >
-
-          <Link
-
-            to={`/events/${event.id}`}
-
-            className="
-
-              bg-primary
-
-              hover:bg-secondary
-
-              text-white
-
-              px-4
-
-              py-2
-
-              rounded-xl
-
-              transition
-
-            "
-
-          >
-
-            View Details
-
-          </Link>
-
-          {children}
-
-        </div>
-
       </div>
 
-    </div>
+    </Link>
 
   );
 

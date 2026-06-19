@@ -1,448 +1,903 @@
 import {
+
   useEffect,
+
   useState,
+
+  useCallback,
+
 } from "react";
 
 import {
+
   useParams,
+
 } from "react-router-dom";
-
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
-
-import {
-  getOpportunityById,
-  saveOpportunity,
-  unsaveOpportunity,
-  applyOpportunity,
-} from "../../api/opportunityApi";
 
 import toast
 from "react-hot-toast";
 
+import DashboardLayout
+from "../../components/layouts/DashboardLayout";
+
+import PageHeader
+from "../../components/common/PageHeader";
+
+import LoadingState
+from "../../components/common/LoadingState";
+
+import ErrorState
+from "../../components/common/ErrorState";
+
+import Button
+from "../../components/ui/Button";
+
+import {
+
+  getOpportunityById,
+
+  saveOpportunity,
+
+  unsaveOpportunity,
+
+  applyOpportunity,
+
+} from "../../api/opportunityApi";
+
+import {
+
+  formatDate,
+
+} from "../../utils/formatDate";
+
 function OpportunityDetailPage() {
 
-  const { id } = useParams();
+  const { id } =
+
+    useParams();
 
   const [
+
     opportunity,
+
     setOpportunity,
+
   ] = useState(null);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
 
   const [
+
+    error,
+
+    setError,
+
+  ] = useState("");
+
+  const [
+
     saving,
+
     setSaving,
+
   ] = useState(false);
 
   const [
+
     applying,
+
     setApplying,
+
   ] = useState(false);
 
   const [
+
     saved,
+
     setSaved,
+
   ] = useState(false);
+
+  const loadOpportunity =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          setError(
+
+            ""
+
+          );
+
+          const data =
+
+            await getOpportunityById(
+
+              id
+
+            );
+
+          setOpportunity(
+
+            data
+
+          );
+
+          setSaved(
+
+            data?.isSaved
+
+            ||
+
+            false
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          setError(
+
+            "Failed to load opportunity"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      [
+
+        id,
+
+      ]
+
+    );
 
   useEffect(() => {
 
     loadOpportunity();
 
-  }, [id]);
+  },
 
-  const loadOpportunity =
-    async () => {
+  [
 
-      try {
+    loadOpportunity,
 
-        const data =
-          await getOpportunityById(id);
-
-        setOpportunity(data);
-
-      } catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          "Failed to load opportunity"
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-    };
+  ]);
 
   const handleSave =
+
     async () => {
 
       try {
 
-        setSaving(true);
+        setSaving(
 
-        if (saved) {
+          true
 
-          await unsaveOpportunity(id);
+        );
 
-          setSaved(false);
+        if (
 
-          toast.success(
-            "Removed from saved opportunities"
+          saved
+
+        ) {
+
+          await unsaveOpportunity(
+
+            id
+
           );
 
-        } else {
+          setSaved(
 
-          await saveOpportunity(id);
+            false
 
-          setSaved(true);
+          );
 
           toast.success(
-            "Opportunity saved successfully"
+
+            "Removed from saved"
+
           );
 
         }
 
-      } catch (error) {
+        else {
 
-        console.error(error);
+          await saveOpportunity(
 
-        toast.error(
-          error.response?.data?.message ||
-          "Failed to save opportunity"
-        );
+            id
 
-      } finally {
+          );
 
-        setSaving(false);
+          setSaved(
+
+            true
+
+          );
+
+          toast.success(
+
+            "Opportunity saved"
+
+          );
+
+        }
 
       }
+
+      catch (error) {
+
+        console.error(
+
+          error
+
+        );
+
+        toast.error(
+
+          error?.response
+
+          ?.data?.message
+
+          ||
+
+          "Failed to save"
+
+        );
+
+      }
+
+      finally {
+
+        setSaving(
+
+          false
+
+        );
+
+      }
+
     };
 
   const handleApply =
+
     async () => {
 
       try {
 
-        setApplying(true);
+        setApplying(
+
+          true
+
+        );
 
         await applyOpportunity(
+
           id,
+
           {}
+
         );
 
         toast.success(
-          "Application submitted successfully"
+
+          "Application submitted"
+
         );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          error.response?.data?.message ||
-          "Failed to apply"
-        );
-
-      } finally {
-
-        setApplying(false);
 
       }
+
+      catch (error) {
+
+        console.error(
+
+          error
+
+        );
+
+        toast.error(
+
+          error?.response
+
+          ?.data?.message
+
+          ||
+
+          "Application failed"
+
+        );
+
+      }
+
+      finally {
+
+        setApplying(
+
+          false
+
+        );
+
+      }
+
     };
-
-  if (loading) {
-
-    return (
-
-      <DashboardLayout>
-
-        <div
-          className="
-            text-center
-            py-20
-            text-lg
-          "
-        >
-          Loading Opportunity...
-        </div>
-
-      </DashboardLayout>
-
-    );
-  }
 
   return (
 
     <DashboardLayout>
 
       <div
+
         className="
-          bg-white
-          rounded-2xl
-          shadow-lg
-          overflow-hidden
+
+          max-w-6xl
+
+          mx-auto
+
         "
+
       >
 
-        {opportunity.coverImageUrl && (
+        {
 
-          <img
-            src={
-              opportunity.coverImageUrl
-            }
-            alt={
-              opportunity.title
-            }
-            className="
-              w-full
-              h-96
-              object-cover
-            "
-          />
+          loading
 
-        )}
+          &&
 
-        <div className="p-8">
+          <LoadingState />
 
-          <div
-            className="
-              flex
-              flex-col
-              md:flex-row
-              md:justify-between
-              md:items-start
-              gap-4
-              mb-8
-            "
-          >
+        }
 
-            <div>
+        {
 
-              <h1
-                className="
-                  text-4xl
-                  font-bold
-                  text-primary
-                "
-              >
-                {opportunity.title}
-              </h1>
+          !loading
 
-              <p
-                className="
-                  text-gray-500
-                  mt-2
-                "
-              >
-                {
-                  opportunity.organization
-                    ?.organizationName
-                }
-              </p>
+          &&
 
-            </div>
+          error
 
-          </div>
+          &&
 
-          <div
-            className="
-              grid
-              md:grid-cols-3
-              gap-4
-              mb-8
-            "
-          >
+          (
 
-            <div
-              className="
-                bg-gray-50
-                p-4
-                rounded-xl
-              "
-            >
+            <ErrorState
 
-              <p className="text-gray-500">
-                Opportunity Type
-              </p>
+              message={
 
-              <p className="font-semibold">
-                {
-                  opportunity.type
-                    ?.typeName
-                }
-              </p>
+                error
 
-            </div>
-
-            <div
-              className="
-                bg-gray-50
-                p-4
-                rounded-xl
-              "
-            >
-
-              <p className="text-gray-500">
-                Deadline
-              </p>
-
-              <p className="font-semibold">
-
-                {
-                  opportunity.deadline
-                    ? new Date(
-                        opportunity.deadline
-                      ).toLocaleDateString()
-                    : "No Deadline"
-                }
-
-              </p>
-
-            </div>
-
-            <div
-              className="
-                bg-gray-50
-                p-4
-                rounded-xl
-              "
-            >
-
-              <p className="text-gray-500">
-                Status
-              </p>
-
-              <p
-                className="
-                  font-semibold
-                  text-secondary
-                "
-              >
-                {opportunity.status}
-              </p>
-
-            </div>
-
-          </div>
-
-          <h2
-            className="
-              text-2xl
-              font-bold
-              text-primary
-              mb-3
-            "
-          >
-            Description
-          </h2>
-
-          <p
-            className="
-              text-gray-700
-              leading-relaxed
-              mb-8
-            "
-          >
-            {
-              opportunity.description
-            }
-          </p>
-
-          <h2
-            className="
-              text-2xl
-              font-bold
-              text-primary
-              mb-3
-            "
-          >
-            Requirements
-          </h2>
-
-          <p
-            className="
-              text-gray-700
-              whitespace-pre-line
-              leading-relaxed
-            "
-          >
-            {
-              opportunity.requirements ||
-              "No requirements provided."
-            }
-          </p>
-
-          <div
-            className="
-              mt-10
-              flex
-              flex-wrap
-              gap-4
-            "
-          >
-
-            <button
-              onClick={handleApply}
-              disabled={applying}
-              className="
-                bg-primary
-                hover:bg-secondary
-                text-white
-                px-6
-                py-3
-                rounded-xl
-                transition
-                disabled:opacity-50
-              "
-            >
-              {
-                applying
-                  ? "Applying..."
-                  : "Apply Now"
               }
-            </button>
 
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className={`
-                px-6
-                py-3
-                rounded-xl
+            />
+
+          )
+
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          opportunity
+
+          &&
+
+          (
+
+            <div
+
+              className="
+
+                bg-white
+
+                rounded-2xl
+
+                overflow-hidden
+
+                shadow-sm
+
                 border
-                transition
 
-                ${
-                  saved
-                    ? "bg-gold text-white border-gold"
-                    : "border-primary text-primary hover:bg-primary hover:text-white"
-                }
-              `}
+              "
+
             >
-              {
-                saving
-                  ? "Saving..."
-                  : saved
-                    ? "Saved"
-                    : "Save Opportunity"
-              }
-            </button>
 
-          </div>
+              <img
 
-        </div>
+                src={
+
+                  opportunity.coverImageUrl
+
+                  ||
+
+                  "https://placehold.co/1200x500?text=Opportunity"
+
+                }
+
+                alt={
+
+                  opportunity.title
+
+                }
+
+                className="
+
+                  w-full
+
+                  h-96
+
+                  object-cover
+
+                "
+
+              />
+
+              <div
+
+                className="
+
+                  p-8
+
+                "
+
+              >
+
+                <PageHeader
+
+                  title={
+
+                    opportunity.title
+
+                  }
+
+                  description={
+
+                    opportunity.organization
+
+                    ?.organizationName
+
+                  }
+
+                />
+
+                <div
+
+                  className="
+
+                    grid
+
+                    md:grid-cols-3
+
+                    gap-5
+
+                    my-8
+
+                  "
+
+                >
+
+                  <div
+
+                    className="
+
+                      bg-gray-50
+
+                      rounded-xl
+
+                      p-5
+
+                    "
+
+                  >
+
+                    <p
+
+                      className="
+
+                        text-gray-500
+
+                      "
+
+                    >
+
+                      Type
+
+                    </p>
+
+                    <p
+
+                      className="
+
+                        font-semibold
+
+                      "
+
+                    >
+
+                      {
+
+                        opportunity.type
+
+                        ?.typeName
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                  <div
+
+                    className="
+
+                      bg-gray-50
+
+                      rounded-xl
+
+                      p-5
+
+                    "
+
+                  >
+
+                    <p
+
+                      className="
+
+                        text-gray-500
+
+                      "
+
+                    >
+
+                      Deadline
+
+                    </p>
+
+                    <p
+
+                      className="
+
+                        font-semibold
+
+                      "
+
+                    >
+
+                      {
+
+                        opportunity.deadline
+
+                        ?
+
+                        formatDate(
+
+                          opportunity.deadline
+
+                        )
+
+                        :
+
+                        "No deadline"
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                  <div
+
+                    className="
+
+                      bg-gray-50
+
+                      rounded-xl
+
+                      p-5
+
+                    "
+
+                  >
+
+                    <p
+
+                      className="
+
+                        text-gray-500
+
+                      "
+
+                    >
+
+                      Status
+
+                    </p>
+
+                    <p
+
+                      className="
+
+                        font-semibold
+
+                        text-secondary
+
+                      "
+
+                    >
+
+                      {
+
+                        opportunity.status
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div
+
+                  className="
+
+                    space-y-8
+
+                  "
+
+                >
+
+                  <div>
+
+                    <h2
+
+                      className="
+
+                        text-2xl
+
+                        font-bold
+
+                        text-primary
+
+                        mb-3
+
+                      "
+
+                    >
+
+                      Description
+
+                    </h2>
+
+                    <p
+
+                      className="
+
+                        text-gray-700
+
+                      "
+
+                    >
+
+                      {
+
+                        opportunity.description
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                  <div>
+
+                    <h2
+
+                      className="
+
+                        text-2xl
+
+                        font-bold
+
+                        text-primary
+
+                        mb-3
+
+                      "
+
+                    >
+
+                      Requirements
+
+                    </h2>
+
+                    <p
+
+                      className="
+
+                        text-gray-700
+
+                        whitespace-pre-line
+
+                      "
+
+                    >
+
+                      {
+
+                        opportunity.requirements
+
+                        ||
+
+                        "No requirements provided."
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div
+
+                  className="
+
+                    flex
+
+                    flex-wrap
+
+                    gap-4
+
+                    mt-10
+
+                  "
+
+                >
+
+                  <Button
+
+                    onClick={
+
+                      handleApply
+
+                    }
+
+                    disabled={
+
+                      applying
+
+                    }
+
+                  >
+
+                    {
+
+                      applying
+
+                      ?
+
+                      "Applying..."
+
+                      :
+
+                      "Apply Now"
+
+                    }
+
+                  </Button>
+
+                  <Button
+
+                    variant={
+
+                      saved
+
+                      ?
+
+                      "secondary"
+
+                      :
+
+                      "outline"
+
+                    }
+
+                    onClick={
+
+                      handleSave
+
+                    }
+
+                    disabled={
+
+                      saving
+
+                    }
+
+                  >
+
+                    {
+
+                      saving
+
+                      ?
+
+                      "Saving..."
+
+                      :
+
+                      saved
+
+                      ?
+
+                      "Saved"
+
+                      :
+
+                      "Save Opportunity"
+
+                    }
+
+                  </Button>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          )
+
+        }
 
       </div>
 
     </DashboardLayout>
+
   );
+
 }
 
 export default OpportunityDetailPage;

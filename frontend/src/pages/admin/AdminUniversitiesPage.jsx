@@ -23,7 +23,7 @@ function AdminUniversitiesPage() {
 
       title="Universities"
 
-      description="Manage universities available across the platform."
+      description="Manage universities across the platform."
 
       entityName="University"
 
@@ -46,6 +46,10 @@ function AdminUniversitiesPage() {
           name: "universityName",
 
           label: "University Name",
+
+          placeholder:
+
+            "Enter university name",
 
         },
 

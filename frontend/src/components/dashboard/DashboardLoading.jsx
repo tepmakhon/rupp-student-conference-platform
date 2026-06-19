@@ -1,3 +1,9 @@
+import {
+
+  ArrowPathIcon,
+
+} from "@heroicons/react/24/outline";
+
 function DashboardLoading() {
 
   return (
@@ -10,17 +16,55 @@ function DashboardLoading() {
 
         rounded-2xl
 
-        shadow-md
+        border
+
+        shadow-sm
 
         p-16
 
-        text-center
+        flex
+
+        flex-col
+
+        items-center
+
+        justify-center
+
+        gap-4
 
       "
 
     >
 
-      Loading dashboard...
+      <ArrowPathIcon
+
+        className="
+
+          w-10
+
+          h-10
+
+          text-primary
+
+          animate-spin
+
+        "
+
+      />
+
+      <p
+
+        className="
+
+          text-gray-500
+
+        "
+
+      >
+
+        Loading dashboard...
+
+      </p>
 
     </div>
 

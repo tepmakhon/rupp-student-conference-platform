@@ -1,99 +1,184 @@
 import {
+
   useEffect,
+
   useState,
+
+  useCallback,
+
 } from "react";
 
 import {
+
   Link,
+
 } from "react-router-dom";
 
 import {
+
   useSelector,
+
 } from "react-redux";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
-import {
-  getOpportunities,
-} from "../../api/opportunityApi";
+import PageHeader
+from "../../components/common/PageHeader";
 
-import toast
-from "react-hot-toast";
+import LoadingState
+from "../../components/common/LoadingState";
+
+import ErrorState
+from "../../components/common/ErrorState";
+
+import EmptyState
+from "../../components/common/EmptyState";
+
+import OpportunityCard
+from "../../components/opportunities/OpportunityCard";
+
+import {
+
+  getOpportunities,
+
+} from "../../api/opportunityApi";
 
 function OpportunityListPage() {
 
   const role =
+
     useSelector(
+
       (state) =>
+
         state.auth.role
+
     );
 
   const [
+
     opportunities,
+
     setOpportunities,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
+
+  const [
+
+    error,
+
+    setError,
+
+  ] = useState("");
+
+  const loadOpportunities =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          setError(
+
+            ""
+
+          );
+
+          const data =
+
+            await getOpportunities();
+
+          setOpportunities(
+
+            data?.opportunities
+
+            ||
+
+            data
+
+            ||
+
+            []
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          setError(
+
+            "Failed to load opportunities"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
 
   useEffect(() => {
 
     loadOpportunities();
 
-  }, []);
+  },
 
-  const loadOpportunities =
-    async () => {
+  [
 
-      try {
+    loadOpportunities,
 
-        setLoading(true);
-
-        const data =
-
-          await getOpportunities();
-
-        setOpportunities(
-
-          data.opportunities || []
-
-        );
-
-      } catch (error) {
-
-        console.error(
-          error
-        );
-
-        toast.error(
-
-          "Failed to load opportunities"
-
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    };
+  ]);
 
   return (
 
     <DashboardLayout>
 
       <div
-        className="
-          max-w-7xl
-          mx-auto
-        "
-      >
 
-        {/* Header */}
+        className="
+
+          max-w-7xl
+
+          mx-auto
+
+        "
+
+      >
 
         <div
 
@@ -109,105 +194,19 @@ function OpportunityListPage() {
 
             md:justify-between
 
-            gap-4
-
-            mb-8
+            gap-5
 
           "
 
         >
 
-          <div>
+          <PageHeader
 
-            <h1
+            title="Opportunities"
 
-              className="
+            description="Discover opportunities available across the platform."
 
-                text-4xl
-
-                font-bold
-
-                text-primary
-
-              "
-
-            >
-
-              Opportunities
-
-            </h1>
-
-            <p
-
-              className="
-
-                text-gray-600
-
-                mt-2
-
-              "
-
-            >
-
-              Discover internships,
-
-              scholarships,
-
-              volunteer programs,
-
-              part-time jobs,
-
-              and full-time careers.
-
-            </p>
-
-          </div>
-
-          {
-
-            role ===
-
-            "ORGANIZATION"
-
-            &&
-
-            (
-
-              <Link
-
-                to="/opportunities/create"
-
-                className="
-
-                  bg-primary
-
-                  hover:bg-secondary
-
-                  text-white
-
-                  px-6
-
-                  py-3
-
-                  rounded-xl
-
-                  transition
-
-                  font-medium
-
-                  w-fit
-
-                "
-
-              >
-
-                Create Opportunity
-
-              </Link>
-
-            )
-
-          }
+          />
 
         </div>
 
@@ -215,109 +214,81 @@ function OpportunityListPage() {
 
           loading
 
-          ? (
+          &&
 
-            <div
+          <LoadingState />
 
-              className="
+        }
 
-                flex
+        {
 
-                justify-center
+          !loading
 
-                items-center
+          &&
 
-                py-20
+          error
 
-              "
+          &&
 
-            >
+          (
 
-              <p
+            <ErrorState
 
-                className="
+              message={
 
-                  text-lg
+                error
 
-                  text-gray-500
+              }
 
-                "
-
-              >
-
-                Loading opportunities...
-
-              </p>
-
-            </div>
+            />
 
           )
 
-          : opportunities.length === 0
+        }
 
-          ? (
+        {
 
-            <div
+          !loading
 
-              className="
+          &&
 
-                bg-white
+          !error
 
-                rounded-2xl
+          &&
 
-                shadow-md
+          opportunities.length === 0
 
-                p-12
+          &&
 
-                text-center
+          (
 
-              "
+            <EmptyState
 
-            >
+              title="No Opportunities"
 
-              <h2
+              description="No opportunities available."
 
-                className="
-
-                  text-2xl
-
-                  font-bold
-
-                  text-primary
-
-                "
-
-              >
-
-                No Opportunities Found
-
-              </h2>
-
-              <p
-
-                className="
-
-                  text-gray-600
-
-                  mt-3
-
-                "
-
-              >
-
-                There are currently
-
-                no opportunities
-
-                available.
-
-              </p>
-
-            </div>
+            />
 
           )
 
-          : (
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          opportunities.length > 0
+
+          &&
+
+          (
 
             <div
 
@@ -331,7 +302,7 @@ function OpportunityListPage() {
 
                 xl:grid-cols-3
 
-                gap-8
+                gap-6
 
               "
 
@@ -347,7 +318,7 @@ function OpportunityListPage() {
 
                   ) => (
 
-                    <div
+                    <OpportunityCard
 
                       key={
 
@@ -355,231 +326,13 @@ function OpportunityListPage() {
 
                       }
 
-                      className="
+                      opportunity={
 
-                        bg-white
+                        opportunity
 
-                        rounded-2xl
+                      }
 
-                        shadow-lg
-
-                        overflow-hidden
-
-                        hover:shadow-xl
-
-                        transition-all
-
-                        duration-300
-
-                      "
-
-                    >
-
-                      <img
-
-                        src={
-
-                          opportunity.coverImageUrl ||
-
-                          "https://placehold.co/600x300?text=Opportunity"
-
-                        }
-
-                        alt={
-
-                          opportunity.title
-
-                        }
-
-                        className="
-
-                          w-full
-
-                          h-56
-
-                          object-cover
-
-                        "
-
-                      />
-
-                      <div
-
-                        className="p-6"
-
-                      >
-
-                        <span
-
-                          className="
-
-                            inline-block
-
-                            bg-secondary/10
-
-                            text-secondary
-
-                            px-3
-
-                            py-1
-
-                            rounded-full
-
-                            text-sm
-
-                            font-medium
-
-                          "
-
-                        >
-
-                          {
-
-                            opportunity.type
-
-                              ?.typeName ||
-
-                            "Opportunity"
-
-                          }
-
-                        </span>
-
-                        <h2
-
-                          className="
-
-                            text-xl
-
-                            font-bold
-
-                            text-primary
-
-                            mt-3
-
-                          "
-
-                        >
-
-                          {
-
-                            opportunity.title
-
-                          }
-
-                        </h2>
-
-                        <p
-
-                          className="
-
-                            text-gray-600
-
-                            mt-3
-
-                            line-clamp-3
-
-                          "
-
-                        >
-
-                          {
-
-                            opportunity.description
-
-                          }
-
-                        </p>
-
-                        <div
-
-                          className="
-
-                            mt-4
-
-                          "
-
-                        >
-
-                          <p
-
-                            className="
-
-                              text-sm
-
-                              text-gray-500
-
-                            "
-
-                          >
-
-                            Deadline:
-
-                            {" "}
-
-                            {
-
-                              opportunity.deadline
-
-                              ?
-
-                              new Date(
-
-                                opportunity.deadline
-
-                              )
-
-                              .toLocaleDateString()
-
-                              :
-
-                              "No Deadline"
-
-                            }
-
-                          </p>
-
-                        </div>
-
-                        <Link
-
-                          to={
-
-                            `/opportunities/${opportunity.id}`
-
-                          }
-
-                          className="
-
-                            mt-5
-
-                            inline-block
-
-                            bg-primary
-
-                            hover:bg-secondary
-
-                            text-white
-
-                            px-5
-
-                            py-3
-
-                            rounded-xl
-
-                            transition
-
-                          "
-
-                        >
-
-                          View Details
-
-                        </Link>
-
-                      </div>
-
-                    </div>
+                    />
 
                   )
 

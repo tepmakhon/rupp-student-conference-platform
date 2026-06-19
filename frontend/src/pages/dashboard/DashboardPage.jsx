@@ -1,4 +1,8 @@
-import { useSelector } from "react-redux";
+import {
+
+  useSelector,
+
+} from "react-redux";
 
 import StudentDashboardPage
 from "./StudentDashboardPage";
@@ -9,34 +13,69 @@ from "./OrganizationDashboardPage";
 import AdminDashboardPage
 from "./AdminDashboardPage";
 
+import ErrorState
+from "../../components/common/ErrorState";
+
 function DashboardPage() {
 
-  const role =
+  const auth =
+
     useSelector(
+
       (state) =>
-        state.auth.role
+
+        state.auth
+
     );
+
+  const role =
+
+    auth.role
+
+    ||
+
+    auth.user
+
+    ?.role
+
+    ?.roleName;
 
   switch (role) {
 
     case "ADMIN":
 
       return (
+
         <AdminDashboardPage />
+
       );
 
     case "ORGANIZATION":
 
       return (
+
         <OrganizationDashboardPage />
+
       );
 
     case "STUDENT":
 
+      return (
+
+        <StudentDashboardPage />
+
+      );
+
     default:
 
       return (
-        <StudentDashboardPage />
+
+        <ErrorState
+
+          message="Unable to load dashboard."
+
+        />
+
       );
 
   }

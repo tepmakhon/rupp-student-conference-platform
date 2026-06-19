@@ -1,3 +1,12 @@
+import {
+
+  XMarkIcon,
+
+} from "@heroicons/react/24/outline";
+
+import Button
+from "../ui/Button";
+
 function AdminFormModal({
 
   open,
@@ -28,7 +37,7 @@ function AdminFormModal({
 
         inset-0
 
-        bg-black/50
+        z-50
 
         flex
 
@@ -36,7 +45,9 @@ function AdminFormModal({
 
         justify-center
 
-        z-50
+        bg-black/50
+
+        p-4
 
       "
 
@@ -46,19 +57,23 @@ function AdminFormModal({
 
         className="
 
+          w-full
+
+          max-w-2xl
+
           bg-white
 
           rounded-2xl
 
-          w-full
+          shadow-xl
 
-          max-w-xl
-
-          p-8
+          overflow-hidden
 
         "
 
       >
+
+        {/* Header */}
 
         <div
 
@@ -66,9 +81,15 @@ function AdminFormModal({
 
             flex
 
+            items-center
+
             justify-between
 
-            mb-6
+            border-b
+
+            px-8
+
+            py-5
 
           "
 
@@ -82,6 +103,8 @@ function AdminFormModal({
 
               font-bold
 
+              text-primary
+
             "
 
           >
@@ -92,47 +115,101 @@ function AdminFormModal({
 
           <button
 
+            type="button"
+
             onClick={onClose}
-
-          >
-
-            ✕
-
-          </button>
-
-        </div>
-
-        <form
-
-          onSubmit={onSubmit}
-
-          className="space-y-5"
-
-        >
-
-          {children}
-
-          <button
 
             className="
 
-              w-full
+              p-2
 
-              bg-primary
+              rounded-lg
 
-              text-white
+              hover:bg-gray-100
 
-              py-3
-
-              rounded-xl
+              transition
 
             "
 
           >
 
-            Save
+            <XMarkIcon
+
+              className="
+
+                w-6
+
+                h-6
+
+                text-gray-500
+
+              "
+
+            />
 
           </button>
+
+        </div>
+
+        {/* Form */}
+
+        <form
+
+          onSubmit={onSubmit}
+
+          className="
+
+            p-8
+
+            space-y-6
+
+          "
+
+        >
+
+          {children}
+
+          <div
+
+            className="
+
+              flex
+
+              justify-end
+
+              gap-4
+
+              pt-4
+
+            "
+
+          >
+
+            <Button
+
+              type="button"
+
+              variant="outline"
+
+              onClick={onClose}
+
+            >
+
+              Cancel
+
+            </Button>
+
+            <Button
+
+              type="submit"
+
+            >
+
+              Save
+
+            </Button>
+
+          </div>
 
         </form>
 

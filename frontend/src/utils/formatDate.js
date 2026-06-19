@@ -1,8 +1,4 @@
-export default function formatDate(
-
-  date
-
-) {
+export function formatDate(date) {
 
   if (!date) {
 
@@ -14,6 +10,20 @@ export default function formatDate(
 
     date
 
-  ).toLocaleDateString();
+  ).toLocaleDateString(
+
+    "en-US",
+
+    {
+
+      year: "numeric",
+
+      month: "short",
+
+      day: "numeric",
+
+    }
+
+  );
 
 }

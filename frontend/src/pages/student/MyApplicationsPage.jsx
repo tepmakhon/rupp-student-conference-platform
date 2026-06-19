@@ -1,191 +1,207 @@
 import {
+
   useEffect,
+
   useState,
+
+  useCallback,
+
 } from "react";
-
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
-
-import {
-  getMyApplications,
-} from "../../api/applicationApi";
 
 import toast
 from "react-hot-toast";
 
+import DashboardLayout
+from "../../components/layouts/DashboardLayout";
+
+import PageHeader
+from "../../components/common/PageHeader";
+
+import LoadingState
+from "../../components/common/LoadingState";
+
+import EmptyState
+from "../../components/common/EmptyState";
+
+import ApplicationCard
+from "../../components/student/ApplicationCard";
+
+import {
+
+  getMyApplications,
+
+} from "../../api/applicationApi";
+
 function MyApplicationsPage() {
 
   const [
+
     applications,
+
     setApplications,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
+
+  const loadApplications =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          const data =
+
+            await getMyApplications();
+
+          setApplications(
+
+            data?.applications
+
+            ||
+
+            []
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          toast.error(
+
+            "Failed to load applications"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
 
   useEffect(() => {
 
     loadApplications();
 
-  }, []);
+  },
 
-  const loadApplications =
-    async () => {
+  [
 
-      try {
+    loadApplications,
 
-        setLoading(true);
-
-        const data =
-          await getMyApplications();
-
-        setApplications(
-          data.applications || []
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          "Failed to load applications"
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    };
-
-  const statusColor = {
-
-    PENDING:
-      "bg-gray-100 text-gray-700",
-
-    REVIEWING:
-      "bg-yellow-100 text-yellow-700",
-
-    ACCEPTED:
-      "bg-green-100 text-green-700",
-
-    REJECTED:
-      "bg-red-100 text-red-700",
-
-  };
+  ]);
 
   return (
 
     <DashboardLayout>
 
       <div
+
         className="
+
           max-w-7xl
+
           mx-auto
+
         "
+
       >
 
-        <div
-          className="
-            mb-8
-          "
-        >
+        <PageHeader
 
-          <h1
-            className="
-              text-4xl
-              font-bold
-              text-primary
-            "
-          >
+          title="My Applications"
 
-            My Applications
+          description="Track all your opportunity applications."
 
-          </h1>
-
-          <p
-            className="
-              text-gray-500
-              mt-2
-            "
-          >
-
-            Track all your applications.
-
-          </p>
-
-        </div>
+        />
 
         {
 
           loading
 
-          ? (
+          &&
 
-            <div
-              className="
-                text-center
-                py-20
-              "
-            >
+          <LoadingState />
 
-              Loading...
+        }
 
-            </div>
+        {
 
-          )
+          !loading
 
-          : applications.length === 0
+          &&
 
-          ? (
+          applications.length === 0
 
-            <div
-              className="
-                bg-white
-                rounded-2xl
-                shadow-md
-                p-10
-                text-center
-              "
-            >
+          &&
 
-              <h2
-                className="
-                  text-2xl
-                  font-bold
-                  text-primary
-                "
-              >
+          (
 
-                No Applications Yet
+            <EmptyState
 
-              </h2>
+              title="No Applications Yet"
 
-              <p
-                className="
-                  text-gray-500
-                  mt-2
-                "
-              >
+              description="Start applying for opportunities."
 
-                Start applying for opportunities.
-
-              </p>
-
-            </div>
+            />
 
           )
 
-          : (
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          applications.length > 0
+
+          &&
+
+          (
 
             <div
+
               className="
-                grid
-                gap-6
+
+                space-y-6
+
               "
+
             >
 
               {
@@ -193,131 +209,26 @@ function MyApplicationsPage() {
                 applications.map(
 
                   (
+
                     application
+
                   ) => (
 
-                    <div
+                    <ApplicationCard
 
                       key={
+
                         application.id
+
                       }
 
-                      className="
-                        bg-white
-                        rounded-2xl
-                        shadow-md
-                        p-6
-                      "
-                    >
+                      application={
 
-                      <div
-                        className="
-                          flex
-                          justify-between
-                          items-start
-                          gap-6
-                        "
-                      >
+                        application
 
-                        <div>
+                      }
 
-                          <h2
-                            className="
-                              text-2xl
-                              font-bold
-                              text-primary
-                            "
-                          >
-
-                            {
-
-                              application
-                              .opportunity
-                              .title
-
-                            }
-
-                          </h2>
-
-                          <p
-                            className="
-                              text-gray-500
-                              mt-2
-                            "
-                          >
-
-                            {
-
-                              application
-                              .opportunity
-                              .organization
-                              ?.organizationName
-
-                            }
-
-                          </p>
-
-                          <p
-                            className="
-                              text-sm
-                              text-gray-500
-                              mt-3
-                            "
-                          >
-
-                            Applied:
-
-                            {" "}
-
-                            {
-
-                              new Date(
-
-                                application.appliedAt
-
-                              ).toLocaleDateString()
-
-                            }
-
-                          </p>
-
-                        </div>
-
-                        <span
-
-                          className={`
-
-                            px-4
-
-                            py-2
-
-                            rounded-full
-
-                            font-medium
-
-                            ${
-
-                              statusColor[
-                                application.applicationStatus
-                              ]
-
-                            }
-
-                          `}
-
-                        >
-
-                          {
-
-                            application.applicationStatus
-
-                          }
-
-                        </span>
-
-                      </div>
-
-                    </div>
+                    />
 
                   )
 

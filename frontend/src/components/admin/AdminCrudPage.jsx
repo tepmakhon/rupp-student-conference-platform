@@ -6,6 +6,8 @@ import {
 
   useState,
 
+  useCallback,
+
 } from "react";
 
 import toast
@@ -25,6 +27,15 @@ from "./AdminFormModal";
 
 import DeleteConfirmationModal
 from "./DeleteConfirmationModal";
+
+import Input
+from "../ui/Input";
+
+import Select
+from "../ui/Select";
+
+import Textarea
+from "../ui/Textarea";
 
 function AdminCrudPage({
 
@@ -104,309 +115,379 @@ function AdminCrudPage({
 
   ] = useState({});
 
+  const loadData =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          const data =
+
+            await getAll();
+
+          setItems(
+
+            Array.isArray(
+
+              data
+
+            )
+
+            ?
+
+            data
+
+            :
+
+            []
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          toast.error(
+
+            `Failed to load ${entityName}`
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      [
+
+        entityName,
+
+        getAll,
+
+      ]
+
+    );
+
   useEffect(() => {
 
     loadData();
-
-  }, []);
-
-  const loadData =
-  async () => {
-
-    try {
-
-      setLoading(
-        true
-      );
-
-      const data =
-
-        await getAll();
-
-      setItems(
-
-        Array.isArray(data)
-
-        ? data
-
-        : []
-
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(
-        error
-      );
-
-      toast.error(
-
-        `Failed to load ${entityName}`
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(
-        false
-      );
-
-    }
-
-  };
-
-  const filtered =
-  useMemo(() => {
-
-    if (!search) {
-
-      return items;
-
-    }
-
-    return items.filter(
-
-      (item) =>
-
-        JSON.stringify(item)
-
-        .toLowerCase()
-
-        .includes(
-
-          search.toLowerCase()
-
-        )
-
-    );
 
   },
 
   [
 
-    items,
-
-    search,
+    loadData,
 
   ]);
 
+  const filtered =
+
+    useMemo(() => {
+
+      if (
+
+        !search
+
+      ) {
+
+        return items;
+
+      }
+
+      return items.filter(
+
+        (item) =>
+
+          JSON.stringify(
+
+            item
+
+          )
+
+          .toLowerCase()
+
+          .includes(
+
+            search.toLowerCase()
+
+          )
+
+      );
+
+    },
+
+    [
+
+      items,
+
+      search,
+
+    ]
+
+  );
+
   const handleAdd =
-  () => {
 
-    setSelected(
-      null
-    );
+    () => {
 
-    const initial = {};
+      setSelected(
 
-    formFields.forEach(
+        null
 
-      (field) => {
+      );
 
-        initial[
+      const initial = {};
 
-          field.name
+      formFields.forEach(
 
-        ] =
+        (field) => {
 
-        field.defaultValue ||
+          initial[
 
-        "";
+            field.name
 
-      }
+          ] =
 
-    );
+          field.defaultValue
 
-    formFields.forEach(
+          ||
 
-      (field) => {
+          "";
 
-        initial[field.name] = "";
+        }
 
-      }
+      );
 
-    );
+      setForm(
 
-    setForm(
-      initial
-    );
+        initial
 
-    setModalOpen(
-      true
-    );
-
-  };
-
-  const handleEdit =
-  (item) => {
-
-    setSelected(
-      item
-    );
-
-    const values = {};
-
-    formFields.forEach(
-
-      (field) => {
-
-        values[
-
-          field.name
-
-        ] =
-
-        item[
-
-          field.name
-
-        ] ?? "";
-
-      }
-
-    );
-
-    formFields.forEach(
-
-      (field) => {
-
-        values[field.name] =
-
-          item[field.name]
-
-          || "";
-
-      }
-
-    );
-
-    setForm(
-      values
-    );
-
-    setModalOpen(
-      true
-    );
-
-  };
-
-  const handleSubmit =
-  async (
-    e
-  ) => {
-
-    e.preventDefault();
-
-    try {
-
-      if (selected) {
-
-        await update(
-
-          selected.id,
-
-          form
-
-        );
-
-        toast.success(
-
-          `${entityName} updated`
-
-        );
-
-      }
-
-      else {
-
-        await create(
-          form
-        );
-
-        toast.success(
-
-          `${entityName} created`
-
-        );
-
-      }
+      );
 
       setModalOpen(
-        false
+
+        true
+
       );
 
-      loadData();
+    };
 
-    }
+  const handleEdit =
 
-    catch (error) {
+    (item) => {
 
-      console.error(
+      setSelected(
+
+        item
+
+      );
+
+      const values = {};
+
+      formFields.forEach(
+
+        (field) => {
+
+          values[
+
+            field.name
+
+          ] =
+
+          item[
+
+            field.name
+
+          ]
+
+          ??
+
+          "";
+
+        }
+
+      );
+
+      setForm(
+
+        values
+
+      );
+
+      setModalOpen(
+
+        true
+
+      );
+
+    };
+
+  const handleSubmit =
+
+    async (
+
+      e
+
+    ) => {
+
+      e.preventDefault();
+
+      try {
+
+        if (
+
+          selected
+
+        ) {
+
+          await update(
+
+            selected.id,
+
+            form
+
+          );
+
+          toast.success(
+
+            `${entityName} updated`
+
+          );
+
+        }
+
+        else {
+
+          await create(
+
+            form
+
+          );
+
+          toast.success(
+
+            `${entityName} created`
+
+          );
+
+        }
+
+        setModalOpen(
+
+          false
+
+        );
+
+        await loadData();
+
+      }
+
+      catch (
+
         error
-      );
 
-      toast.error(
+      ) {
 
-        error?.response
+        console.error(
 
-        ?.data?.message ||
+          error
 
-        "Operation failed"
+        );
 
-      );
+        toast.error(
 
-    }
+          error?.response
 
-  };
+          ?.data?.message
+
+          ||
+
+          "Operation failed"
+
+        );
+
+      }
+
+    };
 
   const handleDelete =
-  async () => {
 
-    try {
+    async () => {
 
-      await remove(
+      try {
 
-        selected.id
+        await remove(
 
-      );
+          selected.id
 
-      toast.success(
+        );
 
-        `${entityName} deleted`
+        toast.success(
 
-      );
+          `${entityName} deleted`
 
-      setDeleteOpen(
-        false
-      );
+        );
 
-      loadData();
+        setDeleteOpen(
 
-    }
+          false
 
-    catch (error) {
+        );
 
-      console.error(
+        await loadData();
+
+      }
+
+      catch (
+
         error
-      );
 
-      toast.error(
+      ) {
 
-        error?.response
+        console.error(
 
-        ?.data?.message ||
+          error
 
-        "Delete failed"
+        );
 
-      );
+        toast.error(
 
-    }
+          error?.response
 
-  };
+          ?.data?.message
+
+          ||
+
+          "Delete failed"
+
+        );
+
+      }
+
+    };
 
   return (
 
@@ -426,38 +507,82 @@ function AdminCrudPage({
 
         <AdminPageHeader
 
-          title={title}
+          title={
 
-          description={description}
+            title
 
-          addLabel={`Add ${entityName}`}
+          }
 
-          onAdd={handleAdd}
+          description={
+
+            description
+
+          }
+
+          addLabel={`
+
+            Add ${entityName}
+
+          `}
+
+          onAdd={
+
+            handleAdd
+
+          }
 
         />
 
         <AdminDataTable
 
-          columns={columns}
+          columns={
 
-          data={filtered}
+            columns
 
-          loading={loading}
+          }
 
-          search={search}
+          data={
 
-          setSearch={setSearch}
+            filtered
 
-          onEdit={handleEdit}
+          }
+
+          loading={
+
+            loading
+
+          }
+
+          search={
+
+            search
+
+          }
+
+          setSearch={
+
+            setSearch
+
+          }
+
+          onEdit={
+
+            handleEdit
+
+          }
 
           onDelete={(item) => {
 
             setSelected(
+
               item
+
             );
 
             setDeleteOpen(
+
               true
+
             );
 
           }}
@@ -466,7 +591,11 @@ function AdminCrudPage({
 
         <AdminFormModal
 
-          open={modalOpen}
+          open={
+
+            modalOpen
+
+          }
 
           title={
 
@@ -485,7 +614,9 @@ function AdminCrudPage({
           onClose={() =>
 
             setModalOpen(
+
               false
+
             )
 
           }
@@ -498,333 +629,289 @@ function AdminCrudPage({
 
         >
 
-        {
-          formFields.map(
+          {
 
-            (field) => (
+            formFields.map(
 
-              <div
+              (field) => (
 
-                key={field.name}
+                <div
 
-                className="space-y-2"
+                  key={
 
-              >
+                    field.name
 
-                <label
-
-                  className="
-
-                    block
-
-                    font-medium
-
-                    text-gray-700
-
-                  "
+                  }
 
                 >
 
-                  {field.label}
-
-                </label>
-
-                {/* TEXTAREA */}
-
-                {
-
-                  field.type ===
-
-                  "textarea"
-
-                  && (
-
-                    <textarea
-
-                      rows={4}
-
-                      value={
-
-                        form[
-
-                          field.name
-
-                        ] || ""
-
-                      }
-
-                      onChange={(e) =>
-
-                        setForm({
-
-                          ...form,
-
-                          [
-
-                            field.name
-
-                          ]:
-
-                          e.target.value,
-
-                        })
-
-                      }
-
-                      placeholder={
-
-                        field.placeholder
-
-                      }
-
-                      className="
-
-                        w-full
-
-                        border
-
-                        rounded-xl
-
-                        p-3
-
-                      "
-
-                    />
-
-                  )
-
-                }
-
-                {/* SELECT */}
-
-                {
-
-                  field.type ===
-
-                  "select"
-
-                  && (
-
-                    <select
-
-                      value={
-
-                        form[
-
-                          field.name
-
-                        ] || ""
-
-                      }
-
-                      onChange={(e) =>
-
-                        setForm({
-
-                          ...form,
-
-                          [
-
-                            field.name
-
-                          ]:
-
-                          e.target.value,
-
-                        })
-
-                      }
-
-                      className="
-
-                        w-full
-
-                        border
-
-                        rounded-xl
-
-                        p-3
-
-                      "
-
-                    >
-
-                      <option value="">
-
-                        Select
-
-                      </option>
-
-                      {
-
-                        field.options
-
-                        ?.map(
-
-                          (option) => (
-
-                            <option
-
-                              key={
-
-                                option[
-
-                                  field.optionValue ||
-
-                                  "id"
-
-                                ]
-
-                              }
-
-                              value={
-
-                                option[
-
-                                  field.optionValue ||
-
-                                  "id"
-
-                                ]
-
-                              }
-
-                            >
-
-                              {
-
-                                option[
-
-                                  field.optionLabel ||
-
-                                  "name"
-
-                                ]
-
-                              }
-
-                            </option>
-
-                          )
-
-                        )
-
-                      }
-
-                    </select>
-
-                  )
-
-                }
-
-                {/* INPUT */}
-
-                {
-
-                  (
-
-                    !field.type ||
+                  {
 
                     field.type ===
 
-                    "text" ||
+                    "textarea"
 
-                    field.type ===
+                    ?
 
-                    "number"
+                    (
 
-                  )
+                      <Textarea
 
-                  && (
+                        label={
 
-                    <input
+                          field.label
 
-                      type={
+                        }
 
-                        field.type ||
+                        value={
 
-                        "text"
-
-                      }
-
-                      value={
-
-                        form[
-
-                          field.name
-
-                        ] || ""
-
-                      }
-
-                      onChange={(e) =>
-
-                        setForm({
-
-                          ...form,
-
-                          [
+                          form[
 
                             field.name
 
-                          ]:
+                          ]
 
-                          e.target.value,
+                          ||
 
-                        })
+                          ""
 
-                      }
+                        }
 
-                      placeholder={
+                        rows={
 
-                        field.placeholder
+                          field.rows
 
-                      }
+                          ||
 
-                      disabled={
+                          4
 
-                        field.disabled
+                        }
 
-                      }
+                        placeholder={
 
-                      className="
+                          field.placeholder
 
-                        w-full
+                        }
 
-                        border
+                        onChange={(e) =>
 
-                        rounded-xl
+                          setForm({
 
-                        p-3
+                            ...form,
 
-                      "
+                            [
 
-                    />
+                              field.name
 
-                  )
+                            ]:
 
-                }
+                            e.target.value,
 
-              </div>
+                          })
+
+                        }
+
+                      />
+
+                    )
+
+                    :
+
+                    field.type ===
+
+                    "select"
+
+                    ?
+
+                    (
+
+                      <Select
+
+                        label={
+
+                          field.label
+
+                        }
+
+                        value={
+
+                          form[
+
+                            field.name
+
+                          ]
+
+                          ||
+
+                          ""
+
+                        }
+
+                        options={
+
+                          field.options
+
+                          ||
+
+                          []
+
+                        }
+
+                        optionValue={
+
+                          field.optionValue
+
+                          ||
+
+                          "id"
+
+                        }
+
+                        optionLabel={
+
+                          field.optionLabel
+
+                          ||
+
+                          "name"
+
+                        }
+
+                        placeholder={
+
+                          field.placeholder
+
+                          ||
+
+                          "Select"
+
+                        }
+
+                        onChange={(e) =>
+
+                          setForm({
+
+                            ...form,
+
+                            [
+
+                              field.name
+
+                            ]:
+
+                            e.target.value,
+
+                          })
+
+                        }
+
+                      />
+
+                    )
+
+                    :
+
+                    (
+
+                      <Input
+
+                        label={
+
+                          field.label
+
+                        }
+
+                        type={
+
+                          field.type
+
+                          ||
+
+                          "text"
+
+                        }
+
+                        value={
+
+                          form[
+
+                            field.name
+
+                          ]
+
+                          ||
+
+                          ""
+
+                        }
+
+                        placeholder={
+
+                          field.placeholder
+
+                        }
+
+                        disabled={
+
+                          field.disabled
+
+                        }
+
+                        onChange={(e) =>
+
+                          setForm({
+
+                            ...form,
+
+                            [
+
+                              field.name
+
+                            ]:
+
+                            e.target.value,
+
+                          })
+
+                        }
+
+                      />
+
+                    )
+
+                  }
+
+                </div>
+
+              )
 
             )
 
-          )
-        }
+          }
 
         </AdminFormModal>
 
         <DeleteConfirmationModal
 
-          open={deleteOpen}
+          open={
+
+            deleteOpen
+
+          }
 
           title={
 
-            selected?.name ||
+            selected?.name
 
-            selected?.title ||
+            ||
 
-            selected?.categoryName ||
+            selected?.title
+
+            ||
+
+            selected?.categoryName
+
+            ||
 
             ""
 
@@ -833,7 +920,9 @@ function AdminCrudPage({
           onClose={() =>
 
             setDeleteOpen(
+
               false
+
             )
 
           }

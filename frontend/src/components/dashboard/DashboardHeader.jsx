@@ -26,13 +26,13 @@ function DashboardHeader({
 
         flex-col
 
-        md:flex-row
+        lg:flex-row
 
-        md:justify-between
+        lg:items-center
 
-        md:items-center
+        lg:justify-between
 
-        gap-5
+        gap-6
 
         mb-10
 
@@ -46,7 +46,9 @@ function DashboardHeader({
 
           className="
 
-            text-4xl
+            text-3xl
+
+            md:text-4xl
 
             font-bold
 
@@ -98,6 +100,8 @@ function DashboardHeader({
 
           items-center
 
+          justify-center
+
           gap-2
 
           bg-primary
@@ -112,6 +116,8 @@ function DashboardHeader({
 
           rounded-xl
 
+          shadow-sm
+
           transition
 
           disabled:opacity-50
@@ -122,13 +128,27 @@ function DashboardHeader({
 
         <ArrowPathIcon
 
-          className="
+          className={`
 
             w-5
 
             h-5
 
-          "
+            ${
+
+              loading
+
+              ?
+
+              "animate-spin"
+
+              :
+
+              ""
+
+            }
+
+          `}
 
         />
 

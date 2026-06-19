@@ -6,6 +6,8 @@ import {
 
   useState,
 
+  useCallback,
+
 } from "react";
 
 import toast
@@ -25,6 +27,12 @@ from "../../components/admin/AdminFormModal";
 
 import DeleteConfirmationModal
 from "../../components/admin/DeleteConfirmationModal";
+
+import Input
+from "../../components/ui/Input";
+
+import Select
+from "../../components/ui/Select";
 
 import {
 
@@ -120,263 +128,367 @@ function AdminFacultiesPage() {
 
   });
 
+  const loadData =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          const [
+
+            facultyData,
+
+            universityData,
+
+          ] = await Promise.all([
+
+            getFaculties(),
+
+            getUniversities(),
+
+          ]);
+
+          setFaculties(
+
+            Array.isArray(
+
+              facultyData
+
+            )
+
+            ?
+
+            facultyData
+
+            :
+
+            []
+
+          );
+
+          setUniversities(
+
+            Array.isArray(
+
+              universityData
+
+            )
+
+            ?
+
+            universityData
+
+            :
+
+            []
+
+          );
+
+        }
+
+        catch (
+
+          error
+
+        ) {
+
+          console.error(
+
+            error
+
+          );
+
+          toast.error(
+
+            "Failed to load faculties"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
+
   useEffect(() => {
 
     loadData();
-
-  }, []);
-
-  const loadData =
-  async () => {
-
-    try {
-
-      setLoading(
-        true
-      );
-
-      const [
-
-        facultyData,
-
-        universityData,
-
-      ] = await Promise.all([
-
-        getFaculties(),
-
-        getUniversities(),
-
-      ]);
-
-      setFaculties(
-
-        facultyData
-
-      );
-
-      setUniversities(
-
-        universityData
-
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(
-        error
-      );
-
-      toast.error(
-
-        "Failed to load data"
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(
-        false
-      );
-
-    }
-
-  };
-
-  const filtered =
-  useMemo(() => {
-
-    return faculties.filter(
-
-      (item) =>
-
-        item.facultyName
-
-        ?.toLowerCase()
-
-        .includes(
-
-          search.toLowerCase()
-
-        )
-
-    );
 
   },
 
   [
 
-    faculties,
-
-    search,
+    loadData,
 
   ]);
 
+  const filtered =
+
+    useMemo(
+
+      () => {
+
+        if (
+
+          !search
+
+        ) {
+
+          return faculties;
+
+        }
+
+        return faculties.filter(
+
+          (item) =>
+
+            item.facultyName
+
+            ?.toLowerCase()
+
+            .includes(
+
+              search.toLowerCase()
+
+            )
+
+        );
+
+      },
+
+      [
+
+        faculties,
+
+        search,
+
+      ]
+
+    );
+
   const handleAdd =
-  () => {
 
-    setSelected(
-      null
-    );
+    () => {
 
-    setForm({
+      setSelected(
 
-      facultyName: "",
+        null
 
-      universityId: "",
+      );
 
-    });
+      setForm({
 
-    setModalOpen(
-      true
-    );
+        facultyName: "",
 
-  };
+        universityId: "",
 
-  const handleEdit =
-  (item) => {
-
-    setSelected(
-      item
-    );
-
-    setForm({
-
-      facultyName:
-
-        item.facultyName,
-
-      universityId:
-
-        item.universityId,
-
-    });
-
-    setModalOpen(
-      true
-    );
-
-  };
-
-  const handleSubmit =
-  async (
-    e
-  ) => {
-
-    e.preventDefault();
-
-    try {
-
-      if (selected) {
-
-        await updateFaculty(
-
-          selected.id,
-
-          form
-
-        );
-
-        toast.success(
-
-          "Faculty updated"
-
-        );
-
-      }
-
-      else {
-
-        await createFaculty(
-
-          form
-
-        );
-
-        toast.success(
-
-          "Faculty created"
-
-        );
-
-      }
+      });
 
       setModalOpen(
-        false
+
+        true
+
       );
 
-      loadData();
+    };
 
-    }
+  const handleEdit =
 
-    catch (error) {
+    (item) => {
 
-      console.error(
+      setSelected(
+
+        item
+
+      );
+
+      setForm({
+
+        facultyName:
+
+          item.facultyName
+
+          || "",
+
+        universityId:
+
+          item.universityId
+
+          || "",
+
+      });
+
+      setModalOpen(
+
+        true
+
+      );
+
+    };
+
+  const handleSubmit =
+
+    async (
+
+      e
+
+    ) => {
+
+      e.preventDefault();
+
+      try {
+
+        if (
+
+          selected
+
+        ) {
+
+          await updateFaculty(
+
+            selected.id,
+
+            form
+
+          );
+
+          toast.success(
+
+            "Faculty updated"
+
+          );
+
+        }
+
+        else {
+
+          await createFaculty(
+
+            form
+
+          );
+
+          toast.success(
+
+            "Faculty created"
+
+          );
+
+        }
+
+        setModalOpen(
+
+          false
+
+        );
+
+        loadData();
+
+      }
+
+      catch (
+
         error
-      );
 
-      toast.error(
+      ) {
 
-        error?.response
+        console.error(
 
-        ?.data?.message ||
+          error
 
-        "Operation failed"
+        );
 
-      );
+        toast.error(
 
-    }
+          error?.response
 
-  };
+          ?.data?.message
+
+          ||
+
+          "Operation failed"
+
+        );
+
+      }
+
+    };
 
   const handleDelete =
-  async () => {
 
-    try {
+    async () => {
 
-      await deleteFaculty(
+      try {
 
-        selected.id
+        await deleteFaculty(
 
-      );
+          selected.id
 
-      toast.success(
+        );
 
-        "Faculty deleted"
+        toast.success(
 
-      );
+          "Faculty deleted"
 
-      setDeleteOpen(
-        false
-      );
+        );
 
-      loadData();
+        setDeleteOpen(
 
-    }
+          false
 
-    catch (error) {
+        );
 
-      console.error(
+        loadData();
+
+      }
+
+      catch (
+
         error
-      );
 
-      toast.error(
+      ) {
 
-        error?.response
+        console.error(
 
-        ?.data?.message ||
+          error
 
-        "Delete failed"
+        );
 
-      );
+        toast.error(
 
-    }
+          error?.response
 
-  };
+          ?.data?.message
+
+          ||
+
+          "Delete failed"
+
+        );
+
+      }
+
+    };
 
   return (
 
@@ -398,11 +510,15 @@ function AdminFacultiesPage() {
 
           title="Faculties"
 
-          description="Manage faculties."
+          description="Manage faculties and universities."
 
           addLabel="Add Faculty"
 
-          onAdd={handleAdd}
+          onAdd={
+
+            handleAdd
+
+          }
 
         />
 
@@ -444,24 +560,48 @@ function AdminFacultiesPage() {
 
           ]}
 
-          data={filtered}
+          data={
 
-          loading={loading}
+            filtered
 
-          search={search}
+          }
 
-          setSearch={setSearch}
+          loading={
 
-          onEdit={handleEdit}
+            loading
+
+          }
+
+          search={
+
+            search
+
+          }
+
+          setSearch={
+
+            setSearch
+
+          }
+
+          onEdit={
+
+            handleEdit
+
+          }
 
           onDelete={(item) => {
 
             setSelected(
+
               item
+
             );
 
             setDeleteOpen(
+
               true
+
             );
 
           }}
@@ -470,7 +610,11 @@ function AdminFacultiesPage() {
 
         <AdminFormModal
 
-          open={modalOpen}
+          open={
+
+            modalOpen
+
+          }
 
           title={
 
@@ -489,7 +633,9 @@ function AdminFacultiesPage() {
           onClose={() =>
 
             setModalOpen(
+
               false
+
             )
 
           }
@@ -502,151 +648,81 @@ function AdminFacultiesPage() {
 
         >
 
-          <div>
+          <Input
 
-            <label>
+            label="Faculty Name"
 
-              Faculty Name
+            value={
 
-            </label>
+              form.facultyName
 
-            <input
+            }
 
-              value={
+            placeholder="Enter faculty name"
 
-                form.facultyName
+            onChange={(e) =>
 
-              }
+              setForm({
 
-              onChange={(e) =>
+                ...form,
 
-                setForm({
+                facultyName:
 
-                  ...form,
+                e.target.value,
 
-                  facultyName:
+              })
 
-                  e.target.value,
+            }
 
-                })
+          />
 
-              }
+          <Select
 
-              className="
+            label="University"
 
-                w-full
+            value={
 
-                border
+              form.universityId
 
-                p-3
+            }
 
-                rounded-xl
+            options={
 
-              "
+              universities
 
-            />
+            }
 
-          </div>
+            optionValue="id"
 
-          <div>
+            optionLabel="universityName"
 
-            <label>
+            placeholder="Select university"
 
-              University
+            onChange={(e) =>
 
-            </label>
+              setForm({
 
-            <select
+                ...form,
 
-              value={
+                universityId:
 
-                form.universityId
+                e.target.value,
 
-              }
+              })
 
-              onChange={(e) =>
+            }
 
-                setForm({
-
-                  ...form,
-
-                  universityId:
-
-                  e.target.value,
-
-                })
-
-              }
-
-              className="
-
-                w-full
-
-                border
-
-                p-3
-
-                rounded-xl
-
-              "
-
-            >
-
-              <option value="">
-
-                Select
-
-              </option>
-
-              {
-
-                universities.map(
-
-                  (
-
-                    university
-
-                  ) => (
-
-                    <option
-
-                      key={
-
-                        university.id
-
-                      }
-
-                      value={
-
-                        university.id
-
-                      }
-
-                    >
-
-                      {
-
-                        university.universityName
-
-                      }
-
-                    </option>
-
-                  )
-
-                )
-
-              }
-
-            </select>
-
-          </div>
+          />
 
         </AdminFormModal>
 
         <DeleteConfirmationModal
 
-          open={deleteOpen}
+          open={
+
+            deleteOpen
+
+          }
 
           title={
 
@@ -659,7 +735,9 @@ function AdminFacultiesPage() {
           onClose={() =>
 
             setDeleteOpen(
+
               false
+
             )
 
           }

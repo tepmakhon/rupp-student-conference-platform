@@ -14,9 +14,11 @@ function DashboardStatsGrid({
 
         grid-cols-1
 
-        md:grid-cols-2
+        sm:grid-cols-2
 
-        xl:grid-cols-4
+        xl:grid-cols-3
+
+        2xl:grid-cols-4
 
         gap-6
 

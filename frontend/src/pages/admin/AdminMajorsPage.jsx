@@ -6,6 +6,8 @@ import {
 
   useState,
 
+  useCallback,
+
 } from "react";
 
 import toast
@@ -25,6 +27,15 @@ from "../../components/admin/AdminFormModal";
 
 import DeleteConfirmationModal
 from "../../components/admin/DeleteConfirmationModal";
+
+import Input
+from "../../components/ui/Input";
+
+import Select
+from "../../components/ui/Select";
+
+import Textarea
+from "../../components/ui/Textarea";
 
 import {
 
@@ -124,299 +135,383 @@ function AdminMajorsPage() {
 
   });
 
+  const loadData =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          const [
+
+            majorData,
+
+            facultyData,
+
+          ] = await Promise.all([
+
+            getMajors(),
+
+            getFaculties(),
+
+          ]);
+
+          setMajors(
+
+            Array.isArray(
+
+              majorData
+
+            )
+
+            ?
+
+            majorData
+
+            :
+
+            []
+
+          );
+
+          setFaculties(
+
+            Array.isArray(
+
+              facultyData
+
+            )
+
+            ?
+
+            facultyData
+
+            :
+
+            []
+
+          );
+
+        }
+
+        catch (
+
+          error
+
+        ) {
+
+          console.error(
+
+            error
+
+          );
+
+          toast.error(
+
+            "Failed to load majors"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
+
   useEffect(() => {
 
     loadData();
-
-  }, []);
-
-  const loadData =
-  async () => {
-
-    try {
-
-      setLoading(
-        true
-      );
-
-      const [
-
-        majorData,
-
-        facultyData,
-
-      ] = await Promise.all([
-
-        getMajors(),
-
-        getFaculties(),
-
-      ]);
-
-      setMajors(
-
-        Array.isArray(
-
-          majorData
-
-        )
-
-        ? majorData
-
-        : []
-
-      );
-
-      setFaculties(
-
-        Array.isArray(
-
-          facultyData
-
-        )
-
-        ? facultyData
-
-        : []
-
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(
-        error
-      );
-
-      toast.error(
-
-        "Failed to load data"
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(
-        false
-      );
-
-    }
-
-  };
-
-  const filtered =
-  useMemo(() => {
-
-    return majors.filter(
-
-      (item) =>
-
-        item.majorName
-
-        ?.toLowerCase()
-
-        .includes(
-
-          search.toLowerCase()
-
-        )
-
-    );
 
   },
 
   [
 
-    majors,
-
-    search,
+    loadData,
 
   ]);
 
+  const filtered =
+
+    useMemo(
+
+      () => {
+
+        if (
+
+          !search
+
+        ) {
+
+          return majors;
+
+        }
+
+        return majors.filter(
+
+          (item) =>
+
+            item.majorName
+
+            ?.toLowerCase()
+
+            .includes(
+
+              search.toLowerCase()
+
+            )
+
+        );
+
+      },
+
+      [
+
+        majors,
+
+        search,
+
+      ]
+
+    );
+
   const handleAdd =
-  () => {
 
-    setSelected(
-      null
-    );
+    () => {
 
-    setForm({
+      setSelected(
 
-      majorName: "",
+        null
 
-      facultyId: "",
+      );
 
-      description: "",
+      setForm({
 
-      careerPath: "",
+        majorName: "",
 
-    });
+        facultyId: "",
 
-    setModalOpen(
-      true
-    );
+        description: "",
 
-  };
+        careerPath: "",
 
-  const handleEdit =
-  (item) => {
-
-    setSelected(
-      item
-    );
-
-    setForm({
-
-      majorName:
-
-        item.majorName ||
-
-        "",
-
-      facultyId:
-
-        item.facultyId ||
-
-        "",
-
-      description:
-
-        item.description ||
-
-        "",
-
-      careerPath:
-
-        item.careerPath ||
-
-        "",
-
-    });
-
-    setModalOpen(
-      true
-    );
-
-  };
-
-  const handleSubmit =
-  async (
-    e
-  ) => {
-
-    e.preventDefault();
-
-    try {
-
-      if (selected) {
-
-        await updateMajor(
-
-          selected.id,
-
-          form
-
-        );
-
-        toast.success(
-
-          "Major updated"
-
-        );
-
-      }
-
-      else {
-
-        await createMajor(
-
-          form
-
-        );
-
-        toast.success(
-
-          "Major created"
-
-        );
-
-      }
+      });
 
       setModalOpen(
-        false
+
+        true
+
       );
 
-      loadData();
+    };
 
-    }
+  const handleEdit =
 
-    catch (error) {
+    (item) => {
 
-      console.error(
+      setSelected(
+
+        item
+
+      );
+
+      setForm({
+
+        majorName:
+
+          item.majorName
+
+          || "",
+
+        facultyId:
+
+          item.facultyId
+
+          || "",
+
+        description:
+
+          item.description
+
+          || "",
+
+        careerPath:
+
+          item.careerPath
+
+          || "",
+
+      });
+
+      setModalOpen(
+
+        true
+
+      );
+
+    };
+
+  const handleSubmit =
+
+    async (
+
+      e
+
+    ) => {
+
+      e.preventDefault();
+
+      try {
+
+        if (
+
+          selected
+
+        ) {
+
+          await updateMajor(
+
+            selected.id,
+
+            form
+
+          );
+
+          toast.success(
+
+            "Major updated"
+
+          );
+
+        }
+
+        else {
+
+          await createMajor(
+
+            form
+
+          );
+
+          toast.success(
+
+            "Major created"
+
+          );
+
+        }
+
+        setModalOpen(
+
+          false
+
+        );
+
+        loadData();
+
+      }
+
+      catch (
+
         error
-      );
 
-      toast.error(
+      ) {
 
-        error?.response
+        console.error(
 
-        ?.data?.message ||
+          error
 
-        "Operation failed"
+        );
 
-      );
+        toast.error(
 
-    }
+          error?.response
 
-  };
+          ?.data?.message
+
+          ||
+
+          "Operation failed"
+
+        );
+
+      }
+
+    };
 
   const handleDelete =
-  async () => {
 
-    try {
+    async () => {
 
-      await deleteMajor(
+      try {
 
-        selected.id
+        await deleteMajor(
 
-      );
+          selected.id
 
-      toast.success(
+        );
 
-        "Major deleted"
+        toast.success(
 
-      );
+          "Major deleted"
 
-      setDeleteOpen(
-        false
-      );
+        );
 
-      loadData();
+        setDeleteOpen(
 
-    }
+          false
 
-    catch (error) {
+        );
 
-      console.error(
+        loadData();
+
+      }
+
+      catch (
+
         error
-      );
 
-      toast.error(
+      ) {
 
-        error?.response
+        console.error(
 
-        ?.data?.message ||
+          error
 
-        "Delete failed"
+        );
 
-      );
+        toast.error(
 
-    }
+          error?.response
 
-  };
+          ?.data?.message
+
+          ||
+
+          "Delete failed"
+
+        );
+
+      }
+
+    };
 
   return (
 
@@ -533,11 +628,15 @@ function AdminMajorsPage() {
           onDelete={(item) => {
 
             setSelected(
+
               item
+
             );
 
             setDeleteOpen(
+
               true
+
             );
 
           }}
@@ -569,7 +668,9 @@ function AdminMajorsPage() {
           onClose={() =>
 
             setModalOpen(
+
               false
+
             )
 
           }
@@ -582,239 +683,129 @@ function AdminMajorsPage() {
 
         >
 
-          <div>
+          <Input
 
-            <label>
+            label="Major Name"
 
-              Major Name
+            value={
 
-            </label>
+              form.majorName
 
-            <input
+            }
 
-              value={
+            placeholder="Enter major name"
 
-                form.majorName
+            onChange={(e) =>
 
-              }
+              setForm({
 
-              onChange={(e) =>
+                ...form,
 
-                setForm({
+                majorName:
 
-                  ...form,
+                e.target.value,
 
-                  majorName:
+              })
 
-                  e.target.value,
+            }
 
-                })
+          />
 
-              }
+          <Select
 
-              className="
+            label="Faculty"
 
-                w-full
+            value={
 
-                border
+              form.facultyId
 
-                rounded-xl
+            }
 
-                p-3
+            options={
 
-              "
+              faculties
 
-            />
+            }
 
-          </div>
+            optionValue="id"
 
-          <div>
+            optionLabel="facultyName"
 
-            <label>
+            placeholder="Select faculty"
 
-              Faculty
+            onChange={(e) =>
 
-            </label>
+              setForm({
 
-            <select
+                ...form,
 
-              value={
+                facultyId:
 
-                form.facultyId
+                e.target.value,
 
-              }
+              })
 
-              onChange={(e) =>
+            }
 
-                setForm({
+          />
 
-                  ...form,
+          <Textarea
 
-                  facultyId:
+            label="Description"
 
-                  e.target.value,
+            rows={4}
 
-                })
+            value={
 
-              }
+              form.description
 
-              className="
+            }
 
-                w-full
+            placeholder="Enter description"
 
-                border
+            onChange={(e) =>
 
-                rounded-xl
+              setForm({
 
-                p-3
+                ...form,
 
-              "
+                description:
 
-            >
+                e.target.value,
 
-              <option value="">
+              })
 
-                Select Faculty
+            }
 
-              </option>
+          />
 
-              {
+          <Input
 
-                faculties.map(
+            label="Career Path"
 
-                  (
+            value={
 
-                    faculty
+              form.careerPath
 
-                  ) => (
+            }
 
-                    <option
+            placeholder="Enter career path"
 
-                      key={
+            onChange={(e) =>
 
-                        faculty.id
+              setForm({
 
-                      }
+                ...form,
 
-                      value={
+                careerPath:
 
-                        faculty.id
+                e.target.value,
 
-                      }
+              })
 
-                    >
+            }
 
-                      {
-
-                        faculty.facultyName
-
-                      }
-
-                    </option>
-
-                  )
-
-                )
-
-              }
-
-            </select>
-
-          </div>
-
-          <div>
-
-            <label>
-
-              Description
-
-            </label>
-
-            <textarea
-
-              rows={4}
-
-              value={
-
-                form.description
-
-              }
-
-              onChange={(e) =>
-
-                setForm({
-
-                  ...form,
-
-                  description:
-
-                  e.target.value,
-
-                })
-
-              }
-
-              className="
-
-                w-full
-
-                border
-
-                rounded-xl
-
-                p-3
-
-              "
-
-            />
-
-          </div>
-
-          <div>
-
-            <label>
-
-              Career Path
-
-            </label>
-
-            <input
-
-              value={
-
-                form.careerPath
-
-              }
-
-              onChange={(e) =>
-
-                setForm({
-
-                  ...form,
-
-                  careerPath:
-
-                  e.target.value,
-
-                })
-
-              }
-
-              className="
-
-                w-full
-
-                border
-
-                rounded-xl
-
-                p-3
-
-              "
-
-            />
-
-          </div>
+          />
 
         </AdminFormModal>
 
@@ -837,7 +828,9 @@ function AdminMajorsPage() {
           onClose={() =>
 
             setDeleteOpen(
+
               false
+
             )
 
           }

@@ -1,247 +1,275 @@
 import {
+
   useEffect,
+
   useState,
+
+  useCallback,
+
 } from "react";
 
-import {
-  Link,
-} from "react-router-dom";
+import toast
+from "react-hot-toast";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
-import {
-  getSavedOpportunities,
-} from "../../api/opportunityApi";
+import PageHeader
+from "../../components/common/PageHeader";
 
-import toast from "react-hot-toast";
+import LoadingState
+from "../../components/common/LoadingState";
+
+import EmptyState
+from "../../components/common/EmptyState";
+
+import OpportunityCard
+from "../../components/opportunities/OpportunityCard";
+
+import {
+
+  getSavedOpportunities,
+
+} from "../../api/opportunityApi";
 
 function SavedOpportunitiesPage() {
 
   const [
+
     opportunities,
+
     setOpportunities,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
+
+  const loadSavedOpportunities =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          const data =
+
+            await getSavedOpportunities();
+
+          const normalized =
+
+            Array.isArray(
+
+              data
+
+            )
+
+            ?
+
+            data
+
+            .map(
+
+              (
+
+                item
+
+              ) =>
+
+              item.opportunity
+
+            )
+
+            .filter(
+
+              Boolean
+
+            )
+
+            :
+
+            [];
+
+          setOpportunities(
+
+            normalized
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          toast.error(
+
+            "Failed to load saved opportunities"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
 
   useEffect(() => {
 
     loadSavedOpportunities();
 
-  }, []);
+  },
 
-  const loadSavedOpportunities =
-    async () => {
+  [
 
-      try {
+    loadSavedOpportunities,
 
-        setLoading(true);
-
-        const data =
-          await getSavedOpportunities();
-
-        setOpportunities(
-          Array.isArray(data)
-            ? data
-            : []
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          "Failed to load saved opportunities"
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-    };
+  ]);
 
   return (
 
     <DashboardLayout>
 
-      <div>
+      <div
 
-        <h1
-          className="
-            text-3xl
-            font-bold
-            text-primary
-            mb-8
-          "
-        >
-          Saved Opportunities
-        </h1>
+        className="
+
+          max-w-7xl
+
+          mx-auto
+
+        "
+
+      >
+
+        <PageHeader
+
+          title="Saved Opportunities"
+
+          description="Manage opportunities you saved for later."
+
+        />
 
         {
 
           loading
 
-          ? (
+          &&
 
-            <div
-              className="
-                flex
-                justify-center
-                py-10
-              "
-            >
+          <LoadingState />
 
-              <p
-                className="
-                  text-gray-500
-                "
-              >
+        }
 
-                Loading...
+        {
 
-              </p>
+          !loading
 
-            </div>
+          &&
 
-          )
+          opportunities.length === 0
 
-          : opportunities.length === 0
+          &&
 
-          ? (
+          (
 
-            <div
-              className="
-                bg-white
-                rounded-2xl
-                p-8
-                shadow-md
-                text-center
-              "
-            >
+            <EmptyState
 
-              <h2
-                className="
-                  text-xl
-                  font-bold
-                  text-gray-700
-                "
-              >
+              title="No Saved Opportunities"
 
-                No saved opportunities yet
+              description="You haven't saved any opportunities yet."
 
-              </h2>
-
-            </div>
+            />
 
           )
 
-          : (
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          opportunities.length > 0
+
+          &&
+
+          (
 
             <div
+
               className="
+
                 grid
+
+                grid-cols-1
+
+                md:grid-cols-2
+
+                xl:grid-cols-3
+
                 gap-6
+
               "
+
             >
 
               {
 
                 opportunities.map(
-                  (item) => {
 
-                    const opportunity =
-                      item.opportunity;
+                  (
 
-                    if (
-                      !opportunity
-                    ) {
-                      return null;
-                    }
+                    opportunity
 
-                    return (
+                  ) => (
 
-                      <div
+                    <OpportunityCard
 
-                        key={
-                          `${item.studentId}-${item.opportunityId}`
-                        }
+                      key={
 
-                        className="
-                          bg-white
-                          rounded-2xl
-                          shadow-md
-                          p-6
-                        "
-                      >
+                        opportunity.id
 
-                        <h2
-                          className="
-                            text-xl
-                            font-bold
-                            text-primary
-                          "
-                        >
+                      }
 
-                          {
-                            opportunity.title
-                          }
+                      opportunity={
 
-                        </h2>
+                        opportunity
 
-                        <p
-                          className="
-                            text-gray-600
-                            mt-2
-                            line-clamp-3
-                          "
-                        >
+                      }
 
-                          {
-                            opportunity.description
-                          }
+                    />
 
-                        </p>
+                  )
 
-                        <div
-                          className="
-                            mt-4
-                          "
-                        >
-
-                          <Link
-
-                            to={
-                              `/opportunities/${opportunity.id}`
-                            }
-
-                            className="
-                              inline-block
-                              bg-primary
-                              hover:bg-secondary
-                              text-white
-                              px-4
-                              py-2
-                              rounded-lg
-                              transition
-                            "
-                          >
-
-                            View Details
-
-                          </Link>
-
-                        </div>
-
-                      </div>
-
-                    );
-
-                  }
                 )
 
               }
@@ -257,6 +285,7 @@ function SavedOpportunitiesPage() {
     </DashboardLayout>
 
   );
+
 }
 
 export default SavedOpportunitiesPage;

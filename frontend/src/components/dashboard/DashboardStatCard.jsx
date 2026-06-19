@@ -4,6 +4,8 @@ function DashboardStatCard({
 
   value,
 
+  icon: Icon,
+
 }) {
 
   return (
@@ -16,7 +18,13 @@ function DashboardStatCard({
 
         rounded-2xl
 
-        shadow-md
+        border
+
+        shadow-sm
+
+        hover:shadow-md
+
+        transition
 
         p-6
 
@@ -24,39 +32,107 @@ function DashboardStatCard({
 
     >
 
-      <p
+      <div
 
         className="
 
-          text-gray-500
+          flex
 
-          mb-2
+          items-center
+
+          justify-between
 
         "
 
       >
 
-        {title}
+        <div>
 
-      </p>
+          <p
 
-      <h2
+            className="
 
-        className="
+              text-sm
 
-          text-4xl
+              text-gray-500
 
-          font-bold
+            "
 
-          text-primary
+          >
 
-        "
+            {title}
 
-      >
+          </p>
 
-        {value || 0}
+          <h2
 
-      </h2>
+            className="
+
+              text-4xl
+
+              font-bold
+
+              text-primary
+
+              mt-2
+
+            "
+
+          >
+
+            {value ?? 0}
+
+          </h2>
+
+        </div>
+
+        {
+
+          Icon && (
+
+            <div
+
+              className="
+
+                w-14
+
+                h-14
+
+                rounded-xl
+
+                bg-gray-100
+
+                flex
+
+                items-center
+
+                justify-center
+
+              "
+
+            >
+
+              <Icon
+
+                className="
+
+                  w-7
+
+                  h-7
+
+                  text-primary
+
+                "
+
+              />
+
+            </div>
+
+          )
+
+        }
+
+      </div>
 
     </div>
 

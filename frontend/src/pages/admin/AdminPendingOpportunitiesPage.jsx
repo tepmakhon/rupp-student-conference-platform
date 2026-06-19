@@ -1,217 +1,319 @@
 import {
+
   useEffect,
+
   useState,
+
+  useCallback,
+
 } from "react";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
+import PageHeader
+from "../../components/common/PageHeader";
+
+import LoadingState
+from "../../components/common/LoadingState";
+
+import ErrorState
+from "../../components/common/ErrorState";
+
+import EmptyState
+from "../../components/common/EmptyState";
+
 import PendingOpportunityCard
 from "../../components/admin/PendingOpportunityCard";
 
 import {
-  getPendingOpportunities,
-} from "../../api/opportunityApi";
 
-import {
-  CircleAlert,
-} from "lucide-react";
+  getPendingOpportunities,
+
+} from "../../api/opportunityApi";
 
 function AdminPendingOpportunitiesPage() {
 
   const [
+
     opportunities,
+
     setOpportunities,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
 
+  const [
+
+    error,
+
+    setError,
+
+  ] = useState("");
+
   const loadOpportunities =
-    async () => {
 
-      try {
+    useCallback(
 
-        setLoading(true);
+      async () => {
 
-        const data =
-          await getPendingOpportunities();
+        try {
 
-        setOpportunities(
-          data
-        );
+          setLoading(
 
-      } catch (error) {
+            true
 
-        console.error(error);
+          );
 
-      } finally {
+          setError(
 
-        setLoading(false);
+            ""
 
-      }
+          );
 
-    };
+          const data =
+
+            await getPendingOpportunities();
+
+          setOpportunities(
+
+            Array.isArray(
+
+              data
+
+            )
+
+            ?
+
+            data
+
+            :
+
+            []
+
+          );
+
+        }
+
+        catch (
+
+          error
+
+        ) {
+
+          console.error(
+
+            error
+
+          );
+
+          setError(
+
+            "Failed to load pending opportunities"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
 
   useEffect(() => {
 
     loadOpportunities();
 
-  }, []);
+  },
+
+  [
+
+    loadOpportunities,
+
+  ]);
 
   return (
 
     <DashboardLayout>
 
       <div
+
         className="
-          flex
-          items-center
-          gap-3
-          mb-8
+
+          max-w-7xl
+
+          mx-auto
+
+          space-y-8
+
         "
+
       >
 
-        <CircleAlert
-          size={34}
-          className="
-            text-primary
-          "
+        <PageHeader
+
+          title="Pending Opportunities"
+
+          description="Review and manage opportunity approval requests."
+
         />
 
-        <h1
-          className="
-            text-4xl
-            font-bold
-            text-primary
-          "
-        >
+        {
 
-          Pending Opportunities
+          loading
 
-        </h1>
+          &&
 
-      </div>
+          <LoadingState
 
-      {
+            message="Loading pending opportunities..."
 
-        loading
+          />
 
-        ? (
+        }
 
-          <div
-            className="
-              flex
-              justify-center
-              py-20
-            "
-          >
+        {
 
-            <p
-              className="
-                text-lg
-                text-gray-500
-              "
-            >
+          !loading
 
-              Loading...
+          &&
 
-            </p>
+          error
 
-          </div>
+          &&
 
-        )
+          <ErrorState
 
-        : opportunities.length === 0
+            message={
 
-        ? (
-
-          <div
-            className="
-              bg-white
-              rounded-2xl
-              shadow-sm
-              border
-              p-10
-              text-center
-            "
-          >
-
-            <h2
-              className="
-                text-2xl
-                font-bold
-                text-gray-700
-              "
-            >
-
-              No Pending Opportunities
-
-            </h2>
-
-            <p
-              className="
-                text-gray-500
-                mt-2
-              "
-            >
-
-              Everything has been reviewed.
-
-            </p>
-
-          </div>
-
-        )
-
-        : (
-
-          <div
-            className="
-              grid
-              gap-6
-            "
-          >
-
-            {
-
-              opportunities.map(
-                (
-                  opportunity
-                ) => (
-
-                  <PendingOpportunityCard
-
-                    key={
-                      opportunity.id
-                    }
-
-                    opportunity={
-                      opportunity
-                    }
-
-                    onAction={
-                      loadOpportunities
-                    }
-
-                  />
-
-                )
-              )
+              error
 
             }
 
-          </div>
+          />
 
-        )
+        }
 
-      }
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          opportunities.length === 0
+
+          && (
+
+            <EmptyState
+
+              title="No Pending Opportunities"
+
+              description="Everything has been reviewed."
+
+            />
+
+          )
+
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          opportunities.length > 0
+
+          && (
+
+            <div
+
+              className="
+
+                grid
+
+                gap-6
+
+              "
+
+            >
+
+              {
+
+                opportunities.map(
+
+                  (
+
+                    opportunity
+
+                  ) => (
+
+                    <PendingOpportunityCard
+
+                      key={
+
+                        opportunity.id
+
+                      }
+
+                      opportunity={
+
+                        opportunity
+
+                      }
+
+                      onAction={
+
+                        loadOpportunities
+
+                      }
+
+                    />
+
+                  )
+
+                )
+
+              }
+
+            </div>
+
+          )
+
+        }
+
+      </div>
 
     </DashboardLayout>
 
   );
+
 }
 
 export default AdminPendingOpportunitiesPage;

@@ -1,164 +1,313 @@
 import {
-  useEffect,
-  useState,
-} from "react";
 
-import {
-  Link,
-} from "react-router-dom";
+  useEffect,
+
+  useState,
+
+  useCallback,
+
+} from "react";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
 
+import EventCard
+from "../../components/events/EventCard";
+
+import LoadingState
+from "../../components/common/LoadingState";
+
+import ErrorState
+from "../../components/common/ErrorState";
+
+import EmptyState
+from "../../components/common/EmptyState";
+
+import PageHeader
+from "../../components/common/PageHeader";
+
 import {
+
   getApprovedEvents,
+
 } from "../../api/eventApi";
 
 function EventListPage() {
 
   const [
+
     events,
+
     setEvents,
+
   ] = useState([]);
 
   const [
+
     loading,
+
     setLoading,
+
   ] = useState(true);
+
+  const [
+
+    error,
+
+    setError,
+
+  ] = useState("");
+
+  const loadEvents =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          setLoading(
+
+            true
+
+          );
+
+          setError(
+
+            ""
+
+          );
+
+          const data =
+
+            await getApprovedEvents();
+
+          setEvents(
+
+            data?.events
+
+            ||
+
+            data
+
+            ||
+
+            []
+
+          );
+
+        }
+
+        catch (error) {
+
+          console.error(
+
+            error
+
+          );
+
+          setError(
+
+            "Failed to load events"
+
+          );
+
+        }
+
+        finally {
+
+          setLoading(
+
+            false
+
+          );
+
+        }
+
+      },
+
+      []
+
+    );
 
   useEffect(() => {
 
     loadEvents();
 
-  }, []);
+  },
 
-  const loadEvents =
-    async () => {
+  [
 
-      try {
+    loadEvents,
 
-        const data =
-          await getApprovedEvents();
-
-        setEvents(
-          data.events
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-      } finally {
-
-        setLoading(false);
-
-      }
-    };
-
-  if (loading) {
-
-    return (
-      <DashboardLayout>
-        Loading Events...
-      </DashboardLayout>
-    );
-  }
+  ]);
 
   return (
 
     <DashboardLayout>
 
-      <h1
-        className="
-          text-4xl
-          font-bold
-          text-primary
-          mb-8
-        "
-      >
-        Events
-      </h1>
-
       <div
+
         className="
-          grid
-          md:grid-cols-2
-          lg:grid-cols-3
-          gap-6
+
+          max-w-7xl
+
+          mx-auto
+
         "
+
       >
+
+        <PageHeader
+
+          title="Events"
+
+          description="Explore approved events."
+
+        />
 
         {
-          events.map(
-            (event) => (
 
-              <Link
-                key={event.id}
-                to={`/events/${event.id}`}
-              >
+          loading
 
-                <div
-                  className="
-                    bg-white
-                    rounded-2xl
-                    shadow-md
-                    overflow-hidden
-                    hover:shadow-xl
-                    transition
-                  "
-                >
+          &&
 
-                  <img
-                    src={
-                      event.bannerImageUrl ||
-                      "https://placehold.co/600x400?text=Event"
-                    }
-                    alt={event.title}
-                    className="
-                      w-full
-                      h-48
-                      object-cover
-                    "
-                  />
+          <LoadingState />
 
-                  <div className="p-5">
+        }
 
-                    <h2
-                      className="
-                        text-xl
-                        font-bold
-                        text-primary
-                      "
-                    >
-                      {event.title}
-                    </h2>
+        {
 
-                    <p
-                      className="
-                        text-gray-500
-                        mt-2
-                      "
-                    >
-                      {
-                        event.organization
-                          ?.organizationName
-                      }
-                    </p>
+          !loading
 
-                  </div>
+          &&
 
-                </div>
+          error
 
-              </Link>
+          &&
 
-            )
+          (
+
+            <ErrorState
+
+              message={
+
+                error
+
+              }
+
+            />
+
           )
+
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          events.length === 0
+
+          &&
+
+          (
+
+            <EmptyState
+
+              title="No Events"
+
+              description="No events available."
+
+            />
+
+          )
+
+        }
+
+        {
+
+          !loading
+
+          &&
+
+          !error
+
+          &&
+
+          events.length > 0
+
+          &&
+
+          (
+
+            <div
+
+              className="
+
+                grid
+
+                grid-cols-1
+
+                md:grid-cols-2
+
+                xl:grid-cols-3
+
+                gap-6
+
+              "
+
+            >
+
+              {
+
+                events.map(
+
+                  (
+
+                    event
+
+                  ) => (
+
+                    <EventCard
+
+                      key={
+
+                        event.id
+
+                      }
+
+                      event={
+
+                        event
+
+                      }
+
+                    />
+
+                  )
+
+                )
+
+              }
+
+            </div>
+
+          )
+
         }
 
       </div>
 
     </DashboardLayout>
+
   );
+
 }
 
 export default EventListPage;

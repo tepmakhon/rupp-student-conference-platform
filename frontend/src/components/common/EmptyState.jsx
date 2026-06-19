@@ -1,10 +1,8 @@
 function EmptyState({
 
-  title = "No Data",
+  title,
 
-  message = "Nothing available yet.",
-
-  action,
+  description,
 
 }) {
 
@@ -18,7 +16,9 @@ function EmptyState({
 
         rounded-2xl
 
-        shadow-md
+        shadow-sm
+
+        border
 
         p-10
 
@@ -38,8 +38,6 @@ function EmptyState({
 
           text-primary
 
-          mb-3
-
         "
 
       >
@@ -54,21 +52,15 @@ function EmptyState({
 
           text-gray-500
 
-          mb-6
+          mt-2
 
         "
 
       >
 
-        {message}
+        {description}
 
       </p>
-
-      {
-
-        action
-
-      }
 
     </div>
 
