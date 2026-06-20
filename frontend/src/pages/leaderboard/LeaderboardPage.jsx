@@ -6,17 +6,45 @@ import {
 
 } from "react";
 
+import {
+
+  useDispatch,
+
+  useSelector,
+
+} from "react-redux";
+
 import DashboardLayout
+
 from "../../components/layouts/DashboardLayout";
 
 import DashboardHeader
+
 from "../../components/dashboard/DashboardHeader";
 
 import DashboardLoading
+
 from "../../components/dashboard/DashboardLoading";
 
 import DashboardError
+
 from "../../components/dashboard/DashboardError";
+
+import LeaderboardHero
+
+from "../../components/leaderboard/LeaderboardHero";
+
+import LeaderboardFilters
+
+from "../../components/leaderboard/LeaderboardFilters";
+
+import LeaderboardTable
+
+from "../../components/leaderboard/LeaderboardTable";
+
+import LeaderboardPagination
+
+from "../../components/leaderboard/LeaderboardPagination";
 
 import {
 
@@ -24,76 +52,175 @@ import {
 
 } from "../../api/leaderboardApi";
 
+import {
+
+  setLeaderboardLoading,
+
+  setLeaderboardData,
+
+  setLeaderboardError,
+
+}
+
+from "../../redux/slices/leaderboardSlice";
+
 function LeaderboardPage() {
 
+  const dispatch =
+
+    useDispatch();
+
   const [
+
+    page,
+
+    setPage,
+
+  ] = useState(1);
+
+  const [
+
+    search,
+
+    setSearch,
+
+  ] = useState("");
+
+  const {
 
     students,
 
-    setStudents,
-
-  ] = useState([]);
-
-  const [
+    pagination,
 
     loading,
 
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
     error,
 
-    setError,
+  } = useSelector(
 
-  ] = useState(null);
+    state =>
+
+    state.leaderboard
+
+  );
 
   useEffect(() => {
 
     loadLeaderboard();
 
-  }, []);
+  }, [
+
+    page,
+
+  ]);
 
   const loadLeaderboard =
-    async () => {
 
-      try {
+  async () => {
 
-        setLoading(true);
+    try {
 
-        setError(null);
+      dispatch(
 
-        const data =
+        setLeaderboardLoading(
 
-          await getLeaderboard();
+          true
 
-        setStudents(
+        )
 
-          data.students || []
+      );
 
-        );
+      dispatch(
 
-      } catch (error) {
+        setLeaderboardError(
 
-        console.error(
-          error
-        );
+          null
 
-        setError(
+        )
+
+      );
+
+      const data =
+
+      await getLeaderboard(
+
+        page,
+
+        10
+
+      );
+
+      dispatch(
+
+        setLeaderboardData(
+
+          data
+
+        )
+
+      );
+
+    }
+
+    catch (
+
+      error
+
+    ) {
+
+      console.error(
+
+        error
+
+      );
+
+      dispatch(
+
+        setLeaderboardError(
 
           "Failed to load leaderboard"
 
-        );
+        )
 
-      } finally {
+      );
 
-        setLoading(false);
+    }
 
-      }
+    finally {
 
-    };
+      dispatch(
+
+        setLeaderboardLoading(
+
+          false
+
+        )
+
+      );
+
+    }
+
+  };
+
+  const filteredStudents =
+
+  students.filter(
+
+    student =>
+
+      student.fullName
+
+      .toLowerCase()
+
+      .includes(
+
+        search
+
+        .toLowerCase()
+
+      )
+
+  );
 
   return (
 
@@ -107,6 +234,8 @@ function LeaderboardPage() {
 
           mx-auto
 
+          space-y-8
+
         "
 
       >
@@ -115,15 +244,7 @@ function LeaderboardPage() {
 
           title="Leaderboard"
 
-          subtitle="Top active students on the platform."
-
-          buttonText="Refresh"
-
-          onClick={
-
-            loadLeaderboard
-
-          }
+          subtitle="Top active students across the platform"
 
           loading={
 
@@ -131,29 +252,41 @@ function LeaderboardPage() {
 
           }
 
+          onRefresh={
+
+            loadLeaderboard
+
+          }
+
         />
 
         {
 
-          loading && (
+          loading &&
 
-            <DashboardLoading
-
-              text="Loading leaderboard..."
-
-            />
-
-          )
+          <DashboardLoading />
 
         }
 
         {
 
-          error && (
+          !loading
+
+          &&
+
+          error
+
+          &&
+
+          (
 
             <DashboardError
 
-              message={error}
+              message={
+
+                error
+
+              }
 
             />
 
@@ -163,277 +296,83 @@ function LeaderboardPage() {
 
         {
 
-          !loading &&
+          !loading
 
-          !error && (
+          &&
 
-            <div
+          !error
 
-              className="
+          &&
 
-                bg-white
+          <>
 
-                rounded-2xl
+            <LeaderboardHero
 
-                shadow-md
+              students={
 
-                overflow-hidden
+                filteredStudents
 
-              "
+              }
 
-            >
+            />
 
-              <table
+            <LeaderboardFilters
 
-                className="
+              search={
 
-                  w-full
+                search
 
-                "
+              }
 
-              >
+              setSearch={
 
-                <thead
+                setSearch
 
-                  className="
+              }
 
-                    bg-primary
+            />
 
-                    text-white
+            <LeaderboardTable
 
-                  "
+              students={
 
-                >
+                filteredStudents
 
-                  <tr>
+              }
 
-                    <th
+            />
 
-                      className="
+            <LeaderboardPagination
 
-                        p-4
+              page={
 
-                        text-left
+                pagination?.page
 
-                      "
+                ||
 
-                    >
+                1
 
-                      Rank
+              }
 
-                    </th>
+              totalPages={
 
-                    <th
+                pagination?.totalPages
 
-                      className="
+                ||
 
-                        p-4
+                1
 
-                        text-left
+              }
 
-                      "
+              onPageChange={
 
-                    >
+                setPage
 
-                      Student
+              }
 
-                    </th>
+            />
 
-                    <th
-
-                      className="
-
-                        p-4
-
-                        text-left
-
-                      "
-
-                    >
-
-                      University
-
-                    </th>
-
-                    <th
-
-                      className="
-
-                        p-4
-
-                        text-left
-
-                      "
-
-                    >
-
-                      Faculty
-
-                    </th>
-
-                    <th
-
-                      className="
-
-                        p-4
-
-                        text-left
-
-                      "
-
-                    >
-
-                      Score
-
-                    </th>
-
-                  </tr>
-
-                </thead>
-
-                <tbody>
-
-                  {
-
-                    students.map(
-
-                      (
-
-                        student
-
-                      ) => (
-
-                        <tr
-
-                          key={
-
-                            student.id
-
-                          }
-
-                          className="
-
-                            border-b
-
-                            hover:bg-gray-50
-
-                          "
-
-                        >
-
-                          <td
-
-                            className="
-
-                              p-4
-
-                              font-bold
-
-                            "
-
-                          >
-
-                            #
-
-                            {
-
-                              student.rank
-
-                            }
-
-                          </td>
-
-                          <td
-
-                            className="
-
-                              p-4
-
-                            "
-
-                          >
-
-                            {
-
-                              student.fullName
-
-                            }
-
-                          </td>
-
-                          <td
-
-                            className="
-
-                              p-4
-
-                            "
-
-                          >
-
-                            {
-
-                              student.university
-
-                            }
-
-                          </td>
-
-                          <td
-
-                            className="
-
-                              p-4
-
-                            "
-
-                          >
-
-                            {
-
-                              student.faculty
-
-                            }
-
-                          </td>
-
-                          <td
-
-                            className="
-
-                              p-4
-
-                              font-bold
-
-                              text-primary
-
-                            "
-
-                          >
-
-                            {
-
-                              student.activityScore
-
-                            }
-
-                          </td>
-
-                        </tr>
-
-                      )
-
-                    )
-
-                  }
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-          )
+          </>
 
         }
 

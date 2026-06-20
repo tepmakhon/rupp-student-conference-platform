@@ -6,11 +6,13 @@ import notificationReducer from "./slices/notificationSlice";
 import eventReducer from "./slices/eventSlice";
 import opportunityReducer from "./slices/opportunitySlice";
 import dashboardReducer from "./slices/dashboardSlice";
+import leaderboardReducer from "./slices/leaderboardSlice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     dashboard: dashboardReducer,
+    leaderboard:leaderboardReducer,
     profile: profileReducer,
     notifications: notificationReducer,
     events: eventReducer,

@@ -316,94 +316,272 @@ export const getOrganizationDashboard =
 */
 
 export const getStudentDashboard =
-  async (
-    userId: bigint
-  ) => {
+async (
 
-    const student =
+  userId: bigint
 
-      await prisma.student.findUnique({
+) => {
 
-        where: {
+  const student =
 
-          userId,
+  await prisma.student.findUnique({
 
-        },
+    where: {
 
-      });
+      userId,
 
-    if (!student) {
+    },
 
-      throw new AppError(
+    include: {
 
-        "Student not found",
+      user: {
 
-        404
+        include: {
 
-      );
-
-    }
-
-    const [
-
-      totalRegistrations,
-
-      totalApplications,
-
-      savedOpportunities,
-
-    ] = await Promise.all([
-
-      prisma.eventRegistration.count({
-
-        where: {
-
-          studentId:
-
-            student.id,
+          profile: true,
 
         },
 
-      }),
+      },
 
-      prisma.application.count({
+    },
 
-        where: {
+  });
 
-          studentId:
+  if (!student) {
 
-            student.id,
+    throw new AppError(
+
+      "Student not found",
+
+      404
+
+    );
+
+  }
+
+  const [
+
+    totalRegistrations,
+
+    totalApplications,
+
+    savedOpportunities,
+
+    upcomingEvents,
+
+    recentActivities,
+
+    leaderboard,
+
+  ] = await Promise.all([
+
+    prisma.eventRegistration.count({
+
+      where: {
+
+        studentId:
+
+        student.id,
+
+      },
+
+    }),
+
+    prisma.application.count({
+
+      where: {
+
+        studentId:
+
+        student.id,
+
+      },
+
+    }),
+
+    prisma.savedOpportunity.count({
+
+      where: {
+
+        studentId:
+
+        student.id,
+
+      },
+
+    }),
+
+    prisma.event.findMany({
+
+      where: {
+
+        status:
+
+        "APPROVED",
+
+        eventDate: {
+
+          gte:
+
+          new Date(),
 
         },
 
-      }),
+      },
 
-      prisma.savedOpportunity.count({
+      orderBy: {
 
-        where: {
+        eventDate:
 
-          studentId:
+        "asc",
 
-            student.id,
+      },
+
+      take: 5,
+
+      select: {
+
+        id: true,
+
+        title: true,
+
+        eventDate: true,
+
+        location: true,
+
+      },
+
+    }),
+
+    prisma.activityScoreHistory.findMany({
+
+      where: {
+
+        studentId:
+
+        student.id,
+
+      },
+
+      orderBy: {
+
+        createdAt:
+
+        "desc",
+
+      },
+
+      take: 5,
+
+    }),
+
+    prisma.student.findMany({
+
+      orderBy: {
+
+        activityScore:
+
+        "desc",
+
+      },
+
+      take: 5,
+
+      include: {
+
+        user: {
+
+          include: {
+
+            profile: true,
+
+          },
 
         },
 
-      }),
+      },
 
-    ]);
+    }),
 
-    return {
+  ]);
 
-      activityScore:
+  /*
+  |--------------------------------------------------------------------------
+  | Profile Completion
+  |--------------------------------------------------------------------------
+  */
 
-        student.activityScore,
+  let completed = 0;
 
-      totalRegistrations,
+  const totalFields = 5;
 
-      totalApplications,
+  const profile =
 
-      savedOpportunities,
+  student.user.profile;
 
-    };
+  if (
+
+    profile?.fullName
+
+  ) completed++;
+
+  if (
+
+    profile?.phoneNumber
+
+  ) completed++;
+
+  if (
+
+    profile?.gender
+
+  ) completed++;
+
+  if (
+
+    profile?.bio
+
+  ) completed++;
+
+  if (
+
+    profile?.profileImageUrl
+
+  ) completed++;
+
+  const profileCompletion =
+
+  Math.round(
+
+    completed /
+
+    totalFields *
+
+    100
+
+  );
+
+  return {
+
+    activityScore:
+
+    student.activityScore,
+
+    totalRegistrations,
+
+    totalApplications,
+
+    savedOpportunities,
+
+    upcomingEvents,
+
+    recentActivities,
+
+    leaderboard,
+
+    profileCompletion,
+
+  };
 
 };

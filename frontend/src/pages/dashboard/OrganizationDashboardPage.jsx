@@ -2,6 +2,8 @@ import {
 
   useEffect,
 
+  useCallback,
+
 } from "react";
 
 import {
@@ -12,21 +14,29 @@ import {
 
 import {
 
+  useDispatch,
+
+  useSelector,
+
+} from "react-redux";
+
+import {
+
   PlusCircleIcon,
 
   CalendarDaysIcon,
 
   BriefcaseIcon,
 
+  CheckCircleIcon,
+
+  ClockIcon,
+
+  UserGroupIcon,
+
+  ClipboardDocumentListIcon,
+
 } from "@heroicons/react/24/outline";
-
-import {
-
-  useDispatch,
-
-  useSelector,
-
-} from "react-redux";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
@@ -77,104 +87,282 @@ function OrganizationDashboardPage() {
 
   } = useSelector(
 
-    (state) =>
+    state =>
 
       state.dashboard
 
   );
 
+  const loadDashboard =
+
+    useCallback(
+
+      async () => {
+
+        try {
+
+          dispatch(
+
+            setDashboardLoading(
+
+              true
+
+            )
+
+          );
+
+          dispatch(
+
+            setDashboardError(
+
+              null
+
+            )
+
+          );
+
+          const data =
+
+            await getOrganizationDashboard();
+
+          dispatch(
+
+            setDashboardStats(
+
+              data
+
+            )
+
+          );
+
+        }
+
+        catch (
+
+          error
+
+        ) {
+
+          console.error(
+
+            error
+
+          );
+
+          dispatch(
+
+            setDashboardError(
+
+              "Failed to load dashboard"
+
+            )
+
+          );
+
+        }
+
+        finally {
+
+          dispatch(
+
+            setDashboardLoading(
+
+              false
+
+            )
+
+          );
+
+        }
+
+      },
+
+      [
+
+        dispatch,
+
+      ]
+
+    );
+
   useEffect(() => {
 
     loadDashboard();
 
-  }, []);
+  },
 
-  const loadDashboard =
-    async () => {
+  [
 
-      try {
+    loadDashboard,
 
-        dispatch(
+  ]);
 
-          setDashboardLoading(
-            true
-          )
+  const dashboardCards = [
 
-        );
+    {
 
-        dispatch(
+      title:
 
-          setDashboardError(
-            null
-          )
+      "Total Events",
 
-        );
+      value:
 
-        const data =
+      stats?.totalEvents,
 
-          await getOrganizationDashboard();
+      icon:
 
-        dispatch(
+      CalendarDaysIcon,
 
-          setDashboardStats(
-            data
-          )
+    },
 
-        );
+    {
 
-      } catch (error) {
+      title:
 
-        console.error(
-          error
-        );
+      "Approved Events",
 
-        dispatch(
+      value:
 
-          setDashboardError(
+      stats?.approvedEvents,
 
-            "Failed to load dashboard"
+      icon:
 
-          )
+      CheckCircleIcon,
 
-        );
+    },
 
-      } finally {
+    {
 
-        dispatch(
+      title:
 
-          setDashboardLoading(
-            false
-          )
+      "Pending Events",
 
-        );
+      value:
 
-      }
+      stats?.pendingEvents,
 
-    };
+      icon:
+
+      ClockIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Total Opportunities",
+
+      value:
+
+      stats?.totalOpportunities,
+
+      icon:
+
+      BriefcaseIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Approved Opportunities",
+
+      value:
+
+      stats?.approvedOpportunities,
+
+      icon:
+
+      CheckCircleIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Pending Opportunities",
+
+      value:
+
+      stats?.pendingOpportunities,
+
+      icon:
+
+      ClockIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Registrations",
+
+      value:
+
+      stats?.totalRegistrations,
+
+      icon:
+
+      ClipboardDocumentListIcon,
+
+    },
+
+    {
+
+      title:
+
+      "Applicants",
+
+      value:
+
+      stats?.totalApplicants,
+
+      icon:
+
+      UserGroupIcon,
+
+    },
+
+  ];
 
   return (
 
     <DashboardLayout>
 
       <div
+
         className="
+
           max-w-7xl
+
           mx-auto
+
+          space-y-8
+
         "
+
       >
 
         <DashboardHeader
 
           title="Organization Dashboard"
 
-          subtitle="Manage your events and opportunities."
+          subtitle="Manage your events and opportunities"
 
           loading={
+
             loading
+
           }
 
           onRefresh={
+
             loadDashboard
+
           }
 
         />
@@ -196,7 +384,9 @@ function OrganizationDashboardPage() {
             <DashboardError
 
               message={
+
                 error
+
               }
 
             />
@@ -215,214 +405,483 @@ function OrganizationDashboardPage() {
 
               <DashboardStatsGrid>
 
-                <DashboardStatCard
+                {
 
-                  title="Total Events"
+                  dashboardCards.map(
 
-                  value={
+                    card => (
 
-                    stats?.totalEvents
+                      <DashboardStatCard
 
-                  }
+                        key={
 
-                />
+                          card.title
 
-                <DashboardStatCard
+                        }
 
-                  title="Approved Events"
+                        title={
 
-                  value={
+                          card.title
 
-                    stats?.approvedEvents
+                        }
 
-                  }
+                        value={
 
-                />
+                          card.value
 
-                <DashboardStatCard
+                        }
 
-                  title="Pending Events"
+                        icon={
 
-                  value={
+                          card.icon
 
-                    stats?.pendingEvents
+                        }
 
-                  }
+                      />
 
-                />
+                    )
 
-                <DashboardStatCard
+                  )
 
-                  title="Total Opportunities"
-
-                  value={
-
-                    stats?.totalOpportunities
-
-                  }
-
-                />
-
-                <DashboardStatCard
-
-                  title="Approved Opportunities"
-
-                  value={
-
-                    stats?.approvedOpportunities
-
-                  }
-
-                />
-
-                <DashboardStatCard
-
-                  title="Pending Opportunities"
-
-                  value={
-
-                    stats?.pendingOpportunities
-
-                  }
-
-                />
-
-                <DashboardStatCard
-
-                  title="Applicants"
-
-                  value={
-
-                    stats?.totalApplicants
-
-                  }
-
-                />
-
-                <DashboardStatCard
-
-                  title="Registrations"
-
-                  value={
-
-                    stats?.totalRegistrations
-
-                  }
-
-                />
+                }
 
               </DashboardStatsGrid>
 
+              {/* Bottom Section */}
+
               <div
+
                 className="
-                  mt-12
+
+                  grid
+
+                  grid-cols-1
+
+                  lg:grid-cols-2
+
+                  gap-8
+
                 "
+
               >
 
-                <h2
-                  className="
-                    text-2xl
-                    font-bold
-                    text-primary
-                    mb-6
-                  "
-                >
-
-                  Quick Actions
-
-                </h2>
+                {/* Performance */}
 
                 <div
+
                   className="
-                    grid
-                    md:grid-cols-3
-                    gap-6
+
+                    bg-white
+
+                    rounded-3xl
+
+                    border
+
+                    shadow-sm
+
+                    p-6
+
                   "
+
                 >
 
-                  <Link
-
-                    to="/events/create"
+                  <h3
 
                     className="
-                      bg-white
-                      shadow-md
-                      rounded-2xl
-                      p-6
-                      flex
-                      items-center
-                      gap-4
+
+                      text-2xl
+
+                      font-bold
+
+                      text-primary
+
+                      mb-6
+
                     "
+
                   >
 
-                    <PlusCircleIcon
+                    Performance
 
-                      className="
-                        w-8
-                        h-8
-                        text-primary
-                      "
-                    />
+                  </h3>
 
-                    Create Event
-
-                  </Link>
-
-                  <Link
-
-                    to="/opportunities/create"
+                  <div
 
                     className="
-                      bg-white
-                      shadow-md
-                      rounded-2xl
-                      p-6
-                      flex
-                      items-center
-                      gap-4
+
+                      space-y-5
+
                     "
+
                   >
 
-                    <BriefcaseIcon
+                    <div
 
                       className="
-                        w-8
-                        h-8
-                        text-primary
+
+                        flex
+
+                        justify-between
+
                       "
-                    />
 
-                    Create Opportunity
+                    >
 
-                  </Link>
+                      <span>
 
-                  <Link
+                        Event Approval Rate
 
-                    to="/organization/events"
+                      </span>
+
+                      <span
+
+                        className="
+
+                          font-bold
+
+                          text-green-600
+
+                        "
+
+                      >
+
+                        {
+
+                          stats?.totalEvents
+
+                          ?
+
+                          Math.round(
+
+                            (
+
+                              stats.approvedEvents
+
+                              /
+
+                              stats.totalEvents
+
+                            )
+
+                            * 100
+
+                          )
+
+                          :
+
+                          0
+
+                        }%
+
+                      </span>
+
+                    </div>
+
+                    <div
+
+                      className="
+
+                        flex
+
+                        justify-between
+
+                      "
+
+                    >
+
+                      <span>
+
+                        Opportunity Approval Rate
+
+                      </span>
+
+                      <span
+
+                        className="
+
+                          font-bold
+
+                          text-green-600
+
+                        "
+
+                      >
+
+                        {
+
+                          stats?.totalOpportunities
+
+                          ?
+
+                          Math.round(
+
+                            (
+
+                              stats.approvedOpportunities
+
+                              /
+
+                              stats.totalOpportunities
+
+                            )
+
+                            * 100
+
+                          )
+
+                          :
+
+                          0
+
+                        }%
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {/* Quick Actions */}
+
+                <div
+
+                  className="
+
+                    bg-white
+
+                    rounded-3xl
+
+                    border
+
+                    shadow-sm
+
+                    p-6
+
+                  "
+
+                >
+
+                  <h3
 
                     className="
-                      bg-white
-                      shadow-md
-                      rounded-2xl
-                      p-6
-                      flex
-                      items-center
-                      gap-4
+
+                      text-2xl
+
+                      font-bold
+
+                      text-primary
+
+                      mb-6
+
                     "
+
                   >
 
-                    <CalendarDaysIcon
+                    Quick Actions
+
+                  </h3>
+
+                  <div
+
+                    className="
+
+                      grid
+
+                      grid-cols-2
+
+                      gap-4
+
+                    "
+
+                  >
+
+                    <Link
+
+                      to="/events/create"
 
                       className="
-                        w-8
-                        h-8
-                        text-primary
+
+                        p-5
+
+                        rounded-2xl
+
+                        border
+
+                        hover:bg-gray-50
+
+                        transition
+
+                        flex
+
+                        flex-col
+
+                        items-center
+
+                        gap-3
+
                       "
-                    />
 
-                    Manage Events
+                    >
 
-                  </Link>
+                      <PlusCircleIcon
+
+                        className="
+
+                          w-8
+
+                          h-8
+
+                          text-primary
+
+                        "
+
+                      />
+
+                      Create Event
+
+                    </Link>
+
+                    <Link
+
+                      to="/opportunities/create"
+
+                      className="
+
+                        p-5
+
+                        rounded-2xl
+
+                        border
+
+                        hover:bg-gray-50
+
+                        transition
+
+                        flex
+
+                        flex-col
+
+                        items-center
+
+                        gap-3
+
+                      "
+
+                    >
+
+                      <BriefcaseIcon
+
+                        className="
+
+                          w-8
+
+                          h-8
+
+                          text-primary
+
+                        "
+
+                      />
+
+                      Create Opportunity
+
+                    </Link>
+
+                    <Link
+
+                      to="/organization/events"
+
+                      className="
+
+                        p-5
+
+                        rounded-2xl
+
+                        border
+
+                        hover:bg-gray-50
+
+                        transition
+
+                        flex
+
+                        flex-col
+
+                        items-center
+
+                        gap-3
+
+                      "
+
+                    >
+
+                      <CalendarDaysIcon
+
+                        className="
+
+                          w-8
+
+                          h-8
+
+                          text-primary
+
+                        "
+
+                      />
+
+                      My Events
+
+                    </Link>
+
+                    <Link
+
+                      to="/organization/opportunities"
+
+                      className="
+
+                        p-5
+
+                        rounded-2xl
+
+                        border
+
+                        hover:bg-gray-50
+
+                        transition
+
+                        flex
+
+                        flex-col
+
+                        items-center
+
+                        gap-3
+
+                      "
+
+                    >
+
+                      <BriefcaseIcon
+
+                        className="
+
+                          w-8
+
+                          h-8
+
+                          text-primary
+
+                        "
+
+                      />
+
+                      My Opportunities
+
+                    </Link>
+
+                  </div>
 
                 </div>
 

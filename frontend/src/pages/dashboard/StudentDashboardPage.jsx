@@ -1,16 +1,18 @@
 import {
-
   useEffect,
-
 } from "react";
 
 import {
-
   useDispatch,
-
   useSelector,
-
 } from "react-redux";
+
+import {
+  SparklesIcon,
+  CalendarDaysIcon,
+  BriefcaseIcon,
+  BookmarkIcon,
+} from "@heroicons/react/24/outline";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
@@ -33,20 +35,26 @@ from "../../components/dashboard/DashboardStatCard";
 import RecentOpportunities
 from "../../components/dashboard/RecentOpportunities";
 
+import UpcomingEvents
+from "../../components/dashboard/UpcomingEvents";
+
+import RecentActivities
+from "../../components/dashboard/RecentActivities";
+
+import LeaderboardPreview
+from "../../components/dashboard/LeaderboardPreview";
+
+import ProfileCompletion
+from "../../components/dashboard/ProfileCompletion";
+
 import {
-
   getStudentDashboard,
-
 } from "../../api/dashboardApi";
 
 import {
-
   setDashboardLoading,
-
   setDashboardStats,
-
   setDashboardError,
-
 } from "../../redux/slices/dashboardSlice";
 
 function StudentDashboardPage() {
@@ -54,22 +62,18 @@ function StudentDashboardPage() {
   const dispatch =
     useDispatch();
 
-  const {
-
-    stats,
-
-    loading,
-
-    error,
-
-  } = useSelector(
-
-    (state) =>
-
-      state.dashboard
-
+  const user = useSelector(
+    state => state.auth.user
   );
 
+  const {
+    stats,
+    loading,
+    error,
+  } = useSelector(
+    state => state.dashboard
+  );
+  
   useEffect(() => {
 
     loadDashboard();
@@ -77,67 +81,58 @@ function StudentDashboardPage() {
   }, []);
 
   const loadDashboard =
-    async () => {
+  async () => {
 
-      try {
+    try {
 
-        dispatch(
+      dispatch(
+        setDashboardLoading(
+          true
+        )
+      );
 
-          setDashboardLoading(
-            true
-          )
+      dispatch(
+        setDashboardError(
+          null
+        )
+      );
 
-        );
+      const data =
+      await getStudentDashboard();
 
-        dispatch(
+      dispatch(
+        setDashboardStats(
+          data
+        )
+      );
 
-          setDashboardError(
-            null
-          )
+    }
 
-        );
+    catch (error) {
 
-        const data =
+      console.error(
+        error
+      );
 
-          await getStudentDashboard();
+      dispatch(
+        setDashboardError(
+          "Failed to load dashboard"
+        )
+      );
 
-        dispatch(
+    }
 
-          setDashboardStats(
-            data
-          )
+    finally {
 
-        );
+      dispatch(
+        setDashboardLoading(
+          false
+        )
+      );
 
-      } catch (error) {
+    }
 
-        console.error(
-          error
-        );
-
-        dispatch(
-
-          setDashboardError(
-
-            "Failed to load dashboard"
-
-          )
-
-        );
-
-      } finally {
-
-        dispatch(
-
-          setDashboardLoading(
-            false
-          )
-
-        );
-
-      }
-
-    };
+  };
 
   return (
 
@@ -147,6 +142,7 @@ function StudentDashboardPage() {
         className="
           max-w-7xl
           mx-auto
+          space-y-8
         "
       >
 
@@ -154,11 +150,9 @@ function StudentDashboardPage() {
 
           title="Student Dashboard"
 
-          subtitle="Track your activities and opportunities."
+          subtitle="Track your activities and opportunities"
 
-          loading={
-            loading
-          }
+          loading={loading}
 
           onRefresh={
             loadDashboard
@@ -166,105 +160,110 @@ function StudentDashboardPage() {
 
         />
 
-        {
-
-          loading &&
-
+        {loading && (
           <DashboardLoading />
+        )}
 
-        }
+        {!loading && error && (
 
-        {
+          <DashboardError
+            message={error}
+          />
 
-          !loading &&
+        )}
 
-          error && (
+        {!loading && !error && (
 
-            <DashboardError
+          <>
 
-              message={
-                error
+            <DashboardStatsGrid>
+
+              <DashboardStatCard
+
+                title="Activity Score"
+
+                value={
+                  stats?.activityScore
+                }
+
+                icon={
+                  SparklesIcon
+                }
+
+              />
+
+              <DashboardStatCard
+
+                title="Registrations"
+
+                value={
+                  stats?.totalRegistrations
+                }
+
+                icon={
+                  CalendarDaysIcon
+                }
+
+              />
+
+              <DashboardStatCard
+
+                title="Applications"
+
+                value={
+                  stats?.totalApplications
+                }
+
+                icon={
+                  BriefcaseIcon
+                }
+
+              />
+
+              <DashboardStatCard
+
+                title="Saved Opportunities"
+
+                value={
+                  stats?.savedOpportunities
+                }
+
+                icon={
+                  BookmarkIcon
+                }
+
+              />
+
+            </DashboardStatsGrid>
+
+            <ProfileCompletion 
+              profile={
+                user?.profile
+              }/>
+
+            <RecentOpportunities />
+
+            <UpcomingEvents
+
+              events={
+                stats?.upcomingEvents
               }
 
             />
 
-          )
+            <RecentActivities
 
-        }
+              activities={
+                stats?.recentActivities
+              }
 
-        {
+            />
 
-          !loading &&
+            <LeaderboardPreview />
 
-          !error && (
+          </>
 
-            <>
-
-              <DashboardStatsGrid>
-
-                <DashboardStatCard
-
-                  title="Activity Score"
-
-                  value={
-
-                    stats?.activityScore
-
-                  }
-
-                />
-
-                <DashboardStatCard
-
-                  title="Registrations"
-
-                  value={
-
-                    stats?.totalRegistrations
-
-                  }
-
-                />
-
-                <DashboardStatCard
-
-                  title="Applications"
-
-                  value={
-
-                    stats?.totalApplications
-
-                  }
-
-                />
-
-                <DashboardStatCard
-
-                  title="Saved Opportunities"
-
-                  value={
-
-                    stats?.savedOpportunities
-
-                  }
-
-                />
-
-              </DashboardStatsGrid>
-
-              <div
-                className="mt-10"
-              >
-
-                <RecentOpportunities />
-
-              </div>
-
-            </>
-
-          )
-
-        }
+        )}
 
       </div>
 

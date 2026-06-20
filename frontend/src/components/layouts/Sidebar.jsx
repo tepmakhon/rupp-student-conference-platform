@@ -1,153 +1,76 @@
-import {
+import { Link, useLocation } from "react-router-dom";
 
-  Link,
+import { useSelector } from "react-redux";
 
-  useLocation,
-
-} from "react-router-dom";
-
-import {
-
-  useSelector,
-
-} from "react-redux";
-
-import sidebarMenu
-
-from "../../constants/sidebarMenu";
+import sidebarMenu from "../../constants/sidebar/sidebarMenu";
 
 function Sidebar({
-
   sidebarOpen,
-
   setSidebarOpen,
-
 }) {
-
   const location =
-
     useLocation();
 
   const role =
-
     useSelector(
-
       (state) =>
-
         state.auth.role
-
     );
 
   const menuItems =
-
-    sidebarMenu.filter(
-
-      (menu) =>
-
-        menu.roles.includes(
-
-          role
-
-        )
-
-    );
+    sidebarMenu[role] || [];
 
   const isActiveRoute =
-
     (path) => {
-
       return (
-
         location.pathname ===
-
-        path
-
-        ||
-
+          path ||
         location.pathname.startsWith(
-
           `${path}/`
-
         )
-
       );
-
     };
 
   const handleCloseSidebar =
-
     () => {
-
       if (
-
         window.innerWidth < 768
-
       ) {
-
         setSidebarOpen(
-
           false
-
         );
-
       }
-
     };
 
   return (
-
     <>
-
-      {
-
-        sidebarOpen && (
-
-          <div
-
-            className="
-
-              fixed
-
-              inset-0
-
-              z-40
-
-              bg-black/50
-
-              md:hidden
-
-            "
-
-            onClick={() =>
-
-              setSidebarOpen(
-
-                false
-
-              )
-
-            }
-
-          />
-
-        )
-
-      }
+      {sidebarOpen && (
+        <div
+          className="
+            fixed
+            inset-0
+            z-40
+            bg-black/50
+            md:hidden
+          "
+          onClick={() =>
+            setSidebarOpen(
+              false
+            )
+          }
+        />
+      )}
 
       <aside
-
         className={`
-
           fixed
 
           top-0
-
           left-0
 
           z-50
 
           h-screen
-
           w-64
 
           overflow-y-auto
@@ -156,7 +79,7 @@ function Sidebar({
 
           text-white
 
-          p-6
+          shadow-2xl
 
           transform
 
@@ -165,191 +88,125 @@ function Sidebar({
           duration-300
 
           ${
-
             sidebarOpen
-
-            ?
-
-            "translate-x-0"
-
-            :
-
-            "-translate-x-full"
-
+              ? "translate-x-0"
+              : "-translate-x-full"
           }
 
           md:translate-x-0
-
         `}
-
       >
-
         <div
+          className="
+            px-7
+            py-8
 
-          className="mb-10"
+            border-b
 
+            border-white/20
+          "
         >
-
           <h1
-
             className="
-
-              text-2xl
+              text-3xl
 
               font-bold
 
+              text-yellow-400
             "
-
           >
-
             RUPP Platform
-
           </h1>
 
           <p
-
             className="
+              mt-2
 
               text-sm
 
               text-gray-300
-
-              mt-1
-
             "
-
           >
-
-            Student Conference
-
-            & Opportunity Platform
-
+            Student Conference &
+            Opportunity Platform
           </p>
-
         </div>
 
         <nav
-
           className="
+            p-5
 
             flex
 
             flex-col
 
             gap-2
-
           "
-
         >
+          {menuItems.map(
+            (item) => {
+              const Icon =
+                item.icon;
 
-          {
+              return (
+                <Link
+                  key={
+                    item.path
+                  }
+                  to={
+                    item.path
+                  }
+                  onClick={
+                    handleCloseSidebar
+                  }
+                  className={`
+                    flex
 
-            menuItems.map(
+                    items-center
 
-              (item) => {
+                    gap-4
 
-                const Icon =
+                    px-4
 
-                  item.icon;
+                    py-3
 
-                return (
+                    rounded-2xl
 
-                  <Link
+                    transition-all
 
-                    key={
+                    duration-200
 
-                      item.path
-
+                    ${
+                      isActiveRoute(
+                        item.path
+                      )
+                        ? "bg-secondary shadow-lg"
+                        : "hover:bg-secondary/70"
                     }
+                  `}
+                >
+                  <Icon
+                    className="
+                      w-6
+                      h-6
+                    "
+                  />
 
-                    to={
-
-                      item.path
-
-                    }
-
-                    onClick={
-
-                      handleCloseSidebar
-
-                    }
-
-                    className={`
-
-                      flex
-
-                      items-center
-
-                      gap-3
-
-                      p-3
-
-                      rounded-xl
-
-                      transition
-
-                      ${
-
-                        isActiveRoute(
-
-                          item.path
-
-                        )
-
-                        ?
-
-                        "bg-secondary shadow-md"
-
-                        :
-
-                        "hover:bg-secondary/70"
-
-                      }
-
-                    `}
-
+                  <span
+                    className="
+                      font-medium
+                    "
                   >
-
-                    <Icon
-
-                      className="
-
-                        w-6
-
-                        h-6
-
-                      "
-
-                    />
-
-                    <span>
-
-                      {
-
-                        item.name
-
-                      }
-
-                    </span>
-
-                  </Link>
-
-                );
-
-              }
-
-            )
-
-          }
-
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            }
+          )}
         </nav>
-
       </aside>
-
     </>
-
   );
-
 }
 
 export default Sidebar;

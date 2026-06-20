@@ -71,7 +71,6 @@ import {
 function AdminDashboardPage() {
 
   const dispatch =
-
     useDispatch();
 
   const {
@@ -84,7 +83,7 @@ function AdminDashboardPage() {
 
   } = useSelector(
 
-    (state) =>
+    state =>
 
       state.dashboard
 
@@ -134,7 +133,11 @@ function AdminDashboardPage() {
 
         }
 
-        catch (error) {
+        catch (
+
+          error
+
+        ) {
 
           console.error(
 
@@ -350,6 +353,8 @@ function AdminDashboardPage() {
 
           mx-auto
 
+          space-y-8
+
         "
 
       >
@@ -358,7 +363,7 @@ function AdminDashboardPage() {
 
           title="Admin Dashboard"
 
-          subtitle="Platform overview and analytics."
+          subtitle="Manage and monitor the entire RUPP Platform"
 
           loading={
 
@@ -384,15 +389,9 @@ function AdminDashboardPage() {
 
         {
 
-          !loading
+          !loading &&
 
-          &&
-
-          error
-
-          &&
-
-          (
+          error && (
 
             <DashboardError
 
@@ -410,63 +409,401 @@ function AdminDashboardPage() {
 
         {
 
-          !loading
+          !loading &&
 
-          &&
+          !error && (
 
-          !error
+            <>
 
-          &&
+              <DashboardStatsGrid>
 
-          (
+                {
 
-            <DashboardStatsGrid>
+                  dashboardCards.map(
 
-              {
+                    card => (
 
-                dashboardCards.map(
+                      <DashboardStatCard
 
-                  (
+                        key={
 
-                    card
+                          card.title
 
-                  ) => (
+                        }
 
-                    <DashboardStatCard
+                        title={
 
-                      key={
+                          card.title
 
-                        card.title
+                        }
 
-                      }
+                        value={
 
-                      title={
+                          card.value
 
-                        card.title
+                        }
 
-                      }
+                        icon={
 
-                      value={
+                          card.icon
 
-                        card.value
+                        }
 
-                      }
+                      />
 
-                      icon={
-
-                        card.icon
-
-                      }
-
-                    />
+                    )
 
                   )
 
-                )
+                }
 
-              }
+              </DashboardStatsGrid>
 
-            </DashboardStatsGrid>
+              {/* Bottom Section */}
+
+              <div
+
+                className="
+
+                  grid
+
+                  grid-cols-1
+
+                  lg:grid-cols-2
+
+                  gap-8
+
+                "
+
+              >
+
+                {/* Summary */}
+
+                <div
+
+                  className="
+
+                    bg-white
+
+                    rounded-3xl
+
+                    shadow-sm
+
+                    border
+
+                    p-6
+
+                  "
+
+                >
+
+                  <h3
+
+                    className="
+
+                      text-2xl
+
+                      font-bold
+
+                      text-primary
+
+                      mb-6
+
+                    "
+
+                  >
+
+                    Platform Summary
+
+                  </h3>
+
+                  <div
+
+                    className="
+
+                      space-y-5
+
+                    "
+
+                  >
+
+                    <div
+
+                      className="
+
+                        flex
+
+                        justify-between
+
+                      "
+
+                    >
+
+                      <span>
+
+                        Event Approval Rate
+
+                      </span>
+
+                      <span
+
+                        className="
+
+                          font-bold
+
+                          text-green-600
+
+                        "
+
+                      >
+
+                        {
+
+                          stats?.totalEvents
+
+                          ?
+
+                          Math.round(
+
+                            (
+
+                              stats.approvedEvents
+
+                              /
+
+                              stats.totalEvents
+
+                            )
+
+                            * 100
+
+                          )
+
+                          :
+
+                          0
+
+                        }%
+
+                      </span>
+
+                    </div>
+
+                    <div
+
+                      className="
+
+                        flex
+
+                        justify-between
+
+                      "
+
+                    >
+
+                      <span>
+
+                        Opportunity Approval Rate
+
+                      </span>
+
+                      <span
+
+                        className="
+
+                          font-bold
+
+                          text-green-600
+
+                        "
+
+                      >
+
+                        {
+
+                          stats?.totalOpportunities
+
+                          ?
+
+                          Math.round(
+
+                            (
+
+                              stats.approvedOpportunities
+
+                              /
+
+                              stats.totalOpportunities
+
+                            )
+
+                            * 100
+
+                          )
+
+                          :
+
+                          0
+
+                        }%
+
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                {/* Quick Actions */}
+
+                <div
+
+                  className="
+
+                    bg-white
+
+                    rounded-3xl
+
+                    shadow-sm
+
+                    border
+
+                    p-6
+
+                  "
+
+                >
+
+                  <h3
+
+                    className="
+
+                      text-2xl
+
+                      font-bold
+
+                      text-primary
+
+                      mb-6
+
+                    "
+
+                  >
+
+                    Quick Actions
+
+                  </h3>
+
+                  <div
+
+                    className="
+
+                      grid
+
+                      grid-cols-2
+
+                      gap-4
+
+                    "
+
+                  >
+
+                    <button
+
+                      className="
+
+                        p-4
+
+                        border
+
+                        rounded-xl
+
+                        hover:bg-gray-50
+
+                        transition
+
+                      "
+
+                    >
+
+                      Review Events
+
+                    </button>
+
+                    <button
+
+                      className="
+
+                        p-4
+
+                        border
+
+                        rounded-xl
+
+                        hover:bg-gray-50
+
+                        transition
+
+                      "
+
+                    >
+
+                      Review Opportunities
+
+                    </button>
+
+                    <button
+
+                      className="
+
+                        p-4
+
+                        border
+
+                        rounded-xl
+
+                        hover:bg-gray-50
+
+                        transition
+
+                      "
+
+                    >
+
+                      Manage Skills
+
+                    </button>
+
+                    <button
+
+                      className="
+
+                        p-4
+
+                        border
+
+                        rounded-xl
+
+                        hover:bg-gray-50
+
+                        transition
+
+                      "
+
+                    >
+
+                      Manage Universities
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </>
 
           )
 

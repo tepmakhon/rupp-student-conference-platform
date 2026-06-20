@@ -1,8 +1,4 @@
-import {
-
-  useSelector,
-
-} from "react-redux";
+import { useSelector } from "react-redux";
 
 import StudentDashboardPage
 from "./StudentDashboardPage";
@@ -18,67 +14,49 @@ from "../../components/common/ErrorState";
 
 function DashboardPage() {
 
-  const auth =
+  const {
+    role,
+    user,
+  } = useSelector(
+    state => state.auth
+  );
 
-    useSelector(
+  const currentRole =
+    role ||
+    user?.role?.roleName;
 
-      (state) =>
+  if (!currentRole) {
 
-        state.auth
-
+    return (
+      <ErrorState
+        message="Unable to load dashboard."
+      />
     );
 
-  const role =
-
-    auth.role
-
-    ||
-
-    auth.user
-
-    ?.role
-
-    ?.roleName;
-
-  switch (role) {
-
-    case "ADMIN":
-
-      return (
-
-        <AdminDashboardPage />
-
-      );
-
-    case "ORGANIZATION":
-
-      return (
-
-        <OrganizationDashboardPage />
-
-      );
-
-    case "STUDENT":
-
-      return (
-
-        <StudentDashboardPage />
-
-      );
-
-    default:
-
-      return (
-
-        <ErrorState
-
-          message="Unable to load dashboard."
-
-        />
-
-      );
-
   }
+
+  const dashboards = {
+
+    ADMIN:
+      <AdminDashboardPage />,
+
+    ORGANIZATION:
+      <OrganizationDashboardPage />,
+
+    STUDENT:
+      <StudentDashboardPage />,
+
+  };
+
+  return (
+    dashboards[
+      currentRole
+    ] || (
+      <ErrorState
+        message="Unable to load dashboard."
+      />
+    )
+  );
 
 }
 

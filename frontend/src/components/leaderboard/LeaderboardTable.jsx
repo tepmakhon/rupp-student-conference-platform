@@ -14,61 +14,83 @@ function LeaderboardTable({
 
 }) {
 
-  const getRankIcon =
+  const getRankIcon = (
 
-    (rank) => {
+    rank
 
-      if (rank === 1) {
+  ) => {
 
-        return (
+    if (rank === 1) {
 
-          <Trophy
+      return (
 
-            size={20}
+        <Trophy
 
-            className="text-yellow-500"
+          size={20}
 
-          />
+          className="
 
-        );
+            text-yellow-500
 
-      }
+          "
 
-      if (rank === 2) {
+        />
 
-        return (
+      );
 
-          <Medal
+    }
 
-            size={20}
+    if (rank === 2) {
 
-            className="text-gray-500"
+      return (
 
-          />
+        <Medal
 
-        );
+          size={20}
 
-      }
+          className="
 
-      if (rank === 3) {
+            text-gray-500
 
-        return (
+          "
 
-          <Award
+        />
 
-            size={20}
+      );
 
-            className="text-orange-500"
+    }
 
-          />
+    if (rank === 3) {
 
-        );
+      return (
 
-      }
+        <Award
 
-      return rank;
+          size={20}
 
-    };
+          className="
+
+            text-orange-500
+
+          "
+
+        />
+
+      );
+
+    }
+
+    return (
+
+      <span>
+
+        {rank}
+
+      </span>
+
+    );
+
+  };
 
   return (
 
@@ -76,13 +98,15 @@ function LeaderboardTable({
 
       className="
 
-        overflow-x-auto
-
         bg-white
 
-        rounded-2xl
+        rounded-3xl
 
-        shadow-md
+        shadow-sm
+
+        border
+
+        overflow-x-auto
 
       "
 
@@ -94,27 +118,31 @@ function LeaderboardTable({
 
           w-full
 
+          min-w-[900px]
+
         "
 
       >
 
-        <thead>
+        <thead
 
-          <tr
+          className="
 
-            className="
+            bg-primary
 
-              bg-gray-100
+            text-white
 
-            "
+          "
 
-          >
+        >
+
+          <tr>
 
             <th
 
               className="
 
-                p-4
+                p-5
 
                 text-left
 
@@ -130,7 +158,7 @@ function LeaderboardTable({
 
               className="
 
-                p-4
+                p-5
 
                 text-left
 
@@ -146,7 +174,7 @@ function LeaderboardTable({
 
               className="
 
-                p-4
+                p-5
 
                 text-left
 
@@ -162,7 +190,7 @@ function LeaderboardTable({
 
               className="
 
-                p-4
+                p-5
 
                 text-left
 
@@ -178,7 +206,7 @@ function LeaderboardTable({
 
               className="
 
-                p-4
+                p-5
 
                 text-left
 
@@ -186,7 +214,23 @@ function LeaderboardTable({
 
             >
 
-              Points
+              Major
+
+            </th>
+
+            <th
+
+              className="
+
+                p-5
+
+                text-left
+
+              "
+
+            >
+
+              Score
 
             </th>
 
@@ -206,7 +250,7 @@ function LeaderboardTable({
 
                 <td
 
-                  colSpan={5}
+                  colSpan={6}
 
                   className="
 
@@ -234,9 +278,7 @@ function LeaderboardTable({
 
                 (
 
-                  student,
-
-                  index
+                  student
 
                 ) => (
 
@@ -250,7 +292,11 @@ function LeaderboardTable({
 
                     className="
 
-                      border-t
+                      border-b
+
+                      hover:bg-gray-50
+
+                      transition
 
                     "
 
@@ -260,7 +306,7 @@ function LeaderboardTable({
 
                       className="
 
-                        p-4
+                        p-5
 
                       "
 
@@ -274,7 +320,9 @@ function LeaderboardTable({
 
                           items-center
 
-                          gap-2
+                          gap-3
+
+                          font-bold
 
                         "
 
@@ -284,7 +332,7 @@ function LeaderboardTable({
 
                           getRankIcon(
 
-                            index + 1
+                            student.rank
 
                           )
 
@@ -298,7 +346,9 @@ function LeaderboardTable({
 
                       className="
 
-                        p-4
+                        p-5
+
+                        font-semibold
 
                       "
 
@@ -306,15 +356,7 @@ function LeaderboardTable({
 
                       {
 
-                        student.user
-
-                        ?.profile
-
-                        ?.fullName
-
-                        ||
-
-                        "N/A"
+                        student.fullName
 
                       }
 
@@ -324,7 +366,7 @@ function LeaderboardTable({
 
                       className="
 
-                        p-4
+                        p-5
 
                       "
 
@@ -334,12 +376,6 @@ function LeaderboardTable({
 
                         student.university
 
-                        ?.universityName
-
-                        ||
-
-                        "N/A"
-
                       }
 
                     </td>
@@ -348,7 +384,7 @@ function LeaderboardTable({
 
                       className="
 
-                        p-4
+                        p-5
 
                       "
 
@@ -358,11 +394,23 @@ function LeaderboardTable({
 
                         student.faculty
 
-                        ?.facultyName
+                      }
 
-                        ||
+                    </td>
 
-                        "N/A"
+                    <td
+
+                      className="
+
+                        p-5
+
+                      "
+
+                    >
+
+                      {
+
+                        student.major
 
                       }
 
@@ -372,7 +420,7 @@ function LeaderboardTable({
 
                       className="
 
-                        p-4
+                        p-5
 
                         font-bold
 
@@ -385,8 +433,6 @@ function LeaderboardTable({
                       {
 
                         student.activityScore
-
-                        ?? 0
 
                       }
 

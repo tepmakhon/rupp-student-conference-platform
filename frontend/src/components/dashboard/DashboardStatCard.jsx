@@ -1,10 +1,10 @@
 function DashboardStatCard({
 
+  icon: Icon,
+
   title,
 
   value,
-
-  icon: Icon,
 
 }) {
 
@@ -13,21 +13,12 @@ function DashboardStatCard({
     <div
 
       className="
-
         bg-white
-
         rounded-2xl
-
-        border
-
-        shadow-sm
-
-        hover:shadow-md
-
-        transition
-
         p-6
-
+        shadow-sm
+        hover:shadow-md
+        transition
       "
 
     >
@@ -35,13 +26,9 @@ function DashboardStatCard({
       <div
 
         className="
-
           flex
-
-          items-center
-
           justify-between
-
+          items-center
         "
 
       >
@@ -51,11 +38,8 @@ function DashboardStatCard({
           <p
 
             className="
-
-              text-sm
-
               text-gray-500
-
+              text-sm
             "
 
           >
@@ -67,15 +51,10 @@ function DashboardStatCard({
           <h2
 
             className="
-
               text-4xl
-
               font-bold
-
               text-primary
-
-              mt-2
-
+              mt-3
             "
 
           >
@@ -93,21 +72,13 @@ function DashboardStatCard({
             <div
 
               className="
-
                 w-14
-
                 h-14
-
                 rounded-xl
-
-                bg-gray-100
-
+                bg-primary/10
                 flex
-
                 items-center
-
                 justify-center
-
               "
 
             >
@@ -115,13 +86,9 @@ function DashboardStatCard({
               <Icon
 
                 className="
-
-                  w-7
-
-                  h-7
-
+                  w-8
+                  h-8
                   text-primary
-
                 "
 
               />

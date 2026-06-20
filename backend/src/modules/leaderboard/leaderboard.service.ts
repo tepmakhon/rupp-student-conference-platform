@@ -70,7 +70,8 @@ export const getLeaderboard =
           university: true,
 
           faculty: true,
-
+          
+          major: true,
         },
 
         orderBy: {
@@ -134,6 +135,12 @@ export const getLeaderboard =
               student.faculty
 
                 ?.facultyName ||
+
+              "-",
+            major:
+              student.major
+
+                ?.majorName ||
 
               "-",
 

@@ -1,80 +1,53 @@
-import {
-
-  ArrowPathIcon,
-
-} from "@heroicons/react/24/outline";
-
 function DashboardHeader({
-
-  title,
-
-  subtitle,
-
-  loading,
-
   onRefresh,
-
 }) {
 
   return (
 
     <div
-
       className="
-
         flex
 
         flex-col
 
-        lg:flex-row
+        md:flex-row
 
-        lg:items-center
+        md:items-center
 
-        lg:justify-between
+        md:justify-between
 
-        gap-6
+        gap-4
 
-        mb-10
-
+        mb-8
       "
-
     >
 
       <div>
 
         <h1
-
           className="
-
-            text-3xl
-
-            md:text-4xl
+            text-4xl
 
             font-bold
 
             text-primary
-
           "
-
         >
 
-          {title}
+          Student Dashboard
 
         </h1>
 
         <p
-
           className="
-
             text-gray-500
 
             mt-2
-
           "
-
         >
 
-          {subtitle}
+          Track your activities,
+          events and opportunities.
 
         </p>
 
@@ -83,26 +56,13 @@ function DashboardHeader({
       <button
 
         onClick={
-
           onRefresh
-
-        }
-
-        disabled={
-
-          loading
-
         }
 
         className="
+          self-start
 
-          inline-flex
-
-          items-center
-
-          justify-center
-
-          gap-2
+          md:self-auto
 
           bg-primary
 
@@ -114,43 +74,11 @@ function DashboardHeader({
 
           py-3
 
-          rounded-xl
-
-          shadow-sm
+          rounded-2xl
 
           transition
-
-          disabled:opacity-50
-
         "
-
       >
-
-        <ArrowPathIcon
-
-          className={`
-
-            w-5
-
-            h-5
-
-            ${
-
-              loading
-
-              ?
-
-              "animate-spin"
-
-              :
-
-              ""
-
-            }
-
-          `}
-
-        />
 
         Refresh
 
