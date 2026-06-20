@@ -23,40 +23,121 @@ async (
  userId: bigint
 
 ) => {
+const [
 
- return await prisma.user.findUnique({
+  user,
 
-   where: {
+  totalRegistrations,
 
-     id: userId,
+  totalApplications,
 
-   },
+  savedOpportunities,
 
-   include: {
+] = await Promise.all([
 
-     role: true,
+  prisma.user.findUnique({
 
-     profile: true,
+    where: {
 
-     student: {
+      id: userId,
 
-       include: {
+    },
 
-         university: true,
+    include: {
 
-         faculty: true,
+      role: true,
 
-         major: true,
+      profile: true,
 
-       },
+      student: {
 
-     },
+        include: {
 
-     organization: true,
+          university: true,
 
-   },
+          faculty: true,
 
- });
+          major: true,
+
+          studentSkills: {
+
+            include: {
+
+              skill: true,
+
+            },
+
+          },
+
+        },
+
+      },
+
+      organization: true,
+
+    },
+
+  }),
+
+  prisma.eventRegistration.count({
+
+    where: {
+
+      student: {
+
+        userId,
+
+      },
+
+    },
+
+  }),
+
+  prisma.application.count({
+
+    where: {
+
+      student: {
+
+        userId,
+
+      },
+
+    },
+
+  }),
+
+  prisma.savedOpportunity.count({
+
+    where: {
+
+      student: {
+
+        userId,
+
+      },
+
+    },
+
+  }),
+
+]);
+
+return {
+
+  ...user,
+
+  statistics: {
+
+    totalRegistrations,
+
+    totalApplications,
+
+    savedOpportunities,
+
+  },
+
+};
 
 };
 
@@ -126,13 +207,35 @@ async (
 
  }
 
- /*
- |--------------------------------------------------------------------------
- | User Profile
- |--------------------------------------------------------------------------
- */
+ let parsedDate = null;
 
- await prisma.userProfile.update({
+ if (
+
+   dateOfBirth &&
+
+   !isNaN(
+
+     Date.parse(
+
+       dateOfBirth
+
+     )
+
+   )
+
+ ) {
+
+   parsedDate =
+
+   new Date(
+
+     dateOfBirth
+
+   );
+
+ }
+
+ await prisma.userProfile.upsert({
 
    where: {
 
@@ -140,7 +243,9 @@ async (
 
    },
 
-   data: {
+   create: {
+
+     userId,
 
      fullName,
 
@@ -150,15 +255,25 @@ async (
 
      dateOfBirth:
 
-     dateOfBirth
+     parsedDate,
 
-     ? new Date(
+     bio,
 
-       dateOfBirth
+     profileImageUrl,
 
-     )
+   },
 
-     : null,
+   update: {
+
+     fullName,
+
+     phoneNumber,
+
+     gender,
+
+     dateOfBirth:
+
+     parsedDate,
 
      bio,
 
@@ -168,21 +283,17 @@ async (
 
  });
 
- /*
- |--------------------------------------------------------------------------
- | Student
- |--------------------------------------------------------------------------
- */
-
  if (
 
- user.role.roleName ===
+   user.role.roleName ===
 
- "STUDENT"
+   "STUDENT"
 
  ) {
 
-   await prisma.student.update({
+   const student =
+
+   await prisma.student.findUnique({
 
      where: {
 
@@ -190,31 +301,41 @@ async (
 
      },
 
-     data: {
-
-       academicYear,
-
-     },
-
    });
+
+   if (student) {
+
+     await prisma.student.update({
+
+       where: {
+
+         userId,
+
+       },
+
+       data: {
+
+         academicYear,
+
+       },
+
+     });
+
+   }
 
  }
 
- /*
- |--------------------------------------------------------------------------
- | Organization
- |--------------------------------------------------------------------------
- */
-
  if (
 
- user.role.roleName ===
+   user.role.roleName ===
 
- "ORGANIZATION"
+   "ORGANIZATION"
 
  ) {
 
-   await prisma.organization.update({
+   const organization =
+
+   await prisma.organization.findUnique({
 
      where: {
 
@@ -222,13 +343,27 @@ async (
 
      },
 
-     data: {
-
-       websiteUrl,
-
-     },
-
    });
+
+   if (organization) {
+
+     await prisma.organization.update({
+
+       where: {
+
+         userId,
+
+       },
+
+       data: {
+
+         websiteUrl,
+
+       },
+
+     });
+
+   }
 
  }
 

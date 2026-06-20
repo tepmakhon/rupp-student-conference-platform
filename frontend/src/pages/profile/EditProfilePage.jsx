@@ -20,27 +20,61 @@ import DashboardLayout
 
 from "../../components/layouts/DashboardLayout";
 
+import DashboardLoading
+
+from "../../components/dashboard/DashboardLoading";
+
+import DashboardError
+
+from "../../components/dashboard/DashboardError";
+
+import ProfileCard
+
+from "../../components/profile/ProfileCard";
+
+import ProfileAvatar
+
+from "../../components/profile/ProfileAvatar";
+
+import ProfileCompletion
+
+from "../../components/profile/ProfileCompletion";
+
+import EditProfileHero
+
+from "../../components/profile/EditProfileHero";
+
+import EditProfileActions
+
+from "../../components/profile/EditProfileActions";
+
+import EditProfileSkills
+
+from "../../components/profile/EditProfileSkills";
+
 import {
 
   getMyProfile,
 
   updateMyProfile,
 
-} from "../../api/profileApi";
+}
 
-import ProfileAvatar
+from "../../api/profileApi";
 
-from "../../components/profile/ProfileAvatar";
+import {
 
-import ProfileCard
+  updateMySkills,
 
-from "../../components/profile/ProfileCard";
+}
+
+from "../../api/studentSkillApi";
 
 function EditProfilePage() {
 
   const navigate =
 
-  useNavigate();
+    useNavigate();
 
   const [
 
@@ -48,7 +82,11 @@ function EditProfilePage() {
 
     setLoading,
 
-  ] = useState(true);
+  ] = useState(
+
+    true
+
+  );
 
   const [
 
@@ -56,7 +94,23 @@ function EditProfilePage() {
 
     setSaving,
 
-  ] = useState(false);
+  ] = useState(
+
+    false
+
+  );
+
+  const [
+
+    error,
+
+    setError,
+
+  ] = useState(
+
+    null
+
+  );
 
   const [
 
@@ -64,7 +118,43 @@ function EditProfilePage() {
 
     setProfile,
 
-  ] = useState(null);
+  ] = useState(
+
+    null
+
+  );
+    const isStudent =
+
+    Boolean(
+
+      profile?.student
+
+    );
+
+    const isOrganization =
+
+    Boolean(
+
+      profile?.organization
+
+    );
+
+    const isAdmin =
+
+    profile?.role
+
+    ?.roleName ===
+
+    "ADMIN";
+
+
+  const [
+
+    selectedSkills,
+
+    setSelectedSkills,
+
+  ] = useState([]);
 
   const [
 
@@ -104,13 +194,27 @@ function EditProfilePage() {
 
     try {
 
-      setLoading(true);
+      setLoading(
+
+        true
+
+      );
+
+      setError(
+
+        null
+
+      );
 
       const data =
 
       await getMyProfile();
 
-      setProfile(data);
+      setProfile(
+
+        data
+
+      );
 
       setForm({
 
@@ -146,11 +250,21 @@ function EditProfilePage() {
 
         ?
 
-        data.profile
+        new Date(
 
-        .dateOfBirth
+          data.profile
 
-        .slice(0,10)
+          .dateOfBirth
+
+        )
+
+        .toISOString()
+
+        .split(
+
+          "T"
+
+        )[0]
 
         :
 
@@ -190,11 +304,57 @@ function EditProfilePage() {
 
       });
 
+      if (
+
+        data.student
+
+        ?.studentSkills
+
+      ) {
+
+        setSelectedSkills(
+
+          data.student
+
+          .studentSkills
+
+          .map(
+
+            (
+
+              item
+
+            ) =>
+
+            item.skillId
+
+            .toString()
+
+          )
+
+        );
+
+      }
+
     }
 
-    catch(error){
+    catch (
 
-      console.error(error);
+      error
+
+    ) {
+
+      console.error(
+
+        error
+
+      );
+
+      setError(
+
+        "Failed to load profile"
+
+      );
 
       toast.error(
 
@@ -204,9 +364,13 @@ function EditProfilePage() {
 
     }
 
-    finally{
+    finally {
 
-      setLoading(false);
+      setLoading(
+
+        false
+
+      );
 
     }
 
@@ -214,19 +378,41 @@ function EditProfilePage() {
 
   const handleSubmit =
 
-  async (e) => {
+  async (
+
+    e
+
+  ) => {
 
     e.preventDefault();
 
     try {
 
-      setSaving(true);
+      setSaving(
+
+        true
+
+      );
 
       await updateMyProfile(
 
         form
 
       );
+
+      if (
+
+        profile?.student
+
+      ) {
+
+        await updateMySkills(
+
+          selectedSkills
+
+        );
+
+      }
 
       toast.success(
 
@@ -242,15 +428,27 @@ function EditProfilePage() {
 
     }
 
-    catch(error){
+    catch (
 
-      console.error(error);
+      error
+
+    ) {
+
+      console.error(
+
+        error
+
+      );
 
       toast.error(
 
-        error?.response
+        error
 
-        ?.data?.message ||
+        ?.response
+
+        ?.data
+
+        ?.message ||
 
         "Update failed"
 
@@ -258,41 +456,55 @@ function EditProfilePage() {
 
     }
 
-    finally{
+    finally {
 
-      setSaving(false);
+      setSaving(
+
+        false
+
+      );
 
     }
 
   };
 
-  if (loading) {
+  if (
+
+    loading
+
+  ) {
 
     return (
 
       <DashboardLayout>
 
-        <div
+        <DashboardLoading />
 
-          className="
+      </DashboardLayout>
 
-          flex
+    );
 
-          justify-center
+  }
 
-          items-center
+  if (
 
-          py-24
+    error
 
-          text-gray-500
+  ) {
 
-          "
+    return (
 
-        >
+      <DashboardLayout>
 
-          Loading profile...
+        <DashboardError
 
-        </div>
+          message={
+
+            error
+
+          }
+
+        />
 
       </DashboardLayout>
 
@@ -308,91 +520,35 @@ function EditProfilePage() {
 
         className="
 
-        max-w-6xl
+        max-w-7xl
 
         mx-auto
+
+        space-y-8
 
         "
 
       >
 
-        <ProfileCard>
+        <EditProfileHero />
 
-          <form
+        <form
 
-            onSubmit={
+          onSubmit={
 
-              handleSubmit
+            handleSubmit
 
-            }
+          }
 
-          >
+          className="
 
-            {/* HEADER */}
+          space-y-8
 
-            <div
+          "
 
-              className="
+        >
 
-              flex
-
-              flex-col
-
-              md:flex-row
-
-              md:justify-between
-
-              md:items-center
-
-              gap-6
-
-              mb-10
-
-              "
-
-            >
-
-              <div>
-
-                <h1
-
-                  className="
-
-                  text-4xl
-
-                  font-bold
-
-                  text-primary
-
-                  "
-
-                >
-
-                  Edit Profile
-
-                </h1>
-
-                <p
-
-                  className="
-
-                  text-gray-500
-
-                  mt-2
-
-                  "
-
-                >
-
-                  Keep your information updated
-
-                </p>
-
-              </div>
-
-            </div>
-
-            {/* AVATAR */}
+          <ProfileCard>
 
             <div
 
@@ -401,8 +557,6 @@ function EditProfilePage() {
               flex
 
               justify-center
-
-              mb-12
 
               "
 
@@ -426,7 +580,13 @@ function EditProfilePage() {
 
                 }
 
-                onChange={(url)=>
+                onChange={
+
+                  (
+
+                    url
+
+                  ) =>
 
                   setForm({
 
@@ -444,27 +604,53 @@ function EditProfilePage() {
 
             </div>
 
-            {/* PERSONAL */}
+          </ProfileCard>
 
-            <h2
+            {
 
-              className="
+              isStudent && (
 
-              text-2xl
+                <ProfileCompletion
 
-              font-bold
+                  profile={{
 
-              text-primary
+                    profile: {
 
-              mb-6
+                      fullName:
 
-              "
+                      form.fullName,
 
-            >
+                      phoneNumber:
 
-              Personal Information
+                      form.phoneNumber,
 
-            </h2>
+                      gender:
+
+                      form.gender,
+
+                      bio:
+
+                      form.bio,
+
+                      profileImageUrl:
+
+                      form.profileImageUrl,
+
+                    },
+
+                  }}
+
+                />
+
+              )
+
+            }
+
+          <ProfileCard
+
+            title="Personal Information"
+
+          >
 
             <div
 
@@ -475,8 +661,6 @@ function EditProfilePage() {
               md:grid-cols-2
 
               gap-6
-
-              mb-10
 
               "
 
@@ -492,13 +676,21 @@ function EditProfilePage() {
 
                 }
 
-                onChange={(v)=>
+                onChange={
+
+                  (
+
+                    value
+
+                  ) =>
 
                   setForm({
 
                     ...form,
 
-                    fullName:v,
+                    fullName:
+
+                    value,
 
                   })
 
@@ -516,13 +708,21 @@ function EditProfilePage() {
 
                 }
 
-                onChange={(v)=>
+                onChange={
+
+                  (
+
+                    value
+
+                  ) =>
 
                   setForm({
 
                     ...form,
 
-                    phoneNumber:v,
+                    phoneNumber:
+
+                    value,
 
                   })
 
@@ -558,7 +758,13 @@ function EditProfilePage() {
 
                   }
 
-                  onChange={(e)=>
+                  onChange={
+
+                    (
+
+                      e
+
+                    ) =>
 
                     setForm({
 
@@ -578,7 +784,7 @@ function EditProfilePage() {
 
                   border
 
-                  rounded-xl
+                  rounded-2xl
 
                   px-4
 
@@ -640,7 +846,13 @@ function EditProfilePage() {
 
                   }
 
-                  onChange={(e)=>
+                  onChange={
+
+                    (
+
+                      e
+
+                    ) =>
 
                     setForm({
 
@@ -660,7 +872,7 @@ function EditProfilePage() {
 
                   border
 
-                  rounded-xl
+                  rounded-2xl
 
                   px-4
 
@@ -674,13 +886,11 @@ function EditProfilePage() {
 
             </div>
 
-            {/* BIO */}
-
             <div
 
               className="
 
-              mb-10
+              mt-6
 
               "
 
@@ -714,7 +924,13 @@ function EditProfilePage() {
 
                 }
 
-                onChange={(e)=>
+                onChange={
+
+                  (
+
+                    e
+
+                  ) =>
 
                   setForm({
 
@@ -734,7 +950,7 @@ function EditProfilePage() {
 
                 border
 
-                rounded-xl
+                rounded-2xl
 
                 px-4
 
@@ -746,41 +962,17 @@ function EditProfilePage() {
 
             </div>
 
-            {/* STUDENT */}
+          </ProfileCard>
 
-            {
+          {
 
-              profile.student && (
+            isStudent && (
 
               <>
 
-                <h2
+                <ProfileCard
 
-                  className="
-
-                  text-2xl
-
-                  font-bold
-
-                  text-primary
-
-                  mb-6
-
-                  "
-
-                >
-
-                  Academic Information
-
-                </h2>
-
-                <div
-
-                  className="
-
-                  mb-10
-
-                  "
+                  title="Academic Information"
 
                 >
 
@@ -794,13 +986,21 @@ function EditProfilePage() {
 
                     }
 
-                    onChange={(v)=>
+                    onChange={
+
+                      (
+
+                        value
+
+                      ) =>
 
                       setForm({
 
                         ...form,
 
-                        academicYear:v,
+                        academicYear:
+
+                        value,
 
                       })
 
@@ -808,179 +1008,103 @@ function EditProfilePage() {
 
                   />
 
-                </div>
+                </ProfileCard>
 
-              </>
+                <ProfileCard>
 
-              )
+                  <EditProfileSkills
 
-            }
+                    selectedSkills={
 
-            {/* ORGANIZATION */}
-
-            {
-
-              profile.organization && (
-
-              <>
-
-                <h2
-
-                  className="
-
-                  text-2xl
-
-                  font-bold
-
-                  text-primary
-
-                  mb-6
-
-                  "
-
-                >
-
-                  Organization Information
-
-                </h2>
-
-                <div
-
-                  className="
-
-                  mb-10
-
-                  "
-
-                >
-
-                  <InputField
-
-                    label="Website URL"
-
-                    value={
-
-                      form.websiteUrl
+                      selectedSkills
 
                     }
 
-                    onChange={(v)=>
+                    setSelectedSkills={
 
-                      setForm({
-
-                        ...form,
-
-                        websiteUrl:v,
-
-                      })
+                      setSelectedSkills
 
                     }
 
                   />
 
-                </div>
+                </ProfileCard>
 
               </>
+
+            )
+
+          }
+
+          {
+
+            isOrganization && (
+
+              <ProfileCard
+
+                title="Organization Information"
+
+              >
+
+                <InputField
+
+                  label="Website URL"
+
+                  value={
+
+                    form.websiteUrl
+
+                  }
+
+                  onChange={
+
+                    (
+
+                      value
+
+                    ) =>
+
+                    setForm({
+
+                      ...form,
+
+                      websiteUrl:
+
+                      value,
+
+                    })
+
+                  }
+
+                />
+
+              </ProfileCard>
+
+            )
+
+          }
+
+          <EditProfileActions
+
+            saving={
+
+              saving
+
+            }
+
+            onCancel={() =>
+
+              navigate(
+
+                "/profile"
 
               )
 
             }
 
-            {/* BUTTONS */}
+          />
 
-            <div
-
-              className="
-
-              flex
-
-              justify-end
-
-              gap-4
-
-              mt-10
-
-              "
-
-            >
-
-              <button
-
-                type="button"
-
-                onClick={()=>
-
-                  navigate(
-
-                    "/profile"
-
-                  )
-
-                }
-
-                className="
-
-                border
-
-                px-6
-
-                py-3
-
-                rounded-xl
-
-                "
-
-              >
-
-                Cancel
-
-              </button>
-
-              <button
-
-                disabled={saving}
-
-                className="
-
-                bg-primary
-
-                hover:bg-secondary
-
-                text-white
-
-                px-8
-
-                py-3
-
-                rounded-xl
-
-                transition
-
-                "
-
-              >
-
-                {
-
-                  saving
-
-                  ?
-
-                  "Saving..."
-
-                  :
-
-                  "Save Changes"
-
-                }
-
-              </button>
-
-            </div>
-
-          </form>
-
-        </ProfileCard>
+        </form>
 
       </div>
 
@@ -1018,7 +1142,11 @@ function InputField({
 
       >
 
-        {label}
+        {
+
+          label
+
+        }
 
       </label>
 
@@ -1026,9 +1154,19 @@ function InputField({
 
         type="text"
 
-        value={value}
+        value={
 
-        onChange={(e)=>
+          value
+
+        }
+
+        onChange={
+
+          (
+
+            e
+
+          ) =>
 
           onChange(
 
@@ -1044,7 +1182,7 @@ function InputField({
 
         border
 
-        rounded-xl
+        rounded-2xl
 
         px-4
 

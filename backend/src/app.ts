@@ -100,6 +100,8 @@ import searchRoutes from "./modules/search/search.routes.js";
 
 import recommendationRoutes from "./modules/recommendation/recommendation.routes.js";
 
+import studentSkillRoutes from "./modules/student-skill/studentSkill.routes.js";
+
 /*
 |--------------------------------------------------------------------------
 | Initialize
@@ -433,6 +435,14 @@ app.use(
  "/api/recommendations",
 
  recommendationRoutes
+
+);
+
+app.use(
+
+  "/api/student-skills",
+
+  studentSkillRoutes
 
 );
 /*
