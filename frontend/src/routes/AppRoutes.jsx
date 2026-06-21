@@ -157,6 +157,14 @@ from "../pages/admin/AdminMajorsPage";
 import AdminSkillsPage
 from "../pages/admin/AdminSkillsPage";
 
+/*
+|--------------------------------------------------------------------------
+| Notifications
+|--------------------------------------------------------------------------
+*/
+import NotificationPage
+from "../pages/notifications/NotificationPage";
+
 function AppRoutes() {
 
   const protect = (
@@ -264,6 +272,24 @@ function AppRoutes() {
             protect(
 
               <LeaderboardPage />,
+
+              ALL_ROLES
+
+            )
+
+          }
+
+        />
+
+        <Route
+
+          path="/notifications"
+
+          element={
+
+            protect(
+
+              <NotificationPage />,
 
               ALL_ROLES
 

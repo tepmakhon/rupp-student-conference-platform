@@ -1,31 +1,34 @@
-import axiosInstance from "./axios";
+import axiosInstance
+from "./axios";
 
 export const getNotifications =
-  async () => {
-    const response =
-      await axiosInstance.get(
-        "/notifications"
-      );
-    return (
-      response.data.data
-        ?.userNotifications || []
+async (
+  page = 1,
+  limit = 10
+) => {
+  const response =
+    await axiosInstance.get(
+      `/notifications?page=${page}&limit=${limit}`
     );
+  return response.data.data;
 };
 
 export const readNotification =
-  async (id) => {
-    const response =
-      await axiosInstance.patch(
-        `/notifications/${id}/read`
-      );
-    return response.data;
+async (
+  id
+) => {
+  const response =
+    await axiosInstance.patch(
+      `/notifications/${id}/read`
+    );
+  return response.data.data;
 };
 
 export const readAllNotifications =
-  async () => {
-    const response =
-      await axiosInstance.patch(
-        "/notifications/read-all"
-      );
-    return response.data;
+async () => {
+  const response =
+    await axiosInstance.patch(
+      "/notifications/read-all"
+    );
+  return response.data.data;
 };

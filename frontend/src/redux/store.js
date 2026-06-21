@@ -14,7 +14,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     leaderboard:leaderboardReducer,
     profile: profileReducer,
-    notifications: notificationReducer,
+    notification: notificationReducer,
     events: eventReducer,
     opportunities: opportunityReducer,
   },

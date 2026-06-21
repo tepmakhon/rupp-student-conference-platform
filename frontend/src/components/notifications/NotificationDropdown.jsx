@@ -8,14 +8,31 @@ import {
 
 } from "react";
 
+import {
+
+  Link,
+
+} from "react-router-dom";
+
 import toast
+
 from "react-hot-toast";
+
+import {
+
+  useDispatch,
+
+  useSelector,
+
+} from "react-redux";
 
 import {
 
   BellIcon,
 
   CheckCircleIcon,
+
+  ArrowRightIcon,
 
 } from "@heroicons/react/24/outline";
 
@@ -31,19 +48,33 @@ import {
 
 import {
 
+  setNotifications,
+
+  setNotificationLoading,
+
+  setNotificationError,
+
+  markAsRead,
+
+  markAllAsRead,
+
+} from "../../redux/slices/notificationSlice";
+
+import {
+
   formatDate,
 
 } from "../../utils/formatDate";
 
 function NotificationDropdown() {
 
-  const [
+  const dispatch =
 
-    notifications,
+    useDispatch();
 
-    setNotifications,
+  const dropdownRef =
 
-  ] = useState([]);
+    useRef(null);
 
   const [
 
@@ -51,19 +82,27 @@ function NotificationDropdown() {
 
     setOpen,
 
-  ] = useState(false);
+  ] = useState(
 
-  const [
+    false
+
+  );
+
+  const {
+
+    notifications,
+
+    unreadCount,
 
     loading,
 
-    setLoading,
+  } = useSelector(
 
-  ] = useState(false);
+    state =>
 
-  const dropdownRef =
+    state.notification
 
-    useRef(null);
+  );
 
   useEffect(() => {
 
@@ -75,7 +114,7 @@ function NotificationDropdown() {
 
     const handleClickOutside =
 
-      (event) => {
+      event => {
 
         if (
 
@@ -121,185 +160,165 @@ function NotificationDropdown() {
 
   const loadNotifications =
 
-    async () => {
+  async () => {
 
-      try {
+    try {
 
-        setLoading(
+      dispatch(
+
+        setNotificationLoading(
 
           true
 
+        )
+
+      );
+
+      dispatch(
+
+        setNotificationError(
+
+          null
+
+        )
+
+      );
+
+      const data =
+
+        await getNotifications(
+
+          1,
+
+          5
+
         );
 
-        const data =
-
-          await getNotifications();
+      dispatch(
 
         setNotifications(
-
-          Array.isArray(
-
-            data
-
-          )
-
-          ?
 
           data
 
-          :
+        )
 
-          []
+      );
 
-        );
+    }
 
-      }
+    catch (
 
-      catch (error) {
+      error
 
-        console.error(
+    ) {
 
-          error
+      console.error(
 
-        );
+        error
 
-        toast.error(
+      );
 
-          "Failed to load notifications"
+      toast.error(
 
-        );
+        "Failed to load notifications"
 
-      }
+      );
 
-      finally {
+    }
 
-        setLoading(
+    finally {
+
+      dispatch(
+
+        setNotificationLoading(
 
           false
 
-        );
+        )
 
-      }
+      );
 
-    };
+    }
 
-  const unreadCount =
-
-    notifications.filter(
-
-      (notification) =>
-
-        !notification.isRead
-
-    ).length;
+  };
 
   const handleRead =
 
-    async (id) => {
+  async id => {
 
-      try {
+    try {
 
-        await readNotification(
+      await readNotification(
+
+        id
+
+      );
+
+      dispatch(
+
+        markAsRead(
 
           id
 
-        );
+        )
 
-        setNotifications(
+      );
 
-          (previous) =>
+    }
 
-            previous.map(
+    catch (
 
-              (
+      error
 
-                notification
+    ) {
 
-              ) =>
+      console.error(
 
-                notification.id === id
+        error
 
-                ?
+      );
 
-                {
+    }
 
-                  ...notification,
-
-                  isRead: true,
-
-                }
-
-                :
-
-                notification
-
-            )
-
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-      }
-
-    };
+  };
 
   const handleReadAll =
 
-    async () => {
+  async () => {
 
-      try {
+    try {
 
-        await readAllNotifications();
+      await readAllNotifications();
 
-        setNotifications(
+      dispatch(
 
-          (previous) =>
+        markAllAsRead()
 
-            previous.map(
+      );
 
-              (
+      toast.success(
 
-                notification
+        "All notifications marked as read"
 
-              ) => ({
+      );
 
-                ...notification,
+    }
 
-                isRead: true,
+    catch (
 
-              })
+      error
 
-            )
+    ) {
 
-        );
+      console.error(
 
-        toast.success(
+        error
 
-          "All notifications marked as read"
+      );
 
-        );
+    }
 
-      }
-
-      catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-      }
-
-    };
+  };
 
   return (
 
@@ -417,8 +436,6 @@ function NotificationDropdown() {
 
       </button>
 
-      {/* Dropdown */}
-
       {
 
         open && (
@@ -437,17 +454,15 @@ function NotificationDropdown() {
 
               bg-white
 
-              rounded-2xl
+              rounded-3xl
 
               shadow-xl
 
               border
 
+              overflow-hidden
+
               z-50
-
-              max-h-[500px]
-
-              overflow-y-auto
 
             "
 
@@ -459,41 +474,69 @@ function NotificationDropdown() {
 
               className="
 
-                p-4
+                p-5
 
                 border-b
 
                 flex
 
-                items-center
-
                 justify-between
+
+                items-center
 
               "
 
             >
 
-              <h3
+              <div>
 
-                className="
+                <h3
 
-                  font-bold
+                  className="
 
-                  text-primary
+                    text-lg
 
-                "
+                    font-bold
 
-              >
+                    text-primary
 
-                Notifications
+                  "
 
-              </h3>
+                >
+
+                  Notifications
+
+                </h3>
+
+                <p
+
+                  className="
+
+                    text-sm
+
+                    text-gray-500
+
+                  "
+
+                >
+
+                  {
+
+                    unreadCount
+
+                  }
+
+                  {" "}
+
+                  unread
+
+                </p>
+
+              </div>
 
               {
 
-                notifications.length >
-
-                0 && (
+                unreadCount > 0 && (
 
                   <button
 
@@ -505,11 +548,11 @@ function NotificationDropdown() {
 
                     className="
 
-                      text-sm
-
                       text-secondary
 
-                      font-medium
+                      font-semibold
+
+                      text-sm
 
                     "
 
@@ -525,263 +568,335 @@ function NotificationDropdown() {
 
             </div>
 
-            {/* Loading */}
+            {/* Body */}
 
-            {
+            <div
 
-              loading && (
+              className="
 
-                <div
+                max-h-96
 
-                  className="
+                overflow-y-auto
 
-                    p-6
+              "
 
-                    text-center
+            >
 
-                    text-gray-500
+              {
 
-                  "
-
-                >
-
-                  Loading...
-
-                </div>
-
-              )
-
-            }
-
-            {/* Empty */}
-
-            {
-
-              !loading &&
-
-              notifications.length === 0 && (
-
-                <div
-
-                  className="
-
-                    p-8
-
-                    text-center
-
-                    text-gray-500
-
-                  "
-
-                >
-
-                  No notifications
-
-                </div>
-
-              )
-
-            }
-
-            {/* Notifications */}
-
-            {
-
-              !loading &&
-
-              notifications.map(
-
-                (
-
-                  notification
-
-                ) => (
+                loading && (
 
                   <div
 
-                    key={
+                    className="
 
-                      notification.id
+                      p-10
 
-                    }
+                      text-center
 
-                    onClick={() =>
+                      text-gray-500
 
-                      handleRead(
-
-                        notification.id
-
-                      )
-
-                    }
-
-                    className={`
-
-                      p-4
-
-                      border-b
-
-                      cursor-pointer
-
-                      hover:bg-gray-50
-
-                      transition
-
-                      ${
-
-                        !notification.isRead
-
-                        ?
-
-                        "bg-green-50"
-
-                        :
-
-                        ""
-
-                      }
-
-                    `}
+                    "
 
                   >
 
-                    <div
-
-                      className="
-
-                        flex
-
-                        justify-between
-
-                        items-start
-
-                        gap-3
-
-                      "
-
-                    >
-
-                      <div>
-
-                        <h4
-
-                          className="
-
-                            font-semibold
-
-                            text-gray-800
-
-                          "
-
-                        >
-
-                          {
-
-                            notification
-
-                            .notification
-
-                            ?.title
-
-                          }
-
-                        </h4>
-
-                        <p
-
-                          className="
-
-                            text-sm
-
-                            text-gray-600
-
-                            mt-1
-
-                          "
-
-                        >
-
-                          {
-
-                            notification
-
-                            .notification
-
-                            ?.message
-
-                          }
-
-                        </p>
-
-                        {
-
-                          notification
-
-                          .createdAt && (
-
-                            <p
-
-                              className="
-
-                                text-xs
-
-                                text-gray-400
-
-                                mt-2
-
-                              "
-
-                            >
-
-                              {
-
-                                formatDate(
-
-                                  notification.createdAt
-
-                                )
-
-                              }
-
-                            </p>
-
-                          )
-
-                        }
-
-                      </div>
-
-                      {
-
-                        !notification.isRead && (
-
-                          <CheckCircleIcon
-
-                            className="
-
-                              w-5
-
-                              h-5
-
-                              text-green-600
-
-                            "
-
-                          />
-
-                        )
-
-                      }
-
-                    </div>
+                    Loading...
 
                   </div>
 
                 )
 
-              )
+              }
 
-            }
+              {
+
+                !loading &&
+
+                notifications.length === 0 && (
+
+                  <div
+
+                    className="
+
+                      p-10
+
+                      text-center
+
+                      text-gray-500
+
+                    "
+
+                  >
+
+                    No notifications
+
+                  </div>
+
+                )
+
+              }
+
+              {
+
+                !loading &&
+
+                notifications.map(
+
+                  notification => (
+
+                    <div
+
+                      key={
+
+                        notification.id
+
+                      }
+
+                      onClick={() =>
+
+                        handleRead(
+
+                          notification.id
+
+                        )
+
+                      }
+
+                      className={`
+
+                        p-5
+
+                        border-b
+
+                        cursor-pointer
+
+                        transition
+
+                        hover:bg-gray-50
+
+                        ${
+
+                          !notification.isRead
+
+                          ?
+
+                          "bg-green-50"
+
+                          :
+
+                          ""
+
+                        }
+
+                      `}
+
+                    >
+
+                      <div
+
+                        className="
+
+                          flex
+
+                          gap-4
+
+                        "
+
+                      >
+
+                        {
+
+                          !notification.isRead && (
+
+                            <CheckCircleIcon
+
+                              className="
+
+                                w-5
+
+                                h-5
+
+                                text-green-600
+
+                                mt-1
+
+                              "
+
+                            />
+
+                          )
+
+                        }
+
+                        <div
+
+                          className="
+
+                            flex-1
+
+                          "
+
+                        >
+
+                          <h4
+
+                            className="
+
+                              font-semibold
+
+                              text-gray-800
+
+                            "
+
+                          >
+
+                            {
+
+                              notification
+
+                              .notification
+
+                              ?.title
+
+                            }
+
+                          </h4>
+
+                          <p
+
+                            className="
+
+                              text-sm
+
+                              text-gray-600
+
+                              mt-1
+
+                            "
+
+                          >
+
+                            {
+
+                              notification
+
+                              .notification
+
+                              ?.message
+
+                            }
+
+                          </p>
+
+                          <p
+
+                            className="
+
+                              text-xs
+
+                              text-gray-400
+
+                              mt-2
+
+                            "
+
+                          >
+
+                            {
+
+                              formatDate(
+
+                                notification
+
+                                .notification
+
+                                ?.createdAt
+
+                              )
+
+                            }
+
+                          </p>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  )
+
+                )
+
+              }
+
+            </div>
+
+            {/* Footer */}
+
+            <div
+
+              className="
+
+                p-4
+
+                border-t
+
+              "
+
+            >
+
+              <Link
+
+                to="/notifications"
+
+                onClick={() =>
+
+                  setOpen(
+
+                    false
+
+                  )
+
+                }
+
+                className="
+
+                  flex
+
+                  items-center
+
+                  justify-center
+
+                  gap-2
+
+                  text-primary
+
+                  font-semibold
+
+                  hover:text-secondary
+
+                "
+
+              >
+
+                View All Notifications
+
+                <ArrowRightIcon
+
+                  className="
+
+                    w-4
+
+                    h-4
+
+                  "
+
+                />
+
+              </Link>
+
+            </div>
 
           </div>
 

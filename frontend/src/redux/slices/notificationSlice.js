@@ -1,110 +1,303 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {
+
+  createSlice,
+
+} from "@reduxjs/toolkit";
 
 const initialState = {
+
   notifications: [],
+
   unreadCount: 0,
+
   loading: false,
+
+  error: null,
+
+  filter: "ALL",
+
+  pagination: {
+
+    page: 1,
+
+    limit: 10,
+
+    total: 0,
+
+    totalPages: 1,
+
+  },
+
 };
 
-const notificationSlice = createSlice({
-  name: "notification",
+const notificationSlice =
+
+createSlice({
+
+  name:
+
+  "notification",
 
   initialState,
 
   reducers: {
 
-    setNotifications: (
+    setNotifications:
+
+    (
+
       state,
+
       action
+
     ) => {
+
+      const payload =
+
+      action.payload ||
+
+      {};
 
       state.notifications =
-        action.payload;
+
+      payload
+
+      .userNotifications
+
+      || [];
+
+      state.pagination =
+
+      payload
+
+      .pagination
+
+      || {
+
+        page:1,
+
+        limit:10,
+
+        total:0,
+
+        totalPages:1,
+
+      };
 
       state.unreadCount =
-        action.payload.filter(
-          (notification) =>
-            !notification.isRead
-        ).length;
+
+      state.notifications
+
+      .filter(
+
+        item =>
+
+        !item.isRead
+
+      )
+
+      .length;
+
     },
 
-    addNotification: (
+    addNotification:
+
+    (
+
       state,
+
       action
+
     ) => {
 
-      state.notifications.unshift(
+      state.notifications
+
+      .unshift(
+
         action.payload
+
       );
 
       state.unreadCount += 1;
+
     },
 
-    markAsRead: (
+    markAsRead:
+
+    (
+
       state,
+
       action
+
     ) => {
 
       const notification =
-        state.notifications.find(
-          (item) =>
-            item.id === action.payload
-        );
+
+      state.notifications
+
+      .find(
+
+        item =>
+
+        item.id ===
+
+        action.payload
+
+      );
 
       if (
+
         notification &&
+
         !notification.isRead
+
       ) {
 
         notification.isRead =
-          true;
+
+        true;
 
         state.unreadCount -= 1;
+
       }
+
     },
 
-    markAllAsRead: (
+    markAllAsRead:
+
+    (
+
       state
+
     ) => {
 
       state.notifications =
-        state.notifications.map(
-          (notification) => ({
-            ...notification,
-            isRead: true,
-          })
-        );
+
+      state.notifications
+
+      .map(
+
+        item => ({
+
+          ...item,
+
+          isRead:true,
+
+        })
+
+      );
 
       state.unreadCount = 0;
+
     },
 
-    clearNotifications: (
+    clearNotifications:
+
+    (
+
       state
+
     ) => {
 
       state.notifications = [];
 
       state.unreadCount = 0;
+
     },
 
-    setNotificationLoading: (
+    setNotificationLoading:
+
+    (
+
       state,
+
       action
+
     ) => {
 
       state.loading =
-        action.payload;
+
+      action.payload;
+
     },
+
+    setNotificationError:
+
+    (
+
+      state,
+
+      action
+
+    ) => {
+
+      state.error =
+
+      action.payload;
+
+    },
+
+    setFilter:
+
+    (
+
+      state,
+
+      action
+
+    ) => {
+
+      state.filter =
+
+      action.payload;
+
+    },
+
+    setPagination:
+
+    (
+
+      state,
+
+      action
+
+    ) => {
+
+      state.pagination =
+
+      action.payload;
+
+    },
+
   },
+
 });
 
 export const {
-  setNotifications,
-  addNotification,
-  markAsRead,
-  markAllAsRead,
-  clearNotifications,
-  setNotificationLoading,
-} = notificationSlice.actions;
 
-export default notificationSlice.reducer;
+  setNotifications,
+
+  addNotification,
+
+  markAsRead,
+
+  markAllAsRead,
+
+  clearNotifications,
+
+  setNotificationLoading,
+
+  setNotificationError,
+
+  setFilter,
+
+  setPagination,
+
+} =
+
+notificationSlice.actions;
+
+export default
+
+notificationSlice.reducer;
