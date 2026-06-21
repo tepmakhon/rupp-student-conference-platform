@@ -1,5 +1,4 @@
 import axiosInstance from "./axios";
-
 /*
 |--------------------------------------------------------------------------
 | Public Events
@@ -11,26 +10,20 @@ export const getApprovedEvents =
     page = 1,
     limit = 10
   ) => {
-
     const response =
       await axiosInstance.get(
         `/events/approved?page=${page}&limit=${limit}`
       );
-
     return response.data.data;
-
 };
 
 export const getEventById =
   async (id) => {
-
     const response =
       await axiosInstance.get(
         `/events/${id}`
       );
-
     return response.data.data;
-
 };
 
 /*
@@ -41,26 +34,20 @@ export const getEventById =
 
 export const registerForEvent =
   async (id) => {
-
     const response =
       await axiosInstance.post(
         `/events/${id}/register`
       );
-
     return response.data;
-
 };
 
 export const getMyRegisteredEvents =
   async () => {
-
     const response =
       await axiosInstance.get(
         "/events/my-registrations"
       );
-
     return response.data.data;
-
 };
 
 /*
@@ -71,42 +58,30 @@ export const getMyRegisteredEvents =
 
 export const getEventRegistrations =
   async (id) => {
-
     const response =
-
       await axiosInstance.get(
-
         `/events/${id}/registrations`
-
       );
-
     return response.data.data;
-
 };
 
 export const getMyEvents =
   async () => {
-
     const response =
       await axiosInstance.get(
         "/events/my-events"
       );
-
     return response.data.data;
-
 };
 
 export const createEvent =
   async (payload) => {
-
     const response =
       await axiosInstance.post(
         "/events",
         payload
       );
-
     return response.data.data;
-
 };
 
 export const updateEvent =
@@ -114,27 +89,21 @@ export const updateEvent =
     id,
     payload
   ) => {
-
     const response =
       await axiosInstance.patch(
         `/events/${id}`,
         payload
       );
-
     return response.data.data;
-
 };
 
 export const deleteEvent =
   async (id) => {
-
     const response =
       await axiosInstance.delete(
         `/events/${id}`
       );
-
     return response.data.data;
-
 };
 
 /*
@@ -145,36 +114,27 @@ export const deleteEvent =
 
 export const getPendingEvents =
   async () => {
-
     const response =
       await axiosInstance.get(
         "/events/pending"
       );
-
     return response.data.data;
-
 };
 
 export const approveEvent =
   async (id) => {
-
     const response =
       await axiosInstance.patch(
         `/events/${id}/approve`
       );
-
     return response.data;
-
 };
 
 export const rejectEvent =
   async (id) => {
-
     const response =
       await axiosInstance.patch(
         `/events/${id}/reject`
       );
-
     return response.data;
-
 };

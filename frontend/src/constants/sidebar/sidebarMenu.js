@@ -5,7 +5,8 @@ import organizationMenu from "./organizationMenu";
 import adminMenu from "./adminMenu";
 
 const sidebarMenu = {
-  [ROLES.STUDENT]: studentMenu,
+  [ROLES.STUDENT]: 
+    studentMenu,
 
   [ROLES.ORGANIZATION]:
     organizationMenu,
