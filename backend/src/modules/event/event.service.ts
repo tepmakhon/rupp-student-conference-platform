@@ -79,6 +79,9 @@ export const getApprovedEvents = async (
       prisma.event.findMany({
         where: {
           status: "APPROVED",
+          eventDate: {
+          gte: new Date(),
+          },
         },
 
         include: {
@@ -97,6 +100,9 @@ export const getApprovedEvents = async (
       prisma.event.count({
         where: {
           status: "APPROVED",
+          eventDate: {
+          gte: new Date(),
+          },
         },
       }),
     ]);
@@ -373,6 +379,17 @@ export const registerForEvent = async (
     );
   }
 
+  if (
+    new Date(
+      event.eventDate
+    ) < new Date()
+  ) {
+    throw new AppError(
+      "This event has already ended",
+      400
+    );
+  }
+  
   const existingRegistration =
     await prisma.eventRegistration.findFirst({
       where: {
