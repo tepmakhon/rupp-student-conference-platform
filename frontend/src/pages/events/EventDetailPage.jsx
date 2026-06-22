@@ -15,29 +15,36 @@ import {
 } from "react-router-dom";
 
 import toast
+
 from "react-hot-toast";
 
-import {
-
-  CalendarDaysIcon,
-
-  MapPinIcon,
-
-  BuildingOffice2Icon,
-
-} from "@heroicons/react/24/outline";
-
 import DashboardLayout
+
 from "../../components/layouts/DashboardLayout";
 
 import LoadingState
+
 from "../../components/common/LoadingState";
 
 import ErrorState
+
 from "../../components/common/ErrorState";
 
-import Button
-from "../../components/ui/Button";
+import EventDetailHero
+
+from "../../components/events/EventDetailHero";
+
+import EventInfoGrid
+
+from "../../components/events/EventInfoGrid";
+
+import EventDescription
+
+from "../../components/events/EventDescription";
+
+import EventRegisterButton
+
+from "../../components/events/EventRegisterButton";
 
 import {
 
@@ -47,17 +54,13 @@ import {
 
 } from "../../api/eventApi";
 
-import {
-
-  formatDate,
-
-} from "../../utils/formatDate";
-
 function EventDetailPage() {
 
-  const { id } =
+  const {
 
-    useParams();
+    id,
+
+  } = useParams();
 
   const [
 
@@ -65,7 +68,11 @@ function EventDetailPage() {
 
     setEvent,
 
-  ] = useState(null);
+  ] = useState(
+
+    null
+
+  );
 
   const [
 
@@ -73,7 +80,11 @@ function EventDetailPage() {
 
     setLoading,
 
-  ] = useState(true);
+  ] = useState(
+
+    true
+
+  );
 
   const [
 
@@ -81,7 +92,11 @@ function EventDetailPage() {
 
     setError,
 
-  ] = useState("");
+  ] = useState(
+
+    ""
+
+  );
 
   const [
 
@@ -89,7 +104,11 @@ function EventDetailPage() {
 
     setRegistering,
 
-  ] = useState(false);
+  ] = useState(
+
+    false
+
+  );
 
   const loadEvent =
 
@@ -127,7 +146,11 @@ function EventDetailPage() {
 
         }
 
-        catch (error) {
+        catch (
+
+          error
+
+        ) {
 
           console.error(
 
@@ -201,15 +224,21 @@ function EventDetailPage() {
 
       }
 
-      catch (error) {
+      catch (
+
+        error
+
+      ) {
 
         toast.error(
 
-          error?.response
+          error
 
-          ?.data?.message
+          ?.response
 
-          ||
+          ?.data
+
+          ?.message ||
 
           "Registration failed"
 
@@ -229,6 +258,60 @@ function EventDetailPage() {
 
     };
 
+  if (
+
+    loading
+
+  ) {
+
+    return (
+
+      <DashboardLayout>
+
+        <LoadingState />
+
+      </DashboardLayout>
+
+    );
+
+  }
+
+  if (
+
+    error
+
+  ) {
+
+    return (
+
+      <DashboardLayout>
+
+        <ErrorState
+
+          message={
+
+            error
+
+          }
+
+        />
+
+      </DashboardLayout>
+
+    );
+
+  }
+
+  if (
+
+    !event
+
+  ) {
+
+    return null;
+
+  }
+
   return (
 
     <DashboardLayout>
@@ -237,391 +320,75 @@ function EventDetailPage() {
 
         className="
 
-          max-w-6xl
+          max-w-7xl
 
           mx-auto
+
+          space-y-8
 
         "
 
       >
 
-        {
+        <EventDetailHero
 
-          loading
+          event={
 
-          &&
+            event
 
-          <LoadingState />
+          }
 
-        }
+        />
 
-        {
+        <EventInfoGrid
 
-          !loading
+          event={
 
-          &&
+            event
 
-          error
+          }
 
-          &&
+        />
 
-          (
+        <EventDescription
 
-            <ErrorState
+          description={
 
-              message={
+            event.description
 
-                error
+          }
 
-              }
+        />
 
-            />
+        <div
 
-          )
+          className="
 
-        }
+            flex
 
-        {
+            justify-center
 
-          !loading
+          "
 
-          &&
+        >
 
-          !error
+          <EventRegisterButton
 
-          &&
+            registering={
 
-          event
+              registering
 
-          &&
+            }
 
-          (
+            onRegister={
 
-            <div
+              handleRegister
 
-              className="
+            }
 
-                bg-white
+          />
 
-                rounded-3xl
-
-                overflow-hidden
-
-                shadow-sm
-
-                border
-
-              "
-
-            >
-
-              <img
-
-                src={
-
-                  event.bannerImageUrl
-
-                  ||
-
-                  "https://placehold.co/1200x500?text=Event"
-
-                }
-
-                alt={
-
-                  event.title
-
-                }
-
-                className="
-
-                  w-full
-
-                  h-80
-
-                  object-cover
-
-                "
-
-              />
-
-              <div
-
-                className="
-
-                  p-8
-
-                "
-
-              >
-
-                <h1
-
-                  className="
-
-                    text-4xl
-
-                    font-bold
-
-                    text-primary
-
-                    mb-8
-
-                  "
-
-                >
-
-                  {event.title}
-
-                </h1>
-
-                <div
-
-                  className="
-
-                    grid
-
-                    md:grid-cols-3
-
-                    gap-6
-
-                    mb-8
-
-                  "
-
-                >
-
-                  <div
-
-                    className="
-
-                      flex
-
-                      items-center
-
-                      gap-3
-
-                    "
-
-                  >
-
-                    <BuildingOffice2Icon
-
-                      className="
-
-                        w-6
-
-                        h-6
-
-                        text-primary
-
-                      "
-
-                    />
-
-                    <span>
-
-                      {
-
-                        event.organization
-
-                        ?.organizationName
-
-                      }
-
-                    </span>
-
-                  </div>
-
-                  <div
-
-                    className="
-
-                      flex
-
-                      items-center
-
-                      gap-3
-
-                    "
-
-                  >
-
-                    <CalendarDaysIcon
-
-                      className="
-
-                        w-6
-
-                        h-6
-
-                        text-primary
-
-                      "
-
-                    />
-
-                    <span>
-
-                      {
-
-                        formatDate(
-
-                          event.eventDate
-
-                        )
-
-                      }
-
-                    </span>
-
-                  </div>
-
-                  <div
-
-                    className="
-
-                      flex
-
-                      items-center
-
-                      gap-3
-
-                    "
-
-                  >
-
-                    <MapPinIcon
-
-                      className="
-
-                        w-6
-
-                        h-6
-
-                        text-primary
-
-                      "
-
-                    />
-
-                    <span>
-
-                      {
-
-                        event.location
-
-                      }
-
-                    </span>
-
-                  </div>
-
-                </div>
-
-                <div
-
-                  className="
-
-                    border-t
-
-                    pt-8
-
-                  "
-
-                >
-
-                  <h2
-
-                    className="
-
-                      text-2xl
-
-                      font-semibold
-
-                      mb-4
-
-                    "
-
-                  >
-
-                    Description
-
-                  </h2>
-
-                  <p
-
-                    className="
-
-                      text-gray-600
-
-                      leading-relaxed
-
-                    "
-
-                  >
-
-                    {
-
-                      event.description
-
-                    }
-
-                  </p>
-
-                </div>
-
-                <div
-
-                  className="
-
-                    mt-10
-
-                  "
-
-                >
-
-                  <Button
-
-                    onClick={
-
-                      handleRegister
-
-                    }
-
-                    disabled={
-
-                      registering
-
-                    }
-
-                  >
-
-                    {
-
-                      registering
-
-                      ?
-
-                      "Registering..."
-
-                      :
-
-                      "Register Event"
-
-                    }
-
-                  </Button>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          )
-
-        }
+        </div>
 
       </div>
 

@@ -1,19 +1,26 @@
 import {
+
   useState,
+
+  useEffect,
+
 } from "react";
 
 import toast
+
 from "react-hot-toast";
 
 import {
+
   uploadToCloudinary,
+
 } from "../../utils/cloudinaryUpload";
 
 function EventForm({
 
   initialData,
 
-  categories,
+  categories = [],
 
   onSubmit,
 
@@ -29,26 +36,19 @@ function EventForm({
 
   ] = useState({
 
-    title:
-      initialData?.title || "",
+    title: "",
 
-    description:
-      initialData?.description || "",
+    description: "",
 
-    location:
-      initialData?.location || "",
+    location: "",
 
-    categoryId:
-      initialData?.categoryId || "",
+    categoryId: "",
 
-    capacity:
-      initialData?.capacity || "",
+    capacity: "",
 
-    eventDate:
-      initialData?.eventDate || "",
+    eventDate: "",
 
-    bannerImageUrl:
-      initialData?.bannerImageUrl || "",
+    bannerImageUrl: "",
 
   });
 
@@ -68,53 +68,98 @@ function EventForm({
 
   ] = useState(false);
 
+  useEffect(() => {
+
+    if (
+
+      initialData
+
+    ) {
+
+      setForm(
+
+        initialData
+
+      );
+
+    }
+
+  },
+
+  [
+
+    initialData,
+
+  ]);
+
   const handleChange =
+
     (e) => {
 
-      setForm({
+      setForm(
 
-        ...form,
+        (
 
-        [
+          previous
 
-          e.target.name
+        ) => ({
 
-        ]:
+          ...previous,
 
-        e.target.value,
+          [
 
-      });
+            e.target.name
+
+          ]:
+
+          e.target.value,
+
+        })
+
+      );
 
     };
 
   const handleImage =
+
     async (e) => {
 
       const file =
 
         e.target.files[0];
 
-      if (!file) return;
+      if (!file)
+
+      return;
 
       try {
 
         setImageUploading(
+
           true
+
         );
 
         const url =
 
           await uploadToCloudinary(
+
             file
+
           );
 
         setForm(
 
-          (prev) => ({
+          (
 
-            ...prev,
+            previous
+
+          ) => ({
+
+            ...previous,
 
             bannerImageUrl:
+
               url,
 
           })
@@ -122,23 +167,39 @@ function EventForm({
         );
 
         toast.success(
+
           "Image uploaded"
+
         );
 
-      } catch (error) {
+      }
+
+      catch (
+
+        error
+
+      ) {
 
         console.error(
+
           error
+
         );
 
         toast.error(
+
           "Upload failed"
+
         );
 
-      } finally {
+      }
+
+      finally {
 
         setImageUploading(
+
           false
+
         );
 
       }
@@ -146,6 +207,7 @@ function EventForm({
     };
 
   const handleSubmit =
+
     async (e) => {
 
       e.preventDefault();
@@ -153,17 +215,25 @@ function EventForm({
       try {
 
         setLoading(
+
           true
+
         );
 
         await onSubmit(
+
           form
+
         );
 
-      } finally {
+      }
+
+      finally {
 
         setLoading(
+
           false
+
         );
 
       }
@@ -175,20 +245,24 @@ function EventForm({
     <form
 
       onSubmit={
+
         handleSubmit
+
       }
 
       className="
 
         bg-white
 
-        p-8
-
         rounded-3xl
 
-        shadow-md
+        shadow-sm
 
-        space-y-6
+        border
+
+        p-8
+
+        space-y-8
 
       "
 
@@ -204,9 +278,9 @@ function EventForm({
 
             block
 
-            mb-2
-
             font-semibold
+
+            mb-2
 
           "
 
@@ -218,15 +292,23 @@ function EventForm({
 
         <input
 
+          type="text"
+
           name="title"
 
           value={
+
             form.title
+
           }
 
           onChange={
+
             handleChange
+
           }
+
+          required
 
           className="
 
@@ -236,7 +318,7 @@ function EventForm({
 
             rounded-xl
 
-            p-3
+            p-4
 
           "
 
@@ -254,9 +336,9 @@ function EventForm({
 
             block
 
-            mb-2
-
             font-semibold
+
+            mb-2
 
           "
 
@@ -268,17 +350,23 @@ function EventForm({
 
         <textarea
 
+          rows={6}
+
           name="description"
 
-          rows={5}
-
           value={
+
             form.description
+
           }
 
           onChange={
+
             handleChange
+
           }
+
+          required
 
           className="
 
@@ -288,7 +376,7 @@ function EventForm({
 
             rounded-xl
 
-            p-3
+            p-4
 
           "
 
@@ -296,151 +384,305 @@ function EventForm({
 
       </div>
 
-      {/* Location */}
+      {/* Grid */}
 
-      <div>
+      <div
 
-        <label
+        className="
 
-          className="
+          grid
 
-            block
+          md:grid-cols-2
 
-            mb-2
+          gap-6
 
-            font-semibold
+        "
 
-          "
+      >
 
-        >
+        {/* Location */}
 
-          Location
+        <div>
 
-        </label>
+          <label
 
-        <input
+            className="
 
-          name="location"
+              block
 
-          value={
-            form.location
-          }
+              font-semibold
 
-          onChange={
-            handleChange
-          }
+              mb-2
 
-          className="
+            "
 
-            w-full
+          >
 
-            border
+            Location
 
-            rounded-xl
+          </label>
 
-            p-3
+          <input
 
-          "
+            type="text"
 
-        />
+            name="location"
 
-      </div>
+            value={
 
-      {/* Category */}
+              form.location
 
-      <div>
+            }
 
-        <label
+            onChange={
 
-          className="
+              handleChange
 
-            block
+            }
 
-            mb-2
+            required
 
-            font-semibold
+            className="
 
-          "
+              w-full
 
-        >
+              border
 
-          Category
+              rounded-xl
 
-        </label>
+              p-4
 
-        <select
+            "
 
-          name="categoryId"
+          />
 
-          value={
-            form.categoryId
-          }
+        </div>
 
-          onChange={
-            handleChange
-          }
+        {/* Capacity */}
 
-          className="
+        <div>
 
-            w-full
+          <label
 
-            border
+            className="
 
-            rounded-xl
+              block
 
-            p-3
+              font-semibold
 
-          "
+              mb-2
 
-        >
+            "
 
-          <option value="">
+          >
 
-            Select category
+            Capacity
 
-          </option>
+          </label>
 
-          {
+          <input
 
-            categories.map(
+            type="number"
 
-              (
+            name="capacity"
 
-                category
+            value={
 
-              ) => (
+              form.capacity
 
-                <option
+            }
 
-                  key={
-                    category.id
-                  }
+            onChange={
 
-                  value={
-                    category.id
-                  }
+              handleChange
 
-                >
+            }
 
-                  {
+            className="
 
-                    category.categoryName
+              w-full
 
-                  }
+              border
 
-                </option>
+              rounded-xl
+
+              p-4
+
+            "
+
+          />
+
+        </div>
+
+        {/* Category */}
+
+        <div>
+
+          <label
+
+            className="
+
+              block
+
+              font-semibold
+
+              mb-2
+
+            "
+
+          >
+
+            Category
+
+          </label>
+
+          <select
+
+            name="categoryId"
+
+            value={
+
+              form.categoryId
+
+            }
+
+            onChange={
+
+              handleChange
+
+            }
+
+            required
+
+            className="
+
+              w-full
+
+              border
+
+              rounded-xl
+
+              p-4
+
+            "
+
+          >
+
+            <option
+
+              value=""
+
+            >
+
+              Select category
+
+            </option>
+
+            {
+
+              categories.map(
+
+                (
+
+                  category
+
+                ) => (
+
+                  <option
+
+                    key={
+
+                      category.id
+
+                    }
+
+                    value={
+
+                      category.id
+
+                    }
+
+                  >
+
+                    {
+
+                      category.categoryName
+
+                    }
+
+                  </option>
+
+                )
 
               )
 
-            )
+            }
 
-          }
+          </select>
 
-        </select>
+        </div>
+
+        {/* Event Date */}
+
+        <div>
+
+          <label
+
+            className="
+
+              block
+
+              font-semibold
+
+              mb-2
+
+            "
+
+          >
+
+            Event Date
+
+          </label>
+
+          <input
+
+            type="datetime-local"
+
+            name="eventDate"
+
+            value={
+
+              form.eventDate
+
+            }
+
+            onChange={
+
+              handleChange
+
+            }
+
+            required
+
+            className="
+
+              w-full
+
+              border
+
+              rounded-xl
+
+              p-4
+
+            "
+
+          />
+
+        </div>
 
       </div>
 
-      {/* Capacity */}
+      {/* Upload */}
 
       <div>
 
@@ -450,113 +692,9 @@ function EventForm({
 
             block
 
-            mb-2
-
             font-semibold
 
-          "
-
-        >
-
-          Capacity
-
-        </label>
-
-        <input
-
-          type="number"
-
-          name="capacity"
-
-          value={
-            form.capacity
-          }
-
-          onChange={
-            handleChange
-          }
-
-          className="
-
-            w-full
-
-            border
-
-            rounded-xl
-
-            p-3
-
-          "
-
-        />
-
-      </div>
-
-      {/* Date */}
-
-      <div>
-
-        <label
-
-          className="
-
-            block
-
             mb-2
-
-            font-semibold
-
-          "
-
-        >
-
-          Event Date
-
-        </label>
-
-        <input
-
-          type="datetime-local"
-
-          name="eventDate"
-
-          value={
-            form.eventDate
-          }
-
-          onChange={
-            handleChange
-          }
-
-          className="
-
-            w-full
-
-            border
-
-            rounded-xl
-
-            p-3
-
-          "
-
-        />
-
-      </div>
-
-      {/* Banner */}
-
-      <div>
-
-        <label
-
-          className="
-
-            block
-
-            mb-2
-
-            font-semibold
 
           "
 
@@ -573,12 +711,16 @@ function EventForm({
           accept="image/*"
 
           onChange={
+
             handleImage
+
           }
 
         />
 
       </div>
+
+      {/* Preview */}
 
       {
 
@@ -587,7 +729,9 @@ function EventForm({
           <img
 
             src={
+
               form.bannerImageUrl
+
             }
 
             alt="banner"
@@ -596,7 +740,7 @@ function EventForm({
 
               w-full
 
-              h-64
+              h-72
 
               object-cover
 
@@ -609,6 +753,8 @@ function EventForm({
         )
 
       }
+
+      {/* Button */}
 
       <button
 
@@ -635,6 +781,10 @@ function EventForm({
           py-4
 
           rounded-xl
+
+          font-semibold
+
+          transition
 
         "
 

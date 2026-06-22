@@ -13,16 +13,28 @@ import {
 } from "react-router-dom";
 
 import toast
+
 from "react-hot-toast";
 
 import DashboardLayout
+
 from "../../components/layouts/DashboardLayout";
 
 import PageHeader
+
 from "../../components/common/PageHeader";
 
-import PageCard
-from "../../components/common/PageCard";
+import LoadingState
+
+from "../../components/common/LoadingState";
+
+import RegistrationGrid
+
+from "../../components/events/RegistrationGrid";
+
+import RegistrationEmpty
+
+from "../../components/events/RegistrationEmpty";
 
 import {
 
@@ -61,21 +73,32 @@ function EventRegistrationsPage() {
   }, []);
 
   const loadRegistrations =
+
     async () => {
 
       try {
 
-        setLoading(true);
+        setLoading(
+
+          true
+
+        );
 
         const data =
 
           await getEventRegistrations(
+
             id
+
           );
 
         setRegistrations(
 
-          Array.isArray(data)
+          Array.isArray(
+
+            data
+
+          )
 
           ? data
 
@@ -83,25 +106,39 @@ function EventRegistrationsPage() {
 
         );
 
-      } catch (error) {
+      }
+
+      catch (
+
+        error
+
+      ) {
 
         console.error(
+
           error
+
         );
 
         toast.error(
 
           error?.response
 
-            ?.data?.message ||
+          ?.data?.message ||
 
           "Failed to load registrations"
 
         );
 
-      } finally {
+      }
 
-        setLoading(false);
+      finally {
+
+        setLoading(
+
+          false
+
+        );
 
       }
 
@@ -112,270 +149,60 @@ function EventRegistrationsPage() {
     <DashboardLayout>
 
       <div
+
         className="
+
           max-w-7xl
+
           mx-auto
+
+          space-y-8
+
         "
+
       >
 
         <PageHeader
 
           title="Event Registrations"
 
-          description="Students who registered for this event."
+          description="Students who registered for this event"
 
         />
 
         {
 
-          loading
+          loading &&
 
-          ? (
+          <LoadingState />
 
-            <div
-              className="
-                text-center
-                py-20
-              "
-            >
+        }
 
-              Loading...
+        {
 
-            </div>
+          !loading &&
 
-          )
+          registrations.length === 0 &&
 
-          : registrations.length === 0
+          <RegistrationEmpty />
 
-          ? (
+        }
 
-            <PageCard>
+        {
 
-              <div
-                className="
-                  text-center
-                  py-12
-                "
-              >
+          !loading &&
 
-                <h2
-                  className="
-                    text-2xl
-                    font-bold
-                    text-primary
-                  "
-                >
+          registrations.length > 0 && (
 
-                  No Registrations Yet
+            <RegistrationGrid
 
-                </h2>
+              registrations={
 
-                <p
-                  className="
-                    text-gray-500
-                    mt-3
-                  "
-                >
-
-                  No students have registered.
-
-                </p>
-
-              </div>
-
-            </PageCard>
-
-          )
-
-          : (
-
-            <div
-              className="
-                grid
-                gap-6
-              "
-            >
-
-              {
-
-                registrations.map(
-
-                  (
-                    registration
-                  ) => {
-
-                    const student =
-
-                      registration.student;
-
-                    return (
-
-                      <PageCard
-
-                        key={
-                          registration.id
-                        }
-
-                      >
-
-                        <div
-                          className="
-                            flex
-                            flex-col
-                            md:flex-row
-                            md:justify-between
-                            md:items-center
-                            gap-6
-                          "
-                        >
-
-                          <div>
-
-                            <h2
-                              className="
-                                text-2xl
-                                font-bold
-                                text-primary
-                              "
-                            >
-
-                              {
-
-                                student.user
-
-                                  ?.profile
-
-                                  ?.fullName ||
-
-                                student.user
-
-                                  ?.email
-
-                              }
-
-                            </h2>
-
-                            <p
-                              className="
-                                text-gray-500
-                                mt-2
-                              "
-                            >
-
-                              {
-
-                                student.user
-
-                                  ?.email
-
-                              }
-
-                            </p>
-
-                          </div>
-
-                          <div
-                            className="
-                              grid
-                              md:grid-cols-3
-                              gap-4
-                              text-sm
-                            "
-                          >
-
-                            <div>
-
-                              <p
-                                className="
-                                  font-semibold
-                                "
-                              >
-
-                                University
-
-                              </p>
-
-                              <p>
-
-                                {
-
-                                  student.university
-
-                                    ?.name
-
-                                }
-
-                              </p>
-
-                            </div>
-
-                            <div>
-
-                              <p
-                                className="
-                                  font-semibold
-                                "
-                              >
-
-                                Faculty
-
-                              </p>
-
-                              <p>
-
-                                {
-
-                                  student.faculty
-
-                                    ?.facultyName
-
-                                }
-
-                              </p>
-
-                            </div>
-
-                            <div>
-
-                              <p
-                                className="
-                                  font-semibold
-                                "
-                              >
-
-                                Major
-
-                              </p>
-
-                              <p>
-
-                                {
-
-                                  student.major
-
-                                    ?.majorName
-
-                                }
-
-                              </p>
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </PageCard>
-
-                    );
-
-                  }
-
-                )
+                registrations
 
               }
 
-            </div>
+            />
 
           )
 

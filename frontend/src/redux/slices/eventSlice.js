@@ -2,14 +2,32 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   events: [],
-  selectedEvent: null,
-  registeredEvents: [],
+
+  currentEvent: null,
+
+  myEvents: [],
+
+  registrations: [],
+
   loading: false,
+
   error: null,
+
+  filters: {
+    search: "",
+    category: "",
+  },
+
+  pagination: {
+    page: 1,
+    limit: 9,
+    total: 0,
+    totalPages: 1,
+  },
 };
 
 const eventSlice = createSlice({
-  name: "event",
+  name: "events",
 
   initialState,
 
@@ -21,52 +39,50 @@ const eventSlice = createSlice({
     ) => {
 
       state.events =
+        Array.isArray(
+          action.payload
+        )
+        ? action.payload
+        : [];
+
+    },
+
+    setCurrentEvent: (
+      state,
+      action
+    ) => {
+
+      state.currentEvent =
         action.payload;
 
-      state.error = null;
     },
 
-    setSelectedEvent: (
+    setMyEvents: (
       state,
       action
     ) => {
 
-      state.selectedEvent =
-        action.payload;
+      state.myEvents =
+        Array.isArray(
+          action.payload
+        )
+        ? action.payload
+        : [];
 
-      state.error = null;
     },
 
-    setRegisteredEvents: (
+    setRegistrations: (
       state,
       action
     ) => {
 
-      state.registeredEvents =
-        action.payload;
-    },
+      state.registrations =
+        Array.isArray(
+          action.payload
+        )
+        ? action.payload
+        : [];
 
-    addRegisteredEvent: (
-      state,
-      action
-    ) => {
-
-      state.registeredEvents.unshift(
-        action.payload
-      );
-    },
-
-    removeRegisteredEvent: (
-      state,
-      action
-    ) => {
-
-      state.registeredEvents =
-        state.registeredEvents.filter(
-          (item) =>
-            item.eventId !==
-            action.payload
-        );
     },
 
     setEventLoading: (
@@ -76,6 +92,7 @@ const eventSlice = createSlice({
 
       state.loading =
         action.payload;
+
     },
 
     setEventError: (
@@ -85,39 +102,67 @@ const eventSlice = createSlice({
 
       state.error =
         action.payload;
+
     },
 
-    clearSelectedEvent: (
+    setFilters: (
+      state,
+      action
+    ) => {
+
+      state.filters = {
+
+        ...state.filters,
+
+        ...action.payload,
+
+      };
+
+    },
+
+    setPagination: (
+      state,
+      action
+    ) => {
+
+      state.pagination =
+        action.payload;
+
+    },
+
+    clearCurrentEvent: (
       state
     ) => {
 
-      state.selectedEvent =
+      state.currentEvent =
         null;
+
     },
 
-    clearEventState: (
-      state
-    ) => {
-
-      state.events = [];
-      state.selectedEvent = null;
-      state.registeredEvents = [];
-      state.loading = false;
-      state.error = null;
-    },
   },
+
 });
 
 export const {
+
   setEvents,
-  setSelectedEvent,
-  setRegisteredEvents,
-  addRegisteredEvent,
-  removeRegisteredEvent,
+
+  setCurrentEvent,
+
+  setMyEvents,
+
+  setRegistrations,
+
   setEventLoading,
+
   setEventError,
-  clearSelectedEvent,
-  clearEventState,
+
+  setFilters,
+
+  setPagination,
+
+  clearCurrentEvent,
+
 } = eventSlice.actions;
 
 export default eventSlice.reducer;

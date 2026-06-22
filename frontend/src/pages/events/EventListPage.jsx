@@ -4,27 +4,37 @@ import {
 
   useState,
 
-  useCallback,
+  useMemo,
 
 } from "react";
 
 import DashboardLayout
+
 from "../../components/layouts/DashboardLayout";
 
-import EventCard
-from "../../components/events/EventCard";
+import PageHeader
+
+from "../../components/common/PageHeader";
 
 import LoadingState
+
 from "../../components/common/LoadingState";
 
 import ErrorState
+
 from "../../components/common/ErrorState";
 
 import EmptyState
+
 from "../../components/common/EmptyState";
 
-import PageHeader
-from "../../components/common/PageHeader";
+import EventGrid
+
+from "../../components/events/EventGrid";
+
+import EventSearch
+
+from "../../components/events/EventSearch";
 
 import {
 
@@ -58,89 +68,117 @@ function EventListPage() {
 
   ] = useState("");
 
-  const loadEvents =
+  const [
 
-    useCallback(
+    search,
 
-      async () => {
+    setSearch,
 
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          setError(
-
-            ""
-
-          );
-
-          const data =
-
-            await getApprovedEvents();
-
-          setEvents(
-
-            data?.events
-
-            ||
-
-            data
-
-            ||
-
-            []
-
-          );
-
-        }
-
-        catch (error) {
-
-          console.error(
-
-            error
-
-          );
-
-          setError(
-
-            "Failed to load events"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
+  ] = useState("");
 
   useEffect(() => {
 
     loadEvents();
 
-  },
+  }, []);
 
-  [
+  const loadEvents =
 
-    loadEvents,
+    async () => {
 
-  ]);
+      try {
+
+        setLoading(
+
+          true
+
+        );
+
+        const data =
+
+          await getApprovedEvents();
+
+        setEvents(
+
+          data.events ||
+
+          []
+
+        );
+
+      }
+
+      catch (
+
+        error
+
+      ) {
+
+        console.error(
+
+          error
+
+        );
+
+        setError(
+
+          "Failed to load events"
+
+        );
+
+      }
+
+      finally {
+
+        setLoading(
+
+          false
+
+        );
+
+      }
+
+    };
+
+  const filteredEvents =
+
+    useMemo(
+
+      () => {
+
+        return events.filter(
+
+          (
+
+            event
+
+          ) =>
+
+            event.title
+
+            .toLowerCase()
+
+            .includes(
+
+              search
+
+              .toLowerCase()
+
+            )
+
+        );
+
+      },
+
+      [
+
+        events,
+
+        search,
+
+      ]
+
+    );
 
   return (
 
@@ -154,6 +192,8 @@ function EventListPage() {
 
           mx-auto
 
+          space-y-8
+
         "
 
       >
@@ -162,15 +202,29 @@ function EventListPage() {
 
           title="Events"
 
-          description="Explore approved events."
+          description="Explore approved events"
+
+        />
+
+        <EventSearch
+
+          value={
+
+            search
+
+          }
+
+          onChange={
+
+            setSearch
+
+          }
 
         />
 
         {
 
-          loading
-
-          &&
+          loading &&
 
           <LoadingState />
 
@@ -178,15 +232,9 @@ function EventListPage() {
 
         {
 
-          !loading
+          !loading &&
 
-          &&
-
-          error
-
-          &&
-
-          (
+          error && (
 
             <ErrorState
 
@@ -204,25 +252,17 @@ function EventListPage() {
 
         {
 
-          !loading
+          !loading &&
 
-          &&
+          !error &&
 
-          !error
-
-          &&
-
-          events.length === 0
-
-          &&
-
-          (
+          filteredEvents.length === 0 && (
 
             <EmptyState
 
               title="No Events"
 
-              description="No events available."
+              description="No events found"
 
             />
 
@@ -232,71 +272,21 @@ function EventListPage() {
 
         {
 
-          !loading
+          !loading &&
 
-          &&
+          !error &&
 
-          !error
+          filteredEvents.length > 0 && (
 
-          &&
+            <EventGrid
 
-          events.length > 0
+              events={
 
-          &&
-
-          (
-
-            <div
-
-              className="
-
-                grid
-
-                grid-cols-1
-
-                md:grid-cols-2
-
-                xl:grid-cols-3
-
-                gap-6
-
-              "
-
-            >
-
-              {
-
-                events.map(
-
-                  (
-
-                    event
-
-                  ) => (
-
-                    <EventCard
-
-                      key={
-
-                        event.id
-
-                      }
-
-                      event={
-
-                        event
-
-                      }
-
-                    />
-
-                  )
-
-                )
+                filteredEvents
 
               }
 
-            </div>
+            />
 
           )
 
