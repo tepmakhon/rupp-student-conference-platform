@@ -1,16 +1,18 @@
 import {
 
-  BriefcaseIcon,
-
-  CalendarDaysIcon,
-
-} from "@heroicons/react/24/outline";
-
-import {
-
   Link,
 
 } from "react-router-dom";
+
+import {
+
+  Calendar,
+
+  Building2,
+
+  ArrowRight,
+
+} from "lucide-react";
 
 import {
 
@@ -32,81 +34,187 @@ function OpportunityCard({
 
         bg-white
 
-        rounded-2xl
-
-        border
-
-        shadow-sm
+        rounded-3xl
 
         overflow-hidden
 
-        hover:shadow-lg
+        shadow-sm
+
+        border
+
+        hover:shadow-xl
+
+        hover:-translate-y-1
 
         transition
+
+        duration-300
 
       "
 
     >
 
-      <img
-
-        src={
-
-          opportunity.coverImageUrl
-
-          ||
-
-          "https://placehold.co/800x400?text=Opportunity"
-
-        }
-
-        alt={
-
-          opportunity.title
-
-        }
-
-        className="
-
-          w-full
-
-          h-56
-
-          object-cover
-
-        "
-
-      />
-
       <div
 
         className="
 
-          p-6
+          relative
+
+          h-60
 
         "
 
       >
 
-        <span
+        <img
+
+          src={
+
+            opportunity.coverImageUrl
+
+            ||
+
+            "https://placehold.co/800x500"
+
+          }
+
+          alt={
+
+            opportunity.title
+
+          }
 
           className="
 
-            inline-flex
+            w-full
 
-            items-center
+            h-full
 
-            gap-2
+            object-cover
 
-            px-3
+          "
 
-            py-1
+        />
 
-            rounded-full
+        <div
 
-            bg-secondary/10
+          className="
 
-            text-secondary
+            absolute
+
+            top-5
+
+            left-5
+
+          "
+
+        >
+
+          <span
+
+            className="
+
+              px-4
+
+              py-2
+
+              rounded-full
+
+              bg-gold
+
+              text-black
+
+              font-semibold
+
+              text-sm
+
+            "
+
+          >
+
+            {
+
+              opportunity.type
+
+              ?.typeName
+
+            }
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <div
+
+        className="
+
+          p-7
+
+          space-y-5
+
+        "
+
+      >
+
+        <div>
+
+          <h2
+
+            className="
+
+              text-2xl
+
+              font-bold
+
+              text-primary
+
+              line-clamp-2
+
+            "
+
+          >
+
+            {
+
+              opportunity.title
+
+            }
+
+          </h2>
+
+          <p
+
+            className="
+
+              text-gray-600
+
+              mt-3
+
+              line-clamp-3
+
+            "
+
+          >
+
+            {
+
+              opportunity.description
+
+            }
+
+          </p>
+
+        </div>
+
+        <div
+
+          className="
+
+            space-y-3
+
+            text-gray-500
 
             text-sm
 
@@ -114,125 +222,86 @@ function OpportunityCard({
 
         >
 
-          <BriefcaseIcon
+          <div
 
             className="
 
-              w-4
+              flex
 
-              h-4
+              items-center
+
+              gap-2
 
             "
 
-          />
+          >
 
-          {
+            <Building2
 
-            opportunity.type
+              size={18}
 
-            ?.typeName
+            />
 
-            ||
+            <span>
 
-            "Opportunity"
+              {
 
-          }
+                opportunity.organization
+                ?.organizationName
 
-        </span>
+                ||
 
-        <h2
+                "Organization"
 
-          className="
+              }
 
-            text-xl
+            </span>
 
-            font-bold
+          </div>
 
-            text-primary
-
-            mt-4
-
-          "
-
-        >
-
-          {
-
-            opportunity.title
-
-          }
-
-        </h2>
-
-        <p
-
-          className="
-
-            text-gray-600
-
-            mt-3
-
-            line-clamp-3
-
-          "
-
-        >
-
-          {
-
-            opportunity.description
-
-          }
-
-        </p>
-
-        <div
-
-          className="
-
-            flex
-
-            items-center
-
-            gap-2
-
-            text-gray-500
-
-            mt-5
-
-          "
-
-        >
-
-          <CalendarDaysIcon
+          <div
 
             className="
 
-              w-5
+              flex
 
-              h-5
+              items-center
+
+              gap-2
 
             "
 
-          />
+          >
 
-          {
+            <Calendar
 
-            opportunity.deadline
+              size={18}
 
-            ?
+            />
 
-            formatDate(
+            <span>
 
-              opportunity.deadline
+              {
 
-            )
+                opportunity.deadline
 
-            :
+                ?
 
-            "No deadline"
+                formatDate(
 
-          }
+                  opportunity.deadline
+
+                )
+
+                :
+
+                "No deadline"
+
+              }
+
+            </span>
+
+          </div>
 
         </div>
 
@@ -242,13 +311,15 @@ function OpportunityCard({
 
           className="
 
-            inline-flex
+            flex
 
             items-center
 
             justify-center
 
-            mt-6
+            gap-2
+
+            w-full
 
             bg-primary
 
@@ -256,11 +327,11 @@ function OpportunityCard({
 
             text-white
 
-            px-5
+            py-4
 
-            py-3
+            rounded-2xl
 
-            rounded-xl
+            font-semibold
 
             transition
 
@@ -269,6 +340,12 @@ function OpportunityCard({
         >
 
           View Details
+
+          <ArrowRight
+
+            size={18}
+
+          />
 
         </Link>
 

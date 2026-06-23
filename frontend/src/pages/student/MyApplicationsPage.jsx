@@ -1,15 +1,7 @@
 import {
-
   useEffect,
-
   useState,
-
-  useCallback,
-
 } from "react";
-
-import toast
-from "react-hot-toast";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
@@ -24,15 +16,16 @@ import EmptyState
 from "../../components/common/EmptyState";
 
 import ApplicationCard
-from "../../components/student/ApplicationCard";
+from "../../components/applications/ApplicationCard";
 
 import {
-
   getMyApplications,
-
 } from "../../api/applicationApi";
 
-function MyApplicationsPage() {
+import toast
+from "react-hot-toast";
+
+function StudentApplicationsPage() {
 
   const [
 
@@ -50,79 +43,49 @@ function MyApplicationsPage() {
 
   ] = useState(true);
 
-  const loadApplications =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          const data =
-
-            await getMyApplications();
-
-          setApplications(
-
-            data?.applications
-
-            ||
-
-            []
-
-          );
-
-        }
-
-        catch (error) {
-
-          console.error(
-
-            error
-
-          );
-
-          toast.error(
-
-            "Failed to load applications"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
-
   useEffect(() => {
 
     loadApplications();
 
-  },
+  }, []);
 
-  [
+  const loadApplications =
+  async () => {
 
-    loadApplications,
+    try {
 
-  ]);
+      setLoading(true);
+
+      const data =
+        await getMyApplications();
+
+      setApplications(
+
+        data.applications || []
+
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      toast.error(
+
+        "Failed to load applications"
+
+      );
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
+  };
 
   return (
 
@@ -136,6 +99,8 @@ function MyApplicationsPage() {
 
           mx-auto
 
+          space-y-8
+
         "
 
       >
@@ -144,15 +109,13 @@ function MyApplicationsPage() {
 
           title="My Applications"
 
-          description="Track all your opportunity applications."
+          description="Track all your applications"
 
         />
 
         {
 
-          loading
-
-          &&
+          loading &&
 
           <LoadingState />
 
@@ -160,21 +123,15 @@ function MyApplicationsPage() {
 
         {
 
-          !loading
+          !loading &&
 
-          &&
-
-          applications.length === 0
-
-          &&
-
-          (
+          applications.length === 0 && (
 
             <EmptyState
 
               title="No Applications Yet"
 
-              description="Start applying for opportunities."
+              description="You have not applied for any opportunities"
 
             />
 
@@ -184,21 +141,17 @@ function MyApplicationsPage() {
 
         {
 
-          !loading
+          !loading &&
 
-          &&
-
-          applications.length > 0
-
-          &&
-
-          (
+          applications.length > 0 && (
 
             <div
 
               className="
 
-                space-y-6
+                grid
+
+                gap-6
 
               "
 
@@ -250,4 +203,4 @@ function MyApplicationsPage() {
 
 }
 
-export default MyApplicationsPage;
+export default StudentApplicationsPage;

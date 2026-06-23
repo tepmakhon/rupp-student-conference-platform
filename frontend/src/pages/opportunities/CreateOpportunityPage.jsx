@@ -1,415 +1,251 @@
-import { useState } from "react";
-import DashboardLayout from "../../components/layouts/DashboardLayout";
-import axiosInstance from "../../api/axios";
+import {
+
+  useEffect,
+
+  useState,
+
+} from "react";
+
+import {
+
+  useNavigate,
+
+} from "react-router-dom";
 
 import toast from "react-hot-toast";
+
+import DashboardLayout
+from "../../components/layouts/DashboardLayout";
+
+import PageHeader
+from "../../components/common/PageHeader";
+
+import LoadingState
+from "../../components/common/LoadingState";
+
+import OpportunityForm
+from "../../components/opportunities/OpportunityForm";
+
 import {
-  uploadToCloudinary,
-} from "../../utils/cloudinaryUpload";
+
+  createOpportunity,
+
+} from "../../api/opportunityApi";
+
+import {
+
+  getOpportunityTypes,
+
+} from "../../api/opportunityTypeApi";
 
 function CreateOpportunityPage() {
 
-const [loading, setLoading] =
-useState(false);
+  const navigate =
 
-const [image, setImage] =
-useState(null);
+    useNavigate();
 
-const [imagePreview, setImagePreview] =
-useState("");
+  const [
 
-const [formData, setFormData] =
-useState({
-title: "",
-description: "",
-requirements: "",
-typeId: "",
-deadline: "",
-});
+    opportunityTypes,
 
-const handleChange = (e) => {
+    setOpportunityTypes,
 
-setFormData({
-  ...formData,
-  [e.target.name]:
-    e.target.value,
-});
+  ] = useState([]);
 
-};
+  const [
 
-const handleImageChange =
-(e) => {
+    loading,
 
-  const file =
-    e.target.files[0];
-  if (!file) return;
-  setImage(file);
-  setImagePreview(
-    URL.createObjectURL(file)
-  );
-};
+    setLoading,
 
-const uploadImage =
-async () => {
+  ] = useState(true);
 
-  if (!image) {
-    return "";
-  }
-  const cloudinaryData =
-    new FormData();
-  cloudinaryData.append(
-    "file",
-    image
-  );
-  cloudinaryData.append(
-    "upload_preset",
-    "rupp_platform_cloudnary"
-  );
-  const response =
-    await fetch(
-      "https://api.cloudinary.com/v1_1/dct61ygjw/image/upload",
-      {
-        method: "POST",
-        body: cloudinaryData,
+  const [
+
+    saving,
+
+    setSaving,
+
+  ] = useState(false);
+
+  useEffect(() => {
+
+    loadTypes();
+
+  }, []);
+
+  const loadTypes =
+
+    async () => {
+
+      try {
+
+        setLoading(true);
+
+        const data =
+
+          await getOpportunityTypes();
+
+        setOpportunityTypes(
+
+          Array.isArray(data)
+
+          ?
+
+          data
+
+          :
+
+          []
+
+        );
+
       }
-    );
-  const result =
-    await response.json();
-  return result.secure_url;
-};
 
-const resetForm = () => {
+      catch (error) {
 
-setFormData({
-  title: "",
-  description: "",
-  requirements: "",
-  typeId: "",
-  deadline: "",
-});
-setImage(null);
-setImagePreview("");
+        console.error(error);
 
-};
+        toast.error(
 
-const handleSubmit =
-async (e) => {
+          "Failed to load opportunity types"
 
-  e.preventDefault();
-  if (
-    !formData.title.trim()
-  ) {
-    toast.error(
-      "Title is required"
-    );
-    return;
-  }
-  if (
-    !formData.description.trim()
-  ) {
-    toast.error(
-      "Description is required"
-    );
-    return;
-  }
-  if (
-    !formData.requirements.trim()
-  ) {
-    toast.error(
-      "Requirements are required"
-    );
-    return;
-  }
-  if (
-    !formData.typeId
-  ) {
-    toast.error(
-      "Please select an opportunity type"
-    );
-    return;
-  }
-  try {
-    setLoading(true);
-    const coverImageUrl =
-      await uploadImage();
-    const payload = {
-      title:
-        formData.title,
-      description:
-        formData.description,
-      requirements:
-        formData.requirements,
-      typeId:
-        formData.typeId,
-      deadline:
-        formData.deadline,
-      coverImageUrl,
+        );
+
+      }
+
+      finally {
+
+        setLoading(false);
+
+      }
+
     };
-    await axiosInstance.post(
-      "/opportunities",
-      payload
+
+  const handleSubmit =
+
+    async (form) => {
+
+      try {
+
+        setSaving(true);
+
+        await createOpportunity(
+
+          form
+
+        );
+
+        toast.success(
+
+          "Opportunity created"
+
+        );
+
+        navigate(
+
+          "/organization/opportunities"
+
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        toast.error(
+
+          error?.response
+
+          ?.data?.message
+
+          ||
+
+          "Create failed"
+
+        );
+
+      }
+
+      finally {
+
+        setSaving(false);
+
+      }
+
+    };
+
+  if (loading) {
+
+    return (
+
+      <DashboardLayout>
+
+        <LoadingState
+
+          message="Loading..."
+
+        />
+
+      </DashboardLayout>
+
     );
-    toast.success(
-      "Opportunity created successfully"
-    );
-    resetForm();
-  } catch (error) {
-    console.error(error);
-    toast.error(
-      error?.response?.data?.message ||
-      "Failed to create opportunity"
-    );
-  } finally {
-    setLoading(false);
+
   }
-};
 
-return (
+  return (
 
-<DashboardLayout>
-  <div
-    className="
-      max-w-5xl
-      mx-auto
-    "
-  >
-    <div
-      className="
-        mb-8
-      "
-    >
-      <h1
-        className="
-          text-3xl
-          font-bold
-          text-primary
-        "
-      >
-        Create Opportunity
-      </h1>
-      <p
-        className="
-          text-gray-500
-          mt-2
-        "
-      >
-        Publish internships,
-        scholarships,
-        volunteer positions,
-        and career opportunities.
-      </p>
-    </div>
-    <form
-      onSubmit={handleSubmit}
-      className="
-        bg-white
-        rounded-2xl
-        shadow-lg
-        p-8
-        space-y-6
-      "
-    >
-      <div>
-        <label
-          className="
-            block
-            mb-2
-            font-medium
-          "
-        >
-          Title
-        </label>
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          className="
-            w-full
-            border
-            rounded-xl
-            p-3
-          "
-        />
-      </div>
-      <div>
-        <label
-          className="
-            block
-            mb-2
-            font-medium
-          "
-        >
-          Description
-        </label>
-        <textarea
-          rows="5"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          className="
-            w-full
-            border
-            rounded-xl
-            p-3
-          "
-        />
-      </div>
-      <div>
-        <label
-          className="
-            block
-            mb-2
-            font-medium
-          "
-        >
-          Requirements
-        </label>
-        <textarea
-          rows="5"
-          name="requirements"
-          value={formData.requirements}
-          onChange={handleChange}
-          className="
-            w-full
-            border
-            rounded-xl
-            p-3
-          "
-        />
-      </div>
+    <DashboardLayout>
+
       <div
-        className="
-          grid
-          md:grid-cols-2
-          gap-6
-        "
-      >
-        <div>
-          <label
-            className="
-              block
-              mb-2
-              font-medium
-            "
-          >
-            Opportunity Type
-          </label>
-          <select
-            name="typeId"
-            value={formData.typeId}
-            onChange={handleChange}
-            className="
-              w-full
-              border
-              rounded-xl
-              p-3
-            "
-          >
-            <option value="">
-              Select Type
-            </option>
-            <option value="1">
-              Internship
-            </option>
-            <option value="2">
-              Scholarship
-            </option>
-            <option value="3">
-              Volunteer
-            </option>
-            <option value="4">
-              Part-Time
-            </option>
-            <option value="5">
-              Full-Time
-            </option>
-          </select>
-        </div>
-        <div>
-          <label
-            className="
-              block
-              mb-2
-              font-medium
-            "
-          >
-            Deadline
-          </label>
-          <input
-            type="date"
-            name="deadline"
-            value={formData.deadline}
-            onChange={handleChange}
-            className="
-              w-full
-              border
-              rounded-xl
-              p-3
-            "
-          />
-        </div>
-      </div>
-      <div>
-        <label
-          className="
-            block
-            mb-2
-            font-medium
-          "
-        >
-          Cover Image
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="
-            w-full
-            border
-            rounded-xl
-            p-3
-          "
-        />
-      </div>
-      {imagePreview && (
-        <img
-          src={imagePreview}
-          alt="Preview"
-          className="
-            w-full
-            h-64
-            object-cover
-            rounded-2xl
-            border
-          "
-        />
-      )}
-      <button
-        type="submit"
-        disabled={loading}
-        className="
-          w-full
-          bg-primary
-          hover:bg-secondary
-          text-white
-          py-3
-          rounded-xl
-          transition
-          disabled:opacity-50
-        "
-      >
-        {
-          loading
-            ? "Creating Opportunity..."
-            : "Create Opportunity"
-        }
-      </button>
-    </form>
-  </div>
-</DashboardLayout>
 
-);
+        className="
+
+          max-w-5xl
+
+          mx-auto
+
+        "
+
+      >
+
+        <PageHeader
+
+          title="Create Opportunity"
+
+          description="Publish new opportunities."
+
+        />
+
+        <OpportunityForm
+
+          opportunityTypes={
+
+            opportunityTypes
+
+          }
+
+          loading={
+
+            saving
+
+          }
+
+          onSubmit={
+
+            handleSubmit
+
+          }
+
+        />
+
+      </div>
+
+    </DashboardLayout>
+
+  );
+
 }
 
 export default CreateOpportunityPage;

@@ -12,31 +12,14 @@ import {
 
 } from "../../utils/formatDate";
 
+import ApplicationStatusBadge
+from "./ApplicationStatusBadge";
+
 function ApplicationCard({
 
   application,
 
 }) {
-
-  const statusColor = {
-
-    PENDING:
-
-      "bg-gray-100 text-gray-700",
-
-    REVIEWING:
-
-      "bg-yellow-100 text-yellow-700",
-
-    ACCEPTED:
-
-      "bg-green-100 text-green-700",
-
-    REJECTED:
-
-      "bg-red-100 text-red-700",
-
-  };
 
   return (
 
@@ -210,41 +193,15 @@ function ApplicationCard({
 
         </div>
 
-        <span
+        <ApplicationStatusBadge
 
-          className={`
-
-            px-4
-
-            py-2
-
-            rounded-full
-
-            text-sm
-
-            font-semibold
-
-            ${
-
-              statusColor[
-
-                application.applicationStatus
-
-              ]
-
-            }
-
-          `}
-
-        >
-
-          {
+          status={
 
             application.applicationStatus
 
           }
 
-        </span>
+        />
 
       </div>
 

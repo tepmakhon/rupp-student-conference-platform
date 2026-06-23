@@ -48,7 +48,7 @@ function OpportunityForm({
 
       initialData.deadline
 
-      .slice(0, 10)
+      .slice(0,10)
 
       :
 
@@ -112,17 +112,21 @@ function OpportunityForm({
 
         bg-white
 
-        rounded-2xl
+        rounded-3xl
 
-        shadow-md
+        shadow-sm
 
-        p-8
+        border
 
-        space-y-6
+        p-10
+
+        space-y-8
 
       "
 
     >
+
+      {/* Title */}
 
       <div>
 
@@ -132,9 +136,11 @@ function OpportunityForm({
 
             block
 
-            mb-2
+            mb-3
 
-            font-medium
+            font-semibold
+
+            text-primary
 
           "
 
@@ -170,15 +176,23 @@ function OpportunityForm({
 
             border
 
-            rounded-xl
+            rounded-2xl
 
-            p-3
+            p-4
+
+            focus:outline-none
+
+            focus:ring-2
+
+            focus:ring-secondary
 
           "
 
         />
 
       </div>
+
+      {/* Type */}
 
       <div>
 
@@ -188,9 +202,11 @@ function OpportunityForm({
 
             block
 
-            mb-2
+            mb-3
 
-            font-medium
+            font-semibold
+
+            text-primary
 
           "
 
@@ -224,9 +240,15 @@ function OpportunityForm({
 
             border
 
-            rounded-xl
+            rounded-2xl
 
-            p-3
+            p-4
+
+            focus:outline-none
+
+            focus:ring-2
+
+            focus:ring-secondary
 
           "
 
@@ -242,7 +264,11 @@ function OpportunityForm({
 
             opportunityTypes.map(
 
-              (type) => (
+              (
+
+                type
+
+              ) => (
 
                 <option
 
@@ -278,6 +304,8 @@ function OpportunityForm({
 
       </div>
 
+      {/* Description */}
+
       <div>
 
         <label
@@ -286,9 +314,11 @@ function OpportunityForm({
 
             block
 
-            mb-2
+            mb-3
 
-            font-medium
+            font-semibold
+
+            text-primary
 
           "
 
@@ -300,7 +330,7 @@ function OpportunityForm({
 
         <textarea
 
-          rows={5}
+          rows={6}
 
           name="description"
 
@@ -324,15 +354,23 @@ function OpportunityForm({
 
             border
 
-            rounded-xl
+            rounded-2xl
 
-            p-3
+            p-4
+
+            focus:outline-none
+
+            focus:ring-2
+
+            focus:ring-secondary
 
           "
 
         />
 
       </div>
+
+      {/* Requirements */}
 
       <div>
 
@@ -342,9 +380,11 @@ function OpportunityForm({
 
             block
 
-            mb-2
+            mb-3
 
-            font-medium
+            font-semibold
+
+            text-primary
 
           "
 
@@ -356,7 +396,7 @@ function OpportunityForm({
 
         <textarea
 
-          rows={5}
+          rows={6}
 
           name="requirements"
 
@@ -378,63 +418,15 @@ function OpportunityForm({
 
             border
 
-            rounded-xl
+            rounded-2xl
 
-            p-3
+            p-4
 
-          "
+            focus:outline-none
 
-        />
+            focus:ring-2
 
-      </div>
-
-      <div>
-
-        <label
-
-          className="
-
-            block
-
-            mb-2
-
-            font-medium
-
-          "
-
-        >
-
-          Cover Image URL
-
-        </label>
-
-        <input
-
-          type="text"
-
-          name="coverImageUrl"
-
-          value={
-
-            form.coverImageUrl
-
-          }
-
-          onChange={
-
-            handleChange
-
-          }
-
-          className="
-
-            w-full
-
-            border
-
-            rounded-xl
-
-            p-3
+            focus:ring-secondary
 
           "
 
@@ -442,57 +434,147 @@ function OpportunityForm({
 
       </div>
 
-      <div>
+      <div
 
-        <label
+        className="
 
-          className="
+          grid
 
-            block
+          md:grid-cols-2
 
-            mb-2
+          gap-8
 
-            font-medium
+        "
 
-          "
+      >
 
-        >
+        {/* Cover */}
 
-          Deadline
+        <div>
 
-        </label>
+          <label
 
-        <input
+            className="
 
-          type="date"
+              block
 
-          name="deadline"
+              mb-3
 
-          value={
+              font-semibold
 
-            form.deadline
+              text-primary
 
-          }
+            "
 
-          onChange={
+          >
 
-            handleChange
+            Cover Image URL
 
-          }
+          </label>
 
-          className="
+          <input
 
-            w-full
+            type="text"
 
-            border
+            name="coverImageUrl"
 
-            rounded-xl
+            value={
 
-            p-3
+              form.coverImageUrl
 
-          "
+            }
 
-        />
+            onChange={
+
+              handleChange
+
+            }
+
+            className="
+
+              w-full
+
+              border
+
+              rounded-2xl
+
+              p-4
+
+              focus:outline-none
+
+              focus:ring-2
+
+              focus:ring-secondary
+
+            "
+
+          />
+
+        </div>
+
+        {/* Deadline */}
+
+        <div>
+
+          <label
+
+            className="
+
+              block
+
+              mb-3
+
+              font-semibold
+
+              text-primary
+
+            "
+
+          >
+
+            Deadline
+
+          </label>
+
+          <input
+
+            type="date"
+
+            name="deadline"
+
+            value={
+
+              form.deadline
+
+            }
+
+            onChange={
+
+              handleChange
+
+            }
+
+            className="
+
+              w-full
+
+              border
+
+              rounded-2xl
+
+              p-4
+
+              focus:outline-none
+
+              focus:ring-2
+
+              focus:ring-secondary
+
+            "
+
+          />
+
+        </div>
 
       </div>
 
@@ -516,9 +598,11 @@ function OpportunityForm({
 
           text-white
 
-          py-3
+          py-4
 
-          rounded-xl
+          rounded-2xl
+
+          font-semibold
 
           transition
 

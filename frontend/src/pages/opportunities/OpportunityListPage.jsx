@@ -1,24 +1,8 @@
 import {
-
   useEffect,
-
   useState,
-
   useCallback,
-
 } from "react";
-
-import {
-
-  Link,
-
-} from "react-router-dom";
-
-import {
-
-  useSelector,
-
-} from "react-redux";
 
 import DashboardLayout
 from "../../components/layouts/DashboardLayout";
@@ -35,26 +19,21 @@ from "../../components/common/ErrorState";
 import EmptyState
 from "../../components/common/EmptyState";
 
+import Pagination
+from "../../components/common/Pagination";
+
 import OpportunityCard
 from "../../components/opportunities/OpportunityCard";
 
+import OpportunityFilters
+from "../../components/opportunities/OpportunityFilters";
+
 import {
-
   getOpportunities,
-
-} from "../../api/opportunityApi";
+}
+from "../../api/opportunityApi";
 
 function OpportunityListPage() {
-
-  const role =
-
-    useSelector(
-
-      (state) =>
-
-        state.auth.role
-
-    );
 
   const [
 
@@ -80,6 +59,38 @@ function OpportunityListPage() {
 
   ] = useState("");
 
+  const [
+
+    keyword,
+
+    setKeyword,
+
+  ] = useState("");
+
+  const [
+
+    typeId,
+
+    setTypeId,
+
+  ] = useState("");
+
+  const [
+
+    page,
+
+    setPage,
+
+  ] = useState(1);
+
+  const [
+
+    totalPages,
+
+    setTotalPages,
+
+  ] = useState(1);
+
   const loadOpportunities =
 
     useCallback(
@@ -102,7 +113,17 @@ function OpportunityListPage() {
 
           const data =
 
-            await getOpportunities();
+            await getOpportunities(
+
+              page,
+
+              10,
+
+              keyword,
+
+              typeId
+
+            );
 
           setOpportunities(
 
@@ -110,11 +131,19 @@ function OpportunityListPage() {
 
             ||
 
-            data
+            []
+
+          );
+
+          setTotalPages(
+
+            data?.pagination
+
+            ?.totalPages
 
             ||
 
-            []
+            1
 
           );
 
@@ -148,7 +177,15 @@ function OpportunityListPage() {
 
       },
 
-      []
+      [
+
+        page,
+
+        keyword,
+
+        typeId,
+
+      ]
 
     );
 
@@ -176,6 +213,8 @@ function OpportunityListPage() {
 
           mx-auto
 
+          space-y-8
+
         "
 
       >
@@ -184,17 +223,7 @@ function OpportunityListPage() {
 
           className="
 
-            flex
-
-            flex-col
-
-            md:flex-row
-
-            md:items-center
-
-            md:justify-between
-
-            gap-5
+            space-y-6
 
           "
 
@@ -205,6 +234,34 @@ function OpportunityListPage() {
             title="Opportunities"
 
             description="Discover opportunities available across the platform."
+
+          />
+
+          <OpportunityFilters
+
+            keyword={
+
+              keyword
+
+            }
+
+            setKeyword={
+
+              setKeyword
+
+            }
+
+            typeId={
+
+              typeId
+
+            }
+
+            setTypeId={
+
+              setTypeId
+
+            }
 
           />
 
@@ -290,57 +347,83 @@ function OpportunityListPage() {
 
           (
 
-            <div
+            <>
 
-              className="
+              <div
 
-                grid
+                className="
 
-                grid-cols-1
+                  grid
 
-                md:grid-cols-2
+                  grid-cols-1
 
-                xl:grid-cols-3
+                  md:grid-cols-2
 
-                gap-6
+                  xl:grid-cols-3
 
-              "
+                  gap-6
 
-            >
+                "
 
-              {
+              >
 
-                opportunities.map(
+                {
 
-                  (
+                  opportunities.map(
 
-                    opportunity
+                    (
 
-                  ) => (
+                      opportunity
 
-                    <OpportunityCard
+                    ) => (
 
-                      key={
+                      <OpportunityCard
 
-                        opportunity.id
+                        key={
 
-                      }
+                          opportunity.id
 
-                      opportunity={
+                        }
 
-                        opportunity
+                        opportunity={
 
-                      }
+                          opportunity
 
-                    />
+                        }
+
+                      />
+
+                    )
 
                   )
 
-                )
+                }
 
-              }
+              </div>
 
-            </div>
+              <Pagination
+
+                page={
+
+                  page
+
+                }
+
+                totalPages={
+
+                  totalPages
+
+                }
+
+                setPage={
+
+                  setPage
+
+                }
+
+              />
+
+            </>
 
           )
 

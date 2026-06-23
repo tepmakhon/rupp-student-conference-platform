@@ -2,11 +2,13 @@ import axiosInstance from "./axios";
 
 export const getOpportunities = async (
   page = 1,
-  limit = 10
+  limit = 10,
+  keyword = "",
+  typeId = ""
 ) => {
   const response =
     await axiosInstance.get(
-      `/opportunities?page=${page}&limit=${limit}`
+      `/opportunities?page=${page}&limit=${limit}&keyword=${keyword}&typeId=${typeId}`
     );
   return response.data.data;
 };
