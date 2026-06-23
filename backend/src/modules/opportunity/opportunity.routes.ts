@@ -27,6 +27,8 @@ import {
   getSavedOpportunities,
   getRecentOpportunities,
   getOrganizationOpportunities,
+  updateOpportunity,
+  deleteOpportunity,
 } from "./opportunity.controller.js";
 
 const router = Router();
@@ -130,6 +132,34 @@ router.post(
   ),
 
   createOpportunity
+);
+
+router.patch(
+
+  "/:id",
+
+  authMiddleware,
+
+  rbac([
+    "ORGANIZATION"
+  ]),
+
+  updateOpportunity
+
+);
+
+router.delete(
+
+  "/:id",
+
+  authMiddleware,
+
+  rbac([
+    "ORGANIZATION"
+  ]),
+
+  deleteOpportunity
+
 );
 
 /*

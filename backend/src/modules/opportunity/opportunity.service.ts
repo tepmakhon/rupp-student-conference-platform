@@ -66,8 +66,42 @@ async ({
 const { skip } =
   getPagination(page, limit);
 
+  const today = new Date();
+
   const where: any = {
-    status: status || "APPROVED",
+
+    status:
+
+      "APPROVED",
+
+    AND: [
+
+      {
+
+        OR: [
+
+          {
+
+            deadline: null,
+
+          },
+
+          {
+
+            deadline: {
+
+              gte: today,
+
+            },
+
+          },
+
+        ],
+
+      },
+
+    ],
+
   };
 
   /*
@@ -77,31 +111,49 @@ const { skip } =
   */
 
   if (keyword) {
+    where.AND.push({
+      OR: [
 
-    where.OR = [
+        {
 
-      {
-        title: {
-          contains: keyword,
-          mode: "insensitive",
+          title: {
+
+            contains: keyword,
+
+            mode: "insensitive",
+
+          },
+
         },
-      },
 
-      {
-        description: {
-          contains: keyword,
-          mode: "insensitive",
+        {
+
+          description: {
+
+            contains: keyword,
+
+            mode: "insensitive",
+
+          },
+
         },
-      },
 
-      {
-        requirements: {
-          contains: keyword,
-          mode: "insensitive",
+        {
+
+          requirements: {
+
+            contains: keyword,
+
+            mode: "insensitive",
+
+          },
+
         },
-      },
 
-    ];
+      ],
+
+    });
+
   }
 
   /*
@@ -175,6 +227,7 @@ const { skip } =
     },
   };
 };
+
 export const getOpportunityById = async (
   opportunityId: bigint
 ) => {
@@ -361,7 +414,27 @@ export const applyOpportunity = async (
   }
 
   if (
-    (opportunity as any).status !==
+
+    opportunity.deadline &&
+
+    new Date(opportunity.deadline)
+
+    < new Date()
+
+  ) {
+
+    throw new AppError(
+
+      "Opportunity has expired",
+
+      400
+
+    );
+
+  }
+
+  if (
+    opportunity.status !==
     "APPROVED"
   ) {
     throw new AppError(
@@ -457,18 +530,37 @@ export const saveOpportunity = async (
       },
     });
 
-  if (existing) {
-    throw new AppError(
-      "Already saved",
-      409
-    );
-  }
+    if (
 
-  return prisma.savedOpportunity.create({
-    data: {
-      studentId: student.id,
-      opportunityId,
-    },
+      opportunity.deadline &&
+
+      new Date(opportunity.deadline)
+
+      < new Date()
+
+    ) {
+
+      throw new AppError(
+
+        "Opportunity has expired",
+
+        400
+
+      );
+
+    }
+    if (existing) {
+      throw new AppError(
+        "Already saved",
+        409
+      );
+    }
+
+    return prisma.savedOpportunity.create({
+      data: {
+        studentId: student.id,
+        opportunityId,
+      },
   });
 };
 
@@ -546,33 +638,74 @@ export const getSavedOpportunities =
   
 export const getRecentOpportunities = async () => {
 
+  const today = new Date();
+  
   return prisma.opportunity.findMany({
+
     where: {
+
       status: "APPROVED",
+
+      OR: [
+
+        {
+
+          deadline: null,
+
+        },
+
+        {
+
+          deadline: {
+
+            gte: today,
+
+          },
+
+        },
+
+      ],
+
     },
 
     include: {
+
       organization: {
+
         select: {
+
           id: true,
+
           organizationName: true,
+
           logoUrl: true,
+
         },
+
       },
 
       type: {
+
         select: {
+
           id: true,
+
           typeName: true,
+
         },
+
       },
+
     },
 
     orderBy: {
+
       createdAt: "desc",
+
     },
 
     take: 5,
+
   });
 };
 
@@ -680,3 +813,211 @@ export const getMyOpportunities =
     });
 
   };
+/*
+|--------------------------------------------------------------------------
+| Update Opportunity
+|--------------------------------------------------------------------------
+*/
+
+export const updateOpportunity =
+async (
+  opportunityId: bigint,
+  userId: bigint,
+  data: any
+) => {
+
+  const organization =
+    await prisma.organization.findUnique({
+
+      where: {
+        userId,
+      },
+
+    });
+
+  if (!organization) {
+
+    throw new AppError(
+      "Organization not found",
+      404
+    );
+
+  }
+
+  const opportunity =
+    await prisma.opportunity.findUnique({
+
+      where: {
+        id: opportunityId,
+      },
+
+    });
+
+  if (!opportunity) {
+
+    throw new AppError(
+      "Opportunity not found",
+      404
+    );
+
+  }
+
+  if (
+
+    opportunity.organizationId !==
+    organization.id
+
+  ) {
+
+    throw new AppError(
+      "Not authorized",
+      403
+    );
+
+  }
+
+  return prisma.opportunity.update({
+
+    where: {
+
+      id: opportunityId,
+
+    },
+
+    data: {
+
+      title:
+        data.title,
+
+      description:
+        data.description,
+
+      requirements:
+        data.requirements,
+
+      coverImageUrl:
+        data.coverImageUrl,
+
+      typeId:
+        data.typeId
+        ? BigInt(data.typeId)
+        : undefined,
+
+      deadline:
+        data.deadline
+        ? new Date(data.deadline)
+        : null,
+
+    },
+
+  });
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Delete Opportunity
+|--------------------------------------------------------------------------
+*/
+
+export const deleteOpportunity =
+async (
+  opportunityId: bigint,
+  userId: bigint
+) => {
+
+  const organization =
+    await prisma.organization.findUnique({
+
+      where: {
+        userId,
+      },
+
+    });
+
+  if (!organization) {
+
+    throw new AppError(
+      "Organization not found",
+      404
+    );
+
+  }
+
+  const opportunity =
+    await prisma.opportunity.findUnique({
+
+      where: {
+        id: opportunityId,
+      },
+
+    });
+
+  if (!opportunity) {
+
+    throw new AppError(
+      "Opportunity not found",
+      404
+    );
+
+  }
+
+  if (
+
+    opportunity.organizationId !==
+    organization.id
+
+  ) {
+
+    throw new AppError(
+      "Not authorized",
+      403
+    );
+
+  }
+
+  /*
+  --------------------------------
+  Delete child records
+  --------------------------------
+  */
+
+  await prisma.savedOpportunity.deleteMany({
+
+    where: {
+
+      opportunityId,
+
+    },
+
+  });
+
+  await prisma.application.deleteMany({
+
+    where: {
+
+      opportunityId,
+
+    },
+
+  });
+
+  /*
+  --------------------------------
+  Delete opportunity
+  --------------------------------
+  */
+
+  await prisma.opportunity.delete({
+
+    where: {
+
+      id: opportunityId,
+
+    },
+
+  });
+
+  return true;
+
+};

@@ -472,3 +472,128 @@ export const getMyOpportunities =
     }
 
   };
+
+  export const updateOpportunity =
+async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const user =
+      req.user!;
+
+    const getBigIntId = (id: any): bigint => {
+      if (!id) {
+        throw new Error("ID parameter is missing");
+      }
+      // Check if string contains only digits
+      if (!/^\d+$/.test(id.toString())) {
+        throw new Error("Invalid ID format");
+      }
+      return BigInt(id);
+    };
+
+    // Usage in your controller:
+    const id = getBigIntId(req.params.id);
+
+    const data =
+      await opportunityService.updateOpportunity(
+
+        id,
+
+        BigInt(user.id),
+
+        req.body
+
+      );
+
+    return successResponse(
+
+      res,
+
+      data,
+
+      "Opportunity updated"
+
+    );
+
+  }
+
+  catch (error: any) {
+
+    return errorResponse(
+
+      res,
+
+      error.message,
+
+      error.statusCode || 400
+
+    );
+
+  }
+
+};
+
+export const deleteOpportunity =
+async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const user =
+      req.user!;
+
+    const getBigIntId = (id: any): bigint => {
+      if (!id) {
+        throw new Error("ID parameter is missing");
+      }
+      // Check if string contains only digits
+      if (!/^\d+$/.test(id.toString())) {
+        throw new Error("Invalid ID format");
+      }
+      return BigInt(id);
+    };
+
+    // Usage in your controller:
+    const id = getBigIntId(req.params.id);
+
+    await opportunityService.deleteOpportunity(
+
+      id,
+
+      BigInt(user.id)
+
+    );
+
+    return successResponse(
+
+      res,
+
+      null,
+
+      "Opportunity deleted"
+
+    );
+
+  }
+
+  catch (error: any) {
+
+    return errorResponse(
+
+      res,
+
+      error.message,
+
+      error.statusCode || 400
+
+    );
+
+  }
+
+};
