@@ -11,31 +11,60 @@ export const getNotifications = async (
   req: Request,
   res: Response
 ) => {
+
   try {
 
     const user =
       req.user!;
 
+    const page =
+      Number(
+        req.query.page
+      ) || 1;
+
+    const limit =
+      Number(
+        req.query.limit
+      ) || 10;
+
     const notifications =
+
       await notificationService.getMyNotifications(
-        BigInt(user.id)
+
+        BigInt(user.id),
+
+        page,
+
+        limit
+
       );
 
     return successResponse(
+
       res,
+
       notifications,
+
       "Notifications retrieved"
-    );
 
-  } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
     );
 
   }
+
+  catch (error: any) {
+
+    return errorResponse(
+
+      res,
+
+      error.message,
+
+      error.statusCode || 400
+
+    );
+
+  }
+
 };
 
 export const readNotification = async (

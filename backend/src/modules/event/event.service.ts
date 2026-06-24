@@ -4,6 +4,7 @@ import { getPagination } from "../../utils/pagination.js";
 
 import {
   createNotification,
+  notifyAdmins,
 } from "../notification/notification.service.js";
 
 import {
@@ -52,6 +53,15 @@ export const createEvent = async (
           organization.id,
       },
     });
+    await notifyAdmins(
+
+      "New Event Request",
+
+      `${event.title} needs approval`,
+
+      "EVENT"
+
+    );
 
   await createAuditLog(
     BigInt(user.id),

@@ -1,5 +1,5 @@
 import { prisma } from "../../config/prisma.js";
-import { createNotification } from "../notification/notification.service.js";
+import { createNotification ,  notifyAdmins,} from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
 import { AppError } from "../../utils/AppError.js";
 import { getPagination } from "../../utils/pagination.js";
@@ -45,6 +45,15 @@ export const createOpportunity = async (
         organizationId: organization.id,
       },
     });
+    await notifyAdmins(
+
+      "New Opportunity Request",
+
+      `${opportunity.title} needs approval`,
+
+      "OPPORTUNITY"
+
+    );
 
   await createAuditLog(
     userId,

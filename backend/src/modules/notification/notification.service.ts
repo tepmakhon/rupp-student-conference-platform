@@ -91,7 +91,7 @@ export const markAsRead = async (
     throw new AppError(
       "Notification not found",
       404
-    );
+    );   
   }
 
   return prisma.userNotification.update({
@@ -175,4 +175,72 @@ export const createNotification = async (
   });
 
   return notification;
+};
+
+/*
+|--------------------------------------------------------------------------
+| Notify All Admins
+|--------------------------------------------------------------------------
+*/
+
+export const notifyAdmins = async (
+  title: string,
+  message: string,
+  type:
+    | "EVENT"
+    | "OPPORTUNITY"
+    | "SYSTEM" = "SYSTEM"
+) => {
+
+  const adminRole =
+    await prisma.role.findUnique({
+
+      where: {
+
+        roleName: "ADMIN",
+
+      },
+
+    });
+
+  if (!adminRole) {
+
+    return;
+
+  }
+
+  const admins =
+    await prisma.user.findMany({
+
+      where: {
+
+        roleId:
+          adminRole.id,
+
+      },
+
+    });
+
+  await Promise.all(
+
+    admins.map(
+
+      (admin) =>
+
+        createNotification(
+
+          admin.id,
+
+          title,
+
+          message,
+
+          type
+
+        )
+
+    )
+
+  );
+
 };
