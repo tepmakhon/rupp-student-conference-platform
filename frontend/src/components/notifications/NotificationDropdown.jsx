@@ -30,8 +30,6 @@ import {
 
   BellIcon,
 
-  CheckCircleIcon,
-
   ArrowRightIcon,
 
 } from "@heroicons/react/24/outline";
@@ -107,6 +105,14 @@ function NotificationDropdown() {
   useEffect(() => {
 
     loadNotifications();
+
+    const interval = setInterval(() => {
+
+      loadNotifications();
+
+    }, 30000);
+
+    return () => clearInterval(interval);
 
   }, []);
 
@@ -342,15 +348,17 @@ function NotificationDropdown() {
 
       <button
 
-        onClick={() =>
+        onClick={() => {
 
-          setOpen(
+          if (!open) {
 
-            !open
+            loadNotifications();
 
-          )
+          }
 
-        }
+          setOpen(!open);
+
+        }}
 
         className="
 
@@ -448,9 +456,17 @@ function NotificationDropdown() {
 
               right-0
 
+              sm:right-0
+
+              max-sm:right-[-10px]
+
               mt-3
 
-              w-96
+              w-[340px]
+
+              sm:w-[380px]
+
+              max-w-[calc(100vw-20px)]
 
               bg-white
 
@@ -600,7 +616,31 @@ function NotificationDropdown() {
 
                   >
 
-                    Loading...
+                    <div className="p-8 space-y-3">
+
+                      {[1,2,3].map(item => (
+
+                        <div
+
+                          key={item}
+
+                          className="
+
+                            h-16
+
+                            rounded-xl
+
+                            bg-gray-100
+
+                            animate-pulse
+
+                          "
+
+                        />
+
+                      ))}
+
+                    </div>
 
                   </div>
 
@@ -614,21 +654,45 @@ function NotificationDropdown() {
 
                 notifications.length === 0 && (
 
-                  <div
+                  <div className="
 
-                    className="
+                  p-10
 
-                      p-10
+                  text-center
 
-                      text-center
+                  ">
 
-                      text-gray-500
+                    <BellIcon
 
-                    "
+                      className="
 
-                  >
+                        w-12
 
-                    No notifications
+                        h-12
+
+                        mx-auto
+
+                        text-gray-300
+
+                      "
+
+                    />
+
+                    <p
+
+                      className="
+
+                        mt-3
+
+                        text-gray-500
+
+                      "
+
+                    >
+
+                      No notifications yet
+
+                    </p>
 
                   </div>
 
@@ -708,17 +772,21 @@ function NotificationDropdown() {
 
                           !notification.isRead && (
 
-                            <CheckCircleIcon
+                            <div
 
                               className="
 
-                                w-5
+                                w-3
 
-                                h-5
+                                h-3
 
-                                text-green-600
+                                rounded-full
 
-                                mt-1
+                                bg-green-500
+
+                                mt-2
+
+                                flex-shrink-0
 
                               "
 

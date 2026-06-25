@@ -1,15 +1,9 @@
 import {
-
   BellAlertIcon,
-
-  CheckCircleIcon,
-
 } from "@heroicons/react/24/outline";
 
 import {
-
   formatDate,
-
 } from "../../utils/formatDate";
 
 function NotificationCard({
@@ -21,8 +15,44 @@ function NotificationCard({
 }) {
 
   const isUnread =
-
     !notification.isRead;
+
+  const notificationType =
+    notification.notification?.type;
+
+  const iconBg = {
+
+    EVENT:
+      "bg-blue-100",
+
+    OPPORTUNITY:
+      "bg-green-100",
+
+    SYSTEM:
+      "bg-purple-100",
+
+  }[notificationType]
+
+  ||
+
+  "bg-gray-100";
+
+  const badgeColor = {
+
+    EVENT:
+      "bg-blue-100 text-blue-700",
+
+    OPPORTUNITY:
+      "bg-green-100 text-green-700",
+
+    SYSTEM:
+      "bg-purple-100 text-purple-700",
+
+  }[notificationType]
+
+  ||
+
+  "bg-gray-100 text-gray-700";
 
   return (
 
@@ -94,7 +124,7 @@ function NotificationCard({
 
         <div
 
-          className="
+          className={`
 
             w-14
 
@@ -102,7 +132,7 @@ function NotificationCard({
 
             rounded-2xl
 
-            bg-primary/10
+            ${iconBg}
 
             flex
 
@@ -112,7 +142,7 @@ function NotificationCard({
 
             flex-shrink-0
 
-          "
+          `}
 
         >
 
@@ -182,7 +212,9 @@ function NotificationCard({
 
                   .notification
 
-                  ?.title ||
+                  ?.title
+
+                  ||
 
                   "Notification"
 
@@ -208,7 +240,9 @@ function NotificationCard({
 
                   .notification
 
-                  ?.message ||
+                  ?.message
+
+                  ||
 
                   "-"
 
@@ -216,21 +250,61 @@ function NotificationCard({
 
               </p>
 
+              <span
+
+                className={`
+
+                  inline-block
+
+                  mt-3
+
+                  px-3
+
+                  py-1
+
+                  rounded-full
+
+                  text-xs
+
+                  font-semibold
+
+                  ${badgeColor}
+
+                `}
+
+              >
+
+                {
+
+                  notificationType
+
+                  ||
+
+                  "SYSTEM"
+
+                }
+
+              </span>
+
             </div>
 
             {
 
               isUnread && (
 
-                <CheckCircleIcon
+                <div
 
                   className="
 
-                    w-6
+                    w-3
 
-                    h-6
+                    h-3
 
-                    text-primary
+                    rounded-full
+
+                    bg-green-500
+
+                    mt-2
 
                     flex-shrink-0
 
@@ -274,11 +348,11 @@ function NotificationCard({
 
                   .notification
 
-                  ?.createdAt ||
+                  ?.createdAt
 
-                  notification
+                  ||
 
-                  .createdAt
+                  notification.createdAt
 
                 )
 
