@@ -1,72 +1,46 @@
 import {
-
- Request,
-
- Response,
-
- NextFunction,
-
-}
-
-from "express";
+  Request,
+  Response,
+  NextFunction,
+} from "express";
 
 import * as searchService
 from "./search.service.js";
 
 import {
+  successResponse,
+} from "../../utils/apiResponse.js";
 
- successResponse,
-
-}
-
-from "../../utils/apiResponse.js";
-
-export const globalSearch =
-
-async (
-
- req: Request,
-
- res: Response,
-
- next: NextFunction
-
+export const globalSearch = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
 
- try {
+  try {
 
-   const q =
+    const keyword =
+      String(
+        req.query.q ?? ""
+      );
 
-   String(
+    const result =
+      await searchService.globalSearch(
+        keyword
+      );
 
-    req.query.q ||
+    return successResponse(
+      res,
+      result,
+      "Search completed"
+    );
 
-    ""
+  }
 
-   );
+  catch (error) {
 
-   const data =
+    next(error);
 
-   await searchService
-
-   .globalSearch(q);
-
-   return successResponse(
-
-     res,
-
-     data,
-
-     "Search results"
-
-   );
-
- }
-
- catch(error){
-
-   next(error);
-
- }
+  }
 
 };

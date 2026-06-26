@@ -1,153 +1,169 @@
-import {
+import { prisma } from "../../config/prisma.js";
 
- prisma,
-
-}
-
-from "../../config/prisma.js";
-
-export const globalSearch =
-
-async (
-
- keyword: string
-
+export const globalSearch = async (
+  keyword: string
 ) => {
 
- const search =
+  const search =
+    keyword
+      .trim()
+      .slice(0, 100);
 
- keyword.trim();
+  if (search.length < 2) {
 
- if (!search) {
+    return {
+      events: [],
+      opportunities: [],
+      organizations: [],
+    };
+
+  }
+
+  const [
+    events,
+    opportunities,
+    organizations,
+  ] = await Promise.all([
+
+    prisma.event.findMany({
+
+      where: {
+
+        OR: [
+
+          {
+            title: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            description: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+        ],
+
+      },
+
+      select: {
+          id: true,
+          title: true,
+          bannerImageUrl: true,
+          eventDate: true,
+          organization: {
+              select: {
+                  organizationName: true,
+              },
+          },
+      },
+
+      take: 5,
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+    }),
+
+    prisma.opportunity.findMany({
+
+      where: {
+
+        status: "APPROVED",
+
+        OR: [
+
+          {
+            title: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            description: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+        ],
+
+      },
+
+      select: {
+          id: true,
+          title: true,
+          coverImageUrl: true,
+          deadline: true,
+
+          organization: {
+              select: {
+                  organizationName: true,
+                  logoUrl: true,
+              },
+          },
+      },
+
+      take: 5,
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+    }),
+
+    prisma.organization.findMany({
+
+      where: {
+
+        organizationName: {
+
+          contains: search,
+          mode: "insensitive",
+
+        },
+
+      },
+
+      select: {
+        id: true,
+        organizationName: true,
+        logoUrl: true,
+      },
+
+      take: 5,
+
+      orderBy: {
+        createdAt: "desc",
+      },
+
+    }),
+
+  ]);
 
   return {
 
-   events: [],
+    keyword: search,
 
-   opportunities: [],
+    total:
 
-   organizations: [],
+      events.length +
+
+      opportunities.length +
+
+      organizations.length,
+
+    events,
+
+    opportunities,
+
+    organizations,
 
   };
-
- }
-
- const [
-
-  events,
-
-  opportunities,
-
-  organizations,
-
- ]
-
- = await Promise.all([
-
- prisma.event.findMany({
-
-  where: {
-
-   OR: [
-
-    {
-
-     title: {
-
-      contains: search,
-
-      mode: "insensitive",
-
-     },
-
-    },
-
-    {
-
-     description: {
-
-      contains: search,
-
-      mode: "insensitive",
-
-     },
-
-    },
-
-   ],
-
-  },
-
-  take: 5,
-
- }),
-
- prisma.opportunity.findMany({
-
-  where: {
-
-   OR: [
-
-    {
-
-     title: {
-
-      contains: search,
-
-      mode: "insensitive",
-
-     },
-
-    },
-
-    {
-
-     description: {
-
-      contains: search,
-
-      mode: "insensitive",
-
-     },
-
-    },
-
-   ],
-
-  },
-
-  take: 5,
-
- }),
-
- prisma.organization.findMany({
-
-  where: {
-
-   organizationName: {
-
-    contains: search,
-
-    mode: "insensitive",
-
-   },
-
-  },
-
-  take: 5,
-
- }),
-
- ]);
-
- return {
-
-  events,
-
-  opportunities,
-
-  organizations,
-
- };
 
 };
