@@ -100,3 +100,41 @@ export const getMyProfile = async (
 
   }
 };
+
+export const getPublicProfile = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+    
+    const id = BigInt(
+      Array.isArray(req.params.id)
+        ? req.params.id[0]
+        : req.params.id
+    );
+
+    const profile =
+      await studentService.getStudentPublicProfile(
+        id
+      );
+
+    return successResponse(
+      res,
+      profile,
+      "Student profile retrieved"
+    );
+
+  }
+
+  catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+
+};

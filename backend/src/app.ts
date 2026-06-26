@@ -102,6 +102,8 @@ import recommendationRoutes from "./modules/recommendation/recommendation.routes
 
 import studentSkillRoutes from "./modules/student-skill/studentSkill.routes.js";
 
+import badgeRoutes from "./modules/badge/badge.routes.js";
+
 /*
 |--------------------------------------------------------------------------
 | Initialize
@@ -315,6 +317,14 @@ app.use(
  "/api/leaderboard",
 
  leaderboardRoutes
+
+);
+
+app.use(
+
+  "/api/badges",
+
+  badgeRoutes
 
 );
 

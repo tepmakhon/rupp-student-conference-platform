@@ -96,3 +96,103 @@ export const getMyProfile = async (
 
   return profile;
 };
+
+/*
+|--------------------------------------------------------------------------
+| Get Student Public Profile
+|--------------------------------------------------------------------------
+*/
+
+export const getStudentPublicProfile = async (
+  studentId: bigint
+) => {
+
+  const student =
+    await prisma.student.findUnique({
+
+      where: {
+        id: studentId,
+      },
+
+      include: {
+
+        user: {
+
+          include: {
+
+            profile: true,
+
+          },
+
+        },
+
+        university: true,
+
+        faculty: true,
+
+        major: true,
+
+        studentSkills: {
+
+          include: {
+
+            skill: true,
+
+          },
+
+        },
+
+        applications: {
+
+          include: {
+
+            opportunity: {
+
+              include: {
+
+                organization: true,
+
+              },
+
+            },
+
+          },
+
+          orderBy: {
+
+            appliedAt: "desc",
+
+          },
+
+          take: 5,
+
+        },
+
+        scoreHistory: {
+
+          orderBy: {
+
+            createdAt: "desc",
+
+          },
+
+          take: 10,
+
+        },
+
+      },
+
+    });
+
+  if (!student) {
+
+    throw new AppError(
+      "Student not found",
+      404
+    );
+
+  }
+
+  return student;
+
+};

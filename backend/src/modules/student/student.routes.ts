@@ -6,6 +6,7 @@ import {
   getMyHistory,
   createProfile,
   getMyProfile,
+  getPublicProfile,
 } from "./student.controller.js";
 const router = Router();
 /**
@@ -121,6 +122,30 @@ router.get(
  *     tags: [Students]
  *     security:
  *       - bearerAuth: []
+ */
+
+router.get(
+  "/:id/public",
+  authMiddleware,
+  getPublicProfile
+);
+/**
+ * @swagger
+ * /api/students/{id}/public:
+ *   get:
+ *     summary: Get Student Public Profile
+ *     tags: [Students]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Student profile retrieved
  */
 
 export default router;
