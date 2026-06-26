@@ -58,7 +58,11 @@ const studentMenu = [
     path: "/activity-history",
     icon: ClockIcon,
   },
-
+  {
+    name: "My Badges",
+    path: "/badges",
+    icon: TrophyIcon,
+  },
   {
     name: "Profile",
     path: "/profile",

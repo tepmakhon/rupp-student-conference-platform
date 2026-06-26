@@ -23,6 +23,9 @@ const pageTitles = {
   "/activity-history":
     "Activity History",
 
+  "/badges":
+    "My Badges",
+
   "/organization/events":
     "My Events",
 

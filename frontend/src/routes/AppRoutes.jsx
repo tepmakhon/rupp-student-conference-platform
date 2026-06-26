@@ -100,6 +100,9 @@ from "../pages/student/MyEventsPage";
 import ActivityHistoryPage
 from "../pages/student/ActivityHistoryPage";
 
+import StudentBadgesPage
+from "../pages/student/StudentBadgesPage";
+
 /*
 |--------------------------------------------------------------------------
 | Organization
@@ -533,6 +536,17 @@ function AppRoutes() {
 
           }
 
+        />
+
+        <Route
+          path="/badges"
+          element={
+            <ProtectedRoute
+              roles={["STUDENT"]}
+            >
+              <StudentBadgesPage />
+            </ProtectedRoute>
+          }
         />
 
         {/* Organization */}
