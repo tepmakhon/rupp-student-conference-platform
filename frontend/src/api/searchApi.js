@@ -2,10 +2,15 @@ import axiosInstance
 from "./axios";
 
 export const globalSearch =
-async (q) => {  
- const response =
- await axiosInstance.get(
- `/search?q=${q}`
- );
- return response.data.data;
+async (keyword) => {
+
+  const response =
+    await axiosInstance.get(
+
+      `/search?q=${encodeURIComponent(keyword)}`
+
+    );
+
+  return response.data.data;
+
 };
