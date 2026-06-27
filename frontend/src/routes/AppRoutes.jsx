@@ -67,6 +67,9 @@ from "../pages/events/EventListPage";
 import EventDetailPage
 from "../pages/events/EventDetailPage";
 
+import EventTicketPage
+from "../pages/ticket/EventTicketPage";
+
 /*
 |--------------------------------------------------------------------------
 | Opportunities
@@ -118,6 +121,9 @@ from "../pages/organization/EditOpportunityPage";
 import EventRegistrationsPage
 from "../pages/organization/EventRegistrationsPage";
 
+import EventAttendancePage
+from "../pages/organization/EventAttendancePage";
+
 import OpportunityApplicantsPage
 from "../pages/organization/OpportunityApplicantsPage";
 
@@ -129,6 +135,9 @@ from "../pages/organization/EditEventPage";
 
 import OrganizationMyEventsPage
 from "../pages/organization/MyEventsPage";
+
+import AttendanceScannerPage
+from "../pages/organization/AttendanceScannerPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -556,6 +565,16 @@ function AppRoutes() {
           }
         />
 
+        <Route
+          path="/events/:eventId/ticket"
+          element={
+            <ProtectedRoute
+            roles={["STUDENT"]}>
+              <EventTicketPage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Organization */}
 
         <Route
@@ -578,6 +597,27 @@ function AppRoutes() {
 
           }
 
+        />
+
+        <Route
+          path="/organization/attendance/scanner"
+          element={
+            <ProtectedRoute
+              roles={["ORGANIZATION"]}
+            >
+              <AttendanceScannerPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/events/:id/scanner"
+          element={
+            protect(
+              <AttendanceScannerPage />,
+              [ROLES.ORGANIZATION]
+            )
+          }
         />
 
         <Route
@@ -622,6 +662,16 @@ function AppRoutes() {
 
           }
 
+        />
+        
+        <Route
+          path="/events/:id/attendance"
+          element={
+            protect(
+              <EventAttendancePage />,
+              [ROLES.ORGANIZATION]
+            )
+          }
         />
 
         <Route

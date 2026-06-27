@@ -165,45 +165,22 @@ function StudentMyEventsPage() {
     };
 
   const filteredEvents =
+    useMemo(() => {
 
-    useMemo(
+      return events.filter(event =>
 
-      () => {
+        event?.title
+          ?.toLowerCase()
+          .includes(
+            search.toLowerCase()
+          )
 
-        return events.filter(
+      );
 
-          (
-
-            event
-
-          ) =>
-
-            event.title
-
-            .toLowerCase()
-
-            .includes(
-
-              search
-
-              .toLowerCase()
-
-            )
-
-        );
-
-      },
-
-      [
-
-        events,
-
-        search,
-
-      ]
-
-    );
-
+    }, [
+      events,
+      search,
+    ]);
   return (
 
     <DashboardLayout>

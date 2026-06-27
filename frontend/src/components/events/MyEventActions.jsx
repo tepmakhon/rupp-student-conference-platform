@@ -1,18 +1,6 @@
 import {
-
   Link,
-
 } from "react-router-dom";
-
-import {
-
-  PencilSquareIcon,
-
-  TrashIcon,
-
-  UserGroupIcon,
-
-} from "@heroicons/react/24/outline";
 
 function MyEventActions({
 
@@ -44,12 +32,6 @@ function MyEventActions({
 
         className="
 
-          flex
-
-          items-center
-
-          gap-2
-
           bg-primary
 
           text-white
@@ -64,19 +46,33 @@ function MyEventActions({
 
       >
 
-        <UserGroupIcon
-
-          className="
-
-            w-5
-
-            h-5
-
-          "
-
-        />
-
         Registrations
+
+      </Link>
+
+      <Link
+
+        to={`/events/${event.id}/attendance`}
+
+        className="
+
+          bg-blue-600
+
+          hover:bg-blue-700
+
+          text-white
+
+          px-4
+
+          py-3
+
+          rounded-xl
+
+        "
+
+      >
+
+        Attendance
 
       </Link>
 
@@ -85,12 +81,6 @@ function MyEventActions({
         to={`/organization/events/${event.id}/edit`}
 
         className="
-
-          flex
-
-          items-center
-
-          gap-2
 
           bg-secondary
 
@@ -106,18 +96,6 @@ function MyEventActions({
 
       >
 
-        <PencilSquareIcon
-
-          className="
-
-            w-5
-
-            h-5
-
-          "
-
-        />
-
         Edit
 
       </Link>
@@ -132,13 +110,9 @@ function MyEventActions({
 
         className="
 
-          flex
-
-          items-center
-
-          gap-2
-
           bg-red-600
+
+          hover:bg-red-700
 
           text-white
 
@@ -151,18 +125,6 @@ function MyEventActions({
         "
 
       >
-
-        <TrashIcon
-
-          className="
-
-            w-5
-
-            h-5
-
-          "
-
-        />
 
         Delete
 
