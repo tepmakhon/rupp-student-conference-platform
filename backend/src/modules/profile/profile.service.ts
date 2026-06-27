@@ -16,54 +16,49 @@ import {
 |--------------------------------------------------------------------------
 */
 
-export const getMyProfile =
-
-async (
-
- userId: bigint
-
+export const getMyProfile = async (
+  userId: bigint
 ) => {
-const [
 
-  user,
+  const [
+    user,
+    totalRegistrations,
+    totalApplications,
+    savedOpportunities,
+    recentActivities,
+    recentEvents,
+    recentApplications,
+  ] = await Promise.all([
 
-  totalRegistrations,
+    prisma.user.findUnique({
 
-  totalApplications,
+      where: {
+        id: userId,
+      },
 
-  savedOpportunities,
+      include: {
 
-] = await Promise.all([
+        role: true,
 
-  prisma.user.findUnique({
+        profile: true,
 
-    where: {
+        student: {
 
-      id: userId,
+          include: {
 
-    },
+            university: true,
 
-    include: {
+            faculty: true,
 
-      role: true,
+            major: true,
 
-      profile: true,
+            studentSkills: {
 
-      student: {
+              include: {
 
-        include: {
+                skill: true,
 
-          university: true,
-
-          faculty: true,
-
-          major: true,
-
-          studentSkills: {
-
-            include: {
-
-              skill: true,
+              },
 
             },
 
@@ -71,76 +66,230 @@ const [
 
         },
 
-      },
-
-      organization: true,
-
-    },
-
-  }),
-
-  prisma.eventRegistration.count({
-
-    where: {
-
-      student: {
-
-        userId,
+        organization: true,
 
       },
 
-    },
+    }),
 
-  }),
+    prisma.eventRegistration.count({
 
-  prisma.application.count({
+      where: {
 
-    where: {
+        student: {
 
-      student: {
+          userId,
 
-        userId,
-
-      },
-
-    },
-
-  }),
-
-  prisma.savedOpportunity.count({
-
-    where: {
-
-      student: {
-
-        userId,
+        },
 
       },
 
+    }),
+
+    prisma.application.count({
+
+      where: {
+
+        student: {
+
+          userId,
+
+        },
+
+      },
+
+    }),
+
+    prisma.savedOpportunity.count({
+
+      where: {
+
+        student: {
+
+          userId,
+
+        },
+
+      },
+
+    }),
+
+    prisma.activityScoreHistory.findMany({
+
+      where: {
+
+        student: {
+
+          userId,
+
+        },
+
+      },
+
+      orderBy: {
+
+        createdAt: "desc",
+
+      },
+
+      take: 5,
+
+    }),
+
+    prisma.eventRegistration.findMany({
+
+      where: {
+
+        student: {
+
+          userId,
+
+        },
+
+      },
+
+      include: {
+
+        event: true,
+
+      },
+
+      orderBy: {
+
+        registeredAt: "desc",
+
+      },
+
+      take: 5,
+
+    }),
+
+    prisma.application.findMany({
+
+      where: {
+
+        student: {
+
+          userId,
+
+        },
+
+      },
+
+      include: {
+
+        opportunity: {
+
+          include: {
+
+            organization: true,
+
+          },
+
+        },
+
+      },
+
+      orderBy: {
+
+        appliedAt: "desc",
+
+      },
+
+      take: 5,
+
+    }),
+
+  ]);
+
+  if (!user) {
+
+    throw new AppError(
+
+      "User not found",
+
+      404
+
+    );
+
+  }
+
+  const activityScore =
+    user.student?.activityScore || 0;
+
+  const badges = [
+
+    {
+
+      badgeName: "Bronze Explorer",
+
+      requiredScore: 100,
+
+      unlocked:
+        activityScore >= 100,
+
     },
 
-  }),
+    {
 
-]);
+      badgeName: "Silver Explorer",
 
-return {
+      requiredScore: 300,
 
-  ...user,
+      unlocked:
+        activityScore >= 300,
 
-  statistics: {
+    },
 
-    totalRegistrations,
+    {
 
-    totalApplications,
+      badgeName: "Gold Explorer",
 
-    savedOpportunities,
+      requiredScore: 600,
 
-  },
+      unlocked:
+        activityScore >= 600,
+
+    },
+
+    {
+
+      badgeName: "Platinum Explorer",
+
+      requiredScore: 1000,
+
+      unlocked:
+        activityScore >= 1000,
+
+    },
+
+  ];
+
+  return {
+
+    ...user,
+
+    statistics: {
+
+      totalRegistrations,
+
+      totalApplications,
+
+      savedOpportunities,
+
+    },
+
+    badges,
+
+    recentActivities,
+
+    recentEvents,
+
+    recentApplications,
+
+  };
 
 };
-
-};
-
 /*
 |--------------------------------------------------------------------------
 | Update Profile

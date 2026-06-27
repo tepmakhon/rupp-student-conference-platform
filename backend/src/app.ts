@@ -104,6 +104,8 @@ import studentSkillRoutes from "./modules/student-skill/studentSkill.routes.js";
 
 import badgeRoutes from "./modules/badge/badge.routes.js";
 
+import analyticsRoutes from "./modules/analytics/analytics.routes.js";
+
 /*
 |--------------------------------------------------------------------------
 | Initialize
@@ -453,6 +455,14 @@ app.use(
   "/api/student-skills",
 
   studentSkillRoutes
+
+);
+
+app.use(
+
+  "/api/analytics",
+
+  analyticsRoutes
 
 );
 /*
