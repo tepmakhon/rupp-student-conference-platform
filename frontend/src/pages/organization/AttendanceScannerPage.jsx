@@ -3,6 +3,11 @@ import {
 } from "react";
 
 import {
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+
+import {
   Html5QrcodeScanner,
 } from "html5-qrcode";
 
@@ -20,7 +25,15 @@ import {
 
 function AttendanceScannerPage() {
 
+  const navigate =
+    useNavigate();
+
+  const { id } =
+    useParams();
+
   useEffect(() => {
+
+    let scanned = false;
 
     const scanner =
       new Html5QrcodeScanner(
@@ -32,52 +45,63 @@ function AttendanceScannerPage() {
         false
       );
 
-      let scanned = false;
+    scanner.render(
 
-      scanner.render(
+      async (decodedText) => {
 
-        async (decodedText) => {
+        if (scanned) return;
 
-          if (scanned) return;
+        scanned = true;
 
-          scanned = true;
+        try {
 
-          try {
+          const qr =
+            JSON.parse(decodedText);
 
-            const qr = JSON.parse(decodedText);
+          await scanAttendance(
+            qr.registrationId
+          );
 
-            await scanAttendance(
-              qr.registrationId
+          toast.success(
+            "Student checked in successfully!"
+          );
+
+          await scanner.clear();
+
+          setTimeout(() => {
+
+            navigate(
+              `/events/${id}/attendance`
             );
 
-            toast.success(
-              "Student checked in!"
-            );
+          }, 2000);
 
-            await scanner.clear();
+        }
 
-          }
+        catch (error) {
 
-          catch (error) {
+          toast.error(
 
-            toast.error(
-              error.response?.data?.message ||
-              "Invalid QR Code"
-            );
+            error?.response?.data?.message ||
 
-            scanned = false;
+            "Invalid QR Code"
 
-          }
+          );
 
-        },
+          scanned = false;
 
-        () => {}
+        }
 
-      );
+      },
+
+      () => {}
+
+    );
 
     return () => {
 
-      scanner.clear();
+      scanner.clear()
+      .catch(() => {});
 
     };
 
@@ -97,7 +121,7 @@ function AttendanceScannerPage() {
 
         <PageHeader
           title="QR Attendance Scanner"
-          description="Scan a student's ticket."
+          description="Scan the student's event ticket."
         />
 
         <div

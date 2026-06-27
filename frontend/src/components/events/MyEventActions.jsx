@@ -10,124 +10,75 @@ function MyEventActions({
 
 }) {
 
+  const buttonStyle = `
+    min-w-[110px]
+    text-center
+    px-4
+    py-2
+    rounded-lg
+    text-sm
+    font-medium
+    transition-colors
+    duration-200
+  `;
+
   return (
 
     <div
-
       className="
-
         flex
-
+        items-center
         flex-wrap
-
-        gap-3
-
+        gap-2
       "
-
     >
 
       <Link
-
         to={`/organization/events/${event.id}/registrations`}
-
-        className="
-
+        className={`
+          ${buttonStyle}
           bg-primary
-
+          hover:bg-secondary
           text-white
-
-          px-4
-
-          py-3
-
-          rounded-xl
-
-        "
-
+        `}
       >
-
         Registrations
-
       </Link>
 
       <Link
-
         to={`/events/${event.id}/attendance`}
-
-        className="
-
+        className={`
+          ${buttonStyle}
           bg-blue-600
-
           hover:bg-blue-700
-
           text-white
-
-          px-4
-
-          py-3
-
-          rounded-xl
-
-        "
-
+        `}
       >
-
         Attendance
-
       </Link>
 
       <Link
-
         to={`/organization/events/${event.id}/edit`}
-
-        className="
-
-          bg-secondary
-
+        className={`
+          ${buttonStyle}
+          bg-green-600
+          hover:bg-green-700
           text-white
-
-          px-4
-
-          py-3
-
-          rounded-xl
-
-        "
-
+        `}
       >
-
         Edit
-
       </Link>
 
       <button
-
-        onClick={
-
-          onDelete
-
-        }
-
-        className="
-
+        onClick={onDelete}
+        className={`
+          ${buttonStyle}
           bg-red-600
-
           hover:bg-red-700
-
           text-white
-
-          px-4
-
-          py-3
-
-          rounded-xl
-
-        "
-
+        `}
       >
-
         Delete
-
       </button>
 
     </div>
