@@ -3,8 +3,14 @@ import { Router } from "express";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import { checkIn, getMyAttendance,scanAttendance, } from "./attendance.controller.js";
-
+import {
+  checkIn,
+  getMyAttendance,
+  scanAttendance,
+  getAttendanceStatistics,
+  exportAttendanceCSV,
+  exportAttendancePDF,
+} from "./attendance.controller.js";
 const router = Router();
 
 router.post(
@@ -28,6 +34,26 @@ router.post(
   scanAttendance
 );
 
+router.get(
+  "/statistics/:eventId",
+  authMiddleware,
+  rbac(["ORGANIZATION"]),
+  getAttendanceStatistics
+);
+
+router.get(
+  "/export/:eventId/csv",
+  authMiddleware,
+  rbac(["ORGANIZATION"]),
+  exportAttendanceCSV
+);
+
+router.get(
+  "/export/:eventId/pdf",
+  authMiddleware,
+  rbac(["ORGANIZATION"]),
+  exportAttendancePDF
+);
 /**
  * @swagger
  * tags:

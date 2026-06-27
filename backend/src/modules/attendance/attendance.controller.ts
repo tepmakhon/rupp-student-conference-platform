@@ -2,6 +2,12 @@ import { Request, Response } from "express";
 
 import * as attendanceService from "./attendance.service.js";
 
+import * as attendanceExport
+from "./attendance.export.js";
+
+import * as attendancePdf
+from "./attendance.pdf.js";
+
 import {
   successResponse,
   errorResponse,
@@ -119,6 +125,178 @@ export const scanAttendance = async (
       res,
       error.message,
       error.statusCode || 400
+    );
+
+  }
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Attendance Statistics
+|--------------------------------------------------------------------------
+*/
+
+export const getAttendanceStatistics =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+      const eventIdParam =
+        req.params.eventId;
+
+      if (
+        !eventIdParam ||
+        Array.isArray(eventIdParam)
+      ) {
+        throw new Error(
+          "Invalid eventId"
+        );
+      }
+
+      const eventId =
+        BigInt(eventIdParam);
+
+      const statistics =
+        await attendanceService.getAttendanceStatistics(
+          eventId
+        );
+
+      return successResponse(
+
+        res,
+
+        statistics,
+
+        "Attendance statistics retrieved"
+
+      );
+
+    }
+
+    catch (error: any) {
+
+      return errorResponse(
+
+        res,
+
+        error.message,
+
+        error.statusCode || 400
+
+      );
+
+    }
+
+  };
+
+  /*
+|--------------------------------------------------------------------------
+| Export CSV
+|--------------------------------------------------------------------------
+*/
+
+export const exportAttendanceCSV = async (
+
+  req: Request,
+
+  res: Response
+
+) => {
+
+  try {
+
+     const eventIdParam =
+        req.params.eventId;
+
+      if (
+        !eventIdParam ||
+        Array.isArray(eventIdParam)
+      ) {
+        throw new Error(
+          "Invalid eventId"
+        );
+      }
+
+      const eventId =
+        BigInt(eventIdParam);
+
+    await attendanceExport.exportCSV(
+      eventId,
+      res
+    );
+
+  }
+
+  catch (error: any) {
+
+    return errorResponse(
+
+      res,
+
+      error.message,
+
+      error.statusCode || 400
+
+    );
+
+  }
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Export PDF
+|--------------------------------------------------------------------------
+*/
+
+export const exportAttendancePDF =
+async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const eventIdParam =
+      req.params.eventId;
+
+    if (
+      !eventIdParam ||
+      Array.isArray(eventIdParam)
+    ) {
+
+      throw new Error(
+        "Invalid eventId"
+      );
+
+    }
+
+    const eventId =
+      BigInt(eventIdParam);
+
+    await attendancePdf.exportPDF(
+
+      eventId,
+
+      res
+
+    );
+
+  }
+
+  catch (error: any) {
+
+    return errorResponse(
+
+      res,
+
+      error.message,
+
+      error.statusCode || 400
+
     );
 
   }

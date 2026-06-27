@@ -831,46 +831,47 @@ export const getEventRegistrations =
 
     }
 
-    return prisma.eventRegistration.findMany({
+   return prisma.eventRegistration.findMany({
 
-      where: {
-        eventId,
-      },
+    where: {
+      eventId,
+    },
 
-      include: {
+    include: {
 
-        student: {
+      attendanceRecord: true,
 
-          include: {
+      student: {
 
-            user: {
+        include: {
 
-              include: {
+          user: {
 
-                profile: true,
+            include: {
 
-              },
+              profile: true,
 
             },
 
-            university: true,
-
-            faculty: true,
-
-            major: true,
-
           },
+
+          university: true,
+
+          faculty: true,
+
+          major: true,
 
         },
 
       },
 
-      orderBy: {
+    },
 
-        registeredAt: "desc",
+    orderBy: {
 
-      },
+      registeredAt: "desc",
 
-    });
+    },
 
+  });
 };

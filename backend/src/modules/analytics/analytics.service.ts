@@ -131,6 +131,77 @@ async (
 
   ]);
 
+  const checkedIn =
+    await prisma.attendanceRecord.count({
+
+      where: {
+
+        registration: {
+
+          event: {
+
+            organizationId:
+              organization.id,
+
+          },
+
+        },
+
+      },
+
+    });
+
+  const attendanceRate =
+    registrations === 0
+
+      ? 0
+
+      : Math.round(
+
+          (checkedIn /
+            registrations)
+
+          * 100
+
+        );
+  const topEvents =
+    await prisma.event.findMany({
+
+      where: {
+
+        organizationId:
+          organization.id,
+
+      },
+
+      include: {
+
+        _count: {
+
+          select: {
+
+            registrations: true,
+
+          },
+
+        },
+
+      },
+
+      orderBy: {
+
+        registrations: {
+
+          _count: "desc",
+
+        },
+
+      },
+
+      take: 5,
+
+    });
+
   return {
 
     events,
@@ -141,8 +212,13 @@ async (
 
     applications,
 
-  };
+    checkedIn,
 
+    attendanceRate,
+
+    topEvents,
+
+  };
 };
 
 /*

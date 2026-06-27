@@ -285,3 +285,137 @@ export const scanAttendance = async (
   return attendance;
 
 };
+
+/*
+|--------------------------------------------------------------------------
+| Attendance Statistics
+|--------------------------------------------------------------------------
+*/
+
+export const getAttendanceStatistics = async (
+  eventId: bigint
+) => {
+
+  const totalRegistrations =
+    await prisma.eventRegistration.count({
+
+      where: {
+        eventId,
+      },
+
+    });
+
+  const checkedIn =
+    await prisma.attendanceRecord.count({
+
+      where: {
+
+        registration: {
+          eventId,
+        },
+
+      },
+
+    });
+
+  const remaining =
+    totalRegistrations - checkedIn;
+
+  const attendanceRate =
+    totalRegistrations === 0
+
+      ? 0
+
+      : Math.round(
+
+          (checkedIn / totalRegistrations) * 100
+
+        );
+
+  return {
+
+    totalRegistrations,
+
+    checkedIn,
+
+    remaining,
+
+    attendanceRate,
+
+  };
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Export Attendance Data
+|--------------------------------------------------------------------------
+*/
+
+/*
+|--------------------------------------------------------------------------
+| Export Attendance Data
+|--------------------------------------------------------------------------
+*/
+
+export const getAttendanceExportData = async (
+  eventId: bigint
+) => {
+
+  return prisma.eventRegistration.findMany({
+
+    where: {
+      eventId,
+    },
+
+    include: {
+
+      event: {
+
+        include: {
+
+          organization: true,
+
+          category: true,
+
+        },
+
+      },
+
+      student: {
+
+        include: {
+
+          user: {
+
+            include: {
+
+              profile: true,
+
+            },
+
+          },
+
+          university: true,
+
+          faculty: true,
+
+          major: true,
+
+        },
+
+      },
+
+      attendanceRecord: true,
+
+    },
+
+    orderBy: {
+
+      registeredAt: "asc",
+
+    },
+
+  });
+
+};
