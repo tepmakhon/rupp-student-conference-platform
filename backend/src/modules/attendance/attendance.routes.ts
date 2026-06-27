@@ -3,7 +3,7 @@ import { Router } from "express";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import { checkIn } from "./attendance.controller.js";
+import { checkIn, getMyAttendance,scanAttendance, } from "./attendance.controller.js";
 
 const router = Router();
 
@@ -12,6 +12,20 @@ router.post(
   authMiddleware,
   rbac(["STUDENT"]),
   checkIn
+);
+
+router.get(
+  "/my",
+  authMiddleware,
+  rbac(["STUDENT"]),
+  getMyAttendance
+);
+
+router.post(
+  "/scan",
+  authMiddleware,
+  rbac(["ORGANIZATION"]),
+  scanAttendance
 );
 
 /**

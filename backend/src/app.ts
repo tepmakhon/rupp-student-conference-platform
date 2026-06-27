@@ -66,6 +66,8 @@ import organizationRoutes from "./modules/organization/organization.routes.js";
 
 import attendanceRoutes from "./modules/attendance/attendance.routes.js";
 
+import ticketRoutes from "./modules/attendance/ticket.routes.js";
+
 import opportunityRoutes from "./modules/opportunity/opportunity.routes.js";
 
 import leaderboardRoutes from "./modules/leaderboard/leaderboard.routes.js";
@@ -312,6 +314,11 @@ app.use(
 
  attendanceRoutes
 
+);
+
+app.use(
+  "/api",
+  ticketRoutes
 );
 
 app.use(

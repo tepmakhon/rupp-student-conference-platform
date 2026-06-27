@@ -53,3 +53,74 @@ export const checkIn = async (
 
   }
 };
+
+export const getMyAttendance = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const data =
+      await attendanceService.getMyAttendance(
+        BigInt(req.user!.id)
+      );
+
+    return successResponse(
+      res,
+      data,
+      "Attendance retrieved"
+    );
+
+  }
+
+  catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+
+};
+
+export const scanAttendance = async (
+  req: Request,
+  res: Response
+) => {
+
+  try {
+
+    const {
+
+      registrationId,
+
+    } = req.body;
+
+    const data =
+      await attendanceService.scanAttendance(
+        BigInt(registrationId),
+        BigInt(req.user!.id)
+      );
+
+    return successResponse(
+      res,
+      data,
+      "Attendance verified"
+    );
+
+  }
+
+  catch (error: any) {
+
+    return errorResponse(
+      res,
+      error.message,
+      error.statusCode || 400
+    );
+
+  }
+
+};

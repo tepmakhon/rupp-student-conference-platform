@@ -15,6 +15,7 @@ import {
   getEventRegistrationsController,
 } from "./event.controller.js";
 
+
 import {
   authMiddleware,
 } from "../../middlewares/auth.middleware.js";

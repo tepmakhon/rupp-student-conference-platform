@@ -96,3 +96,192 @@ export const checkInEvent = async (
 
   return result;
 };
+
+/*
+|--------------------------------------------------------------------------
+| Get My Attendance
+|--------------------------------------------------------------------------
+*/
+
+export const getMyAttendance = async (
+  userId: bigint
+) => {
+
+  const student =
+    await prisma.student.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+  if (!student) {
+    throw new AppError(
+      "Student not found",
+      404
+    );
+  }
+
+  return prisma.attendanceRecord.findMany({
+
+    where: {
+      registration: {
+        studentId: student.id,
+      },
+    },
+
+    include: {
+
+      registration: {
+
+        include: {
+
+          event: {
+
+            include: {
+
+              organization: true,
+
+              category: true,
+
+            },
+
+          },
+
+        },
+
+      },
+
+    },
+
+    orderBy: {
+
+      checkInTime: "desc",
+
+    },
+
+  });
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Scan Attendance
+|--------------------------------------------------------------------------
+*/
+
+export const scanAttendance = async (
+  registrationId: bigint,
+  organizationUserId: bigint
+) => {
+
+  const registration =
+    await prisma.eventRegistration.findUnique({
+
+      where: {
+        id: registrationId,
+      },
+
+      include: {
+
+        student: {
+          include: {
+            user: {
+              include: {
+                profile: true,
+              },
+            },
+          },
+        },
+
+        event: {
+          include: {
+            organization: true,
+          },
+        },
+
+      },
+
+    });
+
+  if (!registration) {
+
+    throw new AppError(
+      "Registration not found",
+      404
+    );
+
+  }
+
+  if (
+
+    registration.event.organization.userId !==
+
+    organizationUserId
+
+  ) {
+
+    throw new AppError(
+      "Unauthorized",
+      403
+    );
+
+  }
+
+  const existing =
+    await prisma.attendanceRecord.findUnique({
+
+      where: {
+
+        registrationId,
+
+      },
+
+    });
+
+  if (existing) {
+
+    throw new AppError(
+      "Student already checked in",
+      409
+    );
+
+  }
+
+  const attendance =
+    await prisma.attendanceRecord.create({
+
+      data: {
+
+        registrationId,
+
+        verificationMethod:
+          "QR_CODE",
+
+        checkInTime:
+          new Date(),
+
+      },
+
+    });
+
+  await addActivityScore(
+
+    registration.student.id,
+
+    20,
+
+    `Attended ${registration.event.title}`
+
+  );
+
+  await createAuditLog(
+
+    organizationUserId,
+
+    `QR_CHECKIN:${registration.event.title}`
+
+  );
+
+  return attendance;
+
+};
