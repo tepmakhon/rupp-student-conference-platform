@@ -4,6 +4,7 @@ import {
   CalendarDaysIcon,
   BriefcaseIcon,
   UserCircleIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 const organizationMenu = [
@@ -43,6 +44,12 @@ const organizationMenu = [
     icon: BriefcaseIcon,
   },
 
+  {
+    name: "Analytics",
+    path: "/analytics",
+    icon: ChartBarIcon,
+  },
+  
   {
     name: "Profile",
     path: "/profile",

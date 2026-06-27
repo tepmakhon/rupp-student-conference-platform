@@ -58,6 +58,9 @@ const pageTitles = {
 
   "/profile":
     "Profile",
+
+  "/analytics":
+    "Analytics",
 };
 
 export default pageTitles;

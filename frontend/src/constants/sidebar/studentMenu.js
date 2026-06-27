@@ -6,6 +6,7 @@ import {
   BookmarkIcon,
   ClockIcon,
   UserCircleIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 import { ROLES } from "../roles";
@@ -62,6 +63,11 @@ const studentMenu = [
     name: "My Badges",
     path: "/badges",
     icon: TrophyIcon,
+  },
+  {
+    name: "Analytics",
+    path: "/analytics",
+    icon: ChartBarIcon,
   },
   {
     name: "Profile",

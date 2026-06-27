@@ -2,6 +2,7 @@ import {
   HomeIcon,
   ClipboardDocumentCheckIcon,
   UserCircleIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 const adminMenu = [
@@ -57,6 +58,12 @@ const adminMenu = [
     name: "Skills",
     path: "/admin/skills",
     icon: ClipboardDocumentCheckIcon,
+  },
+
+  {
+    name: "Analytics",
+    path: "/analytics",
+    icon: ChartBarIcon,
   },
 
   {

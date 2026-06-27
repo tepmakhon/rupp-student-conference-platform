@@ -168,6 +168,9 @@ from "../pages/admin/AdminSkillsPage";
 import NotificationPage
 from "../pages/notifications/NotificationPage";
 
+//Analytics
+import AnalyticsPage from "../pages/analytics/AnalyticsPage";
+
 function AppRoutes() {
 
   const protect = (
@@ -300,6 +303,10 @@ function AppRoutes() {
 
           }
 
+        />
+        <Route
+          path="/analytics"
+          element={<AnalyticsPage />}
         />
 
         <Route
