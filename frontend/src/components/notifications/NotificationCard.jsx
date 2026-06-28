@@ -1,10 +1,14 @@
 import {
   BellAlertIcon,
+  CalendarDaysIcon,
+  BriefcaseIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 
 import {
-  formatDate,
-} from "../../utils/formatDate";
+  formatRelativeDate,
+  formatFullDate,
+} from "../../utils/formatRelativeDate";
 
 function NotificationCard({
 
@@ -19,6 +23,23 @@ function NotificationCard({
 
   const notificationType =
     notification.notification?.type;
+
+  const NotificationIcon = {
+
+    EVENT:
+      CalendarDaysIcon,
+
+    OPPORTUNITY:
+      BriefcaseIcon,
+
+    SYSTEM:
+      Cog6ToothIcon,
+
+  }[notificationType]
+
+  ||
+
+  BellAlertIcon;
 
   const iconBg = {
 
@@ -62,11 +83,7 @@ function NotificationCard({
 
         isUnread &&
 
-        onRead(
-
-          notification.id
-
-        )
+        onRead(notification.id)
 
       }
 
@@ -82,9 +99,13 @@ function NotificationCard({
 
         cursor-pointer
 
-        transition
+        transition-all
 
-        hover:shadow-lg
+        duration-300
+
+        hover:-translate-y-1
+
+        hover:shadow-xl
 
         border
 
@@ -92,13 +113,13 @@ function NotificationCard({
 
           isUnread
 
-          ?
+            ?
 
-          "border-primary/20 bg-green-50"
+            "border-primary/20 bg-green-50"
 
-          :
+            :
 
-          "border-transparent"
+            "border-transparent"
 
         }
 
@@ -146,7 +167,7 @@ function NotificationCard({
 
         >
 
-          <BellAlertIcon
+          <NotificationIcon
 
             className="
 
@@ -208,11 +229,7 @@ function NotificationCard({
 
                 {
 
-                  notification
-
-                  .notification
-
-                  ?.title
+                  notification.notification?.title
 
                   ||
 
@@ -236,11 +253,7 @@ function NotificationCard({
 
                 {
 
-                  notification
-
-                  .notification
-
-                  ?.message
+                  notification.notification?.message
 
                   ||
 
@@ -302,7 +315,9 @@ function NotificationCard({
 
                     rounded-full
 
-                    bg-green-500
+                    bg-blue-500
+
+                    animate-pulse
 
                     mt-2
 
@@ -331,26 +346,29 @@ function NotificationCard({
             <p
 
               className="
-
                 text-sm
-
                 text-gray-400
-
+                flex
+                items-center
+                gap-2
               "
+
+              title={
+                formatFullDate(
+                  notification.notification?.createdAt ||
+                  notification.createdAt
+                )
+              }
 
             >
 
+              🕒
+
               {
 
-                formatDate(
+                formatRelativeDate(
 
-                  notification
-
-                  .notification
-
-                  ?.createdAt
-
-                  ||
+                  notification.notification?.createdAt ||
 
                   notification.createdAt
 
@@ -359,6 +377,72 @@ function NotificationCard({
               }
 
             </p>
+
+            <div
+
+              className="
+
+                mt-3
+
+              "
+
+            >
+
+              {
+
+                notification.isRead
+
+                  ?
+
+                  (
+
+                    <span
+
+                      className="
+
+                        text-xs
+
+                        font-semibold
+
+                        text-green-600
+
+                      "
+
+                    >
+
+                      ✓ Read
+
+                    </span>
+
+                  )
+
+                  :
+
+                  (
+
+                    <span
+
+                      className="
+
+                        text-xs
+
+                        font-semibold
+
+                        text-blue-600
+
+                      "
+
+                    >
+
+                      ● New
+
+                    </span>
+
+                  )
+
+              }
+
+            </div>
 
           </div>
 

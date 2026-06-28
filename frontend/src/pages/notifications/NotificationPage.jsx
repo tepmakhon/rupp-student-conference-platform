@@ -442,27 +442,9 @@ function NotificationPage() {
 
         <NotificationHero
 
-          unreadCount={
+          total={notifications.length}
 
-            unreadCount
-
-          }
-
-          onRefresh={() =>
-
-            loadNotifications(
-
-              page
-
-            )
-
-          }
-
-          onReadAll={
-
-            handleReadAll
-
-          }
+          unread={unreadCount}
 
         />
 

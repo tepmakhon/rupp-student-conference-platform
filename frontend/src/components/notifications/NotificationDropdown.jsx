@@ -58,11 +58,8 @@ import {
 
 } from "../../redux/slices/notificationSlice";
 
-import {
-
-  formatDate,
-
-} from "../../utils/formatDate";
+import NotificationCard
+from "../notifications/NotificationCard";
 
 function NotificationDropdown() {
 
@@ -702,199 +699,24 @@ function NotificationDropdown() {
 
               {
 
-                !loading &&
-
-                notifications.map(
-
-                  notification => (
-
-                    <div
-
-                      key={
-
-                        notification.id
-
-                      }
-
-                      onClick={() =>
-
-                        handleRead(
-
-                          notification.id
-
-                        )
-
-                      }
-
-                      className={`
-
-                        p-5
-
-                        border-b
-
-                        cursor-pointer
-
-                        transition
-
-                        hover:bg-gray-50
-
-                        ${
-
-                          !notification.isRead
-
-                          ?
-
-                          "bg-green-50"
-
-                          :
-
-                          ""
-
-                        }
-
-                      `}
-
-                    >
-
-                      <div
-
-                        className="
-
-                          flex
-
-                          gap-4
-
-                        "
-
-                      >
-
-                        {
-
-                          !notification.isRead && (
-
-                            <div
-
-                              className="
-
-                                w-3
-
-                                h-3
-
-                                rounded-full
-
-                                bg-green-500
-
-                                mt-2
-
-                                flex-shrink-0
-
-                              "
-
-                            />
-
-                          )
-
-                        }
-
-                        <div
-
-                          className="
-
-                            flex-1
-
-                          "
-
-                        >
-
-                          <h4
-
-                            className="
-
-                              font-semibold
-
-                              text-gray-800
-
-                            "
-
-                          >
-
-                            {
-
-                              notification
-
-                              .notification
-
-                              ?.title
-
-                            }
-
-                          </h4>
-
-                          <p
-
-                            className="
-
-                              text-sm
-
-                              text-gray-600
-
-                              mt-1
-
-                            "
-
-                          >
-
-                            {
-
-                              notification
-
-                              .notification
-
-                              ?.message
-
-                            }
-
-                          </p>
-
-                          <p
-
-                            className="
-
-                              text-xs
-
-                              text-gray-400
-
-                              mt-2
-
-                            "
-
-                          >
-
-                            {
-
-                              formatDate(
-
-                                notification
-
-                                .notification
-
-                                ?.createdAt
-
-                              )
-
-                            }
-
-                          </p>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  )
+              !loading &&
+              notifications.map(
+                notification => (
+
+                  <div
+                    key={notification.id}
+                    className="border-b last:border-b-0"
+                  >
+
+                    <NotificationCard
+                      notification={notification}
+                      onRead={handleRead}
+                    />
+
+                  </div>
 
                 )
+              )
 
               }
 
