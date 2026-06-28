@@ -1,7 +1,7 @@
 import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 import { getPagination } from "../../utils/pagination.js";
-
+import { emitNotification } from "../../socket/socket.js";
 /*
 |--------------------------------------------------------------------------
 | Get My Notifications
@@ -134,47 +134,81 @@ export const markAllAsRead = async (
 */
 
 export const createNotification = async (
+
   userId: bigint,
+
   title: string,
+
   message: string,
-  type:
-    | "EVENT"
-    | "OPPORTUNITY"
-    | "SYSTEM" = "SYSTEM"
+
+  type: "EVENT" | "OPPORTUNITY" | "SYSTEM" = "SYSTEM"
+
 ) => {
 
-  const user =
-    await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
-  if (!user) {
-    throw new AppError(
-      "User not found",
-      404
-    );
-  }
+  /*
+  |--------------------------------------------------------------------------
+  | Create Notification
+  |--------------------------------------------------------------------------
+  */
 
   const notification =
+
     await prisma.notification.create({
+
       data: {
+
         title,
+
         message,
+
         type,
+
       },
+
     });
 
-  await prisma.userNotification.create({
-    data: {
-      userId,
-      notificationId:
-        notification.id,
-    },
-  });
+  /*
+  |--------------------------------------------------------------------------
+  | Assign Notification to User
+  |--------------------------------------------------------------------------
+  */
 
-  return notification;
+  const userNotification =
+
+    await prisma.userNotification.create({
+
+      data: {
+
+        userId,
+
+        notificationId: notification.id,
+
+      },
+
+      include: {
+
+        notification: true,
+
+      },
+
+    });
+
+  /*
+  |--------------------------------------------------------------------------
+  | Emit Real-time Notification
+  |--------------------------------------------------------------------------
+  */
+
+  emitNotification(
+
+    userId,
+
+    userNotification
+
+  );
+
+  return userNotification;
+
 };
 
 /*
