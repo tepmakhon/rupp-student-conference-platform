@@ -59,10 +59,31 @@ import {
 } from "../../redux/slices/notificationSlice";
 
 import NotificationCard
-from "../notifications/NotificationCard";
+from "./NotificationCard";
+
+import socket from "../../socket/socket";
+import {
+  playNotificationSound,
+} from "../../utils/playNotificationSound";
 
 function NotificationDropdown() {
+  useEffect(() => {
 
+    socket.on(
+      "new_notification",
+      handleNotification
+    );
+
+    return () => {
+
+      socket.off(
+        "new_notification",
+        handleNotification
+      );
+
+    };
+
+  }, []);
   const dispatch =
 
     useDispatch();
@@ -242,6 +263,69 @@ function NotificationDropdown() {
       );
 
     }
+
+  };
+  const handleNotification = async (
+    notification
+  ) => {
+
+    playNotificationSound();
+
+    if (
+
+      "Notification" in window &&
+
+      Notification.permission === "granted"
+
+    ) {
+
+      new Notification(
+
+        notification.notification?.title ||
+
+        "New Notification",
+
+        {
+
+          body:
+
+            notification.notification?.message ||
+
+            "",
+
+          icon: "/logo.png",
+
+        }
+
+      );
+
+    }
+
+    toast.success(
+
+      notification.notification?.title ||
+
+      "New Notification"
+
+    );
+    console.log(
+
+      "Socket notification:",
+
+      notification
+
+    );
+
+    playNotificationSound();
+
+    toast.success(
+
+      notification.notification?.title ||
+
+      "New Notification"
+
+    );
+    await loadNotifications();
 
   };
 
