@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useCallback,
 } from "react";
 
 import {
@@ -60,6 +61,76 @@ import {
 import socket from "../../socket/socket";
 
 function StudentDashboardPage() {
+  const dispatch =
+    useDispatch();
+
+  const user = useSelector(
+    state => state.auth.user
+  );
+
+  const {
+    stats,
+    loading,
+    error,
+  } = useSelector(
+    state => state.dashboard
+  );
+  
+  useEffect(() => {
+
+    loadDashboard();
+
+  }, []);
+
+  const loadDashboard = useCallback(async () => {
+
+    try {
+
+      dispatch(
+        setDashboardLoading(true)
+      );
+
+      dispatch(
+        setDashboardError(null)
+      );
+
+      const data =
+        await getStudentDashboard();
+
+      dispatch(
+        setDashboardStats(data)
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      dispatch(
+        setDashboardError(
+          "Failed to load dashboard"
+        )
+      );
+
+    }
+
+    finally {
+
+      dispatch(
+        setDashboardLoading(false)
+      );
+
+    }
+
+  }, [dispatch]);
+  
+  useEffect(() => {
+
+    loadDashboard();
+
+  }, [loadDashboard]);
+
   useEffect(() => {
 
     const refreshDashboard = () => {
@@ -82,82 +153,7 @@ function StudentDashboardPage() {
 
     };
 
-  }, []);
-  const dispatch =
-    useDispatch();
-
-  const user = useSelector(
-    state => state.auth.user
-  );
-
-  const {
-    stats,
-    loading,
-    error,
-  } = useSelector(
-    state => state.dashboard
-  );
-  
-  useEffect(() => {
-
-    loadDashboard();
-
-  }, []);
-
-  const loadDashboard =
-  async () => {
-
-    try {
-
-      dispatch(
-        setDashboardLoading(
-          true
-        )
-      );
-
-      dispatch(
-        setDashboardError(
-          null
-        )
-      );
-
-      const data =
-      await getStudentDashboard();
-
-      dispatch(
-        setDashboardStats(
-          data
-        )
-      );
-
-    }
-
-    catch (error) {
-
-      console.error(
-        error
-      );
-
-      dispatch(
-        setDashboardError(
-          "Failed to load dashboard"
-        )
-      );
-
-    }
-
-    finally {
-
-      dispatch(
-        setDashboardLoading(
-          false
-        )
-      );
-
-    }
-
-  };
-
+  }, [loadDashboard]);
   return (
 
     <DashboardLayout>

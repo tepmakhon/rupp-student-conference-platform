@@ -1,17 +1,11 @@
 import {
-
   useEffect,
-
   useCallback,
-
 } from "react";
 
 import {
-
   useDispatch,
-
   useSelector,
-
 } from "react-redux";
 
 import {
@@ -72,20 +66,28 @@ import socket from "../../socket/socket";
 
 function AdminDashboardPage() {
   useEffect(() => {
+
     const refreshDashboard = () => {
+
       loadDashboard();
+
     };
+
     socket.on(
       "dashboard_update",
       refreshDashboard
     );
+
     return () => {
+
       socket.off(
         "dashboard_update",
         refreshDashboard
       );
+
     };
-  }, []);
+
+  }, [loadDashboard]);
   const dispatch =
     useDispatch();
 
