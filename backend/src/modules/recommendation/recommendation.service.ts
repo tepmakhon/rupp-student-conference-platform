@@ -20,51 +20,51 @@ async (
  |--------------------------------------------------------------------------
  */
 
- const student =
+    const student =
 
- await prisma.student.findUnique({
+    await prisma.student.findUnique({
 
-  where: {
+    where: {
 
-   userId,
-
-  },
-
-  include: {
-
-   university: true,
-
-   faculty: true,
-
-   major: true,
-
-   studentSkills: {
-
-    include: {
-
-     skill: true,
+    userId,
 
     },
 
-   },
+    include: {
 
-  },
+    university: true,
 
- });
+    faculty: true,
 
- if (!student) {
+    major: true,
 
-  return {
+    studentSkills: {
 
-   keywords: [],
+        include: {
 
-   events: [],
+        skill: true,
 
-   opportunities: [],
+        },
 
-  };
+    },
 
- }
+    },
+
+    });
+
+    if (!student) {
+
+    return {
+
+    keywords: [],
+
+    events: [],
+
+    opportunities: [],
+
+    };
+
+    }
 
  /*
  |--------------------------------------------------------------------------
@@ -72,51 +72,51 @@ async (
  |--------------------------------------------------------------------------
  */
 
- const majorName =
+    const majorName =
 
- student.major
+    student.major
 
- ?.majorName ||
+    ?.majorName ||
 
- "";
+    "";
 
- const facultyName =
+    const facultyName =
 
- student.faculty
+    student.faculty
 
- ?.facultyName ||
+    ?.facultyName ||
 
- "";
+    "";
 
- const universityName =
+    const universityName =
 
- student.university
+    student.university
 
- ?.universityName ||
+    ?.universityName ||
 
- "";
+    "";
 
- const skillNames =
+    const skillNames =
 
- student.studentSkills.map(
+    student.studentSkills.map(
 
- (studentSkill) =>
+    (studentSkill) =>
 
- studentSkill.skill.skillName
+    studentSkill.skill.skillName
 
- );
+    );
 
- const keywords = [
+    const keywords = [
 
-  universityName,
+    universityName,
 
-  facultyName,
+    facultyName,
 
-  majorName,
+    majorName,
 
-  ...skillNames,
+    ...skillNames,
 
- ].filter(Boolean);
+    ].filter(Boolean);
 
  /*
  |--------------------------------------------------------------------------
@@ -124,67 +124,39 @@ async (
  |--------------------------------------------------------------------------
  */
 
- const events =
-
- await prisma.event.findMany({
-
-  where: {
-
-   OR:
-
-   keywords.flatMap(
-
-   (keyword) => [
-
-   {
-
-    title: {
-
-     contains:
-
-     keyword,
-
-     mode:
-
-     "insensitive",
-
+    const events = await prisma.event.findMany({
+    where: {
+        status: "APPROVED",
+        eventDate: {
+        gte: new Date(),
+        },
+        OR: keywords.flatMap((keyword) => [
+        {
+            title: {
+            contains: keyword,
+            mode: "insensitive",
+            },
+        },
+        {
+            description: {
+            contains: keyword,
+            mode: "insensitive",
+            },
+        },
+        ]),
     },
 
-   },
-
-   {
-
-    description: {
-
-     contains:
-
-     keyword,
-
-     mode:
-
-     "insensitive",
-
+    include: {
+        organization: true,
+        category: true,
     },
 
-   },
+    take: 6,
 
-   ]
-
-   ),
-
-  },
-
-  take: 6,
-
-  orderBy: {
-
-   createdAt:
-
-   "desc",
-
-  },
-
- });
+    orderBy: {
+        createdAt: "desc",
+    },
+    });
 
  /*
  |--------------------------------------------------------------------------
@@ -192,67 +164,41 @@ async (
  |--------------------------------------------------------------------------
  */
 
- const opportunities =
+    const opportunities = await prisma.opportunity.findMany({
+    where: {
+        status: "APPROVED",
 
- await prisma.opportunity.findMany({
+        deadline: {
+        gte: new Date(),
+        },
 
-  where: {
-
-   OR:
-
-   keywords.flatMap(
-
-   (keyword) => [
-
-   {
-
-    title: {
-
-     contains:
-
-     keyword,
-
-     mode:
-
-     "insensitive",
-
+        OR: keywords.flatMap((keyword) => [
+        {
+            title: {
+            contains: keyword,
+            mode: "insensitive",
+            },
+        },
+        {
+            description: {
+            contains: keyword,
+            mode: "insensitive",
+            },
+        },
+        ]),
     },
 
-   },
-
-   {
-
-    description: {
-
-     contains:
-
-     keyword,
-
-     mode:
-
-     "insensitive",
-
+    include: {
+        organization: true,
+        type: true,
     },
 
-   },
+    take: 6,
 
-   ]
-
-   ),
-
-  },
-
-  take: 6,
-
-  orderBy: {
-
-   createdAt:
-
-   "desc",
-
-  },
-
- });
+    orderBy: {
+        createdAt: "desc",
+    },
+    });
 
  return {
 
