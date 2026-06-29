@@ -2,7 +2,9 @@ import { Server } from "socket.io";
 
 let io: Server;
 
-export const initializeSocket = (server: any) => {
+export const initializeSocket = (
+  server: any
+) => {
 
   io = new Server(server, {
 
@@ -22,27 +24,71 @@ export const initializeSocket = (server: any) => {
 
   });
 
-  io.on("connection", socket => {
+  io.on(
+    "connection",
+    socket => {
 
-    console.log("Socket Connected:", socket.id);
+      console.log(
+        "Socket Connected:",
+        socket.id
+      );
 
-    socket.on("join", userId => {
+      socket.on(
+        "join",
+        userId => {
 
-      socket.join(String(userId));
+          socket.join(
+            String(userId)
+          );
 
-    });
+        }
+      );
 
-    socket.on("disconnect", () => {
+      socket.on(
+        "disconnect",
+        () => {
 
-      console.log("Socket Disconnected");
+          console.log(
+            "Socket Disconnected:",
+            socket.id
+          );
 
-    });
+        }
+      );
+        socket.on(
+        "join_attendance",
+        eventId => {
 
-  });
+            socket.join(
+            `attendance-${eventId}`
+            );
+
+        }
+        );
+
+        socket.on(
+        "leave_attendance",
+        eventId => {
+
+            socket.leave(
+            `attendance-${eventId}`
+            );
+
+        }
+        );
+
+    }
+  );
 
 };
 
 export const getIO = () => io;
+
+/*
+|--------------------------------------------------------------------------
+| Notification
+|--------------------------------------------------------------------------
+*/
 
 export const emitNotification = (
 
@@ -52,14 +98,51 @@ export const emitNotification = (
 
 ) => {
 
-  if (!io) return;
-
-  io.to(String(userId)).emit(
+  io.to(
+    String(userId)
+  ).emit(
 
     "new_notification",
 
     notification
 
+  );
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Update
+|--------------------------------------------------------------------------
+*/
+
+export const emitDashboardUpdate = (
+
+  userId: bigint | number | string
+
+) => {
+
+  io.to(
+    String(userId)
+  ).emit(
+
+    "dashboard_update"
+
+  );
+
+};
+
+/*
+|--------------------------------------------------------------------------
+| Attendance Socket Event
+|--------------------------------------------------------------------------
+*/
+export const emitAttendanceUpdate = (
+  eventId: bigint | number | string
+) => {
+
+  io.to(`attendance-${eventId}`).emit(
+    "attendance_update"
   );
 
 };

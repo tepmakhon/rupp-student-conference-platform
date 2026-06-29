@@ -1,6 +1,10 @@
 import { prisma }
 from "../../config/prisma.js";
 
+import {
+  emitDashboardUpdate,
+} from "../../socket/socket.js";
+
 export const addActivityScore =
   async (
 
@@ -12,46 +16,58 @@ export const addActivityScore =
 
   ) => {
 
-    return prisma.$transaction(
+    const student =
 
-      async (tx) => {
+      await prisma.$transaction(
 
-        await tx.student.update({
+        async (tx) => {
 
-          where: {
+          const updatedStudent =
 
-            id: studentId,
+            await tx.student.update({
 
-          },
+              where: {
 
-          data: {
+                id: studentId,
 
-            activityScore: {
+              },
 
-              increment: score,
+              data: {
+
+                activityScore: {
+
+                  increment: score,
+
+                },
+
+              },
+
+            });
+
+          await tx.activityScoreHistory.create({
+
+            data: {
+
+              studentId,
+
+              scoreChange: score,
+
+              reason,
 
             },
 
-          },
+          });
 
-        });
+          return updatedStudent;
 
-        await tx.activityScoreHistory.create({
+        }
 
-          data: {
+      );
 
-            studentId,
-
-            scoreChange: score,
-
-            reason,
-
-          },
-
-        });
-
-      }
-
+    emitDashboardUpdate(
+      student.userId
     );
+
+    return student;
 
 };

@@ -6,6 +6,9 @@ import { getPagination } from "../../utils/pagination.js";
 import {
   addActivityScore,
 } from "../activity/activityScore.service.js";
+import {
+  emitDashboardUpdate,
+} from "../../socket/socket.js";
 
 export const createOpportunity = async (
   data: any,
@@ -55,6 +58,9 @@ export const createOpportunity = async (
 
     );
 
+    emitDashboardUpdate(
+      organization.userId
+    );
   await createAuditLog(
     userId,
     `OPPORTUNITY_CREATED:${opportunity.title}`
@@ -327,7 +333,9 @@ export const approveOpportunity = async (
     `${opportunity.title} has been approved by admin`,
     "OPPORTUNITY"
   );
-
+  emitDashboardUpdate(
+    opportunity.organization.userId
+  );
   await createAuditLog(
     opportunity.organization.userId,
     `OPPORTUNITY_APPROVED:${opportunity.title}`
@@ -374,6 +382,9 @@ export const rejectOpportunity = async (
     "Opportunity Rejected",
     `${opportunity.title} has been rejected by admin`,
     "OPPORTUNITY"
+  );
+  emitDashboardUpdate(
+    opportunity.organization.userId
   );
 
   await createAuditLog(
@@ -486,6 +497,13 @@ export const applyOpportunity = async (
     "New Application",
     `A student applied for ${opportunity.title}`,
     "OPPORTUNITY"
+  );
+  emitDashboardUpdate(
+    userId
+  );
+
+  emitDashboardUpdate(
+    opportunity.organization.userId
   );
 
   await createAuditLog(

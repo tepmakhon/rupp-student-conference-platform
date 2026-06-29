@@ -2,6 +2,9 @@ import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 import { createNotification } from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
+import {
+  emitDashboardUpdate,
+} from "../../socket/socket.js";
 
 export const getMyApplications = async (
   userId: bigint,
@@ -248,6 +251,13 @@ export const updateApplicationStatus =
       `Your application for ${updatedApplication.opportunity.title} has been ${status}`,
 
       "OPPORTUNITY"
+    );
+    emitDashboardUpdate(
+      updatedApplication.student.userId
+    );
+
+    emitDashboardUpdate(
+      userId
     );
 
     await createAuditLog(

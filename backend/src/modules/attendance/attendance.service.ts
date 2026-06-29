@@ -5,6 +5,9 @@ import { createNotification } from "../notification/notification.service.js";
 import {
   addActivityScore,
 } from "../activity/activityScore.service.js";
+import {
+  emitDashboardUpdate, emitAttendanceUpdate,
+} from "../../socket/socket.js";
 
 export const checkInEvent = async (
   eventId: bigint,
@@ -92,6 +95,16 @@ export const checkInEvent = async (
     registration.event.organization.userId,
     "Student Checked In",
     `A student checked in to ${registration.event.title}`
+  );
+
+  emitDashboardUpdate(userId);
+
+  emitDashboardUpdate(
+    registration.event.organization.userId
+  );
+
+  emitAttendanceUpdate(
+    registration.event.id
   );
 
   return result;
@@ -273,6 +286,13 @@ export const scanAttendance = async (
     `Attended ${registration.event.title}`
 
   );
+  emitDashboardUpdate(
+    registration.student.userId
+  );
+
+  emitDashboardUpdate(
+    organizationUserId
+  );
 
   await createAuditLog(
 
@@ -280,6 +300,9 @@ export const scanAttendance = async (
 
     `QR_CHECKIN:${registration.event.title}`
 
+  );
+  emitAttendanceUpdate(
+    registration.event.id
   );
 
   return attendance;
@@ -345,12 +368,6 @@ export const getAttendanceStatistics = async (
   };
 
 };
-
-/*
-|--------------------------------------------------------------------------
-| Export Attendance Data
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------

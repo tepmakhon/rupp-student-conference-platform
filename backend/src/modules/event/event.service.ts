@@ -14,6 +14,10 @@ import {
 import {
   addActivityScore,
 } from "../activity/activityScore.service.js";
+
+import {
+  emitDashboardUpdate,
+} from "../../socket/socket.js";
 /*
 |--------------------------------------------------------------------------
 | Create Event
@@ -61,6 +65,9 @@ export const createEvent = async (
 
       "EVENT"
 
+    );
+    emitDashboardUpdate(
+      organization.userId
     );
 
   await createAuditLog(
@@ -276,7 +283,9 @@ export const approveEvent = async (
     `${event.title} has been approved by admin`,
     "EVENT"
   );
-
+  emitDashboardUpdate(
+    event.organization.userId
+  );
   await createAuditLog(
     event.organization.userId,
     `EVENT_APPROVED:${event.title}`
@@ -330,7 +339,9 @@ export const rejectEvent = async (
     `${event.title} has been rejected by admin`,
     "EVENT"
   );
-
+  emitDashboardUpdate(
+    event.organization.userId
+  );
   await createAuditLog(
     event.organization.userId,
     `EVENT_REJECTED:${event.title}`
@@ -450,7 +461,13 @@ export const registerForEvent = async (
     `A student registered for ${event.title}`,
     "EVENT"
   );
+  emitDashboardUpdate(
+    userId
+  );
 
+  emitDashboardUpdate(
+    event.organization.userId
+  );
   await createAuditLog(
     userId,
     `EVENT_REGISTERED:${event.title}`
