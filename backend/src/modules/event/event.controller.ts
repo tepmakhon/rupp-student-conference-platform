@@ -68,17 +68,21 @@ export const getApprovedEventsController =
 
     try {
 
-      const page =
-        Number(req.query.page) || 1;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
 
-      const limit =
-        Number(req.query.limit) || 10;
+      const keyword = String(req.query.keyword || "");
 
-      const result =
-        await getApprovedEvents(
-          page,
-          limit
-        );
+      const categoryId = req.query.categoryId
+        ? BigInt(req.query.categoryId as string)
+        : undefined;
+
+      const result = await getApprovedEvents(
+        page,
+        limit,
+        keyword,
+        categoryId
+      );
 
       return successResponse(
         res,

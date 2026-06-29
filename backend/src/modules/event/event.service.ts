@@ -90,43 +90,61 @@ export const createEvent = async (
 
 export const getApprovedEvents = async (
   page = 1,
-  limit = 10
+  limit = 10,
+  keyword = "",
+  categoryId?: bigint
 ) => {
-  const { skip } =
-    getPagination(page, limit);
+  const { skip } = getPagination(page, limit);
 
-  const [events, total] =
-    await Promise.all([
-      prisma.event.findMany({
-        where: {
-          status: "APPROVED",
-          eventDate: {
-          gte: new Date(),
-          },
+  const where: any = {
+    status: "APPROVED",
+    eventDate: {
+      gte: new Date(),
+    },
+  };
+
+  if (keyword) {
+    where.OR = [
+      {
+        title: {
+          contains: keyword,
+          mode: "insensitive",
         },
-
-        include: {
-          organization: true,
-          category: true,
+      },
+      {
+        description: {
+          contains: keyword,
+          mode: "insensitive",
         },
+      },
+    ];
+  }
 
-        skip,
-        take: limit,
+  if (categoryId) {
+    where.categoryId = categoryId;
+  }
 
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
+  const [events, total] = await Promise.all([
+    prisma.event.findMany({
+      where,
 
-      prisma.event.count({
-        where: {
-          status: "APPROVED",
-          eventDate: {
-          gte: new Date(),
-          },
-        },
-      }),
-    ]);
+      include: {
+        organization: true,
+        category: true,
+      },
+
+      skip,
+      take: limit,
+
+      orderBy: {
+        eventDate: "asc",
+      },
+    }),
+
+    prisma.event.count({
+      where,
+    }),
+  ]);
 
   return {
     events,
@@ -135,12 +153,10 @@ export const getApprovedEvents = async (
       page,
       limit,
       total,
-      totalPages:
-        Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limit),
     },
   };
 };
-
 /*
 |--------------------------------------------------------------------------
 | Get Event By ID
