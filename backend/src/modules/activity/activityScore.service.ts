@@ -2,8 +2,8 @@ import { prisma }
 from "../../config/prisma.js";
 
 import {
-  emitDashboardUpdate,
-} from "../../socket/socket.js";
+  refreshStudentDashboard,
+} from "../../socket/dashboardEvents.js";
 
 export const addActivityScore =
   async (
@@ -64,9 +64,9 @@ export const addActivityScore =
 
       );
 
-    emitDashboardUpdate(
-      student.userId
-    );
+  refreshStudentDashboard(
+    student.userId
+  );
 
     return student;
 

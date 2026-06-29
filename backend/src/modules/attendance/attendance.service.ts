@@ -6,8 +6,10 @@ import {
   addActivityScore,
 } from "../activity/activityScore.service.js";
 import {
-  emitDashboardUpdate, emitAttendanceUpdate,
-} from "../../socket/socket.js";
+  refreshAdminDashboard,
+  refreshOrganizationDashboard,
+  refreshStudentDashboard,
+} from "../../socket/dashboardEvents.js";
 
 export const checkInEvent = async (
   eventId: bigint,
@@ -97,15 +99,13 @@ export const checkInEvent = async (
     `A student checked in to ${registration.event.title}`
   );
 
-  emitDashboardUpdate(userId);
+  refreshStudentDashboard(userId);
 
-  emitDashboardUpdate(
+  refreshOrganizationDashboard(
     registration.event.organization.userId
   );
 
-  emitAttendanceUpdate(
-    registration.event.id
-  );
+  refreshAdminDashboard();
 
   return result;
 };
@@ -286,13 +286,15 @@ export const scanAttendance = async (
     `Attended ${registration.event.title}`
 
   );
-  emitDashboardUpdate(
+  refreshStudentDashboard(
     registration.student.userId
   );
 
-  emitDashboardUpdate(
+  refreshOrganizationDashboard(
     organizationUserId
   );
+
+  refreshAdminDashboard();
 
   await createAuditLog(
 
@@ -301,10 +303,6 @@ export const scanAttendance = async (
     `QR_CHECKIN:${registration.event.title}`
 
   );
-  emitAttendanceUpdate(
-    registration.event.id
-  );
-
   return attendance;
 
 };

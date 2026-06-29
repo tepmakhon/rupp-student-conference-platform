@@ -35,11 +35,17 @@ export const initializeSocket = (
 
       socket.on(
         "join",
-        userId => {
+        data => {
 
           socket.join(
-            String(userId)
+            String(data.userId)
           );
+
+          if (data.role === "ADMIN") {
+
+            socket.join("admin");
+
+          }
 
         }
       );

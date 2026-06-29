@@ -16,8 +16,10 @@ import {
 } from "../activity/activityScore.service.js";
 
 import {
-  emitDashboardUpdate,
-} from "../../socket/socket.js";
+  refreshAdminDashboard,
+  refreshOrganizationDashboard,
+  refreshStudentDashboard,
+} from "../../socket/dashboardEvents.js";
 /*
 |--------------------------------------------------------------------------
 | Create Event
@@ -66,9 +68,11 @@ export const createEvent = async (
       "EVENT"
 
     );
-    emitDashboardUpdate(
-      organization.userId
-    );
+  refreshOrganizationDashboard(
+    organization.userId
+  );
+
+  refreshAdminDashboard();
 
   await createAuditLog(
     BigInt(user.id),
@@ -283,9 +287,11 @@ export const approveEvent = async (
     `${event.title} has been approved by admin`,
     "EVENT"
   );
-  emitDashboardUpdate(
+  refreshOrganizationDashboard(
     event.organization.userId
   );
+
+  refreshAdminDashboard();
   await createAuditLog(
     event.organization.userId,
     `EVENT_APPROVED:${event.title}`
@@ -339,9 +345,11 @@ export const rejectEvent = async (
     `${event.title} has been rejected by admin`,
     "EVENT"
   );
-  emitDashboardUpdate(
+  refreshOrganizationDashboard(
     event.organization.userId
   );
+
+  refreshAdminDashboard();
   await createAuditLog(
     event.organization.userId,
     `EVENT_REJECTED:${event.title}`
@@ -461,13 +469,13 @@ export const registerForEvent = async (
     `A student registered for ${event.title}`,
     "EVENT"
   );
-  emitDashboardUpdate(
-    userId
-  );
+  refreshStudentDashboard(userId);
 
-  emitDashboardUpdate(
+  refreshOrganizationDashboard(
     event.organization.userId
   );
+
+  refreshAdminDashboard();
   await createAuditLog(
     userId,
     `EVENT_REGISTERED:${event.title}`
