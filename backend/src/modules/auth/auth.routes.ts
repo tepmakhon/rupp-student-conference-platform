@@ -1,37 +1,19 @@
-import {
+import { Router } from "express";
 
-  Router,
-
-}
-
-from "express";
-
-import {
-
-  login,
-
-  register,
-
-}
-
-from "./auth.controller.js";
+import { login, register } from "./auth.controller.js";
 
 const router = Router();
 
 router.post(
-
   "/register",
 
-  register
-
+  register,
 );
 
 router.post(
-
   "/login",
 
-  login
-
+  login,
 );
 
 /**
@@ -79,7 +61,6 @@ router.post(
  *       400:
  *         description: Validation error or user already exists
  */
-
 
 /**
  * @swagger

@@ -1,19 +1,8 @@
-import {
+import { AcademicCapIcon } from "@heroicons/react/24/outline";
 
-  AcademicCapIcon,
-
-} from "@heroicons/react/24/outline";
-
-function ProfileSkills({
-
-  skills = [],
-
-}) {
-
+function ProfileSkills({ skills = [] }) {
   return (
-
     <div
-
       className="
 
         bg-white
@@ -27,11 +16,8 @@ function ProfileSkills({
         p-8
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -43,11 +29,8 @@ function ProfileSkills({
           mb-8
 
         "
-
       >
-
         <AcademicCapIcon
-
           className="
 
             w-8
@@ -57,11 +40,9 @@ function ProfileSkills({
             text-primary
 
           "
-
         />
 
         <h2
-
           className="
 
             text-2xl
@@ -71,24 +52,14 @@ function ProfileSkills({
             text-primary
 
           "
-
         >
-
           Skills
-
         </h2>
-
       </div>
 
-      {
-
-        skills.length === 0
-
-        ? (
-
-          <div
-
-            className="
+      {skills.length === 0 ? (
+        <div
+          className="
 
               text-center
 
@@ -97,20 +68,12 @@ function ProfileSkills({
               text-gray-500
 
             "
-
-          >
-
-            No skills added yet
-
-          </div>
-
-        )
-
-        : (
-
-          <div
-
-            className="
+        >
+          No skills added yet
+        </div>
+      ) : (
+        <div
+          className="
 
               flex
 
@@ -119,24 +82,12 @@ function ProfileSkills({
               gap-4
 
             "
+        >
+          {skills.map((skill) => (
+            <div
+              key={skill.skill.id}
 
-          >
-
-            {
-
-              skills.map(
-
-                skill => (
-
-                  <div
-
-                    key={
-
-                      skill.skill.id
-
-                    }
-
-                    className="
+              className="
 
                       px-5
 
@@ -151,35 +102,14 @@ function ProfileSkills({
                       font-semibold
 
                     "
-
-                  >
-
-                    {
-
-                      skill.skill
-
-                      .skillName
-
-                    }
-
-                  </div>
-
-                )
-
-              )
-
-            }
-
-          </div>
-
-        )
-
-      }
-
+            >
+              {skill.skill.skillName}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-
   );
-
 }
 
 export default ProfileSkills;

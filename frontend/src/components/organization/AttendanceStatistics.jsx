@@ -1,69 +1,40 @@
-function AttendanceStatistics({
-
-  statistics,
-
-}) {
-
+function AttendanceStatistics({ statistics }) {
   const cards = [
-
     {
+      title: "Registered",
 
-      title:
-        "Registered",
+      value: statistics.totalRegistrations,
 
-      value:
-        statistics.totalRegistrations,
-
-      color:
-        "text-blue-600",
-
+      color: "text-blue-600",
     },
 
     {
+      title: "Checked In",
 
-      title:
-        "Checked In",
+      value: statistics.checkedIn,
 
-      value:
-        statistics.checkedIn,
-
-      color:
-        "text-green-600",
-
+      color: "text-green-600",
     },
 
     {
+      title: "Remaining",
 
-      title:
-        "Remaining",
+      value: statistics.remaining,
 
-      value:
-        statistics.remaining,
-
-      color:
-        "text-red-600",
-
+      color: "text-red-600",
     },
 
     {
+      title: "Attendance",
 
-      title:
-        "Attendance",
+      value: `${statistics.attendanceRate}%`,
 
-      value:
-        `${statistics.attendanceRate}%`,
-
-      color:
-        "text-primary",
-
+      color: "text-primary",
     },
-
   ];
 
   return (
-
     <div
-
       className="
         grid
         grid-cols-1
@@ -71,68 +42,41 @@ function AttendanceStatistics({
         lg:grid-cols-4
         gap-6
       "
-
     >
+      {cards.map((card) => (
+        <div
+          key={card.title}
 
-      {
-
-        cards.map(
-
-          card => (
-
-            <div
-
-              key={card.title}
-
-              className="
+          className="
                 bg-white
                 rounded-3xl
                 shadow
                 p-6
               "
-
-            >
-
-              <p
-
-                className="
+        >
+          <p
+            className="
                   text-gray-500
                   text-sm
                 "
+          >
+            {card.title}
+          </p>
 
-              >
-
-                {card.title}
-
-              </p>
-
-              <h2
-
-                className={`
+          <h2
+            className={`
                   text-4xl
                   font-bold
                   mt-3
                   ${card.color}
                 `}
-
-              >
-
-                {card.value}
-
-              </h2>
-
-            </div>
-
-          )
-
-        )
-
-      }
-
+          >
+            {card.value}
+          </h2>
+        </div>
+      ))}
     </div>
-
   );
-
 }
 
 export default AttendanceStatistics;

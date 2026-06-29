@@ -1,27 +1,12 @@
-import {
+import { useRef, useState } from "react";
 
-  useRef,
+import { FaCamera } from "react-icons/fa";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
-
-import {
-
-  FaCamera,
-
-} from "react-icons/fa";
-
-import toast
-
-from "react-hot-toast";
-
-import {
-  uploadToCloudinary,
-} from "../../utils/cloudinaryUpload";
+import { uploadToCloudinary } from "../../utils/cloudinaryUpload";
 
 function ProfileAvatar({
-
   value,
 
   fullName,
@@ -31,147 +16,63 @@ function ProfileAvatar({
   size = "lg",
 
   onChange,
-
 }) {
+  const fileInputRef = useRef(null);
 
-  const fileInputRef =
-
-  useRef(null);
-
-  const [
-
-    uploading,
-
-    setUploading,
-
-  ] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const sizeClasses = {
+    sm: "w-16 h-16",
 
-    sm:
+    md: "w-24 h-24",
 
-    "w-16 h-16",
+    lg: "w-36 h-36",
 
-    md:
-
-    "w-24 h-24",
-
-    lg:
-
-    "w-36 h-36",
-
-    xl:
-
-    "w-44 h-44",
-
+    xl: "w-44 h-44",
   };
 
   const buttonClasses = {
+    sm: "w-8 h-8",
 
-    sm:
+    md: "w-10 h-10",
 
-    "w-8 h-8",
+    lg: "w-12 h-12",
 
-    md:
-
-    "w-10 h-10",
-
-    lg:
-
-    "w-12 h-12",
-
-    xl:
-
-    "w-14 h-14",
-
+    xl: "w-14 h-14",
   };
 
   const avatar =
-
     value ||
-
     `https://ui-avatars.com/api/?background=0F4C3A&color=fff&size=300&name=${encodeURIComponent(
-
-      fullName ||
-
-      "User"
-
+      fullName || "User",
     )}`;
 
-  const handleUpload =
-
-  async (e) => {
-
+  const handleUpload = async (e) => {
     try {
-
-      const file =
-
-      e.target.files[0];
+      const file = e.target.files[0];
 
       if (!file) {
-
         return;
-
       }
 
-      setUploading(
+      setUploading(true);
 
-        true
+      const imageUrl = await uploadToCloudinary(file);
 
-      );
+      onChange?.(imageUrl);
 
-      const imageUrl =
-
-      await uploadToCloudinary(
-
-        file
-
-      );
-
-      onChange?.(
-
-        imageUrl
-
-      );
-
-      toast.success(
-
-        "Image uploaded"
-
-      );
-
-    }
-
-    catch(error){
-
+      toast.success("Image uploaded");
+    } catch (error) {
       console.error(error);
 
-      toast.error(
-
-        error.message ||
-
-        "Upload failed"
-
-      );
-
+      toast.error(error.message || "Upload failed");
+    } finally {
+      setUploading(false);
     }
-
-    finally{
-
-      setUploading(
-
-        false
-
-      );
-
-    }
-
   };
 
   return (
-
     <div
-
       className="
 
       flex
@@ -181,21 +82,15 @@ function ProfileAvatar({
       items-center
 
       "
-
     >
-
       <div
-
         className="
 
         relative
 
         "
-
       >
-
         <img
-
           src={avatar}
 
           alt="profile"
@@ -210,35 +105,17 @@ function ProfileAvatar({
 
             border-primary
 
-            ${
-
-              sizeClasses[size]
-
-            }
+            ${sizeClasses[size]}
 
           `}
-
         />
 
-        {
-
-          editable && (
-
+        {editable && (
           <>
-
             <button
-
               type="button"
 
-              onClick={()=>
-
-                fileInputRef
-
-                .current
-
-                .click()
-
-              }
+              onClick={() => fileInputRef.current.click()}
 
               className={`
 
@@ -264,27 +141,15 @@ function ProfileAvatar({
 
                 shadow-lg
 
-                ${
-
-                  buttonClasses[size]
-
-                }
+                ${buttonClasses[size]}
 
               `}
-
             >
-
               <FaCamera />
-
             </button>
 
             <input
-
-              ref={
-
-                fileInputRef
-
-              }
+              ref={fileInputRef}
 
               type="file"
 
@@ -292,28 +157,14 @@ function ProfileAvatar({
 
               hidden
 
-              onChange={
-
-                handleUpload
-
-              }
-
+              onChange={handleUpload}
             />
-
           </>
-
-          )
-
-        }
-
+        )}
       </div>
 
-      {
-
-        uploading && (
-
+      {uploading && (
         <p
-
           className="
 
           text-sm
@@ -323,21 +174,12 @@ function ProfileAvatar({
           mt-3
 
           "
-
         >
-
           Uploading...
-
         </p>
-
-        )
-
-      }
-
+      )}
     </div>
-
   );
-
 }
 
 export default ProfileAvatar;

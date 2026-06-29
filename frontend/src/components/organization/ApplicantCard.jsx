@@ -1,58 +1,34 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-import {
-  updateApplicationStatus,
-} from "../../api/applicationApi";
+import { updateApplicationStatus } from "../../api/applicationApi";
 
-function ApplicantCard({
-  applicant,
-  onUpdate,
-}) {
+function ApplicantCard({ applicant, onUpdate }) {
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const profile = applicant.student?.user?.profile;
 
-  const profile =
-    applicant.student?.user?.profile;
+  const handleStatus = async (status) => {
+    try {
+      setLoading(true);
 
-  const handleStatus =
-    async (status) => {
+      await updateApplicationStatus(applicant.id, status);
 
-      try {
+      toast.success(`Application ${status.toLowerCase()}`);
 
-        setLoading(true);
+      onUpdate();
+    } catch (error) {
+      console.error(error);
 
-        await updateApplicationStatus(
-          applicant.id,
-          status
-        );
-
-        toast.success(
-          `Application ${status.toLowerCase()}`
-        );
-
-        onUpdate();
-
-      } catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          error?.response?.data?.message ||
-          "Failed to update application"
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    };
+      toast.error(
+        error?.response?.data?.message || "Failed to update application",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-
     <div
       className="
         bg-white
@@ -61,7 +37,6 @@ function ApplicantCard({
         p-6
       "
     >
-
       <div
         className="
           flex
@@ -72,7 +47,6 @@ function ApplicantCard({
           gap-6
         "
       >
-
         <div
           className="
             flex
@@ -80,7 +54,6 @@ function ApplicantCard({
             gap-5
           "
         >
-
           <img
             src={
               profile?.profileImageUrl ||
@@ -96,7 +69,6 @@ function ApplicantCard({
           />
 
           <div>
-
             <h2
               className="
                 text-2xl
@@ -104,10 +76,7 @@ function ApplicantCard({
                 text-primary
               "
             >
-              {
-                profile?.fullName ||
-                applicant.student?.user?.email
-              }
+              {profile?.fullName || applicant.student?.user?.email}
             </h2>
 
             <p
@@ -127,54 +96,29 @@ function ApplicantCard({
                 space-y-2
               "
             >
-
               <p>
-                <span className="font-semibold">
-                  University:
-                </span>{" "}
-                {
-                  applicant.student?.university
-                    ?.universityName || "-"
-                }
+                <span className="font-semibold">University:</span>{" "}
+                {applicant.student?.university?.universityName || "-"}
               </p>
 
               <p>
-                <span className="font-semibold">
-                  Faculty:
-                </span>{" "}
-                {
-                  applicant.student?.faculty
-                    ?.facultyName || "-"
-                }
+                <span className="font-semibold">Faculty:</span>{" "}
+                {applicant.student?.faculty?.facultyName || "-"}
               </p>
 
               <p>
-                <span className="font-semibold">
-                  Major:
-                </span>{" "}
-                {
-                  applicant.student?.major
-                    ?.majorName || "-"
-                }
+                <span className="font-semibold">Major:</span>{" "}
+                {applicant.student?.major?.majorName || "-"}
               </p>
 
               <p>
-                <span className="font-semibold">
-                  Applied:
-                </span>{" "}
-                {
-                  applicant.appliedAt
-                    ? new Date(
-                        applicant.appliedAt
-                      ).toLocaleDateString()
-                    : "-"
-                }
+                <span className="font-semibold">Applied:</span>{" "}
+                {applicant.appliedAt
+                  ? new Date(applicant.appliedAt).toLocaleDateString()
+                  : "-"}
               </p>
-
             </div>
-
           </div>
-
         </div>
 
         <div
@@ -185,7 +129,6 @@ function ApplicantCard({
             items-center
           "
         >
-
           <span
             className="
               px-4
@@ -200,9 +143,7 @@ function ApplicantCard({
           </span>
 
           <button
-            onClick={() =>
-              handleStatus("REVIEWING")
-            }
+            onClick={() => handleStatus("REVIEWING")}
             disabled={loading}
             className="
               bg-yellow-500
@@ -218,9 +159,7 @@ function ApplicantCard({
           </button>
 
           <button
-            onClick={() =>
-              handleStatus("ACCEPTED")
-            }
+            onClick={() => handleStatus("ACCEPTED")}
             disabled={loading}
             className="
               bg-green-600
@@ -236,9 +175,7 @@ function ApplicantCard({
           </button>
 
           <button
-            onClick={() =>
-              handleStatus("REJECTED")
-            }
+            onClick={() => handleStatus("REJECTED")}
             disabled={loading}
             className="
               bg-red-600
@@ -252,15 +189,10 @@ function ApplicantCard({
           >
             Reject
           </button>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default ApplicantCard;

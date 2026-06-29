@@ -1,186 +1,65 @@
-import {
+import { useState } from "react";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
-
-import toast
-from "react-hot-toast";
+import { approveEvent, rejectEvent } from "../../api/eventApi";
 
 import {
-
-  approveEvent,
-
-  rejectEvent,
-
-} from "../../api/eventApi";
-
-import {
-
   CheckCircleIcon,
-
   XCircleIcon,
-
   CalendarDaysIcon,
-
   MapPinIcon,
-
   BuildingOfficeIcon,
-
   TagIcon,
-
 } from "@heroicons/react/24/outline";
 
-import {
-
-  formatDate,
-
-} from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate";
 
 function PendingEventCard({
-
   event,
 
   onAction,
-
 }) {
+  const [processing, setProcessing] = useState(false);
 
-  const [
+  const handleApprove = async () => {
+    try {
+      setProcessing(true);
 
-    processing,
+      await approveEvent(event.id);
 
-    setProcessing,
+      toast.success("Event approved");
 
-  ] = useState(false);
+      await onAction();
+    } catch (error) {
+      console.error(error);
 
-  const handleApprove =
+      toast.error(error?.response?.data?.message || "Failed to approve event");
+    } finally {
+      setProcessing(false);
+    }
+  };
 
-    async () => {
+  const handleReject = async () => {
+    try {
+      setProcessing(true);
 
-      try {
+      await rejectEvent(event.id);
 
-        setProcessing(
+      toast.success("Event rejected");
 
-          true
+      await onAction();
+    } catch (error) {
+      console.error(error);
 
-        );
-
-        await approveEvent(
-
-          event.id
-
-        );
-
-        toast.success(
-
-          "Event approved"
-
-        );
-
-        await onAction();
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Failed to approve event"
-
-        );
-
-      }
-
-      finally {
-
-        setProcessing(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  const handleReject =
-
-    async () => {
-
-      try {
-
-        setProcessing(
-
-          true
-
-        );
-
-        await rejectEvent(
-
-          event.id
-
-        );
-
-        toast.success(
-
-          "Event rejected"
-
-        );
-
-        await onAction();
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Failed to reject event"
-
-        );
-
-      }
-
-      finally {
-
-        setProcessing(
-
-          false
-
-        );
-
-      }
-
-    };
+      toast.error(error?.response?.data?.message || "Failed to reject event");
+    } finally {
+      setProcessing(false);
+    }
+  };
 
   return (
-
     <div
-
       className="
 
         bg-white
@@ -202,13 +81,10 @@ function PendingEventCard({
         p-6
 
       "
-
     >
-
       {/* Header */}
 
       <div
-
         className="
 
           flex
@@ -220,13 +96,9 @@ function PendingEventCard({
           gap-4
 
         "
-
       >
-
         <div>
-
           <h2
-
             className="
 
               text-2xl
@@ -236,19 +108,11 @@ function PendingEventCard({
               text-primary
 
             "
-
           >
-
-            {
-
-              event.title
-
-            }
-
+            {event.title}
           </h2>
 
           <span
-
             className="
 
               inline-flex
@@ -272,21 +136,15 @@ function PendingEventCard({
               text-yellow-700
 
             "
-
           >
-
             Pending Approval
-
           </span>
-
         </div>
-
       </div>
 
       {/* Description */}
 
       <p
-
         className="
 
           mt-5
@@ -296,25 +154,13 @@ function PendingEventCard({
           leading-relaxed
 
         "
-
       >
-
-        {
-
-          event.description
-
-          ||
-
-          "No description available"
-
-        }
-
+        {event.description || "No description available"}
       </p>
 
       {/* Information */}
 
       <div
-
         className="
 
           mt-6
@@ -322,11 +168,8 @@ function PendingEventCard({
           space-y-4
 
         "
-
       >
-
         <div
-
           className="
 
             flex
@@ -338,11 +181,8 @@ function PendingEventCard({
             text-gray-700
 
           "
-
         >
-
           <BuildingOfficeIcon
-
             className="
 
               w-5
@@ -350,29 +190,14 @@ function PendingEventCard({
               h-5
 
             "
-
           />
 
           <span>
-
-            {
-
-              event.organization
-
-              ?.organizationName
-
-              ||
-
-              "Unknown Organization"
-
-            }
-
+            {event.organization?.organizationName || "Unknown Organization"}
           </span>
-
         </div>
 
         <div
-
           className="
 
             flex
@@ -384,11 +209,8 @@ function PendingEventCard({
             text-gray-700
 
           "
-
         >
-
           <MapPinIcon
-
             className="
 
               w-5
@@ -396,27 +218,12 @@ function PendingEventCard({
               h-5
 
             "
-
           />
 
-          <span>
-
-            {
-
-              event.location
-
-              ||
-
-              "No location"
-
-            }
-
-          </span>
-
+          <span>{event.location || "No location"}</span>
         </div>
 
         <div
-
           className="
 
             flex
@@ -428,11 +235,8 @@ function PendingEventCard({
             text-gray-700
 
           "
-
         >
-
           <CalendarDaysIcon
-
             className="
 
               w-5
@@ -440,32 +244,14 @@ function PendingEventCard({
               h-5
 
             "
-
           />
 
-          <span>
-
-            {
-
-              formatDate(
-
-                event.eventDate
-
-              )
-
-            }
-
-          </span>
-
+          <span>{formatDate(event.eventDate)}</span>
         </div>
 
-        {
-
-          event.category && (
-
-            <div
-
-              className="
+        {event.category && (
+          <div
+            className="
 
                 flex
 
@@ -478,45 +264,25 @@ function PendingEventCard({
                 font-medium
 
               "
-
-            >
-
-              <TagIcon
-
-                className="
+          >
+            <TagIcon
+              className="
 
                   w-5
 
                   h-5
 
                 "
+            />
 
-              />
-
-              <span>
-
-                {
-
-                  event.category
-
-                  .categoryName
-
-                }
-
-              </span>
-
-            </div>
-
-          )
-
-        }
-
+            <span>{event.category.categoryName}</span>
+          </div>
+        )}
       </div>
 
       {/* Actions */}
 
       <div
-
         className="
 
           flex
@@ -530,22 +296,11 @@ function PendingEventCard({
           mt-8
 
         "
-
       >
-
         <button
+          onClick={handleApprove}
 
-          onClick={
-
-            handleApprove
-
-          }
-
-          disabled={
-
-            processing
-
-          }
+          disabled={processing}
 
           className="
 
@@ -576,11 +331,8 @@ function PendingEventCard({
             disabled:opacity-50
 
           "
-
         >
-
           <CheckCircleIcon
-
             className="
 
               w-5
@@ -588,38 +340,15 @@ function PendingEventCard({
               h-5
 
             "
-
           />
 
-          {
-
-            processing
-
-            ?
-
-            "Processing..."
-
-            :
-
-            "Approve"
-
-          }
-
+          {processing ? "Processing..." : "Approve"}
         </button>
 
         <button
+          onClick={handleReject}
 
-          onClick={
-
-            handleReject
-
-          }
-
-          disabled={
-
-            processing
-
-          }
+          disabled={processing}
 
           className="
 
@@ -650,11 +379,8 @@ function PendingEventCard({
             disabled:opacity-50
 
           "
-
         >
-
           <XCircleIcon
-
             className="
 
               w-5
@@ -662,31 +388,13 @@ function PendingEventCard({
               h-5
 
             "
-
           />
 
-          {
-
-            processing
-
-            ?
-
-            "Processing..."
-
-            :
-
-            "Reject"
-
-          }
-
+          {processing ? "Processing..." : "Reject"}
         </button>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default PendingEventCard;

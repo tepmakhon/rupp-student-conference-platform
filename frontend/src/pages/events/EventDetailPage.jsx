@@ -1,323 +1,95 @@
-import {
+import { useEffect, useState, useCallback } from "react";
 
-  useEffect,
+import { useParams } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-  useCallback,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-} from "react";
+import LoadingState from "../../components/common/LoadingState";
 
-import {
+import ErrorState from "../../components/common/ErrorState";
 
-  useParams,
+import EventDetailHero from "../../components/events/EventDetailHero";
 
-} from "react-router-dom";
+import EventInfoGrid from "../../components/events/EventInfoGrid";
 
-import toast
+import EventDescription from "../../components/events/EventDescription";
 
-from "react-hot-toast";
+import EventRegisterButton from "../../components/events/EventRegisterButton";
 
-import DashboardLayout
-
-from "../../components/layouts/DashboardLayout";
-
-import LoadingState
-
-from "../../components/common/LoadingState";
-
-import ErrorState
-
-from "../../components/common/ErrorState";
-
-import EventDetailHero
-
-from "../../components/events/EventDetailHero";
-
-import EventInfoGrid
-
-from "../../components/events/EventInfoGrid";
-
-import EventDescription
-
-from "../../components/events/EventDescription";
-
-import EventRegisterButton
-
-from "../../components/events/EventRegisterButton";
-
-import {
-
-  getEventById,
-
-  registerForEvent,
-
-} from "../../api/eventApi";
+import { getEventById, registerForEvent } from "../../api/eventApi";
 
 function EventDetailPage() {
+  const { id } = useParams();
 
-  const {
+  const [event, setEvent] = useState(null);
 
-    id,
+  const [loading, setLoading] = useState(true);
 
-  } = useParams();
+  const [error, setError] = useState("");
 
-  const [
+  const [registering, setRegistering] = useState(false);
 
-    event,
+  const loadEvent = useCallback(async () => {
+    try {
+      setLoading(true);
 
-    setEvent,
+      setError("");
 
-  ] = useState(
+      const data = await getEventById(id);
 
-    null
+      setEvent(data);
+    } catch (error) {
+      console.error(error);
 
-  );
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(
-
-    true
-
-  );
-
-  const [
-
-    error,
-
-    setError,
-
-  ] = useState(
-
-    ""
-
-  );
-
-  const [
-
-    registering,
-
-    setRegistering,
-
-  ] = useState(
-
-    false
-
-  );
-
-  const loadEvent =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          setError(
-
-            ""
-
-          );
-
-          const data =
-
-            await getEventById(
-
-              id
-
-            );
-
-          setEvent(
-
-            data
-
-          );
-
-        }
-
-        catch (
-
-          error
-
-        ) {
-
-          console.error(
-
-            error
-
-          );
-
-          setError(
-
-            "Failed to load event"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      [
-
-        id,
-
-      ]
-
-    );
+      setError("Failed to load event");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   useEffect(() => {
-
     loadEvent();
+  }, [loadEvent]);
 
-  },
+  const handleRegister = async () => {
+    try {
+      setRegistering(true);
 
-  [
+      await registerForEvent(id);
 
-    loadEvent,
+      toast.success("Successfully registered");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Registration failed");
+    } finally {
+      setRegistering(false);
+    }
+  };
 
-  ]);
-
-  const handleRegister =
-
-    async () => {
-
-      try {
-
-        setRegistering(
-
-          true
-
-        );
-
-        await registerForEvent(
-
-          id
-
-        );
-
-        toast.success(
-
-          "Successfully registered"
-
-        );
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        toast.error(
-
-          error
-
-          ?.response
-
-          ?.data
-
-          ?.message ||
-
-          "Registration failed"
-
-        );
-
-      }
-
-      finally {
-
-        setRegistering(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  if (
-
-    loading
-
-  ) {
-
+  if (loading) {
     return (
-
       <DashboardLayout>
-
         <LoadingState />
-
       </DashboardLayout>
-
     );
-
   }
 
-  if (
-
-    error
-
-  ) {
-
+  if (error) {
     return (
-
       <DashboardLayout>
-
-        <ErrorState
-
-          message={
-
-            error
-
-          }
-
-        />
-
+        <ErrorState message={error} />
       </DashboardLayout>
-
     );
-
   }
 
-  if (
-
-    !event
-
-  ) {
-
+  if (!event) {
     return null;
-
   }
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -327,41 +99,14 @@ function EventDetailPage() {
           space-y-8
 
         "
-
       >
+        <EventDetailHero event={event} />
 
-        <EventDetailHero
+        <EventInfoGrid event={event} />
 
-          event={
-
-            event
-
-          }
-
-        />
-
-        <EventInfoGrid
-
-          event={
-
-            event
-
-          }
-
-        />
-
-        <EventDescription
-
-          description={
-
-            event.description
-
-          }
-
-        />
+        <EventDescription description={event.description} />
 
         <div
-
           className="
 
             flex
@@ -369,33 +114,16 @@ function EventDetailPage() {
             justify-center
 
           "
-
         >
-
           <EventRegisterButton
+            registering={registering}
 
-            registering={
-
-              registering
-
-            }
-
-            onRegister={
-
-              handleRegister
-
-            }
-
+            onRegister={handleRegister}
           />
-
         </div>
-
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default EventDetailPage;

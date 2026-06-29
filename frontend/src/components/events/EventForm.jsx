@@ -1,23 +1,10 @@
-import {
+import { useState, useEffect } from "react";
 
-  useState,
+import toast from "react-hot-toast";
 
-  useEffect,
-
-} from "react";
-
-import toast
-
-from "react-hot-toast";
-
-import {
-
-  uploadToCloudinary,
-
-} from "../../utils/cloudinaryUpload";
+import { uploadToCloudinary } from "../../utils/cloudinaryUpload";
 
 function EventForm({
-
   initialData,
 
   categories = [],
@@ -25,17 +12,8 @@ function EventForm({
   onSubmit,
 
   submitText,
-
 }) {
-
-  const [
-
-    form,
-
-    setForm,
-
-  ] = useState({
-
+  const [form, setForm] = useState({
     title: "",
 
     description: "",
@@ -49,206 +27,67 @@ function EventForm({
     eventDate: "",
 
     bannerImageUrl: "",
-
   });
 
-  const [
+  const [loading, setLoading] = useState(false);
 
-    loading,
-
-    setLoading,
-
-  ] = useState(false);
-
-  const [
-
-    imageUploading,
-
-    setImageUploading,
-
-  ] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
 
   useEffect(() => {
-
-    if (
-
-      initialData
-
-    ) {
-
-      setForm(
-
-        initialData
-
-      );
-
+    if (initialData) {
+      setForm(initialData);
     }
+  }, [initialData]);
 
-  },
+  const handleChange = (e) => {
+    setForm((previous) => ({
+      ...previous,
 
-  [
+      [e.target.name]: e.target.value,
+    }));
+  };
 
-    initialData,
+  const handleImage = async (e) => {
+    const file = e.target.files[0];
 
-  ]);
+    if (!file) return;
 
-  const handleChange =
+    try {
+      setImageUploading(true);
 
-    (e) => {
+      const url = await uploadToCloudinary(file);
 
-      setForm(
+      setForm((previous) => ({
+        ...previous,
 
-        (
+        bannerImageUrl: url,
+      }));
 
-          previous
+      toast.success("Image uploaded");
+    } catch (error) {
+      console.error(error);
 
-        ) => ({
+      toast.error("Upload failed");
+    } finally {
+      setImageUploading(false);
+    }
+  };
 
-          ...previous,
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-          [
+    try {
+      setLoading(true);
 
-            e.target.name
-
-          ]:
-
-          e.target.value,
-
-        })
-
-      );
-
-    };
-
-  const handleImage =
-
-    async (e) => {
-
-      const file =
-
-        e.target.files[0];
-
-      if (!file)
-
-      return;
-
-      try {
-
-        setImageUploading(
-
-          true
-
-        );
-
-        const url =
-
-          await uploadToCloudinary(
-
-            file
-
-          );
-
-        setForm(
-
-          (
-
-            previous
-
-          ) => ({
-
-            ...previous,
-
-            bannerImageUrl:
-
-              url,
-
-          })
-
-        );
-
-        toast.success(
-
-          "Image uploaded"
-
-        );
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          "Upload failed"
-
-        );
-
-      }
-
-      finally {
-
-        setImageUploading(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  const handleSubmit =
-
-    async (e) => {
-
-      e.preventDefault();
-
-      try {
-
-        setLoading(
-
-          true
-
-        );
-
-        await onSubmit(
-
-          form
-
-        );
-
-      }
-
-      finally {
-
-        setLoading(
-
-          false
-
-        );
-
-      }
-
-    };
+      await onSubmit(form);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-
     <form
-
-      onSubmit={
-
-        handleSubmit
-
-      }
+      onSubmit={handleSubmit}
 
       className="
 
@@ -265,15 +104,11 @@ function EventForm({
         space-y-8
 
       "
-
     >
-
       {/* Title */}
 
       <div>
-
         <label
-
           className="
 
             block
@@ -283,30 +118,18 @@ function EventForm({
             mb-2
 
           "
-
         >
-
           Event Title
-
         </label>
 
         <input
-
           type="text"
 
           name="title"
 
-          value={
+          value={form.title}
 
-            form.title
-
-          }
-
-          onChange={
-
-            handleChange
-
-          }
+          onChange={handleChange}
 
           required
 
@@ -321,17 +144,13 @@ function EventForm({
             p-4
 
           "
-
         />
-
       </div>
 
       {/* Description */}
 
       <div>
-
         <label
-
           className="
 
             block
@@ -341,30 +160,18 @@ function EventForm({
             mb-2
 
           "
-
         >
-
           Description
-
         </label>
 
         <textarea
-
           rows={6}
 
           name="description"
 
-          value={
+          value={form.description}
 
-            form.description
-
-          }
-
-          onChange={
-
-            handleChange
-
-          }
+          onChange={handleChange}
 
           required
 
@@ -379,15 +186,12 @@ function EventForm({
             p-4
 
           "
-
         />
-
       </div>
 
       {/* Grid */}
 
       <div
-
         className="
 
           grid
@@ -397,15 +201,11 @@ function EventForm({
           gap-6
 
         "
-
       >
-
         {/* Location */}
 
         <div>
-
           <label
-
             className="
 
               block
@@ -415,30 +215,18 @@ function EventForm({
               mb-2
 
             "
-
           >
-
             Location
-
           </label>
 
           <input
-
             type="text"
 
             name="location"
 
-            value={
+            value={form.location}
 
-              form.location
-
-            }
-
-            onChange={
-
-              handleChange
-
-            }
+            onChange={handleChange}
 
             required
 
@@ -453,17 +241,13 @@ function EventForm({
               p-4
 
             "
-
           />
-
         </div>
 
         {/* Capacity */}
 
         <div>
-
           <label
-
             className="
 
               block
@@ -473,30 +257,18 @@ function EventForm({
               mb-2
 
             "
-
           >
-
             Capacity
-
           </label>
 
           <input
-
             type="number"
 
             name="capacity"
 
-            value={
+            value={form.capacity}
 
-              form.capacity
-
-            }
-
-            onChange={
-
-              handleChange
-
-            }
+            onChange={handleChange}
 
             className="
 
@@ -509,17 +281,13 @@ function EventForm({
               p-4
 
             "
-
           />
-
         </div>
 
         {/* Category */}
 
         <div>
-
           <label
-
             className="
 
               block
@@ -529,28 +297,16 @@ function EventForm({
               mb-2
 
             "
-
           >
-
             Category
-
           </label>
 
           <select
-
             name="categoryId"
 
-            value={
+            value={form.categoryId}
 
-              form.categoryId
-
-            }
-
-            onChange={
-
-              handleChange
-
-            }
+            onChange={handleChange}
 
             required
 
@@ -565,69 +321,25 @@ function EventForm({
               p-4
 
             "
-
           >
+            <option value="">Select category</option>
 
-            <option
+            {categories.map((category) => (
+              <option
+                key={category.id}
 
-              value=""
-
-            >
-
-              Select category
-
-            </option>
-
-            {
-
-              categories.map(
-
-                (
-
-                  category
-
-                ) => (
-
-                  <option
-
-                    key={
-
-                      category.id
-
-                    }
-
-                    value={
-
-                      category.id
-
-                    }
-
-                  >
-
-                    {
-
-                      category.categoryName
-
-                    }
-
-                  </option>
-
-                )
-
-              )
-
-            }
-
+                value={category.id}
+              >
+                {category.categoryName}
+              </option>
+            ))}
           </select>
-
         </div>
 
         {/* Event Date */}
 
         <div>
-
           <label
-
             className="
 
               block
@@ -637,30 +349,18 @@ function EventForm({
               mb-2
 
             "
-
           >
-
             Event Date
-
           </label>
 
           <input
-
             type="datetime-local"
 
             name="eventDate"
 
-            value={
+            value={form.eventDate}
 
-              form.eventDate
-
-            }
-
-            onChange={
-
-              handleChange
-
-            }
+            onChange={handleChange}
 
             required
 
@@ -675,19 +375,14 @@ function EventForm({
               p-4
 
             "
-
           />
-
         </div>
-
       </div>
 
       {/* Upload */}
 
       <div>
-
         <label
-
           className="
 
             block
@@ -697,46 +392,28 @@ function EventForm({
             mb-2
 
           "
-
         >
-
           Banner Image
-
         </label>
 
         <input
-
           type="file"
 
           accept="image/*"
 
-          onChange={
-
-            handleImage
-
-          }
-
+          onChange={handleImage}
         />
-
       </div>
 
       {/* Preview */}
 
-      {
+      {form.bannerImageUrl && (
+        <img
+          src={form.bannerImageUrl}
 
-        form.bannerImageUrl && (
+          alt="banner"
 
-          <img
-
-            src={
-
-              form.bannerImageUrl
-
-            }
-
-            alt="banner"
-
-            className="
+          className="
 
               w-full
 
@@ -747,26 +424,15 @@ function EventForm({
               rounded-2xl
 
             "
-
-          />
-
-        )
-
-      }
+        />
+      )}
 
       {/* Button */}
 
       <button
-
         type="submit"
 
-        disabled={
-
-          loading ||
-
-          imageUploading
-
-        }
+        disabled={loading || imageUploading}
 
         className="
 
@@ -787,29 +453,11 @@ function EventForm({
           transition
 
         "
-
       >
-
-        {
-
-          imageUploading
-
-          ? "Uploading..."
-
-          : loading
-
-          ? "Saving..."
-
-          : submitText
-
-        }
-
+        {imageUploading ? "Uploading..." : loading ? "Saving..." : submitText}
       </button>
-
     </form>
-
   );
-
 }
 
 export default EventForm;

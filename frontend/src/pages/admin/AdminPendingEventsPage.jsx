@@ -1,161 +1,51 @@
-import {
+import { useEffect, useState, useCallback } from "react";
 
-  useEffect,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-  useState,
+import PageHeader from "../../components/common/PageHeader";
 
-  useCallback,
+import LoadingState from "../../components/common/LoadingState";
 
-} from "react";
+import ErrorState from "../../components/common/ErrorState";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import EmptyState from "../../components/common/EmptyState";
 
-import PageHeader
-from "../../components/common/PageHeader";
+import PendingEventCard from "../../components/admin/PendingEventCard";
 
-import LoadingState
-from "../../components/common/LoadingState";
-
-import ErrorState
-from "../../components/common/ErrorState";
-
-import EmptyState
-from "../../components/common/EmptyState";
-
-import PendingEventCard
-from "../../components/admin/PendingEventCard";
-
-import {
-
-  getPendingEvents,
-
-} from "../../api/eventApi";
+import { getPendingEvents } from "../../api/eventApi";
 
 function AdminPendingEventsPage() {
+  const [events, setEvents] = useState([]);
 
-  const [
+  const [loading, setLoading] = useState(true);
 
-    events,
+  const [error, setError] = useState("");
 
-    setEvents,
+  const loadEvents = useCallback(async () => {
+    try {
+      setLoading(true);
 
-  ] = useState([]);
+      setError("");
 
-  const [
+      const data = await getPendingEvents();
 
-    loading,
+      setEvents(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
 
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    error,
-
-    setError,
-
-  ] = useState("");
-
-  const loadEvents =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          setError(
-
-            ""
-
-          );
-
-          const data =
-
-            await getPendingEvents();
-
-          setEvents(
-
-            Array.isArray(
-
-              data
-
-            )
-
-            ?
-
-            data
-
-            :
-
-            []
-
-          );
-
-        }
-
-        catch (
-
-          error
-
-        ) {
-
-          console.error(
-
-            error
-
-          );
-
-          setError(
-
-            "Failed to load pending events"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
+      setError("Failed to load pending events");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-
     loadEvents();
-
-  },
-
-  [
-
-    loadEvents,
-
-  ]);
+  }, [loadEvents]);
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -165,96 +55,28 @@ function AdminPendingEventsPage() {
           space-y-8
 
         "
-
       >
-
         <PageHeader
-
           title="Pending Events"
 
           description="Review and manage event approval requests."
-
         />
 
-        {
+        {loading && <LoadingState message="Loading pending events..." />}
 
-          loading
+        {!loading && error && <ErrorState message={error} />}
 
-          &&
+        {!loading && !error && events.length === 0 && (
+          <EmptyState
+            title="No Pending Events"
 
-          <LoadingState
-
-            message="Loading pending events..."
-
+            description="All event requests have been reviewed."
           />
+        )}
 
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          error
-
-          &&
-
-          <ErrorState
-
-            message={
-
-              error
-
-            }
-
-          />
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          !error
-
-          &&
-
-          events.length === 0
-
-          && (
-
-            <EmptyState
-
-              title="No Pending Events"
-
-              description="All event requests have been reviewed."
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          !error
-
-          &&
-
-          events.length > 0
-
-          && (
-
-            <div
-
-              className="
+        {!loading && !error && events.length > 0 && (
+          <div
+            className="
 
                 grid
 
@@ -265,59 +87,21 @@ function AdminPendingEventsPage() {
                 gap-6
 
               "
+          >
+            {events.map((event) => (
+              <PendingEventCard
+                key={event.id}
 
-            >
+                event={event}
 
-              {
-
-                events.map(
-
-                  (
-
-                    event
-
-                  ) => (
-
-                    <PendingEventCard
-
-                      key={
-
-                        event.id
-
-                      }
-
-                      event={
-
-                        event
-
-                      }
-
-                      onAction={
-
-                        loadEvents
-
-                      }
-
-                    />
-
-                  )
-
-                )
-
-              }
-
-            </div>
-
-          )
-
-        }
-
+                onAction={loadEvents}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default AdminPendingEventsPage;

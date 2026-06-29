@@ -1,17 +1,12 @@
 import { Router } from "express";
 
-import { authMiddleware }
-from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import { rbac }
-from "../../middlewares/rbac.middleware.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import { validate }
-from "../../middlewares/validate.middleware.js";
+import { validate } from "../../middlewares/validate.middleware.js";
 
-import {
-  createOpportunitySchema,
-} from "./opportunity.validation.js";
+import { createOpportunitySchema } from "./opportunity.validation.js";
 
 import {
   createOpportunity,
@@ -39,15 +34,9 @@ const router = Router();
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/",
-  getAllOpportunities
-);
+router.get("/", getAllOpportunities);
 
-router.get(
-  "/recent",
-  getRecentOpportunities
-);
+router.get("/recent", getRecentOpportunities);
 
 /*
 |--------------------------------------------------------------------------
@@ -60,19 +49,12 @@ router.get(
 
   authMiddleware,
 
-  rbac([
-    "ADMIN",
-  ]),
+  rbac(["ADMIN"]),
 
-  getPendingOpportunities
+  getPendingOpportunities,
 );
 
-router.get(
-  "/my",
-  authMiddleware,
-  rbac(["ORGANIZATION"]),
-  getMyOpportunities
-);
+router.get("/my", authMiddleware, rbac(["ORGANIZATION"]), getMyOpportunities);
 
 /*
 |--------------------------------------------------------------------------
@@ -85,11 +67,9 @@ router.get(
 
   authMiddleware,
 
-  rbac([
-    "STUDENT",
-  ]),
+  rbac(["STUDENT"]),
 
-  getSavedOpportunities
+  getSavedOpportunities,
 );
 
 /*
@@ -101,16 +81,11 @@ router.get(
 router.get(
   "/organization/me",
   authMiddleware,
-  rbac([
-    "ORGANIZATION",
-  ]),
-  getOrganizationOpportunities
+  rbac(["ORGANIZATION"]),
+  getOrganizationOpportunities,
 );
 
-router.get(
-  "/:id",
-  getOpportunityById
-);
+router.get("/:id", getOpportunityById);
 
 /*
 |--------------------------------------------------------------------------
@@ -123,43 +98,31 @@ router.post(
 
   authMiddleware,
 
-  rbac([
-    "ORGANIZATION",
-  ]),
+  rbac(["ORGANIZATION"]),
 
-  validate(
-    createOpportunitySchema
-  ),
+  validate(createOpportunitySchema),
 
-  createOpportunity
+  createOpportunity,
 );
 
 router.patch(
-
   "/:id",
 
   authMiddleware,
 
-  rbac([
-    "ORGANIZATION"
-  ]),
+  rbac(["ORGANIZATION"]),
 
-  updateOpportunity
-
+  updateOpportunity,
 );
 
 router.delete(
-
   "/:id",
 
   authMiddleware,
 
-  rbac([
-    "ORGANIZATION"
-  ]),
+  rbac(["ORGANIZATION"]),
 
-  deleteOpportunity
-
+  deleteOpportunity,
 );
 
 /*
@@ -173,11 +136,9 @@ router.patch(
 
   authMiddleware,
 
-  rbac([
-    "ADMIN",
-  ]),
+  rbac(["ADMIN"]),
 
-  approveOpportunity
+  approveOpportunity,
 );
 
 router.patch(
@@ -185,11 +146,9 @@ router.patch(
 
   authMiddleware,
 
-  rbac([
-    "ADMIN",
-  ]),
+  rbac(["ADMIN"]),
 
-  rejectOpportunity
+  rejectOpportunity,
 );
 
 /*
@@ -203,11 +162,9 @@ router.post(
 
   authMiddleware,
 
-  rbac([
-    "STUDENT",
-  ]),
+  rbac(["STUDENT"]),
 
-  applyOpportunity
+  applyOpportunity,
 );
 
 router.post(
@@ -215,11 +172,9 @@ router.post(
 
   authMiddleware,
 
-  rbac([
-    "STUDENT",
-  ]),
+  rbac(["STUDENT"]),
 
-  saveOpportunity
+  saveOpportunity,
 );
 
 router.delete(
@@ -227,11 +182,9 @@ router.delete(
 
   authMiddleware,
 
-  rbac([
-    "STUDENT",
-  ]),
+  rbac(["STUDENT"]),
 
-  unsaveOpportunity
+  unsaveOpportunity,
 );
 
 /**

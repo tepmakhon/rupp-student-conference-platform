@@ -1,13 +1,6 @@
-function EventDescription({
-
-  description,
-
-}) {
-
+function EventDescription({ description }) {
   return (
-
     <div
-
       className="
 
         bg-white
@@ -21,11 +14,8 @@ function EventDescription({
         shadow-sm
 
       "
-
     >
-
       <h2
-
         className="
 
           text-3xl
@@ -37,15 +27,11 @@ function EventDescription({
           mb-6
 
         "
-
       >
-
         Description
-
       </h2>
 
       <p
-
         className="
 
           text-gray-600
@@ -53,21 +39,11 @@ function EventDescription({
           leading-8
 
         "
-
       >
-
-        {
-
-          description
-
-        }
-
+        {description}
       </p>
-
     </div>
-
   );
-
 }
 
 export default EventDescription;

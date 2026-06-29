@@ -1,21 +1,12 @@
-import {
-
-  BellIcon,
-
-} from "@heroicons/react/24/outline";
+import { BellIcon } from "@heroicons/react/24/outline";
 
 function NotificationHero({
-
   total = 0,
 
   unread = 0,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -27,11 +18,8 @@ function NotificationHero({
         p-8
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -47,11 +35,8 @@ function NotificationHero({
           gap-6
 
         "
-
       >
-
         <div
-
           className="
 
             flex
@@ -61,11 +46,8 @@ function NotificationHero({
             gap-5
 
           "
-
         >
-
           <div
-
             className="
 
               w-16
@@ -83,11 +65,8 @@ function NotificationHero({
               justify-center
 
             "
-
           >
-
             <BellIcon
-
               className="
 
                 w-8
@@ -97,15 +76,11 @@ function NotificationHero({
                 text-primary
 
               "
-
             />
-
           </div>
 
           <div>
-
             <h1
-
               className="
 
                 text-4xl
@@ -115,15 +90,11 @@ function NotificationHero({
                 text-primary
 
               "
-
             >
-
               Notifications
-
             </h1>
 
             <p
-
               className="
 
                 text-gray-500
@@ -131,19 +102,13 @@ function NotificationHero({
                 mt-2
 
               "
-
             >
-
               Stay updated with events, opportunities and system announcements.
-
             </p>
-
           </div>
-
         </div>
 
         <div
-
           className="
 
             flex
@@ -151,21 +116,15 @@ function NotificationHero({
             gap-8
 
           "
-
         >
-
           <div
-
             className="
 
               text-center
 
             "
-
           >
-
             <h3
-
               className="
 
                 text-3xl
@@ -175,41 +134,29 @@ function NotificationHero({
                 text-primary
 
               "
-
             >
-
               {total}
-
             </h3>
 
             <p
-
               className="
 
                 text-gray-500
 
               "
-
             >
-
               Total
-
             </p>
-
           </div>
 
           <div
-
             className="
 
               text-center
 
             "
-
           >
-
             <h3
-
               className="
 
                 text-3xl
@@ -219,37 +166,24 @@ function NotificationHero({
                 text-red-500
 
               "
-
             >
-
               {unread}
-
             </h3>
 
             <p
-
               className="
 
                 text-gray-500
 
               "
-
             >
-
               Unread
-
             </p>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default NotificationHero;

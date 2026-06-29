@@ -3,11 +3,7 @@ import { Request, Response, NextFunction } from "express";
 
 export const validate =
   (schema: z.ZodSchema) =>
-  async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       req.body = await schema.parseAsync(req.body);
 

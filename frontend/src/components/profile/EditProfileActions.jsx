@@ -1,15 +1,10 @@
 function EditProfileActions({
-
   saving,
 
   onCancel,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         flex
@@ -19,18 +14,11 @@ function EditProfileActions({
         gap-4
 
       "
-
     >
-
       <button
-
         type="button"
 
-        onClick={
-
-          onCancel
-
-        }
+        onClick={onCancel}
 
         className="
 
@@ -45,22 +33,14 @@ function EditProfileActions({
           font-semibold
 
         "
-
       >
-
         Cancel
-
       </button>
 
       <button
-
         type="submit"
 
-        disabled={
-
-          saving
-
-        }
+        disabled={saving}
 
         className="
 
@@ -81,29 +61,11 @@ function EditProfileActions({
           transition
 
         "
-
       >
-
-        {
-
-          saving
-
-          ?
-
-          "Saving..."
-
-          :
-
-          "Save Changes"
-
-        }
-
+        {saving ? "Saving..." : "Save Changes"}
       </button>
-
     </div>
-
   );
-
 }
 
 export default EditProfileActions;

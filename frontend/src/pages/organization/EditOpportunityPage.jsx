@@ -1,304 +1,108 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { useNavigate, useParams } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import {
+import PageHeader from "../../components/common/PageHeader";
 
-  useNavigate,
+import LoadingState from "../../components/common/LoadingState";
 
-  useParams,
+import ErrorState from "../../components/common/ErrorState";
 
-} from "react-router-dom";
-
-import toast
-from "react-hot-toast";
-
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
-
-import PageHeader
-from "../../components/common/PageHeader";
-
-import LoadingState
-from "../../components/common/LoadingState";
-
-import ErrorState
-from "../../components/common/ErrorState";
-
-import OpportunityForm
-from "../../components/opportunities/OpportunityForm";
+import OpportunityForm from "../../components/opportunities/OpportunityForm";
 
 import {
-
   getOpportunityById,
-
   updateOpportunity,
+} from "../../api/opportunityApi";
 
-}
-
-from "../../api/opportunityApi";
-
-import {
-
-  getOpportunityTypes,
-
-}
-
-from "../../api/opportunityTypeApi";
+import { getOpportunityTypes } from "../../api/opportunityTypeApi";
 
 function EditOpportunityPage() {
+  const { id } = useParams();
 
-  const {
+  const navigate = useNavigate();
 
-    id,
+  const [opportunity, setOpportunity] = useState(null);
 
-  } = useParams();
+  const [opportunityTypes, setOpportunityTypes] = useState([]);
 
-  const navigate =
+  const [loading, setLoading] = useState(true);
 
-    useNavigate();
+  const [saving, setSaving] = useState(false);
 
-  const [
-
-    opportunity,
-
-    setOpportunity,
-
-  ] = useState(null);
-
-  const [
-
-    opportunityTypes,
-
-    setOpportunityTypes,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    saving,
-
-    setSaving,
-
-  ] = useState(false);
-
-  const [
-
-    error,
-
-    setError,
-
-  ] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-
     loadData();
-
   }, []);
 
-  const loadData =
-  async () => {
-
+  const loadData = async () => {
     try {
-
-      setLoading(
-
-        true
-
-      );
+      setLoading(true);
 
       setError("");
 
-      const [
-
-        opportunityData,
-
-        typeData,
-
-      ] = await Promise.all([
-
-        getOpportunityById(
-
-          id
-
-        ),
+      const [opportunityData, typeData] = await Promise.all([
+        getOpportunityById(id),
 
         getOpportunityTypes(),
-
       ]);
 
-      setOpportunity(
+      setOpportunity(opportunityData);
 
-        opportunityData
+      setOpportunityTypes(Array.isArray(typeData) ? typeData : []);
+    } catch (error) {
+      console.error(error);
 
-      );
-
-      setOpportunityTypes(
-
-        Array.isArray(
-
-          typeData
-
-        )
-
-        ?
-
-        typeData
-
-        :
-
-        []
-
-      );
-
+      setError("Failed to load opportunity");
+    } finally {
+      setLoading(false);
     }
-
-    catch (error) {
-
-      console.error(
-
-        error
-
-      );
-
-      setError(
-
-        "Failed to load opportunity"
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(
-
-        false
-
-      );
-
-    }
-
   };
 
-  const handleSubmit =
-  async (
-    form
-  ) => {
-
+  const handleSubmit = async (form) => {
     try {
-
-      setSaving(
-
-        true
-
-      );
+      setSaving(true);
 
       await updateOpportunity(
-
         id,
 
-        form
-
+        form,
       );
 
-      toast.success(
+      toast.success("Opportunity updated");
 
-        "Opportunity updated"
+      navigate("/organization/opportunities");
+    } catch (error) {
+      console.error(error);
 
-      );
-
-      navigate(
-
-        "/organization/opportunities"
-
-      );
-
+      toast.error(error?.response?.data?.message || "Update failed");
+    } finally {
+      setSaving(false);
     }
-
-    catch (error) {
-
-      console.error(
-
-        error
-
-      );
-
-      toast.error(
-
-        error?.response
-
-        ?.data?.message
-
-        ||
-
-        "Update failed"
-
-      );
-
-    }
-
-    finally {
-
-      setSaving(
-
-        false
-
-      );
-
-    }
-
   };
 
   if (loading) {
-
     return (
-
       <DashboardLayout>
-
-        <LoadingState
-
-          message="Loading opportunity..."
-
-        />
-
+        <LoadingState message="Loading opportunity..." />
       </DashboardLayout>
-
     );
-
   }
 
   if (error) {
-
     return (
-
       <DashboardLayout>
-
         <ErrorState
-
           message={error}
 
           action={
-
             <button
-
-              onClick={
-
-                loadData
-
-              }
+              onClick={loadData}
 
               className="
 
@@ -317,67 +121,34 @@ function EditOpportunityPage() {
                 transition
 
               "
-
             >
-
               Retry
-
             </button>
-
           }
-
         />
-
       </DashboardLayout>
-
     );
-
   }
 
   return (
-
     <DashboardLayout>
-
       <PageHeader
-
         title="Edit Opportunity"
 
         description="Update your opportunity."
-
       />
 
       <OpportunityForm
+        initialData={opportunity}
 
-        initialData={
+        opportunityTypes={opportunityTypes}
 
-          opportunity
+        loading={saving}
 
-        }
-
-        opportunityTypes={
-
-          opportunityTypes
-
-        }
-
-        loading={
-
-          saving
-
-        }
-
-        onSubmit={
-
-          handleSubmit
-
-        }
-
+        onSubmit={handleSubmit}
       />
-
     </DashboardLayout>
-
   );
-
 }
 
 export default EditOpportunityPage;

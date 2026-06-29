@@ -1,5 +1,4 @@
 function Textarea({
-
   label,
 
   value,
@@ -13,24 +12,12 @@ function Textarea({
   required = false,
 
   className = "",
-
 }) {
-
   return (
-
-    <div
-
-      className="space-y-2"
-
-    >
-
-      {
-
-        label && (
-
-          <label
-
-            className="
+    <div className="space-y-2">
+      {label && (
+        <label
+          className="
 
               block
 
@@ -39,19 +26,12 @@ function Textarea({
               text-gray-700
 
             "
-
-          >
-
-            {label}
-
-          </label>
-
-        )
-
-      }
+        >
+          {label}
+        </label>
+      )}
 
       <textarea
-
         rows={rows}
 
         value={value}
@@ -85,13 +65,9 @@ function Textarea({
           ${className}
 
         `}
-
       />
-
     </div>
-
   );
-
 }
 
 export default Textarea;

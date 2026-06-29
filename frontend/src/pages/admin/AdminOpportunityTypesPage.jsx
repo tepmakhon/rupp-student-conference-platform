@@ -1,26 +1,15 @@
-import AdminCrudPage
-from "../../components/admin/AdminCrudPage";
+import AdminCrudPage from "../../components/admin/AdminCrudPage";
 
 import {
-
   getOpportunityTypes,
-
   createOpportunityType,
-
   updateOpportunityType,
-
   deleteOpportunityType,
-
-}
-
-from "../../api/opportunityTypeApi";
+} from "../../api/opportunityTypeApi";
 
 function AdminOpportunityTypesPage() {
-
   return (
-
     <AdminCrudPage
-
       title="Opportunity Types"
 
       description="Manage opportunity types used throughout the platform."
@@ -28,57 +17,30 @@ function AdminOpportunityTypesPage() {
       entityName="Opportunity Type"
 
       columns={[
-
         {
-
           key: "typeName",
 
           label: "Type Name",
-
         },
-
       ]}
 
       formFields={[
-
         {
-
           name: "typeName",
 
           label: "Type Name",
-
         },
-
       ]}
 
-      getAll={
+      getAll={getOpportunityTypes}
 
-        getOpportunityTypes
+      create={createOpportunityType}
 
-      }
+      update={updateOpportunityType}
 
-      create={
-
-        createOpportunityType
-
-      }
-
-      update={
-
-        updateOpportunityType
-
-      }
-
-      remove={
-
-        deleteOpportunityType
-
-      }
-
+      remove={deleteOpportunityType}
     />
-
   );
-
 }
 
 export default AdminOpportunityTypesPage;

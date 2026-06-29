@@ -1,172 +1,69 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { useNavigate } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import {
+import EventForm from "../../components/events/EventForm";
 
-  useNavigate,
+import { createEvent } from "../../api/eventApi";
 
-} from "react-router-dom";
-
-import toast
-
-from "react-hot-toast";
-
-import DashboardLayout
-
-from "../../components/layouts/DashboardLayout";
-
-import EventForm
-
-from "../../components/events/EventForm";
-
-import {
-
-  createEvent,
-
-} from "../../api/eventApi";
-
-import {
-
-  getEventCategories,
-
-} from "../../api/eventCategoryApi";
+import { getEventCategories } from "../../api/eventCategoryApi";
 
 function CreateEventPage() {
+  const navigate = useNavigate();
 
-  const navigate =
+  const [categories, setCategories] = useState([]);
 
-    useNavigate();
-
-  const [
-
-    categories,
-
-    setCategories,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     loadCategories();
-
   }, []);
 
-  const loadCategories =
+  const loadCategories = async () => {
+    try {
+      const data = await getEventCategories();
 
-    async () => {
+      setCategories(data);
+    } catch (error) {
+      console.error(error);
 
-      try {
+      toast.error("Failed to load categories");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        const data =
+  const handleCreate = async (form) => {
+    try {
+      await createEvent(form);
 
-          await getEventCategories();
+      toast.success("Event created");
 
-        setCategories(
+      navigate("/organization/events");
+    } catch (error) {
+      console.error(error);
 
-          data
-
-        );
-
-      } catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          "Failed to load categories"
-
-        );
-
-      } finally {
-
-        setLoading(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  const handleCreate =
-
-    async (form) => {
-
-      try {
-
-        await createEvent(
-
-          form
-
-        );
-
-        toast.success(
-
-          "Event created"
-
-        );
-
-        navigate(
-
-          "/organization/events"
-
-        );
-
-      } catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response?.data?.message ||
-
-          "Failed to create event"
-
-        );
-
-      }
-
-    };
+      toast.error(error?.response?.data?.message || "Failed to create event");
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
         className="
           max-w-4xl
           mx-auto
         "
       >
-
         <div
           className="
             mb-8
           "
         >
-
           <h1
             className="
               text-4xl
@@ -174,9 +71,7 @@ function CreateEventPage() {
               text-primary
             "
           >
-
             Create Event
-
           </h1>
 
           <p
@@ -185,58 +80,31 @@ function CreateEventPage() {
               mt-2
             "
           >
-
             Publish a new event for students.
-
           </p>
-
         </div>
 
-        {
-
-          loading
-
-          ? (
-
-            <div
-              className="
+        {loading ? (
+          <div
+            className="
                 text-center
                 py-20
               "
-            >
+          >
+            Loading...
+          </div>
+        ) : (
+          <EventForm
+            categories={categories}
 
-              Loading...
+            onSubmit={handleCreate}
 
-            </div>
-
-          )
-
-          : (
-
-            <EventForm
-
-              categories={
-                categories
-              }
-
-              onSubmit={
-                handleCreate
-              }
-
-              submitText="Create Event"
-
-            />
-
-          )
-
-        }
-
+            submitText="Create Event"
+          />
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default CreateEventPage;

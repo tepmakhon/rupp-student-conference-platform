@@ -1,41 +1,21 @@
-import { Router }
-from "express";
+import { Router } from "express";
 
-import {
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-  authMiddleware,
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
-} from "../../middlewares/auth.middleware.js";
+import { getMyActivityHistoryController } from "./activity.controller.js";
 
-import {
-
-  rbac,
-
-} from "../../middlewares/rbac.middleware.js";
-
-import {
-
-  getMyActivityHistoryController,
-
-} from "./activity.controller.js";
-
-const router =
-  Router();
+const router = Router();
 
 router.get(
-
   "/my-history",
 
   authMiddleware,
 
-  rbac([
+  rbac(["STUDENT"]),
 
-    "STUDENT",
-
-  ]),
-
-  getMyActivityHistoryController
-
+  getMyActivityHistoryController,
 );
 
 export default router;

@@ -1,8 +1,6 @@
-import { prisma }
-from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
-import { AppError }
-from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -10,21 +8,12 @@ from "../../utils/AppError.js";
 |--------------------------------------------------------------------------
 */
 
-export const getAllCategories =
-async () => {
-
+export const getAllCategories = async () => {
   return prisma.eventCategory.findMany({
-
     orderBy: {
-
-      categoryName:
-
-        "asc",
-
+      categoryName: "asc",
     },
-
   });
-
 };
 
 /*
@@ -33,51 +22,26 @@ async () => {
 |--------------------------------------------------------------------------
 */
 
-export const createCategory =
-async (
-
-  data: any
-
-) => {
-
-  const existing =
-
-    await prisma.eventCategory.findUnique({
-
-      where: {
-
-        categoryName:
-
-          data.categoryName,
-
-      },
-
-    });
+export const createCategory = async (data: any) => {
+  const existing = await prisma.eventCategory.findUnique({
+    where: {
+      categoryName: data.categoryName,
+    },
+  });
 
   if (existing) {
-
     throw new AppError(
-
       "Category already exists",
 
-      409
-
+      409,
     );
-
   }
 
   return prisma.eventCategory.create({
-
     data: {
-
-      categoryName:
-
-        data.categoryName,
-
+      categoryName: data.categoryName,
     },
-
   });
-
 };
 
 /*
@@ -86,89 +50,52 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const updateCategory =
-async (
-
+export const updateCategory = async (
   id: bigint,
 
-  data: any
-
+  data: any,
 ) => {
-
-  const category =
-
-    await prisma.eventCategory.findUnique({
-
-      where: {
-
-        id,
-
-      },
-
-    });
+  const category = await prisma.eventCategory.findUnique({
+    where: {
+      id,
+    },
+  });
 
   if (!category) {
-
     throw new AppError(
-
       "Category not found",
 
-      404
-
+      404,
     );
-
   }
 
-  const existing =
+  const existing = await prisma.eventCategory.findFirst({
+    where: {
+      categoryName: data.categoryName,
 
-    await prisma.eventCategory.findFirst({
-
-      where: {
-
-        categoryName:
-
-          data.categoryName,
-
-        NOT: {
-
-          id,
-
-        },
-
+      NOT: {
+        id,
       },
-
-    });
+    },
+  });
 
   if (existing) {
-
     throw new AppError(
-
       "Category already exists",
 
-      409
-
+      409,
     );
-
   }
 
   return prisma.eventCategory.update({
-
     where: {
-
       id,
-
     },
 
     data: {
-
-      categoryName:
-
-        data.categoryName,
-
+      categoryName: data.categoryName,
     },
-
   });
-
 };
 
 /*
@@ -177,35 +104,19 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const deleteCategory =
-async (
-
-  id: bigint
-
-) => {
-
-  const category =
-
-    await prisma.eventCategory.findUnique({
-
-      where: {
-
-        id,
-
-      },
-
-    });
+export const deleteCategory = async (id: bigint) => {
+  const category = await prisma.eventCategory.findUnique({
+    where: {
+      id,
+    },
+  });
 
   if (!category) {
-
     throw new AppError(
-
       "Category not found",
 
-      404
-
+      404,
     );
-
   }
 
   /*
@@ -214,42 +125,25 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const totalEvents =
-
-    await prisma.event.count({
-
-      where: {
-
-        categoryId:
-
-          id,
-
-      },
-
-    });
+  const totalEvents = await prisma.event.count({
+    where: {
+      categoryId: id,
+    },
+  });
 
   if (totalEvents > 0) {
-
     throw new AppError(
-
       "Category is currently used by events",
 
-      400
-
+      400,
     );
-
   }
 
   await prisma.eventCategory.delete({
-
     where: {
-
       id,
-
     },
-
   });
 
   return true;
-
 };

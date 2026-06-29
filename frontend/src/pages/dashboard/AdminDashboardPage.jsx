@@ -1,369 +1,160 @@
-import {
-  useEffect,
-  useCallback,
-} from "react";
+import { useEffect, useCallback } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
 
 import {
-  useDispatch,
-  useSelector,
-} from "react-redux";
-
-import {
-
   UsersIcon,
-
   BuildingOffice2Icon,
-
   CalendarDaysIcon,
-
   ClockIcon,
-
   CheckCircleIcon,
-
   XCircleIcon,
-
   BriefcaseIcon,
-
   DocumentTextIcon,
-
 } from "@heroicons/react/24/outline";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import DashboardHeader
-from "../../components/dashboard/DashboardHeader";
+import DashboardHeader from "../../components/dashboard/DashboardHeader";
 
-import DashboardLoading
-from "../../components/dashboard/DashboardLoading";
+import DashboardLoading from "../../components/dashboard/DashboardLoading";
 
-import DashboardError
-from "../../components/dashboard/DashboardError";
+import DashboardError from "../../components/dashboard/DashboardError";
 
-import DashboardStatsGrid
-from "../../components/dashboard/DashboardStatsGrid";
+import DashboardStatsGrid from "../../components/dashboard/DashboardStatsGrid";
 
-import DashboardStatCard
-from "../../components/dashboard/DashboardStatCard";
+import DashboardStatCard from "../../components/dashboard/DashboardStatCard";
+
+import { getAdminDashboard } from "../../api/dashboardApi";
 
 import {
-
-  getAdminDashboard,
-
-} from "../../api/dashboardApi";
-
-import {
-
   setDashboardLoading,
-
   setDashboardStats,
-
   setDashboardError,
-
 } from "../../redux/slices/dashboardSlice";
 
 import socket from "../../socket/socket";
 
 function AdminDashboardPage() {
-  const dispatch =
-    useDispatch();
+  const dispatch = useDispatch();
 
   const {
-
     stats,
 
     loading,
 
     error,
+  } = useSelector((state) => state.dashboard);
 
-  } = useSelector(
+  const loadDashboard = useCallback(async () => {
+    try {
+      dispatch(setDashboardLoading(true));
 
-    state =>
+      dispatch(setDashboardError(null));
 
-      state.dashboard
+      const data = await getAdminDashboard();
 
-  );
+      dispatch(setDashboardStats(data));
+    } catch (error) {
+      console.error(error);
 
-  const loadDashboard =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          dispatch(
-
-            setDashboardLoading(
-
-              true
-
-            )
-
-          );
-
-          dispatch(
-
-            setDashboardError(
-
-              null
-
-            )
-
-          );
-
-          const data =
-
-            await getAdminDashboard();
-
-          dispatch(
-
-            setDashboardStats(
-
-              data
-
-            )
-
-          );
-
-        }
-
-        catch (
-
-          error
-
-        ) {
-
-          console.error(
-
-            error
-
-          );
-
-          dispatch(
-
-            setDashboardError(
-
-              "Failed to load dashboard"
-
-            )
-
-          );
-
-        }
-
-        finally {
-
-          dispatch(
-
-            setDashboardLoading(
-
-              false
-
-            )
-
-          );
-
-        }
-
-      },
-
-      [
-
-        dispatch,
-
-      ]
-
-    );
+      dispatch(setDashboardError("Failed to load dashboard"));
+    } finally {
+      dispatch(setDashboardLoading(false));
+    }
+  }, [dispatch]);
   useEffect(() => {
-
     const refreshDashboard = () => {
-
       loadDashboard();
-
     };
 
-    socket.on(
-      "dashboard_update",
-      refreshDashboard
-    );
+    socket.on("dashboard_update", refreshDashboard);
 
     return () => {
-
-      socket.off(
-        "dashboard_update",
-        refreshDashboard
-      );
-
+      socket.off("dashboard_update", refreshDashboard);
     };
-
   }, [loadDashboard]);
   useEffect(() => {
-
     loadDashboard();
-
-  },
-
-  [
-
-    loadDashboard,
-
-  ]);
+  }, [loadDashboard]);
 
   const dashboardCards = [
-
     {
+      title: "Students",
 
-      title:
+      value: stats?.totalStudents,
 
-      "Students",
-
-      value:
-
-      stats?.totalStudents,
-
-      icon:
-
-      UsersIcon,
-
+      icon: UsersIcon,
     },
 
     {
+      title: "Organizations",
 
-      title:
+      value: stats?.totalOrganizations,
 
-      "Organizations",
-
-      value:
-
-      stats?.totalOrganizations,
-
-      icon:
-
-      BuildingOffice2Icon,
-
+      icon: BuildingOffice2Icon,
     },
 
     {
+      title: "Events",
 
-      title:
+      value: stats?.totalEvents,
 
-      "Events",
-
-      value:
-
-      stats?.totalEvents,
-
-      icon:
-
-      CalendarDaysIcon,
-
+      icon: CalendarDaysIcon,
     },
 
     {
+      title: "Pending Events",
 
-      title:
+      value: stats?.pendingEvents,
 
-      "Pending Events",
-
-      value:
-
-      stats?.pendingEvents,
-
-      icon:
-
-      ClockIcon,
-
+      icon: ClockIcon,
     },
 
     {
+      title: "Approved Events",
 
-      title:
+      value: stats?.approvedEvents,
 
-      "Approved Events",
-
-      value:
-
-      stats?.approvedEvents,
-
-      icon:
-
-      CheckCircleIcon,
-
+      icon: CheckCircleIcon,
     },
 
     {
+      title: "Rejected Events",
 
-      title:
+      value: stats?.rejectedEvents,
 
-      "Rejected Events",
-
-      value:
-
-      stats?.rejectedEvents,
-
-      icon:
-
-      XCircleIcon,
-
+      icon: XCircleIcon,
     },
 
     {
+      title: "Opportunities",
 
-      title:
+      value: stats?.totalOpportunities,
 
-      "Opportunities",
-
-      value:
-
-      stats?.totalOpportunities,
-
-      icon:
-
-      BriefcaseIcon,
-
+      icon: BriefcaseIcon,
     },
 
     {
+      title: "Approved Opportunities",
 
-      title:
+      value: stats?.approvedOpportunities,
 
-      "Approved Opportunities",
-
-      value:
-
-      stats?.approvedOpportunities,
-
-      icon:
-
-      CheckCircleIcon,
-
+      icon: CheckCircleIcon,
     },
 
     {
+      title: "Applications",
 
-      title:
+      value: stats?.totalApplications,
 
-      "Applications",
-
-      value:
-
-      stats?.totalApplications,
-
-      icon:
-
-      DocumentTextIcon,
-
+      icon: DocumentTextIcon,
     },
-
   ];
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -373,114 +164,41 @@ function AdminDashboardPage() {
           space-y-8
 
         "
-
       >
-
         <DashboardHeader
-
           title="Admin Dashboard"
 
           subtitle="Manage and monitor the entire RUPP Platform"
 
-          loading={
+          loading={loading}
 
-            loading
-
-          }
-
-          onRefresh={
-
-            loadDashboard
-
-          }
-
+          onRefresh={loadDashboard}
         />
 
-        {
+        {loading && <DashboardLoading />}
 
-          loading &&
+        {!loading && error && <DashboardError message={error} />}
 
-          <DashboardLoading />
+        {!loading && !error && (
+          <>
+            <DashboardStatsGrid>
+              {dashboardCards.map((card) => (
+                <DashboardStatCard
+                  key={card.title}
 
-        }
+                  title={card.title}
 
-        {
+                  value={card.value}
 
-          !loading &&
+                  icon={card.icon}
+                />
+              ))}
+            </DashboardStatsGrid>
 
-          error && (
+            {/* Bottom Section */}
 
-            <DashboardError
-
-              message={
-
-                error
-
-              }
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading &&
-
-          !error && (
-
-            <>
-
-              <DashboardStatsGrid>
-
-                {
-
-                  dashboardCards.map(
-
-                    card => (
-
-                      <DashboardStatCard
-
-                        key={
-
-                          card.title
-
-                        }
-
-                        title={
-
-                          card.title
-
-                        }
-
-                        value={
-
-                          card.value
-
-                        }
-
-                        icon={
-
-                          card.icon
-
-                        }
-
-                      />
-
-                    )
-
-                  )
-
-                }
-
-              </DashboardStatsGrid>
-
-              {/* Bottom Section */}
-
-              <div
-
-                className="
+            <div
+              className="
 
                   grid
 
@@ -491,14 +209,11 @@ function AdminDashboardPage() {
                   gap-8
 
                 "
+            >
+              {/* Summary */}
 
-              >
-
-                {/* Summary */}
-
-                <div
-
-                  className="
+              <div
+                className="
 
                     bg-white
 
@@ -511,12 +226,9 @@ function AdminDashboardPage() {
                     p-6
 
                   "
-
-                >
-
-                  <h3
-
-                    className="
+              >
+                <h3
+                  className="
 
                       text-2xl
 
@@ -527,156 +239,83 @@ function AdminDashboardPage() {
                       mb-6
 
                     "
+                >
+                  Platform Summary
+                </h3>
 
-                  >
-
-                    Platform Summary
-
-                  </h3>
-
-                  <div
-
-                    className="
+                <div
+                  className="
 
                       space-y-5
 
                     "
+                >
+                  <div
+                    className="
 
+                        flex
+
+                        justify-between
+
+                      "
                   >
+                    <span>Event Approval Rate</span>
 
-                    <div
-
+                    <span
                       className="
-
-                        flex
-
-                        justify-between
-
-                      "
-
-                    >
-
-                      <span>
-
-                        Event Approval Rate
-
-                      </span>
-
-                      <span
-
-                        className="
 
                           font-bold
 
                           text-green-600
 
                         "
-
-                      >
-
-                        {
-
-                          stats?.totalEvents
-
-                          ?
-
-                          Math.round(
-
-                            (
-
-                              stats.approvedEvents
-
-                              /
-
-                              stats.totalEvents
-
-                            )
-
-                            * 100
-
-                          )
-
-                          :
-
-                          0
-
-                        }%
-
-                      </span>
-
-                    </div>
-
-                    <div
-
-                      className="
-
-                        flex
-
-                        justify-between
-
-                      "
-
                     >
-
-                      <span>
-
-                        Opportunity Approval Rate
-
-                      </span>
-
-                      <span
-
-                        className="
-
-                          font-bold
-
-                          text-green-600
-
-                        "
-
-                      >
-
-                        {
-
-                          stats?.totalOpportunities
-
-                          ?
-
-                          Math.round(
-
-                            (
-
-                              stats.approvedOpportunities
-
-                              /
-
-                              stats.totalOpportunities
-
-                            )
-
-                            * 100
-
+                      {stats?.totalEvents
+                        ? Math.round(
+                            (stats.approvedEvents / stats.totalEvents) * 100,
                           )
-
-                          :
-
-                          0
-
-                        }%
-
-                      </span>
-
-                    </div>
-
+                        : 0}
+                      %
+                    </span>
                   </div>
 
+                  <div
+                    className="
+
+                        flex
+
+                        justify-between
+
+                      "
+                  >
+                    <span>Opportunity Approval Rate</span>
+
+                    <span
+                      className="
+
+                          font-bold
+
+                          text-green-600
+
+                        "
+                    >
+                      {stats?.totalOpportunities
+                        ? Math.round(
+                            (stats.approvedOpportunities /
+                              stats.totalOpportunities) *
+                              100,
+                          )
+                        : 0}
+                      %
+                    </span>
+                  </div>
                 </div>
+              </div>
 
-                {/* Quick Actions */}
+              {/* Quick Actions */}
 
-                <div
-
-                  className="
+              <div
+                className="
 
                     bg-white
 
@@ -689,12 +328,9 @@ function AdminDashboardPage() {
                     p-6
 
                   "
-
-                >
-
-                  <h3
-
-                    className="
+              >
+                <h3
+                  className="
 
                       text-2xl
 
@@ -705,16 +341,12 @@ function AdminDashboardPage() {
                       mb-6
 
                     "
+                >
+                  Quick Actions
+                </h3>
 
-                  >
-
-                    Quick Actions
-
-                  </h3>
-
-                  <div
-
-                    className="
+                <div
+                  className="
 
                       grid
 
@@ -723,34 +355,27 @@ function AdminDashboardPage() {
                       gap-4
 
                     "
+                >
+                  <button
+                    className="
 
+                        p-4
+
+                        border
+
+                        rounded-xl
+
+                        hover:bg-gray-50
+
+                        transition
+
+                      "
                   >
+                    Review Events
+                  </button>
 
-                    <button
-
-                      className="
-
-                        p-4
-
-                        border
-
-                        rounded-xl
-
-                        hover:bg-gray-50
-
-                        transition
-
-                      "
-
-                    >
-
-                      Review Events
-
-                    </button>
-
-                    <button
-
-                      className="
+                  <button
+                    className="
 
                         p-4
 
@@ -763,16 +388,12 @@ function AdminDashboardPage() {
                         transition
 
                       "
+                  >
+                    Review Opportunities
+                  </button>
 
-                    >
-
-                      Review Opportunities
-
-                    </button>
-
-                    <button
-
-                      className="
+                  <button
+                    className="
 
                         p-4
 
@@ -785,16 +406,12 @@ function AdminDashboardPage() {
                         transition
 
                       "
+                  >
+                    Manage Skills
+                  </button>
 
-                    >
-
-                      Manage Skills
-
-                    </button>
-
-                    <button
-
-                      className="
+                  <button
+                    className="
 
                         p-4
 
@@ -807,31 +424,17 @@ function AdminDashboardPage() {
                         transition
 
                       "
-
-                    >
-
-                      Manage Universities
-
-                    </button>
-
-                  </div>
-
+                  >
+                    Manage Universities
+                  </button>
                 </div>
-
               </div>
-
-            </>
-
-          )
-
-        }
-
+            </div>
+          </>
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default AdminDashboardPage;

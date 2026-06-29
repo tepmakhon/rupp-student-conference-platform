@@ -1,501 +1,162 @@
-import {
+import { useEffect, useMemo, useState, useCallback } from "react";
 
-  useEffect,
+import toast from "react-hot-toast";
 
-  useMemo,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-  useState,
+import AdminPageHeader from "../../components/admin/AdminPageHeader";
 
-  useCallback,
+import AdminDataTable from "../../components/admin/AdminDataTable";
 
-} from "react";
+import AdminFormModal from "../../components/admin/AdminFormModal";
 
-import toast
-from "react-hot-toast";
+import DeleteConfirmationModal from "../../components/admin/DeleteConfirmationModal";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import Input from "../../components/ui/Input";
 
-import AdminPageHeader
-from "../../components/admin/AdminPageHeader";
-
-import AdminDataTable
-from "../../components/admin/AdminDataTable";
-
-import AdminFormModal
-from "../../components/admin/AdminFormModal";
-
-import DeleteConfirmationModal
-from "../../components/admin/DeleteConfirmationModal";
-
-import Input
-from "../../components/ui/Input";
-
-import Select
-from "../../components/ui/Select";
+import Select from "../../components/ui/Select";
 
 import {
-
   getFaculties,
-
   createFaculty,
-
   updateFaculty,
-
   deleteFaculty,
+} from "../../api/facultyApi";
 
-}
-
-from "../../api/facultyApi";
-
-import {
-
-  getUniversities,
-
-}
-
-from "../../api/universityApi";
+import { getUniversities } from "../../api/universityApi";
 
 function AdminFacultiesPage() {
+  const [faculties, setFaculties] = useState([]);
 
-  const [
+  const [universities, setUniversities] = useState([]);
 
-    faculties,
+  const [loading, setLoading] = useState(true);
 
-    setFaculties,
+  const [search, setSearch] = useState("");
 
-  ] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const [
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-    universities,
+  const [selected, setSelected] = useState(null);
 
-    setUniversities,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    search,
-
-    setSearch,
-
-  ] = useState("");
-
-  const [
-
-    modalOpen,
-
-    setModalOpen,
-
-  ] = useState(false);
-
-  const [
-
-    deleteOpen,
-
-    setDeleteOpen,
-
-  ] = useState(false);
-
-  const [
-
-    selected,
-
-    setSelected,
-
-  ] = useState(null);
-
-  const [
-
-    form,
-
-    setForm,
-
-  ] = useState({
-
+  const [form, setForm] = useState({
     facultyName: "",
 
     universityId: "",
-
   });
 
-  const loadData =
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
 
-    useCallback(
+      const [facultyData, universityData] = await Promise.all([
+        getFaculties(),
 
-      async () => {
+        getUniversities(),
+      ]);
 
-        try {
+      setFaculties(Array.isArray(facultyData) ? facultyData : []);
 
-          setLoading(
+      setUniversities(Array.isArray(universityData) ? universityData : []);
+    } catch (error) {
+      console.error(error);
 
-            true
-
-          );
-
-          const [
-
-            facultyData,
-
-            universityData,
-
-          ] = await Promise.all([
-
-            getFaculties(),
-
-            getUniversities(),
-
-          ]);
-
-          setFaculties(
-
-            Array.isArray(
-
-              facultyData
-
-            )
-
-            ?
-
-            facultyData
-
-            :
-
-            []
-
-          );
-
-          setUniversities(
-
-            Array.isArray(
-
-              universityData
-
-            )
-
-            ?
-
-            universityData
-
-            :
-
-            []
-
-          );
-
-        }
-
-        catch (
-
-          error
-
-        ) {
-
-          console.error(
-
-            error
-
-          );
-
-          toast.error(
-
-            "Failed to load faculties"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
+      toast.error("Failed to load faculties");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-
     loadData();
+  }, [loadData]);
 
-  },
+  const filtered = useMemo(() => {
+    if (!search) {
+      return faculties;
+    }
 
-  [
+    return faculties.filter((item) =>
+      item.facultyName
 
-    loadData,
+        ?.toLowerCase()
 
-  ]);
-
-  const filtered =
-
-    useMemo(
-
-      () => {
-
-        if (
-
-          !search
-
-        ) {
-
-          return faculties;
-
-        }
-
-        return faculties.filter(
-
-          (item) =>
-
-            item.facultyName
-
-            ?.toLowerCase()
-
-            .includes(
-
-              search.toLowerCase()
-
-            )
-
-        );
-
-      },
-
-      [
-
-        faculties,
-
-        search,
-
-      ]
-
+        .includes(search.toLowerCase()),
     );
+  }, [faculties, search]);
 
-  const handleAdd =
+  const handleAdd = () => {
+    setSelected(null);
 
-    () => {
+    setForm({
+      facultyName: "",
 
-      setSelected(
+      universityId: "",
+    });
 
-        null
+    setModalOpen(true);
+  };
 
-      );
+  const handleEdit = (item) => {
+    setSelected(item);
 
-      setForm({
+    setForm({
+      facultyName: item.facultyName || "",
 
-        facultyName: "",
+      universityId: item.universityId || "",
+    });
 
-        universityId: "",
+    setModalOpen(true);
+  };
 
-      });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      setModalOpen(
+    try {
+      if (selected) {
+        await updateFaculty(
+          selected.id,
 
-        true
-
-      );
-
-    };
-
-  const handleEdit =
-
-    (item) => {
-
-      setSelected(
-
-        item
-
-      );
-
-      setForm({
-
-        facultyName:
-
-          item.facultyName
-
-          || "",
-
-        universityId:
-
-          item.universityId
-
-          || "",
-
-      });
-
-      setModalOpen(
-
-        true
-
-      );
-
-    };
-
-  const handleSubmit =
-
-    async (
-
-      e
-
-    ) => {
-
-      e.preventDefault();
-
-      try {
-
-        if (
-
-          selected
-
-        ) {
-
-          await updateFaculty(
-
-            selected.id,
-
-            form
-
-          );
-
-          toast.success(
-
-            "Faculty updated"
-
-          );
-
-        }
-
-        else {
-
-          await createFaculty(
-
-            form
-
-          );
-
-          toast.success(
-
-            "Faculty created"
-
-          );
-
-        }
-
-        setModalOpen(
-
-          false
-
+          form,
         );
 
-        loadData();
+        toast.success("Faculty updated");
+      } else {
+        await createFaculty(form);
 
+        toast.success("Faculty created");
       }
 
-      catch (
+      setModalOpen(false);
 
-        error
+      loadData();
+    } catch (error) {
+      console.error(error);
 
-      ) {
+      toast.error(error?.response?.data?.message || "Operation failed");
+    }
+  };
 
-        console.error(
+  const handleDelete = async () => {
+    try {
+      await deleteFaculty(selected.id);
 
-          error
+      toast.success("Faculty deleted");
 
-        );
+      setDeleteOpen(false);
 
-        toast.error(
+      loadData();
+    } catch (error) {
+      console.error(error);
 
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Operation failed"
-
-        );
-
-      }
-
-    };
-
-  const handleDelete =
-
-    async () => {
-
-      try {
-
-        await deleteFaculty(
-
-          selected.id
-
-        );
-
-        toast.success(
-
-          "Faculty deleted"
-
-        );
-
-        setDeleteOpen(
-
-          false
-
-        );
-
-        loadData();
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Delete failed"
-
-        );
-
-      }
-
-    };
+      toast.error(error?.response?.data?.message || "Delete failed");
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -503,194 +164,82 @@ function AdminFacultiesPage() {
           mx-auto
 
         "
-
       >
-
         <AdminPageHeader
-
           title="Faculties"
 
           description="Manage faculties and universities."
 
           addLabel="Add Faculty"
 
-          onAdd={
-
-            handleAdd
-
-          }
-
+          onAdd={handleAdd}
         />
 
         <AdminDataTable
-
           columns={[
-
             {
+              key: "facultyName",
 
-              key:
-
-              "facultyName",
-
-              label:
-
-              "Faculty",
-
+              label: "Faculty",
             },
 
             {
+              key: "university",
 
-              key:
+              label: "University",
 
-              "university",
-
-              label:
-
-              "University",
-
-              render:
-
-              (item) =>
-
-              item.university
-
-              ?.universityName,
-
+              render: (item) => item.university?.universityName,
             },
-
           ]}
 
-          data={
+          data={filtered}
 
-            filtered
+          loading={loading}
 
-          }
+          search={search}
 
-          loading={
+          setSearch={setSearch}
 
-            loading
-
-          }
-
-          search={
-
-            search
-
-          }
-
-          setSearch={
-
-            setSearch
-
-          }
-
-          onEdit={
-
-            handleEdit
-
-          }
+          onEdit={handleEdit}
 
           onDelete={(item) => {
+            setSelected(item);
 
-            setSelected(
-
-              item
-
-            );
-
-            setDeleteOpen(
-
-              true
-
-            );
-
+            setDeleteOpen(true);
           }}
-
         />
 
         <AdminFormModal
+          open={modalOpen}
 
-          open={
+          title={selected ? "Edit Faculty" : "Create Faculty"}
 
-            modalOpen
+          onClose={() => setModalOpen(false)}
 
-          }
-
-          title={
-
-            selected
-
-            ?
-
-            "Edit Faculty"
-
-            :
-
-            "Create Faculty"
-
-          }
-
-          onClose={() =>
-
-            setModalOpen(
-
-              false
-
-            )
-
-          }
-
-          onSubmit={
-
-            handleSubmit
-
-          }
-
+          onSubmit={handleSubmit}
         >
-
           <Input
-
             label="Faculty Name"
 
-            value={
-
-              form.facultyName
-
-            }
+            value={form.facultyName}
 
             placeholder="Enter faculty name"
 
             onChange={(e) =>
-
               setForm({
-
                 ...form,
 
-                facultyName:
-
-                e.target.value,
-
+                facultyName: e.target.value,
               })
-
             }
-
           />
 
           <Select
-
             label="University"
 
-            value={
+            value={form.universityId}
 
-              form.universityId
-
-            }
-
-            options={
-
-              universities
-
-            }
+            options={universities}
 
             optionValue="id"
 
@@ -699,63 +248,27 @@ function AdminFacultiesPage() {
             placeholder="Select university"
 
             onChange={(e) =>
-
               setForm({
-
                 ...form,
 
-                universityId:
-
-                e.target.value,
-
+                universityId: e.target.value,
               })
-
             }
-
           />
-
         </AdminFormModal>
 
         <DeleteConfirmationModal
+          open={deleteOpen}
 
-          open={
+          title={selected?.facultyName}
 
-            deleteOpen
+          onClose={() => setDeleteOpen(false)}
 
-          }
-
-          title={
-
-            selected
-
-            ?.facultyName
-
-          }
-
-          onClose={() =>
-
-            setDeleteOpen(
-
-              false
-
-            )
-
-          }
-
-          onConfirm={
-
-            handleDelete
-
-          }
-
+          onConfirm={handleDelete}
         />
-
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default AdminFacultiesPage;

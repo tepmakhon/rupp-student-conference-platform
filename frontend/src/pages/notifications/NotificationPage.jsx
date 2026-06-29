@@ -1,87 +1,43 @@
-import {
+import { useEffect, useMemo, useState } from "react";
 
-  useEffect,
+import { useDispatch, useSelector } from "react-redux";
 
-  useMemo,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-  useState,
+import DashboardLoading from "../../components/dashboard/DashboardLoading";
 
-} from "react";
+import DashboardError from "../../components/dashboard/DashboardError";
 
-import {
+import NotificationHero from "../../components/notifications/NotificationHero";
 
-  useDispatch,
+import NotificationStats from "../../components/notifications/NotificationStats";
 
-  useSelector,
+import NotificationFilters from "../../components/notifications/NotificationFilters";
 
-} from "react-redux";
+import NotificationList from "../../components/notifications/NotificationList";
 
-import DashboardLayout
+import NotificationPagination from "../../components/notifications/NotificationPagination";
 
-from "../../components/layouts/DashboardLayout";
-
-import DashboardLoading
-
-from "../../components/dashboard/DashboardLoading";
-
-import DashboardError
-
-from "../../components/dashboard/DashboardError";
-
-import NotificationHero
-from "../../components/notifications/NotificationHero";
-
-import NotificationStats
-from "../../components/notifications/NotificationStats";
-
-import NotificationFilters
-
-from "../../components/notifications/NotificationFilters";
-
-import NotificationList
-
-from "../../components/notifications/NotificationList";
-
-import NotificationPagination
-
-from "../../components/notifications/NotificationPagination";
-
-import NotificationEmpty
-
-from "../../components/notifications/NotificationEmpty";
+import NotificationEmpty from "../../components/notifications/NotificationEmpty";
 
 import {
-
   getNotifications,
-
   readNotification,
-
   readAllNotifications,
-
 } from "../../api/notificationApi";
 
 import {
-
   setNotifications,
-
   setNotificationLoading,
-
   setNotificationError,
-
   markAsRead,
-
   markAllAsRead,
-
 } from "../../redux/slices/notificationSlice";
 
 function NotificationPage() {
-
-  const dispatch =
-
-    useDispatch();
+  const dispatch = useDispatch();
 
   const {
-
     notifications,
 
     unreadCount,
@@ -91,343 +47,95 @@ function NotificationPage() {
     error,
 
     pagination,
+  } = useSelector((state) => state.notification);
 
-  } = useSelector(
+  const [search, setSearch] = useState("");
 
-    state =>
+  const [filter, setFilter] = useState("ALL");
 
-    state.notification
-
-  );
-
-  const [
-
-    search,
-
-    setSearch,
-
-  ] = useState("");
-
-  const [
-
-    filter,
-
-    setFilter,
-
-  ] = useState(
-
-    "ALL"
-
-  );
-
-  const [
-
-    page,
-
-    setPage,
-
-  ] = useState(
-
-    1
-
-  );
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-
-    loadNotifications(
-
-      page
-
-    );
-
+    loadNotifications(page);
   }, [page]);
 
-  const loadNotifications =
-
-  async (
-
-    currentPage = 1
-
-  ) => {
-
+  const loadNotifications = async (currentPage = 1) => {
     try {
+      dispatch(setNotificationLoading(true));
 
-      dispatch(
+      dispatch(setNotificationError(null));
 
-        setNotificationLoading(
-
-          true
-
-        )
-
-      );
-
-      dispatch(
-
-        setNotificationError(
-
-          null
-
-        )
-
-      );
-
-    const data =
-
-      await getNotifications(
-
+      const data = await getNotifications(
         currentPage,
 
-        10
-
+        10,
       );
 
-      dispatch(
+      dispatch(setNotifications(data));
+    } catch (error) {
+      console.error(error);
 
-        setNotifications(
-
-          data
-
-        )
-
-      );
-
+      dispatch(setNotificationError("Failed to load notifications"));
+    } finally {
+      dispatch(setNotificationLoading(false));
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-      dispatch(
-
-        setNotificationError(
-
-          "Failed to load notifications"
-
-        )
-
-      );
-
-    }
-
-    finally {
-
-      dispatch(
-
-        setNotificationLoading(
-
-          false
-
-        )
-
-      );
-
-    }
-
   };
 
-  const filteredNotifications =
+  const filteredNotifications = useMemo(() => {
+    let items = notifications;
 
-    useMemo(
+    if (filter === "UNREAD") {
+      items = items.filter((item) => !item.isRead);
+    }
 
-      () => {
+    if (filter === "READ") {
+      items = items.filter((item) => item.isRead);
+    }
 
-        let items =
+    if (search) {
+      const keyword = search.toLowerCase();
 
-          notifications;
+      items = items.filter(
+        (item) =>
+          item.notification?.title
 
-        if (
+            ?.toLowerCase()
 
-          filter ===
+            .includes(keyword) ||
+          item.notification?.message
 
-          "UNREAD"
+            ?.toLowerCase()
 
-        ) {
+            .includes(keyword),
+      );
+    }
 
-          items =
+    return items;
+  }, [notifications, search, filter]);
 
-            items.filter(
-
-              item =>
-
-              !item.isRead
-
-            );
-
-        }
-
-        if (
-
-          filter ===
-
-          "READ"
-
-        ) {
-
-          items =
-
-            items.filter(
-
-              item =>
-
-              item.isRead
-
-            );
-
-        }
-
-        if (
-
-          search
-
-        ) {
-
-          const keyword =
-
-            search.toLowerCase();
-
-          items =
-
-            items.filter(
-
-              item =>
-
-              item.notification
-
-              ?.title
-
-              ?.toLowerCase()
-
-              .includes(
-
-                keyword
-
-              )
-
-              ||
-
-              item.notification
-
-              ?.message
-
-              ?.toLowerCase()
-
-              .includes(
-
-                keyword
-
-              )
-
-            );
-
-        }
-
-        return items;
-
-      },
-
-      [
-
-        notifications,
-
-        search,
-
-        filter,
-
-      ]
-
-    );
-
-  const handleRead =
-
-  async (
-
-    id
-
-  ) => {
-
+  const handleRead = async (id) => {
     try {
+      await readNotification(id);
 
-      await readNotification(
-
-        id
-
-      );
-
-      dispatch(
-
-        markAsRead(
-
-          id
-
-        )
-
-      );
-
+      dispatch(markAsRead(id));
+    } catch (error) {
+      console.error(error);
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-    }
-
   };
 
-  const handleReadAll =
-
-  async () => {
-
+  const handleReadAll = async () => {
     try {
-
       await readAllNotifications();
 
-      dispatch(
-
-        markAllAsRead()
-
-      );
-
+      dispatch(markAllAsRead());
+    } catch (error) {
+      console.error(error);
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-    }
-
   };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -437,165 +145,51 @@ function NotificationPage() {
           space-y-8
 
         "
-
       >
-
         <NotificationHero
-
           total={notifications.length}
 
           unread={unreadCount}
-
         />
 
-        <NotificationStats
-
-          notifications={
-
-            notifications
-
-          }
-
-        />
+        <NotificationStats notifications={notifications} />
 
         <NotificationFilters
+          search={search}
 
-          search={
+          setSearch={setSearch}
 
-            search
+          filter={filter}
 
-          }
-
-          setSearch={
-
-            setSearch
-
-          }
-
-          filter={
-
-            filter
-
-          }
-
-          setFilter={
-
-            setFilter
-
-          }
-
+          setFilter={setFilter}
         />
 
-        {
+        {loading && <DashboardLoading text="Loading notifications..." />}
 
-          loading && (
+        {!loading && error && <DashboardError message={error} />}
 
-            <DashboardLoading
+        {!loading && !error && filteredNotifications.length === 0 && (
+          <NotificationEmpty />
+        )}
 
-              text="Loading notifications..."
+        {!loading && !error && filteredNotifications.length > 0 && (
+          <NotificationList
+            notifications={filteredNotifications}
 
-            />
+            onRead={handleRead}
+          />
+        )}
 
-          )
+        {pagination && (
+          <NotificationPagination
+            pagination={pagination}
 
-        }
-
-        {
-
-          !loading &&
-
-          error && (
-
-            <DashboardError
-
-              message={
-
-                error
-
-              }
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading &&
-
-          !error &&
-
-          filteredNotifications
-
-          .length === 0 && (
-
-            <NotificationEmpty />
-
-          )
-
-        }
-
-        {
-
-          !loading &&
-
-          !error &&
-
-          filteredNotifications
-
-          .length > 0 && (
-
-            <NotificationList
-
-              notifications={
-
-                filteredNotifications
-
-              }
-
-              onRead={
-
-                handleRead
-
-              }
-
-            />
-
-          )
-
-        }
-
-        {
-
-          pagination && (
-
-            <NotificationPagination
-
-              pagination={
-
-                pagination
-
-              }
-
-              onPageChange={
-
-                setPage
-
-              }
-
-            />
-
-          )
-
-        }
-
+            onPageChange={setPage}
+          />
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default NotificationPage;

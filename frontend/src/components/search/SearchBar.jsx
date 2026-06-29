@@ -1,99 +1,37 @@
-import {
+import { useState } from "react";
 
- useState,
-
-}
-
-from "react";
-
-import {
-
- globalSearch,
-
-}
-
-from "../../api/searchApi";
+import { globalSearch } from "../../api/searchApi";
 
 function SearchBar() {
+  const [keyword, setKeyword] = useState("");
 
- const [
+  const [results, setResults] = useState(null);
 
-  keyword,
+  const search = async () => {
+    if (!keyword) {
+      return;
+    }
 
-  setKeyword,
+    const data = await globalSearch(keyword);
 
- ]
+    setResults(data);
+  };
 
- = useState("");
+  return (
+    <div>
+      <input
+        type="text"
 
- const [
+        placeholder="Search"
 
-  results,
+        value={keyword}
 
-  setResults,
+        onChange={(e) => setKeyword(e.target.value)}
+      />
 
- ]
-
- = useState(null);
-
- const search =
-
- async () => {
-
-  if (!keyword) {
-
-   return;
-
-  }
-
-  const data =
-
-  await globalSearch(
-
-   keyword
-
+      <button onClick={search}>Search</button>
+    </div>
   );
-
-  setResults(data);
-
- };
-
- return (
-
- <div>
-
- <input
-
- type="text"
-
- placeholder="Search"
-
- value={keyword}
-
- onChange={(e)=>
-
- setKeyword(
-
- e.target.value
-
- )}
-
- />
-
- <button
-
- onClick={search}
-
- >
-
- Search
-
- </button>
-
- </div>
-
- );
-
 }
 
 export default SearchBar;

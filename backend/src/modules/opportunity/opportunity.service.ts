@@ -1,11 +1,12 @@
 import { prisma } from "../../config/prisma.js";
-import { createNotification ,  notifyAdmins,} from "../notification/notification.service.js";
+import {
+  createNotification,
+  notifyAdmins,
+} from "../notification/notification.service.js";
 import { createAuditLog } from "../audit/audit.service.js";
 import { AppError } from "../../utils/AppError.js";
 import { getPagination } from "../../utils/pagination.js";
-import {
-  addActivityScore,
-} from "../activity/activityScore.service.js";
+import { addActivityScore } from "../activity/activityScore.service.js";
 
 import {
   refreshAdminDashboard,
@@ -13,115 +14,77 @@ import {
   refreshStudentDashboard,
 } from "../../socket/dashboardEvents.js";
 
-export const createOpportunity = async (
-  data: any,
-  userId: bigint
-) => {
-
-  const organization =
-    await prisma.organization.findUnique({
-      where: {
-        userId,
-      },
-    });
+export const createOpportunity = async (data: any, userId: bigint) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!organization) {
-    throw new AppError(
-      "Only organization can create opportunities",
-      403
-    );
+    throw new AppError("Only organization can create opportunities", 403);
   }
 
-  const opportunity =
-    await prisma.opportunity.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        requirements: data.requirements,
+  const opportunity = await prisma.opportunity.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      requirements: data.requirements,
 
-        coverImageUrl:
-          data.coverImageUrl,
+      coverImageUrl: data.coverImageUrl,
 
-        deadline: data.deadline
-          ? new Date(data.deadline)
-          : null,
+      deadline: data.deadline ? new Date(data.deadline) : null,
 
-        typeId: BigInt(data.typeId),
+      typeId: BigInt(data.typeId),
 
-        organizationId: organization.id,
-      },
-    });
-    await notifyAdmins(
+      organizationId: organization.id,
+    },
+  });
+  await notifyAdmins(
+    "New Opportunity Request",
 
-      "New Opportunity Request",
+    `${opportunity.title} needs approval`,
 
-      `${opportunity.title} needs approval`,
-
-      "OPPORTUNITY"
-
-    );
-
-  refreshOrganizationDashboard(
-    organization.userId
+    "OPPORTUNITY",
   );
+
+  refreshOrganizationDashboard(organization.userId);
 
   refreshAdminDashboard();
-  await createAuditLog(
-    userId,
-    `OPPORTUNITY_CREATED:${opportunity.title}`
-  );
+  await createAuditLog(userId, `OPPORTUNITY_CREATED:${opportunity.title}`);
 
   return opportunity;
 };
 
-export const getAllOpportunities =
-async ({
+export const getAllOpportunities = async ({
   page = 1,
   limit = 10,
   keyword,
   typeId,
   status,
 }: any) => {
-
-const { skip } =
-  getPagination(page, limit);
+  const { skip } = getPagination(page, limit);
 
   const today = new Date();
 
   const where: any = {
-
-    status:
-
-      "APPROVED",
+    status: "APPROVED",
 
     AND: [
-
       {
-
         OR: [
-
           {
-
             deadline: null,
-
           },
 
           {
-
             deadline: {
-
               gte: today,
-
             },
-
           },
-
         ],
-
       },
-
     ],
-
   };
 
   /*
@@ -133,47 +96,31 @@ const { skip } =
   if (keyword) {
     where.AND.push({
       OR: [
-
         {
-
           title: {
-
             contains: keyword,
 
             mode: "insensitive",
-
           },
-
         },
 
         {
-
           description: {
-
             contains: keyword,
 
             mode: "insensitive",
-
           },
-
         },
 
         {
-
           requirements: {
-
             contains: keyword,
 
             mode: "insensitive",
-
           },
-
         },
-
       ],
-
     });
-
   }
 
   /*
@@ -183,9 +130,7 @@ const { skip } =
   */
 
   if (typeId) {
-
-    where.typeId =
-      BigInt(typeId);
+    where.typeId = BigInt(typeId);
   }
 
   /*
@@ -195,18 +140,11 @@ const { skip } =
   */
 
   if (status) {
-
-    where.status =
-      status;
+    where.status = status;
   }
 
-  const [
-    opportunities,
-    total,
-  ] = await Promise.all([
-
+  const [opportunities, total] = await Promise.all([
     prisma.opportunity.findMany({
-
       where,
 
       include: {
@@ -228,7 +166,6 @@ const { skip } =
   ]);
 
   return {
-
     opportunities,
 
     filters: {
@@ -242,33 +179,25 @@ const { skip } =
       limit,
       total,
 
-      totalPages:
-        Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limit),
     },
   };
 };
 
-export const getOpportunityById = async (
-  opportunityId: bigint
-) => {
+export const getOpportunityById = async (opportunityId: bigint) => {
+  const opportunity = await prisma.opportunity.findUnique({
+    where: {
+      id: opportunityId,
+    },
 
-  const opportunity =
-    await prisma.opportunity.findUnique({
-      where: {
-        id: opportunityId,
-      },
-
-      include: {
-        organization: true,
-        type: true,
-      },
-    });
+    include: {
+      organization: true,
+      type: true,
+    },
+  });
 
   if (!opportunity) {
-    throw new AppError(
-      "Opportunity not found",
-      404
-    );
+    throw new AppError("Opportunity not found", 404);
   }
 
   return opportunity;
@@ -281,7 +210,6 @@ export const getOpportunityById = async (
 */
 
 export const getPendingOpportunities = async () => {
-
   return prisma.opportunity.findMany({
     where: {
       status: "PENDING",
@@ -298,107 +226,87 @@ export const getPendingOpportunities = async () => {
   });
 };
 
-export const approveOpportunity = async (
-  opportunityId: bigint
-) => {
-
-  const existingOpportunity =
-    await prisma.opportunity.findUnique({
-      where: {
-        id: opportunityId,
-      },
-    });
+export const approveOpportunity = async (opportunityId: bigint) => {
+  const existingOpportunity = await prisma.opportunity.findUnique({
+    where: {
+      id: opportunityId,
+    },
+  });
 
   if (!existingOpportunity) {
-    throw new AppError(
-      "Opportunity not found",
-      404
-    );
+    throw new AppError("Opportunity not found", 404);
   }
 
-  const opportunity =
-    await prisma.opportunity.update({
-      where: {
-        id: opportunityId,
-      },
+  const opportunity = await prisma.opportunity.update({
+    where: {
+      id: opportunityId,
+    },
 
-      data: {
-        status: "APPROVED",
-        approvedAt: new Date(),
-      } as any,
+    data: {
+      status: "APPROVED",
+      approvedAt: new Date(),
+    } as any,
 
-      include: {
-        organization: true,
-      },
-    });
+    include: {
+      organization: true,
+    },
+  });
 
   await createNotification(
     opportunity.organization.userId,
     "Opportunity Approved",
     `${opportunity.title} has been approved by admin`,
-    "OPPORTUNITY"
+    "OPPORTUNITY",
   );
-  refreshOrganizationDashboard(
-    opportunity.organization.userId
-  );
+  refreshOrganizationDashboard(opportunity.organization.userId);
 
   refreshAdminDashboard();
   await createAuditLog(
     opportunity.organization.userId,
-    `OPPORTUNITY_APPROVED:${opportunity.title}`
+    `OPPORTUNITY_APPROVED:${opportunity.title}`,
   );
 
   return opportunity;
 };
 
-export const rejectOpportunity = async (
-  opportunityId: bigint
-) => {
-
-  const existingOpportunity =
-    await prisma.opportunity.findUnique({
-      where: {
-        id: opportunityId,
-      },
-    });
+export const rejectOpportunity = async (opportunityId: bigint) => {
+  const existingOpportunity = await prisma.opportunity.findUnique({
+    where: {
+      id: opportunityId,
+    },
+  });
 
   if (!existingOpportunity) {
-    throw new AppError(
-      "Opportunity not found",
-      404
-    );
+    throw new AppError("Opportunity not found", 404);
   }
 
-  const opportunity =
-    await prisma.opportunity.update({
-      where: {
-        id: opportunityId,
-      },
+  const opportunity = await prisma.opportunity.update({
+    where: {
+      id: opportunityId,
+    },
 
-      data: {
-        status: "REJECTED",
-      } as any,
+    data: {
+      status: "REJECTED",
+    } as any,
 
-      include: {
-        organization: true,
-      },
-    });
+    include: {
+      organization: true,
+    },
+  });
 
   await createNotification(
     opportunity.organization.userId,
     "Opportunity Rejected",
     `${opportunity.title} has been rejected by admin`,
-    "OPPORTUNITY"
+    "OPPORTUNITY",
   );
-  refreshOrganizationDashboard(
-    opportunity.organization.userId
-  );
+  refreshOrganizationDashboard(opportunity.organization.userId);
 
   refreshAdminDashboard();
 
   await createAuditLog(
     opportunity.organization.userId,
-    `OPPORTUNITY_REJECTED:${opportunity.title}`
+    `OPPORTUNITY_REJECTED:${opportunity.title}`,
   );
 
   return opportunity;
@@ -407,216 +315,145 @@ export const rejectOpportunity = async (
 export const applyOpportunity = async (
   opportunityId: bigint,
   userId: bigint,
-  data: any
+  data: any,
 ) => {
-
-  const student =
-    await prisma.student.findUnique({
-      where: {
-        userId,
-      },
-    });
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!student) {
-    throw new AppError(
-      "Please complete your student profile first",
-      400
-    );
+    throw new AppError("Please complete your student profile first", 400);
   }
 
-  const opportunity =
-    await prisma.opportunity.findUnique({
-      where: {
-        id: opportunityId,
-      },
+  const opportunity = await prisma.opportunity.findUnique({
+    where: {
+      id: opportunityId,
+    },
 
-      include: {
-        organization: true,
-      },
-    });
+    include: {
+      organization: true,
+    },
+  });
 
   if (!opportunity) {
-    throw new AppError(
-      "Opportunity not found",
-      404
-    );
+    throw new AppError("Opportunity not found", 404);
   }
 
-  if (
-
-    opportunity.deadline &&
-
-    new Date(opportunity.deadline)
-
-    < new Date()
-
-  ) {
-
+  if (opportunity.deadline && new Date(opportunity.deadline) < new Date()) {
     throw new AppError(
-
       "Opportunity has expired",
 
-      400
-
-    );
-
-  }
-
-  if (
-    opportunity.status !==
-    "APPROVED"
-  ) {
-    throw new AppError(
-      "Opportunity is not approved",
-      400
+      400,
     );
   }
 
-  const existing =
-    await prisma.application.findFirst({
-      where: {
-        opportunityId,
-        studentId: student.id,
-      },
-    });
+  if (opportunity.status !== "APPROVED") {
+    throw new AppError("Opportunity is not approved", 400);
+  }
+
+  const existing = await prisma.application.findFirst({
+    where: {
+      opportunityId,
+      studentId: student.id,
+    },
+  });
 
   if (existing) {
-    throw new AppError(
-      "Already applied",
-      409
-    );
+    throw new AppError("Already applied", 409);
   }
 
-  const application =
-    await prisma.application.create({
-      data: {
-        opportunityId,
-        studentId: student.id,
-        cvUrl: data.cvUrl || null,
-      },
-    });
-    
-  await addActivityScore(
-    student.id,
-    15,
-    `Applied for ${opportunity.title}`
-  );
+  const application = await prisma.application.create({
+    data: {
+      opportunityId,
+      studentId: student.id,
+      cvUrl: data.cvUrl || null,
+    },
+  });
+
+  await addActivityScore(student.id, 15, `Applied for ${opportunity.title}`);
   await createNotification(
     opportunity.organization.userId,
     "New Application",
     `A student applied for ${opportunity.title}`,
-    "OPPORTUNITY"
+    "OPPORTUNITY",
   );
   refreshStudentDashboard(userId);
 
-  refreshOrganizationDashboard(
-    opportunity.organization.userId
-  );
+  refreshOrganizationDashboard(opportunity.organization.userId);
 
   refreshAdminDashboard();
 
-  await createAuditLog(
-    userId,
-    `OPPORTUNITY_APPLIED:${opportunity.title}`
-  );
+  await createAuditLog(userId, `OPPORTUNITY_APPLIED:${opportunity.title}`);
 
   return application;
 };
 
 export const saveOpportunity = async (
   opportunityId: bigint,
-  userId: bigint
+  userId: bigint,
 ) => {
-
-  const student =
-    await prisma.student.findUnique({
-      where: {
-        userId,
-      },
-    });
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!student) {
-    throw new AppError(
-      "Student profile not found",
-      404
-    );
+    throw new AppError("Student profile not found", 404);
   }
 
-  const opportunity =
-    await prisma.opportunity.findUnique({
-      where: {
-        id: opportunityId,
-      },
-    });
+  const opportunity = await prisma.opportunity.findUnique({
+    where: {
+      id: opportunityId,
+    },
+  });
 
   if (!opportunity) {
-    throw new AppError(
-      "Opportunity not found",
-      404
-    );
+    throw new AppError("Opportunity not found", 404);
   }
 
-  const existing =
-    await prisma.savedOpportunity.findUnique({
-      where: {
-        studentId_opportunityId: {
-          studentId: student.id,
-          opportunityId,
-        },
-      },
-    });
-
-    if (
-
-      opportunity.deadline &&
-
-      new Date(opportunity.deadline)
-
-      < new Date()
-
-    ) {
-
-      throw new AppError(
-
-        "Opportunity has expired",
-
-        400
-
-      );
-
-    }
-    if (existing) {
-      throw new AppError(
-        "Already saved",
-        409
-      );
-    }
-
-    return prisma.savedOpportunity.create({
-      data: {
+  const existing = await prisma.savedOpportunity.findUnique({
+    where: {
+      studentId_opportunityId: {
         studentId: student.id,
         opportunityId,
       },
+    },
+  });
+
+  if (opportunity.deadline && new Date(opportunity.deadline) < new Date()) {
+    throw new AppError(
+      "Opportunity has expired",
+
+      400,
+    );
+  }
+  if (existing) {
+    throw new AppError("Already saved", 409);
+  }
+
+  return prisma.savedOpportunity.create({
+    data: {
+      studentId: student.id,
+      opportunityId,
+    },
   });
 };
 
 export const unsaveOpportunity = async (
   opportunityId: bigint,
-  userId: bigint
+  userId: bigint,
 ) => {
-
-  const student =
-    await prisma.student.findUnique({
-      where: {
-        userId,
-      },
-    });
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!student) {
-    throw new AppError(
-      "Student profile not found",
-      404
-    );
+    throw new AppError("Student profile not found", 404);
   }
 
   await prisma.savedOpportunity.delete({
@@ -633,144 +470,99 @@ export const unsaveOpportunity = async (
   };
 };
 
-export const getSavedOpportunities =
-  async (
-    userId: bigint
-  ) => {
-
-    const student =
-      await prisma.student.findUnique({
-        where: {
-          userId,
-        },
-      });
-
-    if (!student) {
-      throw new AppError(
-        "Student profile not found",
-        404
-      );
-    }
-
-    return prisma.savedOpportunity.findMany({
-      where: {
-        studentId: student.id,
-      },
-
-      include: {
-        opportunity: {
-          include: {
-            organization: true,
-            type: true,
-          },
-        },
-      },
-
-      orderBy: {
-        savedAt: "desc",
-      },
-    });
-  };
-  
-export const getRecentOpportunities = async () => {
-
-  const today = new Date();
-  
-  return prisma.opportunity.findMany({
-
+export const getSavedOpportunities = async (userId: bigint) => {
+  const student = await prisma.student.findUnique({
     where: {
+      userId,
+    },
+  });
 
-      status: "APPROVED",
+  if (!student) {
+    throw new AppError("Student profile not found", 404);
+  }
 
-      OR: [
-
-        {
-
-          deadline: null,
-
-        },
-
-        {
-
-          deadline: {
-
-            gte: today,
-
-          },
-
-        },
-
-      ],
-
+  return prisma.savedOpportunity.findMany({
+    where: {
+      studentId: student.id,
     },
 
     include: {
+      opportunity: {
+        include: {
+          organization: true,
+          type: true,
+        },
+      },
+    },
 
+    orderBy: {
+      savedAt: "desc",
+    },
+  });
+};
+
+export const getRecentOpportunities = async () => {
+  const today = new Date();
+
+  return prisma.opportunity.findMany({
+    where: {
+      status: "APPROVED",
+
+      OR: [
+        {
+          deadline: null,
+        },
+
+        {
+          deadline: {
+            gte: today,
+          },
+        },
+      ],
+    },
+
+    include: {
       organization: {
-
         select: {
-
           id: true,
 
           organizationName: true,
 
           logoUrl: true,
-
         },
-
       },
 
       type: {
-
         select: {
-
           id: true,
 
           typeName: true,
-
         },
-
       },
-
     },
 
     orderBy: {
-
       createdAt: "desc",
-
     },
 
     take: 5,
-
   });
 };
 
-export const getOrganizationOpportunities =
-async (
-  userId: bigint
-) => {
-
-  const organization =
-    await prisma.organization.findUnique({
-      where: {
-        userId,
-      },
-    });
+export const getOrganizationOpportunities = async (userId: bigint) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!organization) {
-
-    throw new AppError(
-      "Organization not found",
-      404
-    );
-
+    throw new AppError("Organization not found", 404);
   }
 
   return prisma.opportunity.findMany({
-
     where: {
-      organizationId:
-        organization.id,
+      organizationId: organization.id,
     },
 
     include: {
@@ -780,9 +572,7 @@ async (
     orderBy: {
       createdAt: "desc",
     },
-
   });
-
 };
 
 /*
@@ -791,163 +581,98 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const getMyOpportunities =
-  async (
-    userId: bigint
-  ) => {
+export const getMyOpportunities = async (userId: bigint) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
-    const organization =
-      await prisma.organization.findUnique({
-        where: {
-          userId,
+  if (!organization) {
+    throw new AppError("Organization not found", 404);
+  }
+
+  return prisma.opportunity.findMany({
+    where: {
+      organizationId: organization.id,
+    },
+
+    include: {
+      organization: {
+        select: {
+          id: true,
+          organizationName: true,
+          logoUrl: true,
         },
-      });
-
-    if (!organization) {
-
-      throw new AppError(
-        "Organization not found",
-        404
-      );
-
-    }
-
-    return prisma.opportunity.findMany({
-
-      where: {
-        organizationId:
-          organization.id,
       },
 
-      include: {
-
-        organization: {
-
-          select: {
-            id: true,
-            organizationName: true,
-            logoUrl: true,
-          },
-
+      type: {
+        select: {
+          id: true,
+          typeName: true,
         },
-
-        type: {
-
-          select: {
-            id: true,
-            typeName: true,
-          },
-
-        },
-
       },
+    },
 
-      orderBy: {
-        createdAt: "desc",
-      },
-
-    });
-
-  };
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
 /*
 |--------------------------------------------------------------------------
 | Update Opportunity
 |--------------------------------------------------------------------------
 */
 
-export const updateOpportunity =
-async (
+export const updateOpportunity = async (
   opportunityId: bigint,
   userId: bigint,
-  data: any
+  data: any,
 ) => {
-
-  const organization =
-    await prisma.organization.findUnique({
-
-      where: {
-        userId,
-      },
-
-    });
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!organization) {
-
-    throw new AppError(
-      "Organization not found",
-      404
-    );
-
+    throw new AppError("Organization not found", 404);
   }
 
-  const opportunity =
-    await prisma.opportunity.findUnique({
-
-      where: {
-        id: opportunityId,
-      },
-
-    });
+  const opportunity = await prisma.opportunity.findUnique({
+    where: {
+      id: opportunityId,
+    },
+  });
 
   if (!opportunity) {
-
-    throw new AppError(
-      "Opportunity not found",
-      404
-    );
-
+    throw new AppError("Opportunity not found", 404);
   }
 
-  if (
-
-    opportunity.organizationId !==
-    organization.id
-
-  ) {
-
-    throw new AppError(
-      "Not authorized",
-      403
-    );
-
+  if (opportunity.organizationId !== organization.id) {
+    throw new AppError("Not authorized", 403);
   }
 
   return prisma.opportunity.update({
-
     where: {
-
       id: opportunityId,
-
     },
 
     data: {
+      title: data.title,
 
-      title:
-        data.title,
+      description: data.description,
 
-      description:
-        data.description,
+      requirements: data.requirements,
 
-      requirements:
-        data.requirements,
+      coverImageUrl: data.coverImageUrl,
 
-      coverImageUrl:
-        data.coverImageUrl,
+      typeId: data.typeId ? BigInt(data.typeId) : undefined,
 
-      typeId:
-        data.typeId
-        ? BigInt(data.typeId)
-        : undefined,
-
-      deadline:
-        data.deadline
-        ? new Date(data.deadline)
-        : null,
-
+      deadline: data.deadline ? new Date(data.deadline) : null,
     },
-
   });
-
 };
 
 /*
@@ -956,60 +681,32 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const deleteOpportunity =
-async (
+export const deleteOpportunity = async (
   opportunityId: bigint,
-  userId: bigint
+  userId: bigint,
 ) => {
-
-  const organization =
-    await prisma.organization.findUnique({
-
-      where: {
-        userId,
-      },
-
-    });
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!organization) {
-
-    throw new AppError(
-      "Organization not found",
-      404
-    );
-
+    throw new AppError("Organization not found", 404);
   }
 
-  const opportunity =
-    await prisma.opportunity.findUnique({
-
-      where: {
-        id: opportunityId,
-      },
-
-    });
+  const opportunity = await prisma.opportunity.findUnique({
+    where: {
+      id: opportunityId,
+    },
+  });
 
   if (!opportunity) {
-
-    throw new AppError(
-      "Opportunity not found",
-      404
-    );
-
+    throw new AppError("Opportunity not found", 404);
   }
 
-  if (
-
-    opportunity.organizationId !==
-    organization.id
-
-  ) {
-
-    throw new AppError(
-      "Not authorized",
-      403
-    );
-
+  if (opportunity.organizationId !== organization.id) {
+    throw new AppError("Not authorized", 403);
   }
 
   /*
@@ -1019,23 +716,15 @@ async (
   */
 
   await prisma.savedOpportunity.deleteMany({
-
     where: {
-
       opportunityId,
-
     },
-
   });
 
   await prisma.application.deleteMany({
-
     where: {
-
       opportunityId,
-
     },
-
   });
 
   /*
@@ -1045,15 +734,10 @@ async (
   */
 
   await prisma.opportunity.delete({
-
     where: {
-
       id: opportunityId,
-
     },
-
   });
 
   return true;
-
 };

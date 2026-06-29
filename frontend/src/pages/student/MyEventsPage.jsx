@@ -1,192 +1,64 @@
-import {
+import { useEffect, useState, useMemo } from "react";
 
-  useEffect,
+import toast from "react-hot-toast";
 
-  useState,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-  useMemo,
+import PageHeader from "../../components/common/PageHeader";
 
-} from "react";
+import LoadingState from "../../components/common/LoadingState";
 
-import toast
+import EmptyState from "../../components/common/EmptyState";
 
-from "react-hot-toast";
+import StudentEventsGrid from "../../components/events/StudentEventsGrid";
 
-import DashboardLayout
+import StudentEventsSearch from "../../components/events/StudentEventsSearch";
 
-from "../../components/layouts/DashboardLayout";
-
-import PageHeader
-
-from "../../components/common/PageHeader";
-
-import LoadingState
-
-from "../../components/common/LoadingState";
-
-import EmptyState
-
-from "../../components/common/EmptyState";
-
-import StudentEventsGrid
-
-from "../../components/events/StudentEventsGrid";
-
-import StudentEventsSearch
-
-from "../../components/events/StudentEventsSearch";
-
-import {
-
-  getMyRegisteredEvents,
-
-} from "../../api/eventApi";
+import { getMyRegisteredEvents } from "../../api/eventApi";
 
 function StudentMyEventsPage() {
+  const [events, setEvents] = useState([]);
 
-  const [
+  const [loading, setLoading] = useState(true);
 
-    events,
-
-    setEvents,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    search,
-
-    setSearch,
-
-  ] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-
     loadEvents();
-
   }, []);
 
-  const loadEvents =
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
 
-    async () => {
+      const data = await getMyRegisteredEvents();
 
-      try {
+      const normalized = Array.isArray(data)
+        ? data
 
-        setLoading(
+            .map((registration) => registration.event)
 
-          true
+            .filter(Boolean)
+        : [];
 
-        );
+      setEvents(normalized);
+    } catch (error) {
+      console.error(error);
 
-        const data =
+      toast.error("Failed to load events");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          await getMyRegisteredEvents();
-
-        const normalized =
-
-          Array.isArray(
-
-            data
-
-          )
-
-          ?
-
-          data
-
-          .map(
-
-            (
-
-              registration
-
-            ) =>
-
-            registration.event
-
-          )
-
-          .filter(
-
-            Boolean
-
-          )
-
-          :
-
-          [];
-
-        setEvents(
-
-          normalized
-
-        );
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          "Failed to load events"
-
-        );
-
-      }
-
-      finally {
-
-        setLoading(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  const filteredEvents =
-    useMemo(() => {
-
-      return events.filter(event =>
-
-        event?.title
-          ?.toLowerCase()
-          .includes(
-            search.toLowerCase()
-          )
-
-      );
-
-    }, [
-      events,
-      search,
-    ]);
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) =>
+      event?.title?.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [events, search]);
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -196,85 +68,35 @@ function StudentMyEventsPage() {
           space-y-8
 
         "
-
       >
-
         <PageHeader
-
           title="My Events"
 
           description="Events you registered for"
-
         />
 
         <StudentEventsSearch
+          value={search}
 
-          value={
-
-            search
-
-          }
-
-          onChange={
-
-            setSearch
-
-          }
-
+          onChange={setSearch}
         />
 
-        {
+        {loading && <LoadingState />}
 
-          loading &&
+        {!loading && filteredEvents.length === 0 && (
+          <EmptyState
+            title="No Events Yet"
 
-          <LoadingState />
+            description="You have not registered for any events"
+          />
+        )}
 
-        }
-
-        {
-
-          !loading &&
-
-          filteredEvents.length === 0 && (
-
-            <EmptyState
-
-              title="No Events Yet"
-
-              description="You have not registered for any events"
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading &&
-
-          filteredEvents.length > 0 && (
-
-            <StudentEventsGrid
-
-              events={
-
-                filteredEvents
-
-              }
-
-            />
-
-          )
-
-        }
-
+        {!loading && filteredEvents.length > 0 && (
+          <StudentEventsGrid events={filteredEvents} />
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default StudentMyEventsPage;

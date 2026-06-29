@@ -1,22 +1,8 @@
-import {
+import { Request, Response, NextFunction } from "express";
 
-  Request,
+import * as studentSkillService from "./studentSkill.service.js";
 
-  Response,
-
-  NextFunction,
-
-} from "express";
-
-import * as studentSkillService
-
-from "./studentSkill.service.js";
-
-import {
-
-  successResponse,
-
-} from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -24,58 +10,26 @@ import {
 |--------------------------------------------------------------------------
 */
 
-export const getMySkills =
-
-async (
-
+export const getMySkills = async (
   req: Request,
 
   res: Response,
 
-  next: NextFunction
-
+  next: NextFunction,
 ) => {
-
   try {
-
-    const data =
-
-    await studentSkillService.getMySkills(
-
-      BigInt(
-
-        req.user!.id
-
-      )
-
-    );
+    const data = await studentSkillService.getMySkills(BigInt(req.user!.id));
 
     return successResponse(
-
       res,
 
       data,
 
-      "Skills fetched"
-
+      "Skills fetched",
     );
-
+  } catch (error) {
+    next(error);
   }
-
-  catch (
-
-    error
-
-  ) {
-
-    next(
-
-      error
-
-    );
-
-  }
-
 };
 
 /*
@@ -84,62 +38,28 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const updateMySkills =
-
-async (
-
+export const updateMySkills = async (
   req: Request,
 
   res: Response,
 
-  next: NextFunction
-
+  next: NextFunction,
 ) => {
-
   try {
+    const data = await studentSkillService.updateMySkills(
+      BigInt(req.user!.id),
 
-    const data =
-
-    await studentSkillService.updateMySkills(
-
-      BigInt(
-
-        req.user!.id
-
-      ),
-
-      req.body.skillIds
-
-      ||
-
-      []
-
+      req.body.skillIds || [],
     );
 
     return successResponse(
-
       res,
 
       data,
 
-      "Skills updated"
-
+      "Skills updated",
     );
-
+  } catch (error) {
+    next(error);
   }
-
-  catch (
-
-    error
-
-  ) {
-
-    next(
-
-      error
-
-    );
-
-  }
-
 };

@@ -4,43 +4,24 @@ import { useSelector } from "react-redux";
 
 import sidebarMenu from "../../constants/sidebar/sidebarMenu";
 
-function Sidebar({
-  sidebarOpen,
-  setSidebarOpen,
-}) {
-  const location =
-    useLocation();
+function Sidebar({ sidebarOpen, setSidebarOpen }) {
+  const location = useLocation();
 
-  const role =
-    useSelector(
-      (state) =>
-        state.auth.role
+  const role = useSelector((state) => state.auth.role);
+
+  const menuItems = sidebarMenu[role] || [];
+
+  const isActiveRoute = (path) => {
+    return (
+      location.pathname === path || location.pathname.startsWith(`${path}/`)
     );
+  };
 
-  const menuItems =
-    sidebarMenu[role] || [];
-
-  const isActiveRoute =
-    (path) => {
-      return (
-        location.pathname ===
-          path ||
-        location.pathname.startsWith(
-          `${path}/`
-        )
-      );
-    };
-
-  const handleCloseSidebar =
-    () => {
-      if (
-        window.innerWidth < 768
-      ) {
-        setSidebarOpen(
-          false
-        );
-      }
-    };
+  const handleCloseSidebar = () => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
 
   return (
     <>
@@ -53,11 +34,7 @@ function Sidebar({
             bg-black/50
             md:hidden
           "
-          onClick={() =>
-            setSidebarOpen(
-              false
-            )
-          }
+          onClick={() => setSidebarOpen(false)}
         />
       )}
 
@@ -87,11 +64,7 @@ function Sidebar({
 
           duration-300
 
-          ${
-            sidebarOpen
-              ? "translate-x-0"
-              : "-translate-x-full"
-          }
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
 
           md:translate-x-0
         `}
@@ -127,8 +100,7 @@ function Sidebar({
               text-gray-300
             "
           >
-            Student Conference &
-            Opportunity Platform
+            Student Conference & Opportunity Platform
           </p>
         </div>
 
@@ -143,23 +115,15 @@ function Sidebar({
             gap-2
           "
         >
-          {menuItems.map(
-            (item) => {
-              const Icon =
-                item.icon;
+          {menuItems.map((item) => {
+            const Icon = item.icon;
 
-              return (
-                <Link
-                  key={
-                    item.path
-                  }
-                  to={
-                    item.path
-                  }
-                  onClick={
-                    handleCloseSidebar
-                  }
-                  className={`
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={handleCloseSidebar}
+                className={`
                     flex
 
                     items-center
@@ -177,32 +141,29 @@ function Sidebar({
                     duration-200
 
                     ${
-                      isActiveRoute(
-                        item.path
-                      )
+                      isActiveRoute(item.path)
                         ? "bg-secondary shadow-lg"
                         : "hover:bg-secondary/70"
                     }
                   `}
-                >
-                  <Icon
-                    className="
+              >
+                <Icon
+                  className="
                       w-6
                       h-6
                     "
-                  />
+                />
 
-                  <span
-                    className="
+                <span
+                  className="
                       font-medium
                     "
-                  >
-                    {item.name}
-                  </span>
-                </Link>
-              );
-            }
-          )}
+                >
+                  {item.name}
+                </span>
+              </Link>
+            );
+          })}
         </nav>
       </aside>
     </>

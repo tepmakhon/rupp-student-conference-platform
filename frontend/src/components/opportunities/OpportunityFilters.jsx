@@ -1,5 +1,4 @@
 function OpportunityFilters({
-
   keyword,
 
   setKeyword,
@@ -7,13 +6,9 @@ function OpportunityFilters({
   typeId,
 
   setTypeId,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -35,26 +30,15 @@ function OpportunityFilters({
         gap-4
 
       "
-
     >
-
       <input
-
         type="text"
 
         placeholder="Search opportunities..."
 
         value={keyword}
 
-        onChange={(e) =>
-
-          setKeyword(
-
-            e.target.value
-
-          )
-
-        }
+        onChange={(e) => setKeyword(e.target.value)}
 
         className="
 
@@ -67,22 +51,12 @@ function OpportunityFilters({
           p-3
 
         "
-
       />
 
       <select
-
         value={typeId}
 
-        onChange={(e) =>
-
-          setTypeId(
-
-            e.target.value
-
-          )
-
-        }
+        onChange={(e) => setTypeId(e.target.value)}
 
         className="
 
@@ -95,51 +69,21 @@ function OpportunityFilters({
           md:w-60
 
         "
-
       >
+        <option value="">All Types</option>
 
-        <option value="">
+        <option value="1">Internship</option>
 
-          All Types
+        <option value="2">Scholarship</option>
 
-        </option>
+        <option value="3">Volunteer</option>
 
-        <option value="1">
+        <option value="4">Part-Time</option>
 
-          Internship
-
-        </option>
-
-        <option value="2">
-
-          Scholarship
-
-        </option>
-
-        <option value="3">
-
-          Volunteer
-
-        </option>
-
-        <option value="4">
-
-          Part-Time
-
-        </option>
-
-        <option value="5">
-
-          Full-Time
-
-        </option>
-
+        <option value="5">Full-Time</option>
       </select>
-
     </div>
-
   );
-
 }
 
 export default OpportunityFilters;

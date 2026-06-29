@@ -6,14 +6,11 @@ import {
   updateMyProfile,
 } from "./user.controller.js";
 
-import { authMiddleware }
-from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import { rbac }
-from "../../middlewares/rbac.middleware.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import { successResponse }
-from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 const router = express.Router();
 
@@ -41,18 +38,9 @@ const router = express.Router();
  *       403:
  *         description: Forbidden
  */
-router.get(
-  "/admin-only",
-  authMiddleware,
-  rbac(["ADMIN"]),
-  (req, res) => {
-    return successResponse(
-      res,
-      null,
-      "Welcome Admin"
-    );
-  }
-);
+router.get("/admin-only", authMiddleware, rbac(["ADMIN"]), (req, res) => {
+  return successResponse(res, null, "Welcome Admin");
+});
 
 /**
  * @swagger
@@ -100,11 +88,7 @@ router.get(
  *       401:
  *         description: Unauthorized
  */
-router.post(
-  "/profile",
-  authMiddleware,
-  createProfile
-);
+router.post("/profile", authMiddleware, createProfile);
 
 /**
  * @swagger
@@ -124,11 +108,7 @@ router.post(
  *       404:
  *         description: Profile not found
  */
-router.get(
-  "/profile",
-  authMiddleware,
-  getMyProfile
-);
+router.get("/profile", authMiddleware, getMyProfile);
 
 /**
  * @swagger
@@ -174,10 +154,6 @@ router.get(
  *       404:
  *         description: Profile not found
  */
-router.put(
-  "/profile",
-  authMiddleware,
-  updateMyProfile
-);
+router.put("/profile", authMiddleware, updateMyProfile);
 
 export default router;

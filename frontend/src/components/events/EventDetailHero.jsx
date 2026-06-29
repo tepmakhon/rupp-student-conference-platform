@@ -1,17 +1,8 @@
-import {
-  BuildingOffice2Icon,
-} from "@heroicons/react/24/outline";
+import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
 
-function EventDetailHero({
-
-  event,
-
-}) {
-
+function EventDetailHero({ event }) {
   return (
-
     <div
-
       className="
 
         relative
@@ -21,24 +12,11 @@ function EventDetailHero({
         overflow-hidden
 
       "
-
     >
-
       <img
+        src={event.bannerImageUrl || "https://placehold.co/1200x500?text=Event"}
 
-        src={
-
-          event.bannerImageUrl ||
-
-          "https://placehold.co/1200x500?text=Event"
-
-        }
-
-        alt={
-
-          event.title
-
-        }
+        alt={event.title}
 
         className="
 
@@ -49,11 +27,9 @@ function EventDetailHero({
           object-cover
 
         "
-
       />
 
       <div
-
         className="
 
           absolute
@@ -67,11 +43,8 @@ function EventDetailHero({
           items-end
 
         "
-
       >
-
         <div
-
           className="
 
             p-10
@@ -81,11 +54,8 @@ function EventDetailHero({
             space-y-5
 
           "
-
         >
-
           <span
-
             className="
 
               inline-block
@@ -99,21 +69,11 @@ function EventDetailHero({
               bg-white/20
 
             "
-
           >
-
-            {
-
-              event.category
-
-              ?.categoryName
-
-            }
-
+            {event.category?.categoryName}
           </span>
 
           <h1
-
             className="
 
               text-5xl
@@ -121,19 +81,11 @@ function EventDetailHero({
               font-bold
 
             "
-
           >
-
-            {
-
-              event.title
-
-            }
-
+            {event.title}
           </h1>
 
           <div
-
             className="
 
               flex
@@ -143,11 +95,8 @@ function EventDetailHero({
               gap-3
 
             "
-
           >
-
             <BuildingOffice2Icon
-
               className="
 
                 w-6
@@ -155,31 +104,14 @@ function EventDetailHero({
                 h-6
 
               "
-
             />
 
-            <span>
-
-              {
-
-                event.organization
-
-                ?.organizationName
-
-              }
-
-            </span>
-
+            <span>{event.organization?.organizationName}</span>
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default EventDetailHero;

@@ -1,31 +1,14 @@
-import {
-
-  FunnelIcon,
-
-} from "@heroicons/react/24/outline";
+import { FunnelIcon } from "@heroicons/react/24/outline";
 
 function NotificationFilters({
-
   filter,
 
   setFilter,
-
 }) {
-
-  const filters = [
-
-    "ALL",
-
-    "UNREAD",
-
-    "READ",
-
-  ];
+  const filters = ["ALL", "UNREAD", "READ"];
 
   return (
-
     <div
-
       className="
 
         bg-white
@@ -37,11 +20,8 @@ function NotificationFilters({
         p-6
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -57,11 +37,8 @@ function NotificationFilters({
           gap-4
 
         "
-
       >
-
         <div
-
           className="
 
             flex
@@ -71,11 +48,8 @@ function NotificationFilters({
             gap-3
 
           "
-
         >
-
           <FunnelIcon
-
             className="
 
               w-6
@@ -85,11 +59,9 @@ function NotificationFilters({
               text-primary
 
             "
-
           />
 
           <h3
-
             className="
 
               text-xl
@@ -99,17 +71,12 @@ function NotificationFilters({
               text-primary
 
             "
-
           >
-
             Filters
-
           </h3>
-
         </div>
 
         <div
-
           className="
 
             flex
@@ -119,36 +86,16 @@ function NotificationFilters({
             gap-3
 
           "
-
         >
+          {filters.map((item) => (
+            <button
+              key={item}
 
-          {
+              type="button"
 
-            filters.map(
+              onClick={() => setFilter(item)}
 
-              item => (
-
-                <button
-
-                  key={
-
-                    item
-
-                  }
-
-                  type="button"
-
-                  onClick={() =>
-
-                    setFilter(
-
-                      item
-
-                    )
-
-                  }
-
-                  className={`
+              className={`
 
                     px-5
 
@@ -161,55 +108,25 @@ function NotificationFilters({
                     transition
 
                     ${
-
                       filter === item
-
-                      ?
-
-                      "bg-primary text-white"
-
-                      :
-
-                      "bg-gray-100 text-gray-700 hover:bg-gray-200"
-
+                        ? "bg-primary text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }
 
                   `}
+            >
+              {item.charAt(0) +
+                item
 
-                >
+                  .slice(1)
 
-                  {
-
-                    item
-
-                      .charAt(0)
-
-                      +
-
-                    item
-
-                      .slice(1)
-
-                      .toLowerCase()
-
-                  }
-
-                </button>
-
-              )
-
-            )
-
-          }
-
+                  .toLowerCase()}
+            </button>
+          ))}
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default NotificationFilters;

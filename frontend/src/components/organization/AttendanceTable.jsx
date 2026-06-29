@@ -1,14 +1,7 @@
-import AttendanceRow
-from "./AttendanceRow";
+import AttendanceRow from "./AttendanceRow";
 
-function AttendanceTable({
-
-  registrations,
-
-}) {
-
+function AttendanceTable({ registrations }) {
   return (
-
     <div
       className="
         bg-white
@@ -17,69 +10,38 @@ function AttendanceTable({
         overflow-hidden
       "
     >
-
       <table
         className="
           w-full
         "
       >
-
         <thead
           className="
             bg-primary
             text-white
           "
         >
-
           <tr>
+            <th className="p-4 text-left">Student</th>
 
-            <th className="p-4 text-left">
-              Student
-            </th>
+            <th className="p-4 text-left">University</th>
 
-            <th className="p-4 text-left">
-              University
-            </th>
+            <th className="p-4 text-left">Major</th>
 
-            <th className="p-4 text-left">
-              Major
-            </th>
+            <th className="p-4 text-left">Status</th>
 
-            <th className="p-4 text-left">
-              Status
-            </th>
-
-            <th className="p-4 text-left">
-              Check In
-            </th>
-
+            <th className="p-4 text-left">Check In</th>
           </tr>
-
         </thead>
 
         <tbody>
-
-          {
-            registrations.map(
-              registration => (
-
-                <AttendanceRow
-                  key={registration.id}
-                  registration={registration}
-                />
-
-              )
-            )
-          }
-
+          {registrations.map((registration) => (
+            <AttendanceRow key={registration.id} registration={registration} />
+          ))}
         </tbody>
-
       </table>
-
     </div>
-
   );
-
 }
 
 export default AttendanceTable;

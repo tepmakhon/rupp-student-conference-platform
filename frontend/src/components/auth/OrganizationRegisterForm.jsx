@@ -1,17 +1,11 @@
 function OrganizationRegisterForm({
-
   form,
 
   setForm,
-
 }) {
-
   return (
-
     <div className="space-y-5">
-
       <div>
-
         <label
           className="
             block
@@ -19,33 +13,20 @@ function OrganizationRegisterForm({
             font-medium
           "
         >
-
           Organization Name
-
         </label>
 
         <input
-
           type="text"
 
-          value={
+          value={form.organizationName}
 
-            form.organizationName
-
-          }
-
-          onChange={(e)=>
-
+          onChange={(e) =>
             setForm({
-
               ...form,
 
-              organizationName:
-
-              e.target.value,
-
+              organizationName: e.target.value,
             })
-
           }
 
           placeholder="Enter organization"
@@ -57,13 +38,10 @@ function OrganizationRegisterForm({
             px-4
             py-3
           "
-
         />
-
       </div>
 
       <div>
-
         <label
           className="
             block
@@ -71,33 +49,20 @@ function OrganizationRegisterForm({
             font-medium
           "
         >
-
           Description
-
         </label>
 
         <textarea
-
           rows={4}
 
-          value={
+          value={form.description}
 
-            form.description
-
-          }
-
-          onChange={(e)=>
-
+          onChange={(e) =>
             setForm({
-
               ...form,
 
-              description:
-
-              e.target.value,
-
+              description: e.target.value,
             })
-
           }
 
           placeholder="Describe organization"
@@ -109,15 +74,10 @@ function OrganizationRegisterForm({
             px-4
             py-3
           "
-
         />
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default OrganizationRegisterForm;

@@ -1,9 +1,6 @@
 function PageLoader() {
-
   return (
-
     <div
-
       className="
 
       flex
@@ -15,11 +12,8 @@ function PageLoader() {
       py-20
 
       "
-
     >
-
       <div
-
         className="
 
         w-12
@@ -37,13 +31,9 @@ function PageLoader() {
         animate-spin
 
         "
-
       />
-
     </div>
-
   );
-
 }
 
 export default PageLoader;

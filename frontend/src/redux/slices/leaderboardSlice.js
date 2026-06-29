@@ -1,9 +1,6 @@
-import { createSlice }
-
-from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-
   students: [],
 
   pagination: null,
@@ -11,89 +8,48 @@ const initialState = {
   loading: false,
 
   error: null,
-
 };
 
-const leaderboardSlice =
-
-createSlice({
-
+const leaderboardSlice = createSlice({
   name: "leaderboard",
 
   initialState,
 
   reducers: {
-
-    setLeaderboardLoading:
-
-    (
-
+    setLeaderboardLoading: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      state.loading =
-
-      action.payload;
-
+      state.loading = action.payload;
     },
 
-    setLeaderboardData:
-
-    (
-
+    setLeaderboardData: (
       state,
 
-      action
-
+      action,
     ) => {
+      state.students = action.payload.students;
 
-      state.students =
-
-      action.payload.students;
-
-      state.pagination =
-
-      action.payload.pagination;
-
+      state.pagination = action.payload.pagination;
     },
 
-    setLeaderboardError:
-
-    (
-
+    setLeaderboardError: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      state.error =
-
-      action.payload;
-
+      state.error = action.payload;
     },
-
   },
-
 });
 
 export const {
-
   setLeaderboardLoading,
 
   setLeaderboardData,
 
   setLeaderboardError,
+} = leaderboardSlice.actions;
 
-}
-
-=
-
-leaderboardSlice.actions;
-
-export default
-
-leaderboardSlice.reducer;
+export default leaderboardSlice.reducer;

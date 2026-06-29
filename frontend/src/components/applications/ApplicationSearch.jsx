@@ -1,32 +1,15 @@
 function ApplicationSearch({
-
   value,
 
   onChange,
-
 }) {
-
   return (
-
     <input
-
       type="text"
 
-      value={
+      value={value}
 
-        value
-
-      }
-
-      onChange={(e)=>
-
-        onChange(
-
-          e.target.value
-
-        )
-
-      }
+      onChange={(e) => onChange(e.target.value)}
 
       placeholder="Search applications..."
 
@@ -47,11 +30,8 @@ function ApplicationSearch({
         focus:ring-secondary
 
       "
-
     />
-
   );
-
 }
 
 export default ApplicationSearch;

@@ -1,10 +1,8 @@
 import { Router } from "express";
 
-import { authMiddleware }
-from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import { rbac }
-from "../../middlewares/rbac.middleware.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
 import {
   adminDashboard,
@@ -20,12 +18,7 @@ const router = Router();
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/admin",
-  authMiddleware,
-  rbac(["ADMIN"]),
-  adminDashboard
-);
+router.get("/admin", authMiddleware, rbac(["ADMIN"]), adminDashboard);
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +30,7 @@ router.get(
   "/organization",
   authMiddleware,
   rbac(["ORGANIZATION"]),
-  organizationDashboard
+  organizationDashboard,
 );
 
 /*
@@ -46,12 +39,7 @@ router.get(
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/student",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  studentDashboard
-);
+router.get("/student", authMiddleware, rbac(["STUDENT"]), studentDashboard);
 
 /**
  * @swagger

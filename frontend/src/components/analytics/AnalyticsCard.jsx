@@ -1,15 +1,11 @@
 function AnalyticsCard({
-
   title,
 
   value,
 
   icon: Icon,
-
 }) {
-
   return (
-
     <div
       className="
         bg-white
@@ -19,7 +15,6 @@ function AnalyticsCard({
         p-7
       "
     >
-
       <div
         className="
           flex
@@ -27,9 +22,7 @@ function AnalyticsCard({
           items-center
         "
       >
-
         <div>
-
           <p
             className="
               text-gray-500
@@ -48,7 +41,6 @@ function AnalyticsCard({
           >
             {value}
           </h2>
-
         </div>
 
         <div
@@ -62,7 +54,6 @@ function AnalyticsCard({
             justify-center
           "
         >
-
           <Icon
             className="
               w-8
@@ -70,15 +61,10 @@ function AnalyticsCard({
               text-primary
             "
           />
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default AnalyticsCard;

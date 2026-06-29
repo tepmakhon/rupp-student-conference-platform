@@ -1,12 +1,7 @@
-import StudentEventCard
-from "./StudentEventCard";
+import StudentEventCard from "./StudentEventCard";
 
-function StudentEventsGrid({
-  events,
-}) {
-
+function StudentEventsGrid({ events }) {
   return (
-
     <div
       className="
         grid
@@ -16,24 +11,11 @@ function StudentEventsGrid({
         gap-6
       "
     >
-
-      {events.map(
-
-        event => (
-
-          <StudentEventCard
-            key={event.id}
-            event={event}
-          />
-
-        )
-
-      )}
-
+      {events.map((event) => (
+        <StudentEventCard key={event.id} event={event} />
+      ))}
     </div>
-
   );
-
 }
 
 export default StudentEventsGrid;

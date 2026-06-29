@@ -38,10 +38,7 @@ function AnalyticsPieChart({ data }) {
         Distribution
       </h2>
 
-      <ResponsiveContainer
-        width="100%"
-        height={350}
-      >
+      <ResponsiveContainer width="100%" height={350}>
         <PieChart>
           <Pie
             data={data}
@@ -51,14 +48,7 @@ function AnalyticsPieChart({ data }) {
             label
           >
             {data.map((item, index) => (
-              <Cell
-                key={index}
-                fill={
-                  COLORS[
-                    index % COLORS.length
-                  ]
-                }
-              />
+              <Cell key={index} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
 

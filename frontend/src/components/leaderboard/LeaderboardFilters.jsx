@@ -1,21 +1,12 @@
-import {
-
-  MagnifyingGlassIcon,
-
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 function LeaderboardFilters({
-
   search,
 
   setSearch,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -27,21 +18,15 @@ function LeaderboardFilters({
         p-6
 
       "
-
     >
-
       <div
-
         className="
 
           relative
 
         "
-
       >
-
         <MagnifyingGlassIcon
-
           className="
 
             absolute
@@ -59,26 +44,14 @@ function LeaderboardFilters({
             text-gray-400
 
           "
-
         />
 
         <input
-
           type="text"
 
           value={search}
 
-          onChange={
-
-            event =>
-
-            setSearch(
-
-              event.target.value
-
-            )
-
-          }
+          onChange={(event) => setSearch(event.target.value)}
 
           placeholder="Search student"
 
@@ -103,15 +76,10 @@ function LeaderboardFilters({
             focus:ring-primary
 
           "
-
         />
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default LeaderboardFilters;

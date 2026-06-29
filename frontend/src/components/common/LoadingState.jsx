@@ -1,15 +1,6 @@
-function LoadingState({
-
-  message =
-
-    "Loading...",
-
-}) {
-
+function LoadingState({ message = "Loading..." }) {
   return (
-
     <div
-
       className="
 
         flex
@@ -23,11 +14,8 @@ function LoadingState({
         py-20
 
       "
-
     >
-
       <div
-
         className="
 
           w-12
@@ -47,27 +35,19 @@ function LoadingState({
           mb-4
 
         "
-
       />
 
       <p
-
         className="
 
           text-gray-500
 
         "
-
       >
-
         {message}
-
       </p>
-
     </div>
-
   );
-
 }
 
 export default LoadingState;

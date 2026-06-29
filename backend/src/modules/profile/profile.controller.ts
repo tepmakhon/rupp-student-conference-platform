@@ -1,19 +1,8 @@
-import {
-  Request,
-  Response,
-  NextFunction,
-}
+import { Request, Response, NextFunction } from "express";
 
-from "express";
+import * as profileService from "./profile.service.js";
 
-import * as profileService
-from "./profile.service.js";
-
-import {
-  successResponse,
-}
-
-from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -21,50 +10,26 @@ from "../../utils/apiResponse.js";
 |--------------------------------------------------------------------------
 */
 
-export const getMyProfile =
-
-async (
-
+export const getMyProfile = async (
   req: Request,
 
   res: Response,
 
-  next: NextFunction
-
+  next: NextFunction,
 ) => {
-
   try {
-
-    const data =
-
-    await profileService.getMyProfile(
-
-      BigInt(
-
-        req.user!.id
-
-      )
-
-    );
+    const data = await profileService.getMyProfile(BigInt(req.user!.id));
 
     return successResponse(
-
       res,
 
       data,
 
-      "Profile fetched"
-
+      "Profile fetched",
     );
-
-  }
-
-  catch (error) {
-
+  } catch (error) {
     next(error);
-
   }
-
 };
 
 /*
@@ -73,50 +38,28 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const updateMyProfile =
-
-async (
-
+export const updateMyProfile = async (
   req: Request,
 
   res: Response,
 
-  next: NextFunction
-
+  next: NextFunction,
 ) => {
-
   try {
+    const data = await profileService.updateMyProfile(
+      BigInt(req.user!.id),
 
-    const data =
-
-    await profileService.updateMyProfile(
-
-      BigInt(
-
-        req.user!.id
-
-      ),
-
-      req.body
-
+      req.body,
     );
 
     return successResponse(
-
       res,
 
       data,
 
-      "Profile updated"
-
+      "Profile updated",
     );
-
-  }
-
-  catch (error) {
-
+  } catch (error) {
     next(error);
-
   }
-
 };

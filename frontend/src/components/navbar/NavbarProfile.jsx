@@ -1,59 +1,31 @@
-import {
-  ArrowRightStartOnRectangleIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowRightStartOnRectangleIcon } from "@heroicons/react/24/outline";
 
-import {
-  useDispatch,
-  useSelector,
-} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-import {
-  useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import {
-  logout,
-} from "../../redux/slices/authSlice";
+import { logout } from "../../redux/slices/authSlice";
 
-import getInitials
-from "../../utils/getInitials";
+import getInitials from "../../utils/getInitials";
 
 function NavbarProfile() {
+  const dispatch = useDispatch();
 
-  const dispatch =
-    useDispatch();
+  const navigate = useNavigate();
 
-  const navigate =
-    useNavigate();
+  const user = useSelector((state) => state.auth.user);
 
-  const user =
-    useSelector(
-      state => state.auth.user
-    );
+  const role = useSelector((state) => state.auth.role);
 
-  const role =
-    useSelector(
-      state => state.auth.role
-    );
+  const handleLogout = () => {
+    dispatch(logout());
 
-  const handleLogout =
-    () => {
-
-      dispatch(
-        logout()
-      );
-
-      navigate(
-        "/login",
-        {
-          replace: true,
-        }
-      );
-
-    };
+    navigate("/login", {
+      replace: true,
+    });
+  };
 
   return (
-
     <div
       className="
         flex
@@ -61,7 +33,6 @@ function NavbarProfile() {
         gap-4
       "
     >
-
       <div
         className="
           hidden
@@ -70,20 +41,13 @@ function NavbarProfile() {
           text-right
         "
       >
-
         <span
           className="
             font-semibold
             text-primary
           "
         >
-
-          {
-            user?.fullName
-            ||
-            user?.email
-          }
-
+          {user?.fullName || user?.email}
         </span>
 
         <span
@@ -92,11 +56,8 @@ function NavbarProfile() {
             text-gray-500
           "
         >
-
           {role}
-
         </span>
-
       </div>
 
       <div
@@ -118,28 +79,11 @@ function NavbarProfile() {
           justify-center
         "
       >
-
-        {
-
-          getInitials(
-
-            user?.fullName
-            ||
-            user?.email
-            ||
-            "User"
-
-          )
-
-        }
-
+        {getInitials(user?.fullName || user?.email || "User")}
       </div>
 
       <button
-
-        onClick={
-          handleLogout
-        }
+        onClick={handleLogout}
 
         className="
           flex
@@ -161,7 +105,6 @@ function NavbarProfile() {
           transition
         "
       >
-
         <ArrowRightStartOnRectangleIcon
           className="
             w-5
@@ -175,17 +118,11 @@ function NavbarProfile() {
             md:block
           "
         >
-
           Logout
-
         </span>
-
       </button>
-
     </div>
-
   );
-
 }
 
 export default NavbarProfile;

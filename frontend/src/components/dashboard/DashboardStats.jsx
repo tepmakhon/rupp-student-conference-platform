@@ -1,85 +1,49 @@
 import {
-
   TrophyIcon,
-
   CalendarDaysIcon,
-
   BriefcaseIcon,
-
   BookmarkIcon,
-
 } from "@heroicons/react/24/outline";
 
-import DashboardStatCard
+import DashboardStatCard from "./DashboardStatCard";
 
-from "./DashboardStatCard";
-
-function DashboardStats({
-
-  dashboard,
-
-}) {
-
+function DashboardStats({ dashboard }) {
   const stats = [
-
     {
+      title: "Activity Score",
 
-      title:
-        "Activity Score",
+      value: dashboard.activityScore,
 
-      value:
-        dashboard.activityScore,
-
-      icon:
-        TrophyIcon,
-
+      icon: TrophyIcon,
     },
 
     {
+      title: "Registrations",
 
-      title:
-        "Registrations",
+      value: dashboard.registrations,
 
-      value:
-        dashboard.registrations,
-
-      icon:
-        CalendarDaysIcon,
-
+      icon: CalendarDaysIcon,
     },
 
     {
+      title: "Applications",
 
-      title:
-        "Applications",
+      value: dashboard.applications,
 
-      value:
-        dashboard.applications,
-
-      icon:
-        BriefcaseIcon,
-
+      icon: BriefcaseIcon,
     },
 
     {
+      title: "Saved",
 
-      title:
-        "Saved",
+      value: dashboard.saved,
 
-      value:
-        dashboard.saved,
-
-      icon:
-        BookmarkIcon,
-
+      icon: BookmarkIcon,
     },
-
   ];
 
   return (
-
     <div
-
       className="
         grid
 
@@ -93,33 +57,16 @@ function DashboardStats({
 
         mb-8
       "
-
     >
+      {stats.map((item) => (
+        <DashboardStatCard
+          key={item.title}
 
-      {
-
-        stats.map(
-          item => (
-
-            <DashboardStatCard
-
-              key={
-                item.title
-              }
-
-              {...item}
-
-            />
-
-          )
-        )
-
-      }
-
+          {...item}
+        />
+      ))}
     </div>
-
   );
-
 }
 
 export default DashboardStats;

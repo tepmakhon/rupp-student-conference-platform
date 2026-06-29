@@ -12,7 +12,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     dashboard: dashboardReducer,
-    leaderboard:leaderboardReducer,
+    leaderboard: leaderboardReducer,
     profile: profileReducer,
     notification: notificationReducer,
     events: eventReducer,

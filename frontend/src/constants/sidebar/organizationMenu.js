@@ -49,7 +49,7 @@ const organizationMenu = [
     path: "/analytics",
     icon: ChartBarIcon,
   },
-  
+
   {
     name: "Profile",
     path: "/profile",

@@ -1,161 +1,51 @@
-import {
+import { useEffect, useState, useCallback } from "react";
 
-  useEffect,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-  useState,
+import PageHeader from "../../components/common/PageHeader";
 
-  useCallback,
+import LoadingState from "../../components/common/LoadingState";
 
-} from "react";
+import ErrorState from "../../components/common/ErrorState";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import EmptyState from "../../components/common/EmptyState";
 
-import PageHeader
-from "../../components/common/PageHeader";
+import PendingOpportunityCard from "../../components/admin/PendingOpportunityCard";
 
-import LoadingState
-from "../../components/common/LoadingState";
-
-import ErrorState
-from "../../components/common/ErrorState";
-
-import EmptyState
-from "../../components/common/EmptyState";
-
-import PendingOpportunityCard
-from "../../components/admin/PendingOpportunityCard";
-
-import {
-
-  getPendingOpportunities,
-
-} from "../../api/opportunityApi";
+import { getPendingOpportunities } from "../../api/opportunityApi";
 
 function AdminPendingOpportunitiesPage() {
+  const [opportunities, setOpportunities] = useState([]);
 
-  const [
+  const [loading, setLoading] = useState(true);
 
-    opportunities,
+  const [error, setError] = useState("");
 
-    setOpportunities,
+  const loadOpportunities = useCallback(async () => {
+    try {
+      setLoading(true);
 
-  ] = useState([]);
+      setError("");
 
-  const [
+      const data = await getPendingOpportunities();
 
-    loading,
+      setOpportunities(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
 
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    error,
-
-    setError,
-
-  ] = useState("");
-
-  const loadOpportunities =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          setError(
-
-            ""
-
-          );
-
-          const data =
-
-            await getPendingOpportunities();
-
-          setOpportunities(
-
-            Array.isArray(
-
-              data
-
-            )
-
-            ?
-
-            data
-
-            :
-
-            []
-
-          );
-
-        }
-
-        catch (
-
-          error
-
-        ) {
-
-          console.error(
-
-            error
-
-          );
-
-          setError(
-
-            "Failed to load pending opportunities"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
+      setError("Failed to load pending opportunities");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-
     loadOpportunities();
-
-  },
-
-  [
-
-    loadOpportunities,
-
-  ]);
+  }, [loadOpportunities]);
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -165,155 +55,49 @@ function AdminPendingOpportunitiesPage() {
           space-y-8
 
         "
-
       >
-
         <PageHeader
-
           title="Pending Opportunities"
 
           description="Review and manage opportunity approval requests."
-
         />
 
-        {
+        {loading && <LoadingState message="Loading pending opportunities..." />}
 
-          loading
+        {!loading && error && <ErrorState message={error} />}
 
-          &&
+        {!loading && !error && opportunities.length === 0 && (
+          <EmptyState
+            title="No Pending Opportunities"
 
-          <LoadingState
-
-            message="Loading pending opportunities..."
-
+            description="Everything has been reviewed."
           />
+        )}
 
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          error
-
-          &&
-
-          <ErrorState
-
-            message={
-
-              error
-
-            }
-
-          />
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          !error
-
-          &&
-
-          opportunities.length === 0
-
-          && (
-
-            <EmptyState
-
-              title="No Pending Opportunities"
-
-              description="Everything has been reviewed."
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          !error
-
-          &&
-
-          opportunities.length > 0
-
-          && (
-
-            <div
-
-              className="
+        {!loading && !error && opportunities.length > 0 && (
+          <div
+            className="
 
                 grid
 
                 gap-6
 
               "
+          >
+            {opportunities.map((opportunity) => (
+              <PendingOpportunityCard
+                key={opportunity.id}
 
-            >
+                opportunity={opportunity}
 
-              {
-
-                opportunities.map(
-
-                  (
-
-                    opportunity
-
-                  ) => (
-
-                    <PendingOpportunityCard
-
-                      key={
-
-                        opportunity.id
-
-                      }
-
-                      opportunity={
-
-                        opportunity
-
-                      }
-
-                      onAction={
-
-                        loadOpportunities
-
-                      }
-
-                    />
-
-                  )
-
-                )
-
-              }
-
-            </div>
-
-          )
-
-        }
-
+                onAction={loadOpportunities}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default AdminPendingOpportunitiesPage;

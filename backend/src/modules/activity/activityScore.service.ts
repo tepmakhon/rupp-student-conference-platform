@@ -1,73 +1,41 @@
-import { prisma }
-from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
-import {
-  refreshStudentDashboard,
-} from "../../socket/dashboardEvents.js";
+import { refreshStudentDashboard } from "../../socket/dashboardEvents.js";
 
-export const addActivityScore =
-  async (
+export const addActivityScore = async (
+  studentId: bigint,
 
-    studentId: bigint,
+  score: number,
 
-    score: number,
+  reason: string,
+) => {
+  const student = await prisma.$transaction(async (tx) => {
+    const updatedStudent = await tx.student.update({
+      where: {
+        id: studentId,
+      },
 
-    reason: string
+      data: {
+        activityScore: {
+          increment: score,
+        },
+      },
+    });
 
-  ) => {
+    await tx.activityScoreHistory.create({
+      data: {
+        studentId,
 
-    const student =
+        scoreChange: score,
 
-      await prisma.$transaction(
+        reason,
+      },
+    });
 
-        async (tx) => {
+    return updatedStudent;
+  });
 
-          const updatedStudent =
+  refreshStudentDashboard(student.userId);
 
-            await tx.student.update({
-
-              where: {
-
-                id: studentId,
-
-              },
-
-              data: {
-
-                activityScore: {
-
-                  increment: score,
-
-                },
-
-              },
-
-            });
-
-          await tx.activityScoreHistory.create({
-
-            data: {
-
-              studentId,
-
-              scoreChange: score,
-
-              reason,
-
-            },
-
-          });
-
-          return updatedStudent;
-
-        }
-
-      );
-
-  refreshStudentDashboard(
-    student.userId
-  );
-
-    return student;
-
+  return student;
 };

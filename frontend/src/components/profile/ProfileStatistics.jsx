@@ -1,101 +1,47 @@
 import {
-
   SparklesIcon,
-
   CalendarDaysIcon,
-
   BriefcaseIcon,
-
   BookmarkIcon,
-
 } from "@heroicons/react/24/outline";
 
-function ProfileStatistics({
-
-  profile,
-
-}) {
-
+function ProfileStatistics({ profile }) {
   const statistics = [
-
     {
+      title: "Activity Score",
 
-      title:
+      value: profile?.student?.activityScore ?? 0,
 
-      "Activity Score",
-
-      value:
-
-      profile?.student
-
-      ?.activityScore ?? 0,
-
-      icon:
-
-      SparklesIcon,
-
+      icon: SparklesIcon,
     },
 
     {
+      title: "Registrations",
 
-      title:
+      value: profile?.statistics?.totalRegistrations ?? 0,
 
-      "Registrations",
-
-      value:
-
-      profile?.statistics
-
-      ?.totalRegistrations ?? 0,
-
-      icon:
-
-      CalendarDaysIcon,
-
+      icon: CalendarDaysIcon,
     },
 
     {
+      title: "Applications",
 
-      title:
+      value: profile?.statistics?.totalApplications ?? 0,
 
-      "Applications",
-
-      value:
-
-      profile?.statistics
-
-      ?.totalApplications ?? 0,
-
-      icon:
-
-      BriefcaseIcon,
-
+      icon: BriefcaseIcon,
     },
 
     {
+      title: "Saved",
 
-      title:
+      value: profile?.statistics?.savedOpportunities ?? 0,
 
-      "Saved",
-
-      value:
-
-      profile?.statistics
-
-      ?.savedOpportunities ?? 0,
-
-      icon:
-
-      BookmarkIcon,
-
+      icon: BookmarkIcon,
     },
-
   ];
 
   return (
-
     <div
-
       className="
 
         grid
@@ -107,30 +53,15 @@ function ProfileStatistics({
         gap-6
 
       "
-
     >
+      {statistics.map((item) => {
+        const Icon = item.icon;
 
-      {
+        return (
+          <div
+            key={item.title}
 
-        statistics.map(
-
-          item => {
-
-            const Icon =
-
-            item.icon;
-
-            return (
-
-              <div
-
-                key={
-
-                  item.title
-
-                }
-
-                className="
+            className="
 
                   bg-white
 
@@ -143,12 +74,9 @@ function ProfileStatistics({
                   p-6
 
                 "
-
-              >
-
-                <div
-
-                  className="
+          >
+            <div
+              className="
 
                     flex
 
@@ -157,34 +85,22 @@ function ProfileStatistics({
                     items-center
 
                   "
-
-                >
-
-                  <div>
-
-                    <p
-
-                      className="
+            >
+              <div>
+                <p
+                  className="
 
                         text-sm
 
                         text-gray-500
 
                       "
+                >
+                  {item.title}
+                </p>
 
-                    >
-
-                      {
-
-                        item.title
-
-                      }
-
-                    </p>
-
-                    <h2
-
-                      className="
+                <h2
+                  className="
 
                         text-4xl
 
@@ -195,22 +111,13 @@ function ProfileStatistics({
                         mt-3
 
                       "
+                >
+                  {item.value}
+                </h2>
+              </div>
 
-                    >
-
-                      {
-
-                        item.value
-
-                      }
-
-                    </h2>
-
-                  </div>
-
-                  <div
-
-                    className="
+              <div
+                className="
 
                       w-14
 
@@ -227,12 +134,9 @@ function ProfileStatistics({
                       justify-center
 
                     "
-
-                  >
-
-                    <Icon
-
-                      className="
+              >
+                <Icon
+                  className="
 
                         w-8
 
@@ -241,27 +145,14 @@ function ProfileStatistics({
                         text-primary
 
                       "
-
-                    />
-
-                  </div>
-
-                </div>
-
+                />
               </div>
-
-            );
-
-          }
-
-        )
-
-      }
-
+            </div>
+          </div>
+        );
+      })}
     </div>
-
   );
-
 }
 
 export default ProfileStatistics;

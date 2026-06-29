@@ -1,12 +1,6 @@
-import {
-  useEffect,
-  useCallback,
-} from "react";
+import { useEffect, useCallback } from "react";
 
-import {
-  useDispatch,
-  useSelector,
-} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import {
   SparklesIcon,
@@ -15,42 +9,29 @@ import {
   BookmarkIcon,
 } from "@heroicons/react/24/outline";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import DashboardHeader
-from "../../components/dashboard/DashboardHeader";
+import DashboardHeader from "../../components/dashboard/DashboardHeader";
 
-import DashboardLoading
-from "../../components/dashboard/DashboardLoading";
+import DashboardLoading from "../../components/dashboard/DashboardLoading";
 
-import DashboardError
-from "../../components/dashboard/DashboardError";
+import DashboardError from "../../components/dashboard/DashboardError";
 
-import DashboardStatsGrid
-from "../../components/dashboard/DashboardStatsGrid";
+import DashboardStatsGrid from "../../components/dashboard/DashboardStatsGrid";
 
-import DashboardStatCard
-from "../../components/dashboard/DashboardStatCard";
+import DashboardStatCard from "../../components/dashboard/DashboardStatCard";
 
-import RecentOpportunities
-from "../../components/dashboard/RecentOpportunities";
+import RecentOpportunities from "../../components/dashboard/RecentOpportunities";
 
-import UpcomingEvents
-from "../../components/dashboard/UpcomingEvents";
+import UpcomingEvents from "../../components/dashboard/UpcomingEvents";
 
-import RecentActivities
-from "../../components/dashboard/RecentActivities";
+import RecentActivities from "../../components/dashboard/RecentActivities";
 
-import LeaderboardPreview
-from "../../components/dashboard/LeaderboardPreview";
+import LeaderboardPreview from "../../components/dashboard/LeaderboardPreview";
 
-import ProfileCompletion
-from "../../components/dashboard/ProfileCompletion";
+import ProfileCompletion from "../../components/dashboard/ProfileCompletion";
 
-import {
-  getStudentDashboard,
-} from "../../api/dashboardApi";
+import { getStudentDashboard } from "../../api/dashboardApi";
 
 import {
   setDashboardLoading,
@@ -61,103 +42,51 @@ import {
 import socket from "../../socket/socket";
 
 function StudentDashboardPage() {
-  const dispatch =
-    useDispatch();
+  const dispatch = useDispatch();
 
-  const user = useSelector(
-    state => state.auth.user
-  );
+  const user = useSelector((state) => state.auth.user);
 
-  const {
-    stats,
-    loading,
-    error,
-  } = useSelector(
-    state => state.dashboard
-  );
-  
+  const { stats, loading, error } = useSelector((state) => state.dashboard);
+
   useEffect(() => {
-
     loadDashboard();
-
   }, []);
 
   const loadDashboard = useCallback(async () => {
-
     try {
+      dispatch(setDashboardLoading(true));
 
-      dispatch(
-        setDashboardLoading(true)
-      );
+      dispatch(setDashboardError(null));
 
-      dispatch(
-        setDashboardError(null)
-      );
+      const data = await getStudentDashboard();
 
-      const data =
-        await getStudentDashboard();
-
-      dispatch(
-        setDashboardStats(data)
-      );
-
-    }
-
-    catch (error) {
-
+      dispatch(setDashboardStats(data));
+    } catch (error) {
       console.error(error);
 
-      dispatch(
-        setDashboardError(
-          "Failed to load dashboard"
-        )
-      );
-
+      dispatch(setDashboardError("Failed to load dashboard"));
+    } finally {
+      dispatch(setDashboardLoading(false));
     }
-
-    finally {
-
-      dispatch(
-        setDashboardLoading(false)
-      );
-
-    }
-
   }, [dispatch]);
-  
+
   useEffect(() => {
-
     loadDashboard();
-
   }, [loadDashboard]);
 
   useEffect(() => {
-
     const refreshDashboard = () => {
-
       loadDashboard();
-
     };
 
-    socket.on(
-      "dashboard_update",
-      refreshDashboard
-    );
+    socket.on("dashboard_update", refreshDashboard);
 
     return () => {
-
-      socket.off(
-        "dashboard_update",
-        refreshDashboard
-      );
-
+      socket.off("dashboard_update", refreshDashboard);
     };
-
   }, [loadDashboard]);
   return (
-
     <DashboardLayout>
-
       <div
         className="
           max-w-7xl
@@ -165,132 +94,70 @@ function StudentDashboardPage() {
           space-y-8
         "
       >
-
         <DashboardHeader
-
           title="Student Dashboard"
 
           subtitle="Track your activities and opportunities"
 
           loading={loading}
 
-          onRefresh={
-            loadDashboard
-          }
-
+          onRefresh={loadDashboard}
         />
 
-        {loading && (
-          <DashboardLoading />
-        )}
+        {loading && <DashboardLoading />}
 
-        {!loading && error && (
-
-          <DashboardError
-            message={error}
-          />
-
-        )}
+        {!loading && error && <DashboardError message={error} />}
 
         {!loading && !error && (
-
           <>
-
             <DashboardStatsGrid>
-
               <DashboardStatCard
-
                 title="Activity Score"
 
-                value={
-                  stats?.activityScore
-                }
+                value={stats?.activityScore}
 
-                icon={
-                  SparklesIcon
-                }
-
+                icon={SparklesIcon}
               />
 
               <DashboardStatCard
-
                 title="Registrations"
 
-                value={
-                  stats?.totalRegistrations
-                }
+                value={stats?.totalRegistrations}
 
-                icon={
-                  CalendarDaysIcon
-                }
-
+                icon={CalendarDaysIcon}
               />
 
               <DashboardStatCard
-
                 title="Applications"
 
-                value={
-                  stats?.totalApplications
-                }
+                value={stats?.totalApplications}
 
-                icon={
-                  BriefcaseIcon
-                }
-
+                icon={BriefcaseIcon}
               />
 
               <DashboardStatCard
-
                 title="Saved Opportunities"
 
-                value={
-                  stats?.savedOpportunities
-                }
+                value={stats?.savedOpportunities}
 
-                icon={
-                  BookmarkIcon
-                }
-
+                icon={BookmarkIcon}
               />
-
             </DashboardStatsGrid>
 
-            <ProfileCompletion 
-              profile={
-                user?.profile
-              }/>
+            <ProfileCompletion profile={user?.profile} />
 
             <RecentOpportunities />
 
-            <UpcomingEvents
+            <UpcomingEvents events={stats?.upcomingEvents} />
 
-              events={
-                stats?.upcomingEvents
-              }
-
-            />
-
-            <RecentActivities
-
-              activities={
-                stats?.recentActivities
-              }
-
-            />
+            <RecentActivities activities={stats?.recentActivities} />
 
             <LeaderboardPreview />
-
           </>
-
         )}
-
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default StudentDashboardPage;

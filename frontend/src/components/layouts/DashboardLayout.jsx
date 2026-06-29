@@ -1,22 +1,13 @@
 import { useState } from "react";
 
-import Sidebar
-from "./Sidebar";
+import Sidebar from "./Sidebar";
 
-import Navbar
-from "../navbar/Navbar";
+import Navbar from "../navbar/Navbar";
 
-function DashboardLayout({
-  children,
-}) {
-
-  const [
-    sidebarOpen,
-    setSidebarOpen,
-  ] = useState(false);
+function DashboardLayout({ children }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-
     <div
       className="
         flex
@@ -24,15 +15,7 @@ function DashboardLayout({
         bg-gray-100
       "
     >
-
-      <Sidebar
-        sidebarOpen={
-          sidebarOpen
-        }
-        setSidebarOpen={
-          setSidebarOpen
-        }
-      />
+      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <main
         className="
@@ -43,12 +26,7 @@ function DashboardLayout({
           min-h-screen
         "
       >
-
-        <Navbar
-          setSidebarOpen={
-            setSidebarOpen
-          }
-        />
+        <Navbar setSidebarOpen={setSidebarOpen} />
 
         <section
           className="
@@ -57,17 +35,11 @@ function DashboardLayout({
             md:p-8
           "
         >
-
           {children}
-
         </section>
-
       </main>
-
     </div>
-
   );
-
 }
 
 export default DashboardLayout;

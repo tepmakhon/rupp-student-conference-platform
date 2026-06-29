@@ -60,7 +60,5 @@ export const swaggerSpec = swaggerJsdoc({
     ],
   },
 
-  apis: [
-    "./src/modules/**/*.ts",
-  ],
+  apis: ["./src/modules/**/*.ts"],
 });

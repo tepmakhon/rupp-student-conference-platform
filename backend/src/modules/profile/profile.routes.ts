@@ -1,45 +1,25 @@
-import { Router }
+import { Router } from "express";
 
-from "express";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import {
-
- authMiddleware,
-
-}
-
-from "../../middlewares/auth.middleware.js";
-
-import {
-
- getMyProfile,
-
- updateMyProfile,
-
-}
-
-from "./profile.controller.js";
+import { getMyProfile, updateMyProfile } from "./profile.controller.js";
 
 const router = Router();
 
 router.get(
+  "/me",
 
- "/me",
+  authMiddleware,
 
- authMiddleware,
-
- getMyProfile
-
+  getMyProfile,
 );
 
 router.put(
+  "/me",
 
- "/me",
+  authMiddleware,
 
- authMiddleware,
-
- updateMyProfile
-
+  updateMyProfile,
 );
 
 export default router;

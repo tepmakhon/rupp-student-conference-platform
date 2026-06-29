@@ -1,28 +1,17 @@
 import { z } from "zod";
 
-export const createSkillSchema =
-  z.object({
+export const createSkillSchema = z.object({
+  skillName: z
+    .string()
 
-    skillName:
+    .min(2, "Skill name is required"),
+});
 
-      z.string()
+export const updateSkillSchema = z.object({
+  skillName: z
+    .string()
 
-      .min(
-        2,
-        "Skill name is required"
-      ),
+    .min(2)
 
-  });
-
-export const updateSkillSchema =
-  z.object({
-
-    skillName:
-
-      z.string()
-
-      .min(2)
-
-      .optional(),
-
-  });
+    .optional(),
+});

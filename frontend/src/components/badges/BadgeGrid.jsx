@@ -1,16 +1,8 @@
-import BadgeCard
-from "./BadgeCard";
+import BadgeCard from "./BadgeCard";
 
-function BadgeGrid({
-
-  badges,
-
-}) {
-
+function BadgeGrid({ badges }) {
   return (
-
     <div
-
       className="
 
         grid
@@ -24,33 +16,16 @@ function BadgeGrid({
         gap-6
 
       "
-
     >
+      {badges.map((badge) => (
+        <BadgeCard
+          key={badge.id}
 
-      {
-
-        badges.map(
-
-          badge => (
-
-            <BadgeCard
-
-              key={badge.id}
-
-              badge={badge}
-
-            />
-
-          )
-
-        )
-
-      }
-
+          badge={badge}
+        />
+      ))}
     </div>
-
   );
-
 }
 
 export default BadgeGrid;

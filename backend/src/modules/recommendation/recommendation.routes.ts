@@ -1,47 +1,21 @@
-import { Router }
+import { Router } from "express";
 
-from "express";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import {
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
- authMiddleware,
-
-}
-
-from "../../middlewares/auth.middleware.js";
-
-import {
-
- rbac,
-
-}
-
-from "../../middlewares/rbac.middleware.js";
-
-import {
-
- getRecommendations,
-
-}
-
-from "./recommendation.controller.js";
+import { getRecommendations } from "./recommendation.controller.js";
 
 const router = Router();
 
 router.get(
+  "/",
 
- "/",
+  authMiddleware,
 
- authMiddleware,
+  rbac(["STUDENT"]),
 
- rbac([
-
-  "STUDENT"
-
- ]),
-
- getRecommendations
-
+  getRecommendations,
 );
 
 export default router;

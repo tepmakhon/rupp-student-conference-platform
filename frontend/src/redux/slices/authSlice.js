@@ -1,92 +1,54 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const token =
-  localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
 let user = null;
 
 try {
+  const storedUser = localStorage.getItem("user");
 
-  const storedUser =
-    localStorage.getItem("user");
-
-  user = storedUser
-    ? JSON.parse(storedUser)
-    : null;
-
+  user = storedUser ? JSON.parse(storedUser) : null;
 } catch (error) {
+  console.error("Invalid user data in localStorage");
 
-  console.error(
-    "Invalid user data in localStorage"
-  );
-
-  localStorage.removeItem(
-    "user"
-  );
+  localStorage.removeItem("user");
 }
 
 const initialState = {
-
   user,
 
   token,
 
-  role:
-    user?.role?.roleName || null,
+  role: user?.role?.roleName || null,
 
-  isAuthenticated:
-    !!token,
-
+  isAuthenticated: !!token,
 };
 
 const authSlice = createSlice({
-
   name: "auth",
 
   initialState,
 
   reducers: {
-
-    loginSuccess: (
-      state,
-      action
-    ) => {
-
-      const {
-        user,
-        token,
-      } = action.payload;
+    loginSuccess: (state, action) => {
+      const { user, token } = action.payload;
 
       state.user = user;
 
       state.token = token;
 
-      state.role =
-        user?.role?.roleName || null;
+      state.role = user?.role?.roleName || null;
 
-      state.isAuthenticated =
-        true;
+      state.isAuthenticated = true;
 
-      localStorage.setItem(
-        "token",
-        token
-      );
+      localStorage.setItem("token", token);
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify(user)
-      );
+      localStorage.setItem("user", JSON.stringify(user));
 
-      localStorage.setItem(
-        "role",
-        user?.role?.roleName || ""
-      );
+      localStorage.setItem("role", user?.role?.roleName || "");
     },
 
-    logout: (
-      state
-    ) => {
-
+    logout: (state) => {
       state.user = null;
 
       state.token = null;
@@ -95,29 +57,19 @@ const authSlice = createSlice({
 
       state.isAuthenticated = false;
 
-      localStorage.removeItem(
-        "token"
-      );
+      localStorage.removeItem("token");
 
-      localStorage.removeItem(
-        "user"
-      );
+      localStorage.removeItem("user");
 
-      localStorage.removeItem(
-        "role"
-      );
+      localStorage.removeItem("role");
     },
-
   },
-
 });
 
 export const {
-
   loginSuccess,
 
   logout,
-
 } = authSlice.actions;
 
 export default authSlice.reducer;

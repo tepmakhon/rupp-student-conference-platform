@@ -1,5 +1,4 @@
 function AdminPageHeader({
-
   title,
 
   description,
@@ -7,13 +6,9 @@ function AdminPageHeader({
   onAdd,
 
   addLabel = "Add New",
-
 }) {
-
   return (
-
     <div
-
       className="
 
         flex
@@ -31,13 +26,9 @@ function AdminPageHeader({
         mb-8
 
       "
-
     >
-
       <div>
-
         <h1
-
           className="
 
             text-4xl
@@ -47,15 +38,11 @@ function AdminPageHeader({
             text-primary
 
           "
-
         >
-
           {title}
-
         </h1>
 
         <p
-
           className="
 
             text-gray-500
@@ -63,17 +50,12 @@ function AdminPageHeader({
             mt-2
 
           "
-
         >
-
           {description}
-
         </p>
-
       </div>
 
       <button
-
         onClick={onAdd}
 
         className="
@@ -93,17 +75,11 @@ function AdminPageHeader({
           transition
 
         "
-
       >
-
         {addLabel}
-
       </button>
-
     </div>
-
   );
-
 }
 
 export default AdminPageHeader;

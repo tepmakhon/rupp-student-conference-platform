@@ -1,37 +1,18 @@
-import {
+import { CalendarDaysIcon, MapPinIcon } from "@heroicons/react/24/outline";
 
-  CalendarDaysIcon,
+import { formatDate } from "../../utils/formatDate";
 
-  MapPinIcon,
+import MyEventStatus from "./MyEventStatus";
 
-} from "@heroicons/react/24/outline";
-
-import {
-
-  formatDate,
-
-} from "../../utils/formatDate";
-
-import MyEventStatus
-
-from "./MyEventStatus";
-
-import MyEventActions
-
-from "./MyEventActions";
+import MyEventActions from "./MyEventActions";
 
 function MyEventCard({
-
   event,
 
   onDelete,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -49,11 +30,8 @@ function MyEventCard({
         transition
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -67,13 +45,9 @@ function MyEventCard({
           gap-8
 
         "
-
       >
-
         <div>
-
           <h2
-
             className="
 
               text-2xl
@@ -83,15 +57,11 @@ function MyEventCard({
               text-primary
 
             "
-
           >
-
             {event.title}
-
           </h2>
 
           <div
-
             className="
 
               flex
@@ -107,11 +77,8 @@ function MyEventCard({
               text-sm
 
             "
-
           >
-
             <div
-
               className="
 
                 flex
@@ -121,11 +88,8 @@ function MyEventCard({
                 gap-2
 
               "
-
             >
-
               <MapPinIcon
-
                 className="
 
                   w-5
@@ -133,15 +97,12 @@ function MyEventCard({
                   h-5
 
                 "
-
               />
 
               {event.location}
-
             </div>
 
             <div
-
               className="
 
                 flex
@@ -151,11 +112,8 @@ function MyEventCard({
                 gap-2
 
               "
-
             >
-
               <CalendarDaysIcon
-
                 className="
 
                   w-5
@@ -163,69 +121,31 @@ function MyEventCard({
                   h-5
 
                 "
-
               />
 
-              {
-
-                formatDate(
-
-                  event.eventDate
-
-                )
-
-              }
-
+              {formatDate(event.eventDate)}
             </div>
-
           </div>
 
           <div
-
             className="
 
               mt-5
 
             "
-
           >
-
-            <MyEventStatus
-
-              status={
-
-                event.status
-
-              }
-
-            />
-
+            <MyEventStatus status={event.status} />
           </div>
-
         </div>
 
         <MyEventActions
+          event={event}
 
-          event={
-
-            event
-
-          }
-
-          onDelete={
-
-            onDelete
-
-          }
-
+          onDelete={onDelete}
         />
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default MyEventCard;

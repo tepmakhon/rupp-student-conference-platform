@@ -1,14 +1,6 @@
-import {
+import { prisma } from "../../config/prisma.js";
 
- prisma,
-
-} from "../../config/prisma.js";
-
-import {
-
- AppError,
-
-} from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +8,7 @@ import {
 |--------------------------------------------------------------------------
 */
 
-export const getMyProfile = async (
-  userId: bigint
-) => {
-
+export const getMyProfile = async (userId: bigint) => {
   const [
     user,
     totalRegistrations,
@@ -29,23 +18,18 @@ export const getMyProfile = async (
     recentEvents,
     recentApplications,
   ] = await Promise.all([
-
     prisma.user.findUnique({
-
       where: {
         id: userId,
       },
 
       include: {
-
         role: true,
 
         profile: true,
 
         student: {
-
           include: {
-
             university: true,
 
             faculty: true,
@@ -53,230 +37,149 @@ export const getMyProfile = async (
             major: true,
 
             studentSkills: {
-
               include: {
-
                 skill: true,
-
               },
-
             },
-
           },
-
         },
 
         organization: true,
-
       },
-
     }),
 
     prisma.eventRegistration.count({
-
       where: {
-
         student: {
-
           userId,
-
         },
-
       },
-
     }),
 
     prisma.application.count({
-
       where: {
-
         student: {
-
           userId,
-
         },
-
       },
-
     }),
 
     prisma.savedOpportunity.count({
-
       where: {
-
         student: {
-
           userId,
-
         },
-
       },
-
     }),
 
     prisma.activityScoreHistory.findMany({
-
       where: {
-
         student: {
-
           userId,
-
         },
-
       },
 
       orderBy: {
-
         createdAt: "desc",
-
       },
 
       take: 5,
-
     }),
 
     prisma.eventRegistration.findMany({
-
       where: {
-
         student: {
-
           userId,
-
         },
-
       },
 
       include: {
-
         event: true,
-
       },
 
       orderBy: {
-
         registeredAt: "desc",
-
       },
 
       take: 5,
-
     }),
 
     prisma.application.findMany({
-
       where: {
-
         student: {
-
           userId,
-
         },
-
       },
 
       include: {
-
         opportunity: {
-
           include: {
-
             organization: true,
-
           },
-
         },
-
       },
 
       orderBy: {
-
         appliedAt: "desc",
-
       },
 
       take: 5,
-
     }),
-
   ]);
 
   if (!user) {
-
     throw new AppError(
-
       "User not found",
 
-      404
-
+      404,
     );
-
   }
 
-  const activityScore =
-    user.student?.activityScore || 0;
+  const activityScore = user.student?.activityScore || 0;
 
   const badges = [
-
     {
-
       badgeName: "Bronze Explorer",
 
       requiredScore: 100,
 
-      unlocked:
-        activityScore >= 100,
-
+      unlocked: activityScore >= 100,
     },
 
     {
-
       badgeName: "Silver Explorer",
 
       requiredScore: 300,
 
-      unlocked:
-        activityScore >= 300,
-
+      unlocked: activityScore >= 300,
     },
 
     {
-
       badgeName: "Gold Explorer",
 
       requiredScore: 600,
 
-      unlocked:
-        activityScore >= 600,
-
+      unlocked: activityScore >= 600,
     },
 
     {
-
       badgeName: "Platinum Explorer",
 
       requiredScore: 1000,
 
-      unlocked:
-        activityScore >= 1000,
-
+      unlocked: activityScore >= 1000,
     },
-
   ];
 
   return {
-
     ...user,
 
     statistics: {
-
       totalRegistrations,
 
       totalApplications,
 
       savedOpportunities,
-
     },
 
     badges,
@@ -286,9 +189,7 @@ export const getMyProfile = async (
     recentEvents,
 
     recentApplications,
-
   };
-
 };
 /*
 |--------------------------------------------------------------------------
@@ -296,230 +197,128 @@ export const getMyProfile = async (
 |--------------------------------------------------------------------------
 */
 
-export const updateMyProfile =
+export const updateMyProfile = async (
+  userId: bigint,
 
-async (
-
- userId: bigint,
-
- data: any
-
+  data: any,
 ) => {
+  const {
+    fullName,
 
- const {
+    phoneNumber,
 
-   fullName,
+    gender,
 
-   phoneNumber,
+    dateOfBirth,
 
-   gender,
+    bio,
 
-   dateOfBirth,
+    profileImageUrl,
 
-   bio,
+    academicYear,
 
-   profileImageUrl,
+    websiteUrl,
+  } = data;
 
-   academicYear,
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
 
-   websiteUrl,
+    include: {
+      role: true,
+    },
+  });
 
- } = data;
+  if (!user) {
+    throw new AppError(
+      "User not found",
 
- const user =
+      404,
+    );
+  }
 
- await prisma.user.findUnique({
+  let parsedDate = null;
 
-   where: {
+  if (dateOfBirth && !isNaN(Date.parse(dateOfBirth))) {
+    parsedDate = new Date(dateOfBirth);
+  }
 
-     id: userId,
+  await prisma.userProfile.upsert({
+    where: {
+      userId,
+    },
 
-   },
+    create: {
+      userId,
 
-   include: {
+      fullName,
 
-     role: true,
+      phoneNumber,
 
-   },
+      gender,
 
- });
+      dateOfBirth: parsedDate,
 
- if (!user) {
+      bio,
 
-   throw new AppError(
+      profileImageUrl,
+    },
 
-     "User not found",
+    update: {
+      fullName,
 
-     404
+      phoneNumber,
 
-   );
+      gender,
 
- }
+      dateOfBirth: parsedDate,
 
- let parsedDate = null;
+      bio,
 
- if (
+      profileImageUrl,
+    },
+  });
 
-   dateOfBirth &&
+  if (user.role.roleName === "STUDENT") {
+    const student = await prisma.student.findUnique({
+      where: {
+        userId,
+      },
+    });
 
-   !isNaN(
+    if (student) {
+      await prisma.student.update({
+        where: {
+          userId,
+        },
 
-     Date.parse(
+        data: {
+          academicYear,
+        },
+      });
+    }
+  }
 
-       dateOfBirth
-
-     )
-
-   )
-
- ) {
-
-   parsedDate =
-
-   new Date(
-
-     dateOfBirth
-
-   );
-
- }
-
- await prisma.userProfile.upsert({
-
-   where: {
-
-     userId,
-
-   },
-
-   create: {
-
-     userId,
-
-     fullName,
-
-     phoneNumber,
-
-     gender,
-
-     dateOfBirth:
-
-     parsedDate,
-
-     bio,
-
-     profileImageUrl,
-
-   },
-
-   update: {
-
-     fullName,
-
-     phoneNumber,
-
-     gender,
-
-     dateOfBirth:
-
-     parsedDate,
-
-     bio,
-
-     profileImageUrl,
-
-   },
-
- });
-
- if (
-
-   user.role.roleName ===
-
-   "STUDENT"
-
- ) {
-
-   const student =
-
-   await prisma.student.findUnique({
-
-     where: {
-
-       userId,
-
-     },
-
-   });
-
-   if (student) {
-
-     await prisma.student.update({
-
-       where: {
-
-         userId,
-
-       },
-
-       data: {
-
-         academicYear,
-
-       },
-
-     });
-
-   }
-
- }
-
- if (
-
-   user.role.roleName ===
-
-   "ORGANIZATION"
-
- ) {
-
-   const organization =
-
-   await prisma.organization.findUnique({
-
-     where: {
-
-       userId,
-
-     },
-
-   });
-
-   if (organization) {
-
-     await prisma.organization.update({
-
-       where: {
-
-         userId,
-
-       },
-
-       data: {
-
-         websiteUrl,
-
-       },
-
-     });
-
-   }
-
- }
-
- return await getMyProfile(
-
-   userId
-
- );
-
+  if (user.role.roleName === "ORGANIZATION") {
+    const organization = await prisma.organization.findUnique({
+      where: {
+        userId,
+      },
+    });
+
+    if (organization) {
+      await prisma.organization.update({
+        where: {
+          userId,
+        },
+
+        data: {
+          websiteUrl,
+        },
+      });
+    }
+  }
+
+  return await getMyProfile(userId);
 };

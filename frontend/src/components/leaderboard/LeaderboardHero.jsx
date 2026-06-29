@@ -1,67 +1,34 @@
 import {
-
   TrophyIcon,
-
   StarIcon,
-
   AcademicCapIcon,
-
 } from "@heroicons/react/24/solid";
 
-function LeaderboardHero({
-
-  students = [],
-
-}) {
-
-  const topThree =
-
-  students.slice(0,3);
+function LeaderboardHero({ students = [] }) {
+  const topThree = students.slice(0, 3);
 
   const cards = [
-
     {
+      title: "Champion",
 
-      title:
-
-      "Champion",
-
-      icon:
-
-      TrophyIcon,
-
+      icon: TrophyIcon,
     },
 
     {
+      title: "Second Place",
 
-      title:
-
-      "Second Place",
-
-      icon:
-
-      StarIcon,
-
+      icon: StarIcon,
     },
 
     {
+      title: "Third Place",
 
-      title:
-
-      "Third Place",
-
-      icon:
-
-      AcademicCapIcon,
-
+      icon: AcademicCapIcon,
     },
-
   ];
 
   return (
-
     <div
-
       className="
 
         grid
@@ -71,38 +38,20 @@ function LeaderboardHero({
         gap-6
 
       "
-
     >
+      {topThree.map(
+        (
+          student,
 
-      {
+          index,
+        ) => {
+          const Icon = cards[index]?.icon;
 
-        topThree.map(
+          return (
+            <div
+              key={student.id}
 
-          (
-
-            student,
-
-            index
-
-          ) => {
-
-            const Icon =
-
-            cards[index]
-
-            ?.icon;
-
-            return (
-
-              <div
-
-                key={
-
-                  student.id
-
-                }
-
-                className="
+              className="
 
                   bg-white
 
@@ -115,12 +64,9 @@ function LeaderboardHero({
                   p-8
 
                 "
-
-              >
-
-                <div
-
-                  className="
+            >
+              <div
+                className="
 
                     flex
 
@@ -131,34 +77,21 @@ function LeaderboardHero({
                     mb-6
 
                   "
-
-                >
-
-                  <h3
-
-                    className="
+              >
+                <h3
+                  className="
 
                       font-bold
 
                       text-primary
 
                     "
+                >
+                  {cards[index]?.title}
+                </h3>
 
-                  >
-
-                    {
-
-                      cards[index]
-
-                      ?.title
-
-                    }
-
-                  </h3>
-
-                  <Icon
-
-                    className="
+                <Icon
+                  className="
 
                       w-8
 
@@ -167,64 +100,42 @@ function LeaderboardHero({
                       text-secondary
 
                     "
+                />
+              </div>
 
-                  />
-
-                </div>
-
-                <h2
-
-                  className="
+              <h2
+                className="
 
                     text-2xl
 
                     font-bold
 
                   "
+              >
+                {student.fullName}
+              </h2>
 
-                >
-
-                  {
-
-                    student.fullName
-
-                  }
-
-                </h2>
-
-                <p
-
-                  className="
+              <p
+                className="
 
                     text-gray-500
 
                     mt-2
 
                   "
+              >
+                {student.university}
+              </p>
 
-                >
-
-                  {
-
-                    student.university
-
-                  }
-
-                </p>
-
-                <div
-
-                  className="
+              <div
+                className="
 
                     mt-6
 
                   "
-
-                >
-
-                  <span
-
-                    className="
+              >
+                <span
+                  className="
 
                       text-4xl
 
@@ -233,33 +144,16 @@ function LeaderboardHero({
                       text-primary
 
                     "
-
-                  >
-
-                    {
-
-                      student.activityScore
-
-                    }
-
-                  </span>
-
-                </div>
-
+                >
+                  {student.activityScore}
+                </span>
               </div>
-
-            );
-
-          }
-
-        )
-
-      }
-
+            </div>
+          );
+        },
+      )}
     </div>
-
   );
-
 }
 
 export default LeaderboardHero;

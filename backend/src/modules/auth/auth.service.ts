@@ -2,34 +2,17 @@ import bcrypt from "bcrypt";
 
 import jwt from "jsonwebtoken";
 
-import { prisma }
-from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
-import { AppError }
-from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
-import {
-  createAuditLog,
-}
-from "../audit/audit.service.js";
+import { createAuditLog } from "../audit/audit.service.js";
 
-import {
-  RegisterPayload,
-  LoginPayload,
-}
-from "./auth.types.js";
+import { RegisterPayload, LoginPayload } from "./auth.types.js";
 
-import {
-  validateRegister,
-  validateLogin,
-}
-from "./auth.validation.js";
+import { validateRegister, validateLogin } from "./auth.validation.js";
 
-const JWT_SECRET =
-
-process.env.JWT_SECRET ||
-
-"secret";
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
 /*
 |--------------------------------------------------------------------------
@@ -37,22 +20,10 @@ process.env.JWT_SECRET ||
 |--------------------------------------------------------------------------
 */
 
-export const registerUser =
-
-async (
-
-  data: RegisterPayload
-
-) => {
-
-  validateRegister(
-
-    data
-
-  );
+export const registerUser = async (data: RegisterPayload) => {
+  validateRegister(data);
 
   const {
-
     email,
 
     password,
@@ -72,7 +43,6 @@ async (
     organizationName,
 
     description,
-
   } = data;
 
   /*
@@ -81,18 +51,12 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  if (
-    roleName === "ADMIN"
-  ) {
-
+  if (roleName === "ADMIN") {
     throw new AppError(
-
       "Admin registration is disabled",
 
-      403
-
+      403,
     );
-
   }
 
   /*
@@ -101,9 +65,7 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const normalizedEmail =
-
-    email
+  const normalizedEmail = email
 
     .trim()
 
@@ -115,30 +77,18 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const existingUser =
-
-  await prisma.user.findUnique({
-
+  const existingUser = await prisma.user.findUnique({
     where: {
-
-      email:
-
-      normalizedEmail,
-
+      email: normalizedEmail,
     },
-
   });
 
   if (existingUser) {
-
     throw new AppError(
-
       "Email already exists",
 
-      409
-
+      409,
     );
-
   }
 
   /*
@@ -147,28 +97,18 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const role =
-
-  await prisma.role.findUnique({
-
+  const role = await prisma.role.findUnique({
     where: {
-
       roleName,
-
     },
-
   });
 
   if (!role) {
-
     throw new AppError(
-
       "Role not found",
 
-      404
-
+      404,
     );
-
   }
 
   /*
@@ -177,36 +117,14 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  if (
-
-    roleName ===
-
-    "STUDENT"
-
-  ) {
-
-    if (
-
-      !fullName ||
-
-      !universityId ||
-
-      !facultyId ||
-
-      !majorId
-
-    ) {
-
+  if (roleName === "STUDENT") {
+    if (!fullName || !universityId || !facultyId || !majorId) {
       throw new AppError(
-
         "Student information is required",
 
-        400
-
+        400,
       );
-
     }
-
   }
 
   /*
@@ -215,30 +133,14 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  if (
-
-    roleName ===
-
-    "ORGANIZATION"
-
-  ) {
-
-    if (
-
-      !organizationName
-
-    ) {
-
+  if (roleName === "ORGANIZATION") {
+    if (!organizationName) {
       throw new AppError(
-
         "Organization name is required",
 
-        400
-
+        400,
       );
-
     }
-
   }
 
   /*
@@ -247,14 +149,10 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const hashedPassword =
-
-  await bcrypt.hash(
-
+  const hashedPassword = await bcrypt.hash(
     password,
 
-    10
-
+    10,
   );
 
   /*
@@ -263,44 +161,25 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const user =
-
-  await prisma.$transaction(
-
-  async (tx) => {
-
+  const user = await prisma.$transaction(async (tx) => {
     /*
     |--------------------------------------------------------------------------
     | Create User
     |--------------------------------------------------------------------------
     */
 
-    const newUser =
-
-    await tx.user.create({
-
+    const newUser = await tx.user.create({
       data: {
+        email: normalizedEmail,
 
-        email:
+        passwordHash: hashedPassword,
 
-        normalizedEmail,
-
-        passwordHash:
-
-        hashedPassword,
-
-        roleId:
-
-        role.id,
-
+        roleId: role.id,
       },
 
       include: {
-
         role: true,
-
       },
-
     });
 
     /*
@@ -310,23 +189,11 @@ async (
     */
 
     await tx.userProfile.create({
-
       data: {
+        userId: newUser.id,
 
-        userId:
-
-        newUser.id,
-
-        fullName:
-
-        fullName ||
-
-        organizationName ||
-
-        "Unknown",
-
+        fullName: fullName || organizationName || "Unknown",
       },
-
     });
 
     /*
@@ -335,68 +202,20 @@ async (
     |--------------------------------------------------------------------------
     */
 
-    if (
-
-      role.roleName ===
-
-      "STUDENT"
-
-    ) {
-
+    if (role.roleName === "STUDENT") {
       await tx.student.create({
-
         data: {
+          userId: newUser.id,
 
-          userId:
+          universityId: BigInt(String(universityId)),
 
-          newUser.id,
+          facultyId: BigInt(String(facultyId)),
 
-          universityId:
+          majorId: BigInt(String(majorId)),
 
-          BigInt(
-
-            String(
-
-              universityId
-
-            )
-
-          ),
-
-          facultyId:
-
-          BigInt(
-
-            String(
-
-              facultyId
-
-            )
-
-          ),
-
-          majorId:
-
-          BigInt(
-
-            String(
-
-              majorId
-
-            )
-
-          ),
-
-          academicYear:
-
-          academicYear ||
-
-          null,
-
+          academicYear: academicYear || null,
         },
-
       });
-
     }
 
     /*
@@ -405,42 +224,19 @@ async (
     |--------------------------------------------------------------------------
     */
 
-    if (
+    if (role.roleName === "ORGANIZATION") {
+      await tx.organization.create({
+        data: {
+          userId: newUser.id,
 
-  role.roleName ===
+          organizationName: organizationName || "Unnamed Organization",
 
-  "ORGANIZATION"
-
-) {
-
-  await tx.organization.create({
-
-    data: {
-
-      userId:
-
-      newUser.id,
-
-      organizationName:
-
-      organizationName ||
-
-      "Unnamed Organization",
-
-      description:
-
-      description ||
-
-      "",
-
-    },
-
-  });
-
-}
+          description: description || "",
+        },
+      });
+    }
 
     return newUser;
-
   });
 
   /*
@@ -450,11 +246,9 @@ async (
   */
 
   await createAuditLog(
-
     user.id,
 
-    `USER_REGISTERED_${role.roleName}`
-
+    `USER_REGISTERED_${role.roleName}`,
   );
 
   /*
@@ -463,48 +257,29 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const token =
+  const token = jwt.sign(
+    {
+      id: user.id.toString(),
 
-  jwt.sign(
+      email: user.email,
 
-  {
+      roleId: user.roleId.toString(),
 
-    id:
+      roleName: role.roleName,
+    },
 
-    user.id.toString(),
+    JWT_SECRET,
 
-    email:
-
-    user.email,
-
-    roleId:
-
-    user.roleId.toString(),
-
-    roleName:
-
-    role.roleName,
-
-  },
-
-  JWT_SECRET,
-
-  {
-
-    expiresIn:
-
-    "7d",
-
-  });
+    {
+      expiresIn: "7d",
+    },
+  );
 
   return {
-
     user,
 
     token,
-
   };
-
 };
 
 /*
@@ -513,98 +288,59 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const loginUser =
-
-async (
-
-  data: LoginPayload
-
-) => {
-
-  validateLogin(
-
-    data
-
-  );
+export const loginUser = async (data: LoginPayload) => {
+  validateLogin(data);
 
   const {
-
     email,
 
     password,
-
   } = data;
 
-  const normalizedEmail =
-
-    email
+  const normalizedEmail = email
 
     .trim()
 
     .toLowerCase();
 
-  const user =
-
-  await prisma.user.findUnique({
-
+  const user = await prisma.user.findUnique({
     where: {
-
-      email:
-
-      normalizedEmail,
-
+      email: normalizedEmail,
     },
 
     include: {
-
       role: true,
 
       profile: true,
-
     },
-
   });
 
   if (!user) {
-
     throw new AppError(
-
       "Invalid credentials",
 
-      401
-
+      401,
     );
-
   }
 
-  const isValid =
-
-  await bcrypt.compare(
-
+  const isValid = await bcrypt.compare(
     password,
 
-    user.passwordHash
-
+    user.passwordHash,
   );
 
   if (!isValid) {
-
     await createAuditLog(
-
       user.id,
 
-      "LOGIN_FAILED"
-
+      "LOGIN_FAILED",
     );
 
     throw new AppError(
-
       "Invalid credentials",
 
-      401
-
+      401,
     );
-
   }
 
   /*
@@ -614,11 +350,9 @@ async (
   */
 
   await createAuditLog(
-
     user.id,
 
-    "LOGIN_SUCCESS"
-
+    "LOGIN_SUCCESS",
   );
 
   /*
@@ -627,46 +361,27 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  const token =
+  const token = jwt.sign(
+    {
+      id: user.id.toString(),
 
-  jwt.sign(
+      email: user.email,
 
-  {
+      roleId: user.roleId.toString(),
 
-    id:
+      roleName: user.role.roleName,
+    },
 
-    user.id.toString(),
+    JWT_SECRET,
 
-    email:
-
-    user.email,
-
-    roleId:
-
-    user.roleId.toString(),
-
-    roleName:
-
-    user.role.roleName,
-
-  },
-
-  JWT_SECRET,
-
-  {
-
-    expiresIn:
-
-    "7d",
-
-  });
+    {
+      expiresIn: "7d",
+    },
+  );
 
   return {
-
     user,
 
     token,
-
   };
-
 };

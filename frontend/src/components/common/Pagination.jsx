@@ -1,8 +1,4 @@
-function Pagination({
-  page,
-  totalPages,
-  onPageChange,
-}) {
+function Pagination({ page, totalPages, onPageChange }) {
   if (totalPages <= 1) return null;
 
   return (
@@ -17,9 +13,7 @@ function Pagination({
     >
       <button
         disabled={page === 1}
-        onClick={() =>
-          onPageChange(page - 1)
-        }
+        onClick={() => onPageChange(page - 1)}
         className="
           px-4
           py-2
@@ -31,37 +25,24 @@ function Pagination({
         Previous
       </button>
 
-      {Array.from(
-        { length: totalPages },
-        (_, index) => (
-          <button
-            key={index}
-            onClick={() =>
-              onPageChange(index + 1)
-            }
-            className={`
+      {Array.from({ length: totalPages }, (_, index) => (
+        <button
+          key={index}
+          onClick={() => onPageChange(index + 1)}
+          className={`
               px-4
               py-2
               rounded-xl
-              ${
-                page === index + 1
-                  ? "bg-primary text-white"
-                  : "border"
-              }
+              ${page === index + 1 ? "bg-primary text-white" : "border"}
             `}
-          >
-            {index + 1}
-          </button>
-        )
-      )}
+        >
+          {index + 1}
+        </button>
+      ))}
 
       <button
-        disabled={
-          page === totalPages
-        }
-        onClick={() =>
-          onPageChange(page + 1)
-        }
+        disabled={page === totalPages}
+        onClick={() => onPageChange(page + 1)}
         className="
           px-4
           py-2

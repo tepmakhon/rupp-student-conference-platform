@@ -1,115 +1,37 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { useNavigate } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
+import { registerUser } from "../../api/authApi";
 
-import {
+import { getUniversities } from "../../api/universityApi";
 
-  useNavigate,
+import { getFaculties } from "../../api/facultyApi";
 
-} from "react-router-dom";
+import { getMajors } from "../../api/majorApi";
 
-import toast
+import RoleSelector from "../../components/auth/RoleSelector";
 
-from "react-hot-toast";
+import StudentRegisterForm from "../../components/auth/StudentRegisterForm";
 
-import {
-
-  registerUser,
-
-} from "../../api/authApi";
-
-import {
-
-  getUniversities,
-
-} from "../../api/universityApi";
-
-import {
-
-  getFaculties,
-
-} from "../../api/facultyApi";
-
-import {
-
-  getMajors,
-
-} from "../../api/majorApi";
-
-import RoleSelector
-
-from "../../components/auth/RoleSelector";
-
-import StudentRegisterForm
-
-from "../../components/auth/StudentRegisterForm";
-
-import OrganizationRegisterForm
-
-from "../../components/auth/OrganizationRegisterForm";
+import OrganizationRegisterForm from "../../components/auth/OrganizationRegisterForm";
 
 function RegisterPage() {
+  const navigate = useNavigate();
 
-  const navigate =
+  const [role, setRole] = useState("STUDENT");
 
-  useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const [
+  const [universities, setUniversities] = useState([]);
 
-    role,
+  const [faculties, setFaculties] = useState([]);
 
-    setRole,
+  const [majors, setMajors] = useState([]);
 
-  ] = useState(
-
-    "STUDENT"
-
-  );
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(false);
-
-  const [
-
-    universities,
-
-    setUniversities,
-
-  ] = useState([]);
-
-  const [
-
-    faculties,
-
-    setFaculties,
-
-  ] = useState([]);
-
-  const [
-
-    majors,
-
-    setMajors,
-
-  ] = useState([]);
-
-  const [
-
-    form,
-
-    setForm,
-
-  ] = useState({
-
+  const [form, setForm] = useState({
     email: "",
 
     password: "",
@@ -129,225 +51,96 @@ function RegisterPage() {
     organizationName: "",
 
     description: "",
-
   });
 
   useEffect(() => {
-
     loadData();
-
   }, []);
 
-  const loadData =
-
-  async () => {
-
+  const loadData = async () => {
     try {
-
-      const [
-
-        universityData,
-
-        facultyData,
-
-        majorData,
-
-      ] = await Promise.all([
-
+      const [universityData, facultyData, majorData] = await Promise.all([
         getUniversities(),
 
         getFaculties(),
 
         getMajors(),
-
       ]);
 
-      setUniversities(
+      setUniversities(universityData);
 
-        universityData
+      setFaculties(facultyData);
 
-      );
-
-      setFaculties(
-
-        facultyData
-
-      );
-
-      setMajors(
-
-        majorData
-
-      );
-
-    }
-
-    catch (error) {
-
+      setMajors(majorData);
+    } catch (error) {
       console.error(error);
-
     }
-
   };
 
-  const handleSubmit =
-
-  async (e) => {
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
-
-      if (
-
-        form.password !==
-
-        form.confirmPassword
-
-      ) {
-
-        return toast.error(
-
-          "Passwords do not match"
-
-        );
-
+      if (form.password !== form.confirmPassword) {
+        return toast.error("Passwords do not match");
       }
 
       setLoading(true);
 
       const payload = {
+        email: form.email,
 
-        email:
+        password: form.password,
 
-        form.email,
-
-        password:
-
-        form.password,
-
-        roleName:
-
-        role,
-
+        roleName: role,
       };
 
-      if (
-
-        role ===
-
-        "STUDENT"
-
-      ) {
-
+      if (role === "STUDENT") {
         Object.assign(
-
           payload,
 
           {
+            fullName: form.fullName,
 
-            fullName:
+            universityId: form.universityId,
 
-            form.fullName,
+            facultyId: form.facultyId,
 
-            universityId:
+            majorId: form.majorId,
 
-            form.universityId,
-
-            facultyId:
-
-            form.facultyId,
-
-            majorId:
-
-            form.majorId,
-
-            academicYear:
-
-            form.academicYear,
-
-          }
-
+            academicYear: form.academicYear,
+          },
         );
-
       }
 
-      if (
-
-        role ===
-
-        "ORGANIZATION"
-
-      ) {
-
+      if (role === "ORGANIZATION") {
         Object.assign(
-
           payload,
 
           {
+            organizationName: form.organizationName,
 
-            organizationName:
-
-            form.organizationName,
-
-            description:
-
-            form.description,
-
-          }
-
+            description: form.description,
+          },
         );
-
       }
 
-      await registerUser(
+      await registerUser(payload);
 
-        payload
+      toast.success("Account created");
 
-      );
-
-      toast.success(
-
-        "Account created"
-
-      );
-
-      navigate(
-
-        "/login"
-
-      );
-
-    }
-
-    catch (error) {
-
+      navigate("/login");
+    } catch (error) {
       console.error(error);
 
-      toast.error(
-
-        error?.response
-
-        ?.data?.message ||
-
-        "Registration failed"
-
-      );
-
-    }
-
-    finally {
-
+      toast.error(error?.response?.data?.message || "Registration failed");
+    } finally {
       setLoading(false);
-
     }
-
   };
 
   return (
-
     <div
-
       className="
 
       min-h-screen
@@ -365,11 +158,8 @@ function RegisterPage() {
       py-10
 
       "
-
     >
-
       <div
-
         className="
 
         w-full
@@ -385,13 +175,9 @@ function RegisterPage() {
         p-10
 
         "
-
       >
-
         <div className="text-center mb-8">
-
           <h1
-
             className="
 
             text-4xl
@@ -401,55 +187,35 @@ function RegisterPage() {
             text-primary
 
             "
-
           >
-
             Create Account
-
           </h1>
-
         </div>
 
         <form
-
-          onSubmit={
-
-            handleSubmit
-
-          }
+          onSubmit={handleSubmit}
 
           className="space-y-5"
-
         >
-
           <RoleSelector
-
             role={role}
 
             setRole={setRole}
-
           />
 
           <input
-
             type="email"
 
             placeholder="Email"
 
             value={form.email}
 
-            onChange={(e)=>
-
+            onChange={(e) =>
               setForm({
-
                 ...form,
 
-                email:
-
-                e.target.value,
-
+                email: e.target.value,
               })
-
             }
 
             className="
@@ -465,29 +231,21 @@ function RegisterPage() {
             py-3
 
             "
-
           />
 
           <input
-
             type="password"
 
             placeholder="Password"
 
             value={form.password}
 
-            onChange={(e)=>
-
+            onChange={(e) =>
               setForm({
-
                 ...form,
 
-                password:
-
-                e.target.value,
-
+                password: e.target.value,
               })
-
             }
 
             className="
@@ -503,29 +261,21 @@ function RegisterPage() {
             py-3
 
             "
-
           />
 
           <input
-
             type="password"
 
             placeholder="Confirm Password"
 
             value={form.confirmPassword}
 
-            onChange={(e)=>
-
+            onChange={(e) =>
               setForm({
-
                 ...form,
 
-                confirmPassword:
-
-                e.target.value,
-
+                confirmPassword: e.target.value,
               })
-
             }
 
             className="
@@ -541,49 +291,29 @@ function RegisterPage() {
             py-3
 
             "
-
           />
 
-          {
+          {role === "STUDENT" ? (
+            <StudentRegisterForm
+              form={form}
 
-            role ===
+              setForm={setForm}
 
-            "STUDENT"
+              universities={universities}
 
-            ? (
+              faculties={faculties}
 
-              <StudentRegisterForm
+              majors={majors}
+            />
+          ) : (
+            <OrganizationRegisterForm
+              form={form}
 
-                form={form}
-
-                setForm={setForm}
-
-                universities={universities}
-
-                faculties={faculties}
-
-                majors={majors}
-
-              />
-
-            )
-
-            : (
-
-              <OrganizationRegisterForm
-
-                form={form}
-
-                setForm={setForm}
-
-              />
-
-            )
-
-          }
+              setForm={setForm}
+            />
+          )}
 
           <button
-
             disabled={loading}
 
             className="
@@ -601,33 +331,13 @@ function RegisterPage() {
             rounded-xl
 
             "
-
           >
-
-            {
-
-              loading
-
-              ?
-
-              "Creating..."
-
-              :
-
-              "Create Account"
-
-            }
-
+            {loading ? "Creating..." : "Create Account"}
           </button>
-
         </form>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default RegisterPage;

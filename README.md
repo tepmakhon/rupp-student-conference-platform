@@ -12,14 +12,14 @@ Many university opportunities are scattered across Facebook pages, Telegram grou
 
 This project solves that problem by creating a single platform where students can:
 
-* Register for conferences and workshops
-* Apply for internships and scholarships
-* Discover organizations
-* Save opportunities
-* Track activity history
-* Earn activity scores
-* Receive notifications
-* View personalized recommendations
+- Register for conferences and workshops
+- Apply for internships and scholarships
+- Discover organizations
+- Save opportunities
+- Track activity history
+- Earn activity scores
+- Receive notifications
+- View personalized recommendations
 
 Organizations can publish events and opportunities, while administrators moderate all submitted content.
 
@@ -29,53 +29,53 @@ Organizations can publish events and opportunities, while administrators moderat
 
 👨‍🎓 Student
 
-* Secure Authentication (JWT)
-* Student Profile
-* Browse Events
-* Register for Events
-* QR Event Ticket
-* Browse Opportunities
-* Apply for Opportunities
-* Save Opportunities
-* My Applications
-* My Events
-* Activity History
-* Student Badges
-* Personalized Recommendations
-* Analytics Dashboard
-* Real-time Notifications
-* Leaderboard
+- Secure Authentication (JWT)
+- Student Profile
+- Browse Events
+- Register for Events
+- QR Event Ticket
+- Browse Opportunities
+- Apply for Opportunities
+- Save Opportunities
+- My Applications
+- My Events
+- Activity History
+- Student Badges
+- Personalized Recommendations
+- Analytics Dashboard
+- Real-time Notifications
+- Leaderboard
 
 ⸻
 
 🏢 Organization
 
-* Organization Dashboard
-* Create Events
-* Edit Events
-* Delete Events
-* Create Opportunities
-* Edit Opportunities
-* Delete Opportunities
-* View Event Registrations
-* View Opportunity Applicants
-* Attendance Scanner
-* Organization Analytics
+- Organization Dashboard
+- Create Events
+- Edit Events
+- Delete Events
+- Create Opportunities
+- Edit Opportunities
+- Delete Opportunities
+- View Event Registrations
+- View Opportunity Applicants
+- Attendance Scanner
+- Organization Analytics
 
 ⸻
 
 👨‍💼 Administrator
 
-* Dashboard
-* Approve / Reject Events
-* Approve / Reject Opportunities
-* Manage Universities
-* Manage Faculties
-* Manage Majors
-* Manage Skills
-* Manage Event Categories
-* Manage Opportunity Types
-* Platform Analytics
+- Dashboard
+- Approve / Reject Events
+- Approve / Reject Opportunities
+- Manage Universities
+- Manage Faculties
+- Manage Majors
+- Manage Skills
+- Manage Event Categories
+- Manage Opportunity Types
+- Platform Analytics
 
 ⸻
 
@@ -85,25 +85,25 @@ Frontend (React)
 
         │
 
- REST API (Express.js)
+REST API (Express.js)
 
         │
 
- Business Logic
+Business Logic
 
         │
 
- Prisma ORM
+Prisma ORM
 
         │
 
- PostgreSQL
+PostgreSQL
 
 The backend follows a 3-Layer Architecture
 
-* Controller Layer
-* Service Layer
-* Data Layer (Prisma)
+- Controller Layer
+- Service Layer
+- Data Layer (Prisma)
 
 ⸻
 
@@ -111,50 +111,50 @@ The backend follows a 3-Layer Architecture
 
 Frontend
 
-* React
-* React Router
-* Redux Toolkit
-* Tailwind CSS
-* Axios
-* Heroicons
-* Lucide React
-* React Hot Toast
-* Socket.IO Client
-* Cloudinary Upload Images
-⸻
+- React
+- React Router
+- Redux Toolkit
+- Tailwind CSS
+- Axios
+- Heroicons
+- Lucide React
+- React Hot Toast
+- Socket.IO Client
+- Cloudinary Upload Images
+  ⸻
 
 Backend
 
-* Node.js
-* Express.js
-* TypeScript
-* Prisma ORM
-* PostgreSQL
-* JWT Authentication
-* bcrypt
-* Socket.IO
-* Docker
+- Node.js
+- Express.js
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- JWT Authentication
+- bcrypt
+- Socket.IO
+- Docker
 
 ⸻
 
 Database
 
-* PostgreSQL
-* Prisma Schema
-* 25+ relational tables
-* 3NF database design
+- PostgreSQL
+- Prisma Schema
+- 25+ relational tables
+- 3NF database design
 
 ⸻
 
 🔒 Security
 
-* JWT Authentication
-* Password Hashing (bcrypt)
-* Role-Based Access Control (RBAC)
-* Protected Routes
-* Input Validation
-* Audit Logs
-* User Sessions
+- JWT Authentication
+- Password Hashing (bcrypt)
+- Role-Based Access Control (RBAC)
+- Protected Routes
+- Input Validation
+- Audit Logs
+- User Sessions
 
 ⸻
 
@@ -193,24 +193,24 @@ Database
 frontend/
 
 ├── src/
-│   ├── api/
-│   ├── components/
-│   ├── pages/
-│   ├── redux/
-│   ├── routes/
-│   ├── hooks/
-│   ├── utils/
-│   └── constants/
+│ ├── api/
+│ ├── components/
+│ ├── pages/
+│ ├── redux/
+│ ├── routes/
+│ ├── hooks/
+│ ├── utils/
+│ └── constants/
 
 backend/
 
 ├── src/
-│   ├── modules/
-│   ├── middlewares/
-│   ├── config/
-│   ├── socket/
-│   ├── utils/
-│   └── routes/
+│ ├── modules/
+│ ├── middlewares/
+│ ├── config/
+│ ├── socket/
+│ ├── utils/
+│ └── routes/
 prisma/
 └── schema.prisma
 
@@ -220,23 +220,23 @@ prisma/
 
 Student
 
-* Register events
-* Apply opportunities
-* Save opportunities
-* Receive recommendations
+- Register events
+- Apply opportunities
+- Save opportunities
+- Receive recommendations
 
 Organization
 
-* Publish events
-* Publish opportunities
-* Manage applicants
-* Manage registrations
+- Publish events
+- Publish opportunities
+- Manage applicants
+- Manage registrations
 
 Administrator
 
-* Approve content
-* Manage master data
-* Monitor analytics
+- Approve content
+- Manage master data
+- Monitor analytics
 
 ⸻
 
@@ -254,7 +254,9 @@ npm install
 Create .env
 
 DATABASE_URL="postgresql://postgres:password@postgres:5432/dbname"
+
 # DATABASE_URL="postgresql://postgres:password@localhost:5433/dbname"
+
 JWT_SECRET="super_secure_secret_key_change_this"
 JWT_EXPIRES_IN="7d"
 
@@ -282,40 +284,40 @@ npm run dev
 
 📸 Screenshots
 
-* Login
-* Student Dashboard
-* Organization Dashboard
-* Admin Dashboard
-![alt text](x0-login.png)
-![alt text](x1-student.png)
-![alt text](x2-organization.png)
-![alt text](x3-admin.png)
+- Login
+- Student Dashboard
+- Organization Dashboard
+- Admin Dashboard
+  ![alt text](x0-login.png)
+  ![alt text](x1-student.png)
+  ![alt text](x2-organization.png)
+  ![alt text](x3-admin.png)
 
 ⸻
 
 📈 Future Improvements
 
-* AI Recommendation Engine
-* Resume Builder
-* Certificate Verification
-* Email Notifications
-* Mobile Application
-* Calendar Integration
-* Advanced Analytics
-* Export Reports (PDF / Excel)
-* Multi-University Support
-* Khmer Language Support
-* Docker Deployment
-* CI/CD Pipeline
+- AI Recommendation Engine
+- Resume Builder
+- Certificate Verification
+- Email Notifications
+- Mobile Application
+- Calendar Integration
+- Advanced Analytics
+- Export Reports (PDF / Excel)
+- Multi-University Support
+- Khmer Language Support
+- Docker Deployment
+- CI/CD Pipeline
 
 ⸻
 
 🎯 Project Goals
 
-* Increase student participation in academic activities.
-* Centralize university opportunities.
-* Improve communication between organizations and students.
-* Build a scalable platform that can expand beyond RUPP to universities across Cambodia.
+- Increase student participation in academic activities.
+- Centralize university opportunities.
+- Improve communication between organizations and students.
+- Build a scalable platform that can expand beyond RUPP to universities across Cambodia.
 
 ⸻
 

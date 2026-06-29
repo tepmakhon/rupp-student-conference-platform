@@ -27,17 +27,12 @@ import {
 } from "../../api/analyticsApi";
 
 function AnalyticsPage() {
+  const role = useSelector((state) => state.auth.role);
 
-  const role = useSelector(
-    state => state.auth.role
-  );
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] =
-    useState(true);
-
-  const [cards, setCards] =
-    useState([]);
-  const chartData = cards.map(card => ({
+  const [cards, setCards] = useState([]);
+  const chartData = cards.map((card) => ({
     name: card.title,
     value: Number(card.value),
   }));
@@ -46,14 +41,11 @@ function AnalyticsPage() {
   }, []);
 
   const loadAnalytics = async () => {
-
     try {
-
       let data;
 
       if (role === "STUDENT") {
-        data =
-          await getStudentAnalytics();
+        data = await getStudentAnalytics();
 
         setCards([
           {
@@ -80,38 +72,34 @@ function AnalyticsPage() {
       }
 
       if (role === "ORGANIZATION") {
+        data = await getOrganizationAnalytics();
 
-        data =
-          await getOrganizationAnalytics();
-
-          setCards([
-            {
-              title: "Events",
-              value: data.events,
-              icon: CalendarDaysIcon,
-            },
-            {
-              title: "Opportunities",
-              value: data.opportunities,
-              icon: BriefcaseIcon,
-            },
-            {
-              title: "Participants",
-              value: data.registrations,
-              icon: UserGroupIcon,
-            },
-            {
-              title: "Applications",
-              value: data.applications,
-              icon: BriefcaseIcon,
-            },
-          ]);
+        setCards([
+          {
+            title: "Events",
+            value: data.events,
+            icon: CalendarDaysIcon,
+          },
+          {
+            title: "Opportunities",
+            value: data.opportunities,
+            icon: BriefcaseIcon,
+          },
+          {
+            title: "Participants",
+            value: data.registrations,
+            icon: UserGroupIcon,
+          },
+          {
+            title: "Applications",
+            value: data.applications,
+            icon: BriefcaseIcon,
+          },
+        ]);
       }
 
       if (role === "ADMIN") {
-
-        data =
-          await getAdminAnalytics();
+        data = await getAdminAnalytics();
 
         setCards([
           {
@@ -136,19 +124,13 @@ function AnalyticsPage() {
           },
         ]);
       }
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   return (
-
     <DashboardLayout>
-
       <div
         className="
           max-w-7xl
@@ -156,7 +138,6 @@ function AnalyticsPage() {
           space-y-8
         "
       >
-
         <PageHeader
           title="Analytics"
           description="Platform analytics overview."
@@ -166,9 +147,7 @@ function AnalyticsPage() {
           <AnalyticsLoading />
         ) : (
           <>
-            <AnalyticsGrid
-              cards={cards}
-            />
+            <AnalyticsGrid cards={cards} />
 
             <div
               className="
@@ -177,28 +156,19 @@ function AnalyticsPage() {
                 gap-8
               "
             >
-              <AnalyticsBarChart
-                data={chartData}
-              />
+              <AnalyticsBarChart data={chartData} />
 
-              <AnalyticsPieChart
-                data={chartData}
-              />
+              <AnalyticsPieChart data={chartData} />
             </div>
 
-            <AnalyticsLineChart
-              data={chartData}
-            />
+            <AnalyticsLineChart data={chartData} />
 
             <ExportButtons />
           </>
         )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default AnalyticsPage;

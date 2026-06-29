@@ -1,69 +1,25 @@
-import {
-
-  useMemo,
-
-  useState,
-
-} from "react";
+import { useMemo, useState } from "react";
 
 export default function usePagination(
-
   data = [],
 
-  perPage = 10
-
+  perPage = 10,
 ) {
+  const [page, setPage] = useState(1);
 
-  const [
+  const totalPages = Math.ceil(data.length / perPage);
 
-    page,
+  const paginatedData = useMemo(() => {
+    const start = (page - 1) * perPage;
 
-    setPage,
+    return data.slice(
+      start,
 
-  ] = useState(1);
-
-  const totalPages =
-
-    Math.ceil(
-
-      data.length /
-
-      perPage
-
+      start + perPage,
     );
-
-  const paginatedData =
-
-    useMemo(() => {
-
-      const start =
-
-        (page - 1)
-
-        * perPage;
-
-      return data.slice(
-
-        start,
-
-        start + perPage
-
-      );
-
-    },
-
-    [
-
-      data,
-
-      page,
-
-      perPage,
-
-    ]);
+  }, [data, page, perPage]);
 
   return {
-
     page,
 
     setPage,
@@ -71,7 +27,5 @@ export default function usePagination(
     totalPages,
 
     paginatedData,
-
   };
-
 }

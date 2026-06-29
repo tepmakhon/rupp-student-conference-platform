@@ -1,113 +1,59 @@
-import {
+import { prisma } from "../../config/prisma.js";
 
- prisma,
-
-}
-
-from "../../config/prisma.js";
-
-export const getRecommendations =
-
-async (
-
- userId: bigint
-
-) => {
-
- /*
+export const getRecommendations = async (userId: bigint) => {
+  /*
  |--------------------------------------------------------------------------
  | Get Student
  |--------------------------------------------------------------------------
  */
 
-    const student =
-
-    await prisma.student.findUnique({
-
+  const student = await prisma.student.findUnique({
     where: {
-
-    userId,
-
+      userId,
     },
 
     include: {
+      university: true,
 
-    university: true,
+      faculty: true,
 
-    faculty: true,
+      major: true,
 
-    major: true,
-
-    studentSkills: {
-
+      studentSkills: {
         include: {
-
-        skill: true,
-
+          skill: true,
         },
-
+      },
     },
+  });
 
-    },
-
-    });
-
-    if (!student) {
-
+  if (!student) {
     return {
+      keywords: [],
 
-    keywords: [],
+      events: [],
 
-    events: [],
-
-    opportunities: [],
-
+      opportunities: [],
     };
+  }
 
-    }
-
- /*
+  /*
  |--------------------------------------------------------------------------
  | Build Keywords
  |--------------------------------------------------------------------------
  */
 
-    const majorName =
+  const majorName = student.major?.majorName || "";
 
-    student.major
+  const facultyName = student.faculty?.facultyName || "";
 
-    ?.majorName ||
+  const universityName = student.university?.universityName || "";
 
-    "";
+  const skillNames = student.studentSkills.map(
+    (studentSkill) => studentSkill.skill.skillName,
+  );
 
-    const facultyName =
-
-    student.faculty
-
-    ?.facultyName ||
-
-    "";
-
-    const universityName =
-
-    student.university
-
-    ?.universityName ||
-
-    "";
-
-    const skillNames =
-
-    student.studentSkills.map(
-
-    (studentSkill) =>
-
-    studentSkill.skill.skillName
-
-    );
-
-    const keywords = [
-
+  const keywords = [
     universityName,
 
     facultyName,
@@ -115,119 +61,105 @@ async (
     majorName,
 
     ...skillNames,
+  ].filter(Boolean);
 
-    ].filter(Boolean);
-
- /*
+  /*
  |--------------------------------------------------------------------------
  | Recommended Events
  |--------------------------------------------------------------------------
  */
 
-    const events = await prisma.event.findMany({
+  const events = await prisma.event.findMany({
     where: {
-        status: "APPROVED",
-        eventDate: {
+      status: "APPROVED",
+      eventDate: {
         gte: new Date(),
-        },
-        OR: keywords.flatMap((keyword) => [
+      },
+      OR: keywords.flatMap((keyword) => [
         {
-            title: {
+          title: {
             contains: keyword,
             mode: "insensitive",
-            },
+          },
         },
         {
-            description: {
+          description: {
             contains: keyword,
             mode: "insensitive",
-            },
+          },
         },
-        ]),
+      ]),
     },
 
     include: {
-        organization: true,
-        category: true,
+      organization: true,
+      category: true,
     },
 
     take: 6,
 
     orderBy: {
-        createdAt: "desc",
+      createdAt: "desc",
     },
-    });
+  });
 
- /*
+  /*
  |--------------------------------------------------------------------------
  | Recommended Opportunities
  |--------------------------------------------------------------------------
  */
 
-    const opportunities = await prisma.opportunity.findMany({
+  const opportunities = await prisma.opportunity.findMany({
     where: {
-        status: "APPROVED",
+      status: "APPROVED",
 
-        deadline: {
+      deadline: {
         gte: new Date(),
-        },
+      },
 
-        OR: keywords.flatMap((keyword) => [
+      OR: keywords.flatMap((keyword) => [
         {
-            title: {
+          title: {
             contains: keyword,
             mode: "insensitive",
-            },
+          },
         },
         {
-            description: {
+          description: {
             contains: keyword,
             mode: "insensitive",
-            },
+          },
         },
-        ]),
+      ]),
     },
 
     include: {
-        organization: true,
-        type: true,
+      organization: true,
+      type: true,
     },
 
     take: 6,
 
     orderBy: {
-        createdAt: "desc",
+      createdAt: "desc",
     },
-    });
+  });
 
- return {
+  return {
+    student: {
+      university: universityName,
 
-  student: {
+      faculty: facultyName,
 
-   university:
+      major: majorName,
 
-   universityName,
+      skills: skillNames,
+    },
 
-   faculty:
+    keywords,
 
-   facultyName,
+    events,
 
-   major:
-
-   majorName,
-
-   skills:
-
-   skillNames,
-
-  },
-
-  keywords,
-
-  events,
-
-  opportunities,
-
- };
-
+    opportunities,
+  };
 };

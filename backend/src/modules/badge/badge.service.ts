@@ -1,32 +1,20 @@
 import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 
-export const getMyBadges = async (
-  userId: bigint
-) => {
-
-  const student =
-    await prisma.student.findUnique({
-
-      where: {
-        userId,
-      },
-
-    });
+export const getMyBadges = async (userId: bigint) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!student) {
-
-    throw new AppError(
-      "Student not found",
-      404
-    );
-
+    throw new AppError("Student not found", 404);
   }
 
   const score = student.activityScore;
 
   const badges = [
-
     {
       id: 1,
       name: "Active Student",
@@ -66,22 +54,15 @@ export const getMyBadges = async (
       color: "blue",
       requiredScore: 1000,
     },
-
-  ].map(badge => ({
-
+  ].map((badge) => ({
     ...badge,
 
-    unlocked:
-      score >= badge.requiredScore,
-
+    unlocked: score >= badge.requiredScore,
   }));
 
   return {
-
     activityScore: score,
 
     badges,
-
   };
-
 };

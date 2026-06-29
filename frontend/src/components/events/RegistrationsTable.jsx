@@ -1,13 +1,6 @@
-function RegistrationsTable({
-
-  registrations,
-
-}) {
-
+function RegistrationsTable({ registrations }) {
   return (
-
     <div
-
       className="
 
         overflow-x-auto
@@ -19,33 +12,23 @@ function RegistrationsTable({
         shadow-md
 
       "
-
     >
-
       <table
-
         className="
 
           w-full
 
         "
-
       >
-
         <thead>
-
           <tr
-
             className="
 
               bg-gray-100
 
             "
-
           >
-
             <th
-
               className="
 
                 p-4
@@ -53,15 +36,11 @@ function RegistrationsTable({
                 text-left
 
               "
-
             >
-
               Student
-
             </th>
 
             <th
-
               className="
 
                 p-4
@@ -69,15 +48,11 @@ function RegistrationsTable({
                 text-left
 
               "
-
             >
-
               University
-
             </th>
 
             <th
-
               className="
 
                 p-4
@@ -85,15 +60,11 @@ function RegistrationsTable({
                 text-left
 
               "
-
             >
-
               Faculty
-
             </th>
 
             <th
-
               className="
 
                 p-4
@@ -101,163 +72,68 @@ function RegistrationsTable({
                 text-left
 
               "
-
             >
-
               Major
-
             </th>
-
           </tr>
-
         </thead>
 
         <tbody>
+          {registrations.map((registration) => (
+            <tr
+              key={registration.id}
 
-          {
-
-            registrations.map(
-
-              (
-
-                registration
-
-              ) => (
-
-                <tr
-
-                  key={
-
-                    registration.id
-
-                  }
-
-                  className="
+              className="
 
                     border-t
 
                   "
-
-                >
-
-                  <td
-
-                    className="
+            >
+              <td
+                className="
 
                       p-4
 
                     "
+              >
+                {registration.student?.user?.profile?.fullName || "N/A"}
+              </td>
 
-                  >
-
-                    {
-
-                      registration
-
-                      .student
-
-                      ?.user
-
-                      ?.profile
-
-                      ?.fullName
-
-                      ||
-
-                      "N/A"
-
-                    }
-
-                  </td>
-
-                  <td
-
-                    className="
+              <td
+                className="
 
                       p-4
 
                     "
+              >
+                {registration.student?.university?.universityName}
+              </td>
 
-                  >
-
-                    {
-
-                      registration
-
-                      .student
-
-                      ?.university
-
-                      ?.universityName
-
-                    }
-
-                  </td>
-
-                  <td
-
-                    className="
+              <td
+                className="
 
                       p-4
 
                     "
+              >
+                {registration.student?.faculty?.facultyName}
+              </td>
 
-                  >
-
-                    {
-
-                      registration
-
-                      .student
-
-                      ?.faculty
-
-                      ?.facultyName
-
-                    }
-
-                  </td>
-
-                  <td
-
-                    className="
+              <td
+                className="
 
                       p-4
 
                     "
-
-                  >
-
-                    {
-
-                      registration
-
-                      .student
-
-                      ?.major
-
-                      ?.majorName
-
-                    }
-
-                  </td>
-
-                </tr>
-
-              )
-
-            )
-
-          }
-
+              >
+                {registration.student?.major?.majorName}
+              </td>
+            </tr>
+          ))}
         </tbody>
-
       </table>
-
     </div>
-
   );
-
 }
 
 export default RegistrationsTable;

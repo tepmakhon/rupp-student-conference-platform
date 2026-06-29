@@ -1,62 +1,44 @@
 import { z } from "zod";
 
-export const createMajorSchema =
-  z.object({
+export const createMajorSchema = z.object({
+  facultyId: z.string(),
 
-    facultyId:
+  majorName: z
+    .string()
 
-      z.string(),
+    .min(2, "Major name is required"),
 
-    majorName:
+  description: z
+    .string()
 
-      z.string()
+    .optional(),
 
-      .min(
-        2,
-        "Major name is required"
-      ),
+  careerPath: z
+    .string()
 
-    description:
+    .optional(),
+});
 
-      z.string()
+export const updateMajorSchema = z.object({
+  facultyId: z
+    .string()
 
-      .optional(),
+    .optional(),
 
-    careerPath:
+  majorName: z
+    .string()
 
-      z.string()
+    .min(2)
 
-      .optional(),
+    .optional(),
 
-  });
+  description: z
+    .string()
 
-export const updateMajorSchema =
-  z.object({
+    .optional(),
 
-    facultyId:
+  careerPath: z
+    .string()
 
-      z.string()
-
-      .optional(),
-
-    majorName:
-
-      z.string()
-
-      .min(2)
-
-      .optional(),
-
-    description:
-
-      z.string()
-
-      .optional(),
-
-    careerPath:
-
-      z.string()
-
-      .optional(),
-
-  });
+    .optional(),
+});

@@ -1,103 +1,56 @@
-import { Router }
-from "express";
+import { Router } from "express";
 
 import {
-
   getAllSkills,
-
   createSkill,
-
   updateSkill,
-
   deleteSkill,
+} from "./skill.controller.js";
 
-}
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-from "./skill.controller.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import {
+import { validate } from "../../middlewares/validate.middleware.js";
 
-  authMiddleware,
-
-}
-
-from "../../middlewares/auth.middleware.js";
-
-import {
-
-  rbac,
-
-}
-
-from "../../middlewares/rbac.middleware.js";
-
-import {
-
-  validate,
-
-}
-
-from "../../middlewares/validate.middleware.js";
-
-import {
-
-  createSkillSchema,
-
-  updateSkillSchema,
-
-}
-
-from "./skill.validation.js";
+import { createSkillSchema, updateSkillSchema } from "./skill.validation.js";
 
 const router = Router();
 
-router.get(
-  "/",
-  getAllSkills
-);
+router.get("/", getAllSkills);
 
 router.post(
-
   "/",
 
   authMiddleware,
 
   rbac(["ADMIN"]),
 
-  validate(
-    createSkillSchema
-  ),
+  validate(createSkillSchema),
 
-  createSkill
-
+  createSkill,
 );
 
 router.patch(
-
   "/:id",
 
   authMiddleware,
 
   rbac(["ADMIN"]),
 
-  validate(
-    updateSkillSchema
-  ),
+  validate(updateSkillSchema),
 
-  updateSkill
-
+  updateSkill,
 );
 
 router.delete(
-
   "/:id",
 
   authMiddleware,
 
   rbac(["ADMIN"]),
 
-  deleteSkill
-
+  deleteSkill,
 );
 
 export default router;

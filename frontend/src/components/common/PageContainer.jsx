@@ -1,13 +1,6 @@
-function PageContainer({
-
-  children,
-
-}) {
-
+function PageContainer({ children }) {
   return (
-
     <div
-
       className="
 
         max-w-7xl
@@ -17,15 +10,10 @@ function PageContainer({
         space-y-8
 
       "
-
     >
-
       {children}
-
     </div>
-
   );
-
 }
 
 export default PageContainer;

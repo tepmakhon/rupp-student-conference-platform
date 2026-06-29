@@ -1,12 +1,6 @@
-function PageCard({
-  children,
-  className = "",
-}) {
-
+function PageCard({ children, className = "" }) {
   return (
-
     <div
-
       className={`
 
         bg-white
@@ -20,15 +14,10 @@ function PageCard({
         ${className}
 
       `}
-
     >
-
       {children}
-
     </div>
-
   );
-
 }
 
 export default PageCard;

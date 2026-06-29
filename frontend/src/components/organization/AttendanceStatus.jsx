@@ -1,13 +1,6 @@
-function AttendanceStatus({
-
-  attendance,
-
-}) {
-
+function AttendanceStatus({ attendance }) {
   if (attendance) {
-
     return (
-
       <span
         className="
           px-3
@@ -18,17 +11,12 @@ function AttendanceStatus({
           font-semibold
         "
       >
-
         Checked In
-
       </span>
-
     );
-
   }
 
   return (
-
     <span
       className="
         px-3
@@ -39,13 +27,9 @@ function AttendanceStatus({
         font-semibold
       "
     >
-
       Not Checked In
-
     </span>
-
   );
-
 }
 
 export default AttendanceStatus;

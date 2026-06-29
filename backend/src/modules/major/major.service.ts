@@ -1,8 +1,6 @@
-import { prisma }
-from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
-import { AppError }
-from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -10,33 +8,20 @@ from "../../utils/AppError.js";
 |--------------------------------------------------------------------------
 */
 
-export const getAllMajors =
-async () => {
-
+export const getAllMajors = async () => {
   return prisma.major.findMany({
-
     include: {
-
       faculty: {
-
         include: {
-
           university: true,
-
         },
-
       },
-
     },
 
     orderBy: {
-
       majorName: "asc",
-
     },
-
   });
-
 };
 
 /*
@@ -45,63 +30,32 @@ async () => {
 |--------------------------------------------------------------------------
 */
 
-export const createMajor =
-async (
-  data: any
-) => {
-
-  const faculty =
-
-    await prisma.faculty.findUnique({
-
-      where: {
-
-        id: BigInt(
-          data.facultyId
-        ),
-
-      },
-
-    });
+export const createMajor = async (data: any) => {
+  const faculty = await prisma.faculty.findUnique({
+    where: {
+      id: BigInt(data.facultyId),
+    },
+  });
 
   if (!faculty) {
-
     throw new AppError(
-
       "Faculty not found",
 
-      404
-
+      404,
     );
-
   }
 
   return prisma.major.create({
-
     data: {
+      facultyId: BigInt(data.facultyId),
 
-      facultyId:
+      majorName: data.majorName,
 
-        BigInt(
-          data.facultyId
-        ),
+      description: data.description || null,
 
-      majorName:
-
-        data.majorName,
-
-      description:
-
-        data.description || null,
-
-      careerPath:
-
-        data.careerPath || null,
-
+      careerPath: data.careerPath || null,
     },
-
   });
-
 };
 
 /*
@@ -110,75 +64,40 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const updateMajor =
-async (
-
+export const updateMajor = async (
   id: bigint,
 
-  data: any
-
+  data: any,
 ) => {
-
-  const existing =
-
-    await prisma.major.findUnique({
-
-      where: {
-
-        id,
-
-      },
-
-    });
+  const existing = await prisma.major.findUnique({
+    where: {
+      id,
+    },
+  });
 
   if (!existing) {
-
     throw new AppError(
-
       "Major not found",
 
-      404
-
+      404,
     );
-
   }
 
   return prisma.major.update({
-
     where: {
-
       id,
-
     },
 
     data: {
+      facultyId: data.facultyId ? BigInt(data.facultyId) : undefined,
 
-      facultyId:
+      majorName: data.majorName,
 
-        data.facultyId
+      description: data.description,
 
-        ? BigInt(
-            data.facultyId
-          )
-
-        : undefined,
-
-      majorName:
-
-        data.majorName,
-
-      description:
-
-        data.description,
-
-      careerPath:
-
-        data.careerPath,
-
+      careerPath: data.careerPath,
     },
-
   });
-
 };
 
 /*
@@ -187,45 +106,26 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const deleteMajor =
-async (
-  id: bigint
-) => {
-
-  const existing =
-
-    await prisma.major.findUnique({
-
-      where: {
-
-        id,
-
-      },
-
-    });
+export const deleteMajor = async (id: bigint) => {
+  const existing = await prisma.major.findUnique({
+    where: {
+      id,
+    },
+  });
 
   if (!existing) {
-
     throw new AppError(
-
       "Major not found",
 
-      404
-
+      404,
     );
-
   }
 
   await prisma.major.delete({
-
     where: {
-
       id,
-
     },
-
   });
 
   return true;
-
 };

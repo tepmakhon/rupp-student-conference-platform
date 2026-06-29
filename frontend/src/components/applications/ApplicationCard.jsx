@@ -1,30 +1,15 @@
 import {
-
   CalendarDaysIcon,
-
   BuildingOfficeIcon,
-
 } from "@heroicons/react/24/outline";
 
-import {
+import { formatDate } from "../../utils/formatDate";
 
-  formatDate,
+import ApplicationStatusBadge from "./ApplicationStatusBadge";
 
-} from "../../utils/formatDate";
-
-import ApplicationStatusBadge
-from "./ApplicationStatusBadge";
-
-function ApplicationCard({
-
-  application,
-
-}) {
-
+function ApplicationCard({ application }) {
   return (
-
     <div
-
       className="
 
         bg-white
@@ -42,11 +27,8 @@ function ApplicationCard({
         p-6
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -58,21 +40,15 @@ function ApplicationCard({
           gap-6
 
         "
-
       >
-
         <div
-
           className="
 
             flex-1
 
           "
-
         >
-
           <h2
-
             className="
 
               text-2xl
@@ -82,21 +58,11 @@ function ApplicationCard({
               text-primary
 
             "
-
           >
-
-            {
-
-              application.opportunity
-
-              ?.title
-
-            }
-
+            {application.opportunity?.title}
           </h2>
 
           <div
-
             className="
 
               flex
@@ -110,11 +76,8 @@ function ApplicationCard({
               mt-3
 
             "
-
           >
-
             <BuildingOfficeIcon
-
               className="
 
                 w-5
@@ -122,27 +85,14 @@ function ApplicationCard({
                 h-5
 
               "
-
             />
 
             <span>
-
-              {
-
-                application.opportunity
-
-                ?.organization
-
-                ?.organizationName
-
-              }
-
+              {application.opportunity?.organization?.organizationName}
             </span>
-
           </div>
 
           <div
-
             className="
 
               flex
@@ -156,11 +106,8 @@ function ApplicationCard({
               mt-3
 
             "
-
           >
-
             <CalendarDaysIcon
-
               className="
 
                 w-5
@@ -168,47 +115,16 @@ function ApplicationCard({
                 h-5
 
               "
-
             />
 
-            <span>
-
-              Applied:
-
-              {" "}
-
-              {
-
-                formatDate(
-
-                  application.appliedAt
-
-                )
-
-              }
-
-            </span>
-
+            <span>Applied: {formatDate(application.appliedAt)}</span>
           </div>
-
         </div>
 
-        <ApplicationStatusBadge
-
-          status={
-
-            application.applicationStatus
-
-          }
-
-        />
-
+        <ApplicationStatusBadge status={application.applicationStatus} />
       </div>
-
     </div>
-
   );
-
 }
 
 export default ApplicationCard;

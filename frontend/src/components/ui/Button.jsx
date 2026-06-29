@@ -1,5 +1,4 @@
 function Button({
-
   children,
 
   type = "button",
@@ -13,50 +12,36 @@ function Button({
   onClick,
 
   className = "",
-
 }) {
-
   const variants = {
-
-    primary:
-
-      `
+    primary: `
       bg-primary
       hover:bg-secondary
       text-white
       `,
 
-    secondary:
-
-      `
+    secondary: `
       bg-gray-200
       hover:bg-gray-300
       text-gray-800
       `,
 
-    danger:
-
-      `
+    danger: `
       bg-red-600
       hover:bg-red-700
       text-white
       `,
 
-    outline:
-
-      `
+    outline: `
       border
       border-gray-300
       hover:bg-gray-100
       text-gray-700
       `,
-
   };
 
   return (
-
     <button
-
       type={type}
 
       disabled={disabled}
@@ -81,38 +66,17 @@ function Button({
 
         disabled:cursor-not-allowed
 
-        ${
+        ${fullWidth ? "w-full" : ""}
 
-          fullWidth
-
-          ?
-
-          "w-full"
-
-          :
-
-          ""
-
-        }
-
-        ${
-
-          variants[variant]
-
-        }
+        ${variants[variant]}
 
         ${className}
 
       `}
-
     >
-
       {children}
-
     </button>
-
   );
-
 }
 
 export default Button;

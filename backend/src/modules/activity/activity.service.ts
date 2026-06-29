@@ -1,56 +1,29 @@
-import { prisma }
-from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
-import { AppError }
-from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
-export const getMyActivityHistory =
-  async (
-    userId: bigint
-  ) => {
+export const getMyActivityHistory = async (userId: bigint) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
-    const student =
+  if (!student) {
+    throw new AppError(
+      "Student not found",
 
-      await prisma.student.findUnique({
+      404,
+    );
+  }
 
-        where: {
+  return prisma.activityScoreHistory.findMany({
+    where: {
+      studentId: student.id,
+    },
 
-          userId,
-
-        },
-
-      });
-
-    if (!student) {
-
-      throw new AppError(
-
-        "Student not found",
-
-        404
-
-      );
-
-    }
-
-    return prisma.activityScoreHistory.findMany({
-
-      where: {
-
-        studentId:
-
-          student.id,
-
-      },
-
-      orderBy: {
-
-        createdAt:
-
-          "desc",
-
-      },
-
-    });
-
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 };

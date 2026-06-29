@@ -1,57 +1,29 @@
-import helmet
+import helmet from "helmet";
 
-from "helmet";
+import compression from "compression";
 
-import compression
+import rateLimit from "express-rate-limit";
 
-from "compression";
+import hpp from "hpp";
 
-import rateLimit
+export const helmetMiddleware = helmet();
 
-from "express-rate-limit";
+export const compressionMiddleware = compression();
 
-import hpp
+export const hppMiddleware = hpp();
 
-from "hpp";
+export const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
 
-export const helmetMiddleware =
+  max: 200,
 
-helmet();
+  standardHeaders: true,
 
-export const compressionMiddleware =
+  legacyHeaders: false,
 
-compression();
+  message: {
+    success: false,
 
-export const hppMiddleware =
-
-hpp();
-
-export const apiLimiter =
-
-rateLimit({
-
- windowMs:
-
- 15 * 60 * 1000,
-
- max: 200,
-
- standardHeaders:
-
- true,
-
- legacyHeaders:
-
- false,
-
- message: {
-
-  success: false,
-
-  message:
-
-  "Too many requests"
-
- }
-
+    message: "Too many requests",
+  },
 });

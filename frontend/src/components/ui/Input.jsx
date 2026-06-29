@@ -1,5 +1,4 @@
 function Input({
-
   label,
 
   type = "text",
@@ -15,24 +14,12 @@ function Input({
   disabled = false,
 
   className = "",
-
 }) {
-
   return (
-
-    <div
-
-      className="space-y-2"
-
-    >
-
-      {
-
-        label && (
-
-          <label
-
-            className="
+    <div className="space-y-2">
+      {label && (
+        <label
+          className="
 
               block
 
@@ -41,19 +28,12 @@ function Input({
               text-gray-700
 
             "
-
-          >
-
-            {label}
-
-          </label>
-
-        )
-
-      }
+        >
+          {label}
+        </label>
+      )}
 
       <input
-
         type={type}
 
         value={value}
@@ -89,13 +69,9 @@ function Input({
           ${className}
 
         `}
-
       />
-
     </div>
-
   );
-
 }
 
 export default Input;

@@ -1,17 +1,12 @@
 function PageHeader({
-
   title,
 
   description,
 
   action,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         flex
@@ -29,13 +24,9 @@ function PageHeader({
         mb-10
 
       "
-
     >
-
       <div>
-
         <h1
-
           className="
 
             text-4xl
@@ -45,15 +36,11 @@ function PageHeader({
             text-primary
 
           "
-
         >
-
           {title}
-
         </h1>
 
         <p
-
           className="
 
             text-gray-500
@@ -61,21 +48,14 @@ function PageHeader({
             mt-2
 
           "
-
         >
-
           {description}
-
         </p>
-
       </div>
 
       {action}
-
     </div>
-
   );
-
 }
 
 export default PageHeader;

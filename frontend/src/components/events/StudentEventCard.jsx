@@ -1,6 +1,4 @@
-import {
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
   CalendarDaysIcon,
@@ -8,18 +6,10 @@ import {
   TicketIcon,
 } from "@heroicons/react/24/outline";
 
-import {
-  formatDate,
-} from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate";
 
-function StudentEventCard({
-
-  event,
-
-}) {
-
+function StudentEventCard({ event }) {
   return (
-
     <div
       className="
         bg-white
@@ -29,7 +19,6 @@ function StudentEventCard({
         p-6
       "
     >
-
       <h2
         className="
           text-2xl
@@ -46,7 +35,6 @@ function StudentEventCard({
           space-y-3
         "
       >
-
         <div
           className="
             flex
@@ -54,7 +42,6 @@ function StudentEventCard({
             gap-2
           "
         >
-
           <MapPinIcon
             className="
               w-5
@@ -63,7 +50,6 @@ function StudentEventCard({
           />
 
           {event.location}
-
         </div>
 
         <div
@@ -73,7 +59,6 @@ function StudentEventCard({
             gap-2
           "
         >
-
           <CalendarDaysIcon
             className="
               w-5
@@ -81,12 +66,8 @@ function StudentEventCard({
             "
           />
 
-          {formatDate(
-            event.eventDate
-          )}
-
+          {formatDate(event.eventDate)}
         </div>
-
       </div>
 
       <div
@@ -96,7 +77,6 @@ function StudentEventCard({
           mt-8
         "
       >
-
         <Link
           to={`/events/${event.id}`}
           className="
@@ -124,24 +104,17 @@ function StudentEventCard({
             py-3
           "
         >
-
           <TicketIcon
             className="
               w-5
               h-5
             "
           />
-
           Ticket
-
         </Link>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default StudentEventCard;

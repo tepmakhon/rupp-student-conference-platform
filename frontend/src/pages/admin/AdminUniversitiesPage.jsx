@@ -1,26 +1,15 @@
-import AdminCrudPage
-from "../../components/admin/AdminCrudPage";
+import AdminCrudPage from "../../components/admin/AdminCrudPage";
 
 import {
-
   getUniversities,
-
   createUniversity,
-
   updateUniversity,
-
   deleteUniversity,
-
-}
-
-from "../../api/universityApi";
+} from "../../api/universityApi";
 
 function AdminUniversitiesPage() {
-
   return (
-
     <AdminCrudPage
-
       title="Universities"
 
       description="Manage universities across the platform."
@@ -28,61 +17,32 @@ function AdminUniversitiesPage() {
       entityName="University"
 
       columns={[
-
         {
-
           key: "universityName",
 
           label: "University Name",
-
         },
-
       ]}
 
       formFields={[
-
         {
-
           name: "universityName",
 
           label: "University Name",
 
-          placeholder:
-
-            "Enter university name",
-
+          placeholder: "Enter university name",
         },
-
       ]}
 
-      getAll={
+      getAll={getUniversities}
 
-        getUniversities
+      create={createUniversity}
 
-      }
+      update={updateUniversity}
 
-      create={
-
-        createUniversity
-
-      }
-
-      update={
-
-        updateUniversity
-
-      }
-
-      remove={
-
-        deleteUniversity
-
-      }
-
+      remove={deleteUniversity}
     />
-
   );
-
 }
 
 export default AdminUniversitiesPage;

@@ -1,241 +1,83 @@
-import {
+import { useEffect, useState, useCallback } from "react";
 
-  useEffect,
+import { Link } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-  useCallback,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-} from "react";
+import PageHeader from "../../components/common/PageHeader";
 
-import {
+import LoadingState from "../../components/common/LoadingState";
 
-  Link,
+import EmptyState from "../../components/common/EmptyState";
 
-} from "react-router-dom";
-
-import toast
-from "react-hot-toast";
-
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
-
-import PageHeader
-from "../../components/common/PageHeader";
-
-import LoadingState
-from "../../components/common/LoadingState";
-
-import EmptyState
-from "../../components/common/EmptyState";
-
-import DeleteConfirmationModal
-from "../../components/admin/DeleteConfirmationModal";
+import DeleteConfirmationModal from "../../components/admin/DeleteConfirmationModal";
 
 import {
-
   PlusCircleIcon,
-
   UserGroupIcon,
-
   PencilSquareIcon,
-
   TrashIcon,
-
   CalendarDaysIcon,
-
   BriefcaseIcon,
-
 } from "@heroicons/react/24/outline";
 
-import {
-
-  formatDate,
-
-} from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate";
 
 import {
-
   getMyOpportunities,
-
   deleteOpportunity,
-
 } from "../../api/opportunityApi";
 
 function MyOpportunitiesPage() {
+  const [opportunities, setOpportunities] = useState([]);
 
-  const [
+  const [loading, setLoading] = useState(true);
 
-    opportunities,
+  const [selected, setSelected] = useState(null);
 
-    setOpportunities,
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-  ] = useState([]);
+  const loadOpportunities = useCallback(async () => {
+    try {
+      setLoading(true);
 
-  const [
+      const data = await getMyOpportunities();
 
-    loading,
+      setOpportunities(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
 
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    selected,
-
-    setSelected,
-
-  ] = useState(null);
-
-  const [
-
-    deleteOpen,
-
-    setDeleteOpen,
-
-  ] = useState(false);
-
-  const loadOpportunities =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          const data =
-
-            await getMyOpportunities();
-
-          setOpportunities(
-
-            Array.isArray(
-
-              data
-
-            )
-
-            ?
-
-            data
-
-            :
-
-            []
-
-          );
-
-        }
-
-        catch (error) {
-
-          console.error(
-
-            error
-
-          );
-
-          toast.error(
-
-            "Failed to load opportunities"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
+      toast.error("Failed to load opportunities");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-
     loadOpportunities();
+  }, [loadOpportunities]);
 
-  },
+  const handleDelete = async () => {
+    try {
+      await deleteOpportunity(selected.id);
 
-  [
+      toast.success("Opportunity deleted");
 
-    loadOpportunities,
+      setDeleteOpen(false);
 
-  ]);
+      loadOpportunities();
+    } catch (error) {
+      console.error(error);
 
-  const handleDelete =
-
-    async () => {
-
-      try {
-
-        await deleteOpportunity(
-
-          selected.id
-
-        );
-
-        toast.success(
-
-          "Opportunity deleted"
-
-        );
-
-        setDeleteOpen(
-
-          false
-
-        );
-
-        loadOpportunities();
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Delete failed"
-
-        );
-
-      }
-
-    };
+      toast.error(error?.response?.data?.message || "Delete failed");
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -243,11 +85,8 @@ function MyOpportunitiesPage() {
           mx-auto
 
         "
-
       >
-
         <div
-
           className="
 
             flex
@@ -263,19 +102,14 @@ function MyOpportunitiesPage() {
             gap-6
 
           "
-
         >
-
           <PageHeader
-
             title="My Opportunities"
 
             description="Manage all opportunities created by your organization."
-
           />
 
           <Link
-
             to="/opportunities/create"
 
             className="
@@ -305,11 +139,8 @@ function MyOpportunitiesPage() {
               h-fit
 
             "
-
           >
-
             <PlusCircleIcon
-
               className="
 
                 w-5
@@ -317,92 +148,36 @@ function MyOpportunitiesPage() {
                 h-5
 
               "
-
             />
-
             Create Opportunity
-
           </Link>
-
         </div>
 
-        {
+        {loading && <LoadingState />}
 
-          loading
+        {!loading && opportunities.length === 0 && (
+          <EmptyState
+            title="No Opportunities Yet"
 
-          &&
+            description="Create your first opportunity."
+          />
+        )}
 
-          <LoadingState />
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          opportunities.length === 0
-
-          &&
-
-          (
-
-            <EmptyState
-
-              title="No Opportunities Yet"
-
-              description="Create your first opportunity."
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          opportunities.length > 0
-
-          &&
-
-          (
-
-            <div
-
-              className="
+        {!loading && opportunities.length > 0 && (
+          <div
+            className="
 
                 grid
 
                 gap-6
 
               "
+          >
+            {opportunities.map((opportunity) => (
+              <div
+                key={opportunity.id}
 
-            >
-
-              {
-
-                opportunities.map(
-
-                  (
-
-                    opportunity
-
-                  ) => (
-
-                    <div
-
-                      key={
-
-                        opportunity.id
-
-                      }
-
-                      className="
+                className="
 
                         bg-white
 
@@ -419,12 +194,9 @@ function MyOpportunitiesPage() {
                         transition
 
                       "
-
-                    >
-
-                      <div
-
-                        className="
+              >
+                <div
+                  className="
 
                           flex
 
@@ -437,14 +209,10 @@ function MyOpportunitiesPage() {
                           gap-8
 
                         "
-
-                      >
-
-                        <div>
-
-                          <div
-
-                            className="
+                >
+                  <div>
+                    <div
+                      className="
 
                               flex
 
@@ -453,12 +221,9 @@ function MyOpportunitiesPage() {
                               gap-3
 
                             "
-
-                          >
-
-                            <h2
-
-                              className="
+                    >
+                      <h2
+                        className="
 
                                 text-2xl
 
@@ -467,28 +232,13 @@ function MyOpportunitiesPage() {
                                 text-primary
 
                               "
+                      >
+                        {opportunity.title}
+                      </h2>
 
-                            >
-
-                              {
-
-                                opportunity.title
-
-                              }
-
-                            </h2>
-
-                            {
-
-                              opportunity.type
-
-                              &&
-
-                              (
-
-                                <span
-
-                                  className="
+                      {opportunity.type && (
+                        <span
+                          className="
 
                                     px-3
 
@@ -505,28 +255,14 @@ function MyOpportunitiesPage() {
                                     font-medium
 
                                   "
+                        >
+                          {opportunity.type?.typeName}
+                        </span>
+                      )}
+                    </div>
 
-                                >
-
-                                  {
-
-                                    opportunity.type
-
-                                    ?.typeName
-
-                                  }
-
-                                </span>
-
-                              )
-
-                            }
-
-                          </div>
-
-                          <p
-
-                            className="
+                    <p
+                      className="
 
                               text-gray-600
 
@@ -535,20 +271,12 @@ function MyOpportunitiesPage() {
                               line-clamp-3
 
                             "
+                    >
+                      {opportunity.description}
+                    </p>
 
-                          >
-
-                            {
-
-                              opportunity.description
-
-                            }
-
-                          </p>
-
-                          <div
-
-                            className="
+                    <div
+                      className="
 
                               flex
 
@@ -563,12 +291,9 @@ function MyOpportunitiesPage() {
                               text-gray-500
 
                             "
-
-                          >
-
-                            <div
-
-                              className="
+                    >
+                      <div
+                        className="
 
                                 flex
 
@@ -577,40 +302,23 @@ function MyOpportunitiesPage() {
                                 gap-2
 
                               "
-
-                            >
-
-                              <BriefcaseIcon
-
-                                className="
+                      >
+                        <BriefcaseIcon
+                          className="
 
                                   w-5
 
                                   h-5
 
                                 "
+                        />
 
-                              />
+                        {opportunity.status}
+                      </div>
 
-                              {
-
-                                opportunity.status
-
-                              }
-
-                            </div>
-
-                            {
-
-                              opportunity.deadline
-
-                              &&
-
-                              (
-
-                                <div
-
-                                  className="
+                      {opportunity.deadline && (
+                        <div
+                          className="
 
                                     flex
 
@@ -619,44 +327,25 @@ function MyOpportunitiesPage() {
                                     gap-2
 
                                   "
-
-                                >
-
-                                  <CalendarDaysIcon
-
-                                    className="
+                        >
+                          <CalendarDaysIcon
+                            className="
 
                                       w-5
 
                                       h-5
 
                                     "
+                          />
 
-                                  />
-
-                                  {
-
-                                    formatDate(
-
-                                      opportunity.deadline
-
-                                    )
-
-                                  }
-
-                                </div>
-
-                              )
-
-                            }
-
-                          </div>
-
+                          {formatDate(opportunity.deadline)}
                         </div>
+                      )}
+                    </div>
+                  </div>
 
-                        <div
-
-                          className="
+                  <div
+                    className="
 
                             flex
 
@@ -667,14 +356,11 @@ function MyOpportunitiesPage() {
                             h-fit
 
                           "
+                  >
+                    <Link
+                      to={`/organization/opportunities/${opportunity.id}/applicants`}
 
-                        >
-
-                          <Link
-
-                            to={`/organization/opportunities/${opportunity.id}/applicants`}
-
-                            className="
+                      className="
 
                               flex
 
@@ -693,30 +379,23 @@ function MyOpportunitiesPage() {
                               rounded-xl
 
                             "
-
-                          >
-
-                            <UserGroupIcon
-
-                              className="
+                    >
+                      <UserGroupIcon
+                        className="
 
                                 w-5
 
                                 h-5
 
                               "
+                      />
+                      Applicants
+                    </Link>
 
-                            />
+                    <Link
+                      to={`/organization/opportunities/${opportunity.id}/edit`}
 
-                            Applicants
-
-                          </Link>
-
-                          <Link
-
-                            to={`/organization/opportunities/${opportunity.id}/edit`}
-
-                            className="
+                      className="
 
                               flex
 
@@ -735,44 +414,27 @@ function MyOpportunitiesPage() {
                               rounded-xl
 
                             "
-
-                          >
-
-                            <PencilSquareIcon
-
-                              className="
+                    >
+                      <PencilSquareIcon
+                        className="
 
                                 w-5
 
                                 h-5
 
                               "
+                      />
+                      Edit
+                    </Link>
 
-                            />
+                    <button
+                      onClick={() => {
+                        setSelected(opportunity);
 
-                            Edit
+                        setDeleteOpen(true);
+                      }}
 
-                          </Link>
-
-                          <button
-
-                            onClick={() => {
-
-                              setSelected(
-
-                                opportunity
-
-                              );
-
-                              setDeleteOpen(
-
-                                true
-
-                              );
-
-                            }}
-
-                            className="
+                      className="
 
                               flex
 
@@ -791,81 +453,37 @@ function MyOpportunitiesPage() {
                               rounded-xl
 
                             "
-
-                          >
-
-                            <TrashIcon
-
-                              className="
+                    >
+                      <TrashIcon
+                        className="
 
                                 w-5
 
                                 h-5
 
                               "
-
-                            />
-
-                            Delete
-
-                          </button>
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  )
-
-                )
-
-              }
-
-            </div>
-
-          )
-
-        }
+                      />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <DeleteConfirmationModal
+          open={deleteOpen}
 
-          open={
+          title={selected?.title}
 
-            deleteOpen
+          onClose={() => setDeleteOpen(false)}
 
-          }
-
-          title={
-
-            selected?.title
-
-          }
-
-          onClose={() =>
-
-            setDeleteOpen(
-
-              false
-
-            )
-
-          }
-
-          onConfirm={
-
-            handleDelete
-
-          }
-
+          onConfirm={handleDelete}
         />
-
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default MyOpportunitiesPage;

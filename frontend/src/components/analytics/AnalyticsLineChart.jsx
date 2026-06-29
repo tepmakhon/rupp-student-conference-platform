@@ -30,10 +30,7 @@ function AnalyticsLineChart({ data }) {
         Trend
       </h2>
 
-      <ResponsiveContainer
-        width="100%"
-        height={350}
-      >
+      <ResponsiveContainer width="100%" height={350}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
 

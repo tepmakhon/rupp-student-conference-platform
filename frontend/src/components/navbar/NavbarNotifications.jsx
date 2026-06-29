@@ -1,10 +1,7 @@
-import NotificationDropdown
-from "../notifications/NotificationDropdown";
+import NotificationDropdown from "../notifications/NotificationDropdown";
 
 function NavbarNotifications() {
-  return (
-    <NotificationDropdown />
-  );
+  return <NotificationDropdown />;
 }
 
 export default NavbarNotifications;

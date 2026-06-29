@@ -7,13 +7,9 @@ import {
   notifyAdmins,
 } from "../notification/notification.service.js";
 
-import {
-  createAuditLog,
-} from "../audit/audit.service.js";
+import { createAuditLog } from "../audit/audit.service.js";
 
-import {
-  addActivityScore,
-} from "../activity/activityScore.service.js";
+import { addActivityScore } from "../activity/activityScore.service.js";
 
 import {
   refreshAdminDashboard,
@@ -26,58 +22,41 @@ import {
 |--------------------------------------------------------------------------
 */
 
-export const createEvent = async (
-  data: any,
-  user: any
-) => {
-  const organization =
-    await prisma.organization.findUnique({
-      where: {
-        userId: BigInt(user.id),
-      },
-    });
+export const createEvent = async (data: any, user: any) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId: BigInt(user.id),
+    },
+  });
 
   if (!organization) {
-    throw new AppError(
-      "Only organizations can create events",
-      403
-    );
+    throw new AppError("Only organizations can create events", 403);
   }
 
-  const event =
-    await prisma.event.create({
-      data: {
-        title: data.title,
-        description: data.description,
-        location: data.location,
-        eventDate: new Date(data.eventDate),
-        categoryId: BigInt(data.categoryId),
-        capacity: data.capacity || null,
-        bannerImageUrl:
-          data.bannerImageUrl || null,
-        organizationId:
-          organization.id,
-      },
-    });
-    await notifyAdmins(
+  const event = await prisma.event.create({
+    data: {
+      title: data.title,
+      description: data.description,
+      location: data.location,
+      eventDate: new Date(data.eventDate),
+      categoryId: BigInt(data.categoryId),
+      capacity: data.capacity || null,
+      bannerImageUrl: data.bannerImageUrl || null,
+      organizationId: organization.id,
+    },
+  });
+  await notifyAdmins(
+    "New Event Request",
 
-      "New Event Request",
+    `${event.title} needs approval`,
 
-      `${event.title} needs approval`,
-
-      "EVENT"
-
-    );
-  refreshOrganizationDashboard(
-    organization.userId
+    "EVENT",
   );
+  refreshOrganizationDashboard(organization.userId);
 
   refreshAdminDashboard();
 
-  await createAuditLog(
-    BigInt(user.id),
-    `EVENT_CREATED:${event.title}`
-  );
+  await createAuditLog(BigInt(user.id), `EVENT_CREATED:${event.title}`);
 
   return event;
 };
@@ -92,7 +71,7 @@ export const getApprovedEvents = async (
   page = 1,
   limit = 10,
   keyword = "",
-  categoryId?: bigint
+  categoryId?: bigint,
 ) => {
   const { skip } = getPagination(page, limit);
 
@@ -163,73 +142,47 @@ export const getApprovedEvents = async (
 |--------------------------------------------------------------------------
 */
 
-export const getMyEvents = async (
-  userId: bigint
-) => {
-
-  const organization =
-
-    await prisma.organization.findUnique({
-
-      where: {
-        userId,
-      },
-
-    });
+export const getMyEvents = async (userId: bigint) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!organization) {
-
     throw new AppError(
-
       "Organization not found",
 
-      404
-
+      404,
     );
-
   }
 
   return prisma.event.findMany({
-
     where: {
-
-      organizationId:
-
-        organization.id,
-
+      organizationId: organization.id,
     },
 
     orderBy: {
-
       createdAt: "desc",
-
     },
-
   });
-
 };
 
-export const getEventById = async (
-  eventId: bigint
-) => {
-  const event =
-    await prisma.event.findUnique({
-      where: {
-        id: eventId,
-      },
+export const getEventById = async (eventId: bigint) => {
+  const event = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+    },
 
-      include: {
-        organization: true,
-        category: true,
-        registrations: true,
-      },
-    });
+    include: {
+      organization: true,
+      category: true,
+      registrations: true,
+    },
+  });
 
   if (!event) {
-    throw new AppError(
-      "Event not found",
-      404
-    );
+    throw new AppError("Event not found", 404);
   }
 
   return event;
@@ -264,53 +217,44 @@ export const getPendingEvents = async () => {
 |--------------------------------------------------------------------------
 */
 
-export const approveEvent = async (
-  eventId: bigint
-) => {
-  const existingEvent =
-    await prisma.event.findUnique({
-      where: {
-        id: eventId,
-      },
-    });
+export const approveEvent = async (eventId: bigint) => {
+  const existingEvent = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+    },
+  });
 
   if (!existingEvent) {
-    throw new AppError(
-      "Event not found",
-      404
-    );
+    throw new AppError("Event not found", 404);
   }
 
-  const event =
-    await prisma.event.update({
-      where: {
-        id: eventId,
-      },
+  const event = await prisma.event.update({
+    where: {
+      id: eventId,
+    },
 
-      data: {
-        status: "APPROVED",
-        approvedAt: new Date(),
-      },
+    data: {
+      status: "APPROVED",
+      approvedAt: new Date(),
+    },
 
-      include: {
-        organization: true,
-      },
-    });
+    include: {
+      organization: true,
+    },
+  });
 
   await createNotification(
     event.organization.userId,
     "Event Approved",
     `${event.title} has been approved by admin`,
-    "EVENT"
+    "EVENT",
   );
-  refreshOrganizationDashboard(
-    event.organization.userId
-  );
+  refreshOrganizationDashboard(event.organization.userId);
 
   refreshAdminDashboard();
   await createAuditLog(
     event.organization.userId,
-    `EVENT_APPROVED:${event.title}`
+    `EVENT_APPROVED:${event.title}`,
   );
 
   return event;
@@ -322,53 +266,44 @@ export const approveEvent = async (
 |--------------------------------------------------------------------------
 */
 
-export const rejectEvent = async (
-  eventId: bigint
-) => {
-  const existingEvent =
-    await prisma.event.findUnique({
-      where: {
-        id: eventId,
-      },
-    });
+export const rejectEvent = async (eventId: bigint) => {
+  const existingEvent = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+    },
+  });
 
   if (!existingEvent) {
-    throw new AppError(
-      "Event not found",
-      404
-    );
+    throw new AppError("Event not found", 404);
   }
 
-  const event =
-    await prisma.event.update({
-      where: {
-        id: eventId,
-      },
+  const event = await prisma.event.update({
+    where: {
+      id: eventId,
+    },
 
-      data: {
-        status: "REJECTED",
-        approvedAt: new Date(),
-      },
+    data: {
+      status: "REJECTED",
+      approvedAt: new Date(),
+    },
 
-      include: {
-        organization: true,
-      },
-    });
+    include: {
+      organization: true,
+    },
+  });
 
   await createNotification(
     event.organization.userId,
     "Event Rejected",
     `${event.title} has been rejected by admin`,
-    "EVENT"
+    "EVENT",
   );
-  refreshOrganizationDashboard(
-    event.organization.userId
-  );
+  refreshOrganizationDashboard(event.organization.userId);
 
   refreshAdminDashboard();
   await createAuditLog(
     event.organization.userId,
-    `EVENT_REJECTED:${event.title}`
+    `EVENT_REJECTED:${event.title}`,
   );
 
   return event;
@@ -380,189 +315,121 @@ export const rejectEvent = async (
 |--------------------------------------------------------------------------
 */
 
-export const registerForEvent = async (
-  eventId: bigint,
-  userId: bigint
-) => {
-  const student =
-    await prisma.student.findUnique({
-      where: {
-        userId,
-      },
-    });
+export const registerForEvent = async (eventId: bigint, userId: bigint) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!student) {
-    throw new AppError(
-      "Please complete your student profile first",
-      400
-    );
+    throw new AppError("Please complete your student profile first", 400);
   }
 
-  const event =
-    await prisma.event.findUnique({
-      where: {
-        id: eventId,
-      },
+  const event = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+    },
 
-      include: {
-        registrations: true,
-        organization: true,
-      },
-    });
+    include: {
+      registrations: true,
+      organization: true,
+    },
+  });
 
   if (!event) {
-    throw new AppError(
-      "Event not found",
-      404
-    );
+    throw new AppError("Event not found", 404);
   }
 
   if (event.status !== "APPROVED") {
-    throw new AppError(
-      "Event is not approved",
-      400
-    );
+    throw new AppError("Event is not approved", 400);
   }
 
-  if (
-    new Date(
-      event.eventDate
-    ) < new Date()
-  ) {
-    throw new AppError(
-      "This event has already ended",
-      400
-    );
+  if (new Date(event.eventDate) < new Date()) {
+    throw new AppError("This event has already ended", 400);
   }
-  
-  const existingRegistration =
-    await prisma.eventRegistration.findFirst({
-      where: {
-        eventId,
-        studentId: student.id,
-      },
-    });
+
+  const existingRegistration = await prisma.eventRegistration.findFirst({
+    where: {
+      eventId,
+      studentId: student.id,
+    },
+  });
 
   if (existingRegistration) {
-    throw new AppError(
-      "Already registered",
-      400
-    );
+    throw new AppError("Already registered", 400);
   }
 
-  if (
-    event.capacity &&
-    event.registrations.length >=
-      event.capacity
-  ) {
-    throw new AppError(
-      "Event is full",
-      400
-    );
+  if (event.capacity && event.registrations.length >= event.capacity) {
+    throw new AppError("Event is full", 400);
   }
 
-  const registration =
-    await prisma.eventRegistration.create({
-      data: {
-        eventId,
-        studentId: student.id,
-        registrationStatus:
-          "APPROVED",
-      },
-    });
-  
+  const registration = await prisma.eventRegistration.create({
+    data: {
+      eventId,
+      studentId: student.id,
+      registrationStatus: "APPROVED",
+    },
+  });
+
   await addActivityScore(
     student.id,
-    
+
     10,
 
-    `Registered for ${event.title}`
+    `Registered for ${event.title}`,
   );
 
   await createNotification(
     event.organization.userId,
     "New Event Registration",
     `A student registered for ${event.title}`,
-    "EVENT"
+    "EVENT",
   );
   refreshStudentDashboard(userId);
 
-  refreshOrganizationDashboard(
-    event.organization.userId
-  );
+  refreshOrganizationDashboard(event.organization.userId);
 
   refreshAdminDashboard();
-  await createAuditLog(
-    userId,
-    `EVENT_REGISTERED:${event.title}`
-  );
+  await createAuditLog(userId, `EVENT_REGISTERED:${event.title}`);
 
   return registration;
 };
 
-export const getMyRegistrations =
-  async (
-    userId: bigint
-  ) => {
+export const getMyRegistrations = async (userId: bigint) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
-    const student =
+  if (!student) {
+    throw new AppError(
+      "Student not found",
 
-      await prisma.student.findUnique({
+      404,
+    );
+  }
 
-        where: {
+  return prisma.eventRegistration.findMany({
+    where: {
+      studentId: student.id,
+    },
 
-          userId,
+    include: {
+      event: {
+        include: {
+          organization: true,
 
+          category: true,
         },
-
-      });
-
-    if (!student) {
-
-      throw new AppError(
-
-        "Student not found",
-
-        404
-
-      );
-
-    }
-
-    return prisma.eventRegistration.findMany({
-
-      where: {
-
-        studentId:
-
-          student.id,
-
       },
+    },
 
-      include: {
-
-        event: {
-
-          include: {
-
-            organization: true,
-
-            category: true,
-
-          },
-
-        },
-
-      },
-
-      orderBy: {
-
-        registeredAt: "desc",
-
-      },
-
-    });
-
+    orderBy: {
+      registeredAt: "desc",
+    },
+  });
 };
 
 /*
@@ -571,133 +438,68 @@ export const getMyRegistrations =
 |--------------------------------------------------------------------------
 */
 
-export const updateEvent =
-  async (
-    eventId: bigint,
-    userId: bigint,
-    data: any
-  ) => {
+export const updateEvent = async (
+  eventId: bigint,
+  userId: bigint,
+  data: any,
+) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
-    const organization =
+  if (!organization) {
+    throw new AppError(
+      "Organization not found",
 
-      await prisma.organization.findUnique({
+      404,
+    );
+  }
 
-        where: {
+  const event = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+    },
+  });
 
-          userId,
+  if (!event) {
+    throw new AppError(
+      "Event not found",
 
-        },
+      404,
+    );
+  }
 
-      });
+  if (event.organizationId !== organization.id) {
+    throw new AppError(
+      "Not authorized",
 
-    if (!organization) {
+      403,
+    );
+  }
 
-      throw new AppError(
+  return prisma.event.update({
+    where: {
+      id: eventId,
+    },
 
-        "Organization not found",
+    data: {
+      title: data.title,
 
-        404
+      description: data.description,
 
-      );
+      location: data.location,
 
-    }
+      categoryId: data.categoryId ? BigInt(data.categoryId) : undefined,
 
-    const event =
+      capacity: data.capacity,
 
-      await prisma.event.findUnique({
+      bannerImageUrl: data.bannerImageUrl,
 
-        where: {
-
-          id: eventId,
-
-        },
-
-      });
-
-    if (!event) {
-
-      throw new AppError(
-
-        "Event not found",
-
-        404
-
-      );
-
-    }
-
-    if (
-
-      event.organizationId !==
-
-      organization.id
-
-    ) {
-
-      throw new AppError(
-
-        "Not authorized",
-
-        403
-
-      );
-
-    }
-
-    return prisma.event.update({
-
-      where: {
-
-        id: eventId,
-
-      },
-
-      data: {
-
-        title:
-
-          data.title,
-
-        description:
-
-          data.description,
-
-        location:
-
-          data.location,
-
-        categoryId:
-
-          data.categoryId
-
-          ? BigInt(data.categoryId)
-
-          : undefined,
-
-        capacity:
-
-          data.capacity,
-
-        bannerImageUrl:
-
-          data.bannerImageUrl,
-
-        eventDate:
-
-          data.eventDate
-
-          ? new Date(
-
-              data.eventDate
-
-            )
-
-          : undefined,
-
-      },
-
-    });
-
+      eventDate: data.eventDate ? new Date(data.eventDate) : undefined,
+    },
+  });
 };
 
 /*
@@ -706,194 +508,116 @@ export const updateEvent =
 |--------------------------------------------------------------------------
 */
 
-export const deleteEvent =
-  async (
-    eventId: bigint,
-    userId: bigint
-  ) => {
+export const deleteEvent = async (eventId: bigint, userId: bigint) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
-    const organization =
+  if (!organization) {
+    throw new AppError(
+      "Organization not found",
 
-      await prisma.organization.findUnique({
+      404,
+    );
+  }
 
-        where: {
+  const event = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+    },
+  });
 
-          userId,
+  if (!event) {
+    throw new AppError(
+      "Event not found",
 
-        },
+      404,
+    );
+  }
 
-      });
+  if (event.organizationId !== organization.id) {
+    throw new AppError(
+      "Not authorized",
 
-    if (!organization) {
+      403,
+    );
+  }
 
-      throw new AppError(
-
-        "Organization not found",
-
-        404
-
-      );
-
-    }
-
-    const event =
-
-      await prisma.event.findUnique({
-
-        where: {
-
-          id: eventId,
-
-        },
-
-      });
-
-    if (!event) {
-
-      throw new AppError(
-
-        "Event not found",
-
-        404
-
-      );
-
-    }
-
-    if (
-
-      event.organizationId !==
-
-      organization.id
-
-    ) {
-
-      throw new AppError(
-
-        "Not authorized",
-
-        403
-
-      );
-
-    }
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Delete child records first
     |--------------------------------------------------------------------------
     */
 
-    await prisma.eventRegistration.deleteMany({
+  await prisma.eventRegistration.deleteMany({
+    where: {
+      eventId,
+    },
+  });
 
-      where: {
-
-        eventId,
-
-      },
-
-    });
-
-    /*
+  /*
     |--------------------------------------------------------------------------
     | Delete event
     |--------------------------------------------------------------------------
     */
 
-    await prisma.event.delete({
+  await prisma.event.delete({
+    where: {
+      id: eventId,
+    },
+  });
 
-      where: {
-
-        id: eventId,
-
-      },
-
-    });
-
-    return true;
-
+  return true;
 };
 
-export const getEventRegistrations =
-  async (
-    eventId: bigint,
-    userId: bigint
-  ) => {
+export const getEventRegistrations = async (
+  eventId: bigint,
+  userId: bigint,
+) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
-    const organization =
+  if (!organization) {
+    throw new AppError(
+      "Organization not found",
 
-      await prisma.organization.findUnique({
+      404,
+    );
+  }
 
-        where: {
-          userId,
-        },
+  const event = await prisma.event.findUnique({
+    where: {
+      id: eventId,
+    },
+  });
 
-      });
+  if (!event || event.organizationId !== organization.id) {
+    throw new AppError(
+      "Not authorized",
 
-    if (!organization) {
+      403,
+    );
+  }
 
-      throw new AppError(
-
-        "Organization not found",
-
-        404
-
-      );
-
-    }
-
-    const event =
-
-      await prisma.event.findUnique({
-
-        where: {
-          id: eventId,
-        },
-
-      });
-
-    if (
-
-      !event ||
-
-      event.organizationId !==
-
-      organization.id
-
-    ) {
-
-      throw new AppError(
-
-        "Not authorized",
-
-        403
-
-      );
-
-    }
-
-   return prisma.eventRegistration.findMany({
-
+  return prisma.eventRegistration.findMany({
     where: {
       eventId,
     },
 
     include: {
-
       attendanceRecord: true,
 
       student: {
-
         include: {
-
           user: {
-
             include: {
-
               profile: true,
-
             },
-
           },
 
           university: true,
@@ -901,18 +625,12 @@ export const getEventRegistrations =
           faculty: true,
 
           major: true,
-
         },
-
       },
-
     },
 
     orderBy: {
-
       registeredAt: "desc",
-
     },
-
   });
 };

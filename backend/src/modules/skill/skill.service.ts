@@ -1,8 +1,6 @@
-import { prisma }
-from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
-import { AppError }
-from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -10,19 +8,12 @@ from "../../utils/AppError.js";
 |--------------------------------------------------------------------------
 */
 
-export const getAllSkills =
-async () => {
-
+export const getAllSkills = async () => {
   return prisma.skill.findMany({
-
     orderBy: {
-
       skillName: "asc",
-
     },
-
   });
-
 };
 
 /*
@@ -31,49 +22,26 @@ async () => {
 |--------------------------------------------------------------------------
 */
 
-export const createSkill =
-async (
-  data: any
-) => {
-
-  const existing =
-
-    await prisma.skill.findUnique({
-
-      where: {
-
-        skillName:
-
-          data.skillName,
-
-      },
-
-    });
+export const createSkill = async (data: any) => {
+  const existing = await prisma.skill.findUnique({
+    where: {
+      skillName: data.skillName,
+    },
+  });
 
   if (existing) {
-
     throw new AppError(
-
       "Skill already exists",
 
-      409
-
+      409,
     );
-
   }
 
   return prisma.skill.create({
-
     data: {
-
-      skillName:
-
-        data.skillName,
-
+      skillName: data.skillName,
     },
-
   });
-
 };
 
 /*
@@ -82,57 +50,34 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const updateSkill =
-async (
-
+export const updateSkill = async (
   id: bigint,
 
-  data: any
-
+  data: any,
 ) => {
-
-  const existing =
-
-    await prisma.skill.findUnique({
-
-      where: {
-
-        id,
-
-      },
-
-    });
+  const existing = await prisma.skill.findUnique({
+    where: {
+      id,
+    },
+  });
 
   if (!existing) {
-
     throw new AppError(
-
       "Skill not found",
 
-      404
-
+      404,
     );
-
   }
 
   return prisma.skill.update({
-
     where: {
-
       id,
-
     },
 
     data: {
-
-      skillName:
-
-        data.skillName,
-
+      skillName: data.skillName,
     },
-
   });
-
 };
 
 /*
@@ -141,45 +86,26 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const deleteSkill =
-async (
-  id: bigint
-) => {
-
-  const existing =
-
-    await prisma.skill.findUnique({
-
-      where: {
-
-        id,
-
-      },
-
-    });
+export const deleteSkill = async (id: bigint) => {
+  const existing = await prisma.skill.findUnique({
+    where: {
+      id,
+    },
+  });
 
   if (!existing) {
-
     throw new AppError(
-
       "Skill not found",
 
-      404
-
+      404,
     );
-
   }
 
   await prisma.skill.delete({
-
     where: {
-
       id,
-
     },
-
   });
 
   return true;
-
 };

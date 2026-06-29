@@ -1,29 +1,14 @@
-function MyEventStatus({
-
-  status,
-
-}) {
-
+function MyEventStatus({ status }) {
   const styles = {
+    APPROVED: "bg-green-100 text-green-700",
 
-    APPROVED:
+    PENDING: "bg-yellow-100 text-yellow-700",
 
-      "bg-green-100 text-green-700",
-
-    PENDING:
-
-      "bg-yellow-100 text-yellow-700",
-
-    REJECTED:
-
-      "bg-red-100 text-red-700",
-
+    REJECTED: "bg-red-100 text-red-700",
   };
 
   return (
-
     <span
-
       className={`
 
         inline-block
@@ -38,24 +23,13 @@ function MyEventStatus({
 
         font-medium
 
-        ${
-
-          styles[status] ||
-
-          "bg-gray-100 text-gray-700"
-
-        }
+        ${styles[status] || "bg-gray-100 text-gray-700"}
 
       `}
-
     >
-
       {status}
-
     </span>
-
   );
-
 }
 
 export default MyEventStatus;

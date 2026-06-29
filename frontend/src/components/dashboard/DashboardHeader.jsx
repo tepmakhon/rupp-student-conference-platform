@@ -1,9 +1,5 @@
-function DashboardHeader({
-  onRefresh,
-}) {
-
+function DashboardHeader({ onRefresh }) {
   return (
-
     <div
       className="
         flex
@@ -21,9 +17,7 @@ function DashboardHeader({
         mb-8
       "
     >
-
       <div>
-
         <h1
           className="
             text-4xl
@@ -33,9 +27,7 @@ function DashboardHeader({
             text-primary
           "
         >
-
           Student Dashboard
-
         </h1>
 
         <p
@@ -45,19 +37,12 @@ function DashboardHeader({
             mt-2
           "
         >
-
-          Track your activities,
-          events and opportunities.
-
+          Track your activities, events and opportunities.
         </p>
-
       </div>
 
       <button
-
-        onClick={
-          onRefresh
-        }
+        onClick={onRefresh}
 
         className="
           self-start
@@ -79,15 +64,10 @@ function DashboardHeader({
           transition
         "
       >
-
         Refresh
-
       </button>
-
     </div>
-
   );
-
 }
 
 export default DashboardHeader;

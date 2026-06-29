@@ -1,15 +1,8 @@
-import {
-
-  PencilSquareIcon,
-
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 function EditProfileHero() {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -23,11 +16,8 @@ function EditProfileHero() {
         p-8
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -37,11 +27,8 @@ function EditProfileHero() {
           gap-5
 
         "
-
       >
-
         <div
-
           className="
 
             w-16
@@ -59,11 +46,8 @@ function EditProfileHero() {
             justify-center
 
           "
-
         >
-
           <PencilSquareIcon
-
             className="
 
               w-8
@@ -73,15 +57,11 @@ function EditProfileHero() {
               text-primary
 
             "
-
           />
-
         </div>
 
         <div>
-
           <h1
-
             className="
 
               text-4xl
@@ -91,15 +71,11 @@ function EditProfileHero() {
               text-primary
 
             "
-
           >
-
             Edit Profile
-
           </h1>
 
           <p
-
             className="
 
               text-gray-500
@@ -107,21 +83,13 @@ function EditProfileHero() {
               mt-2
 
             "
-
           >
-
             Keep your account information updated.
-
           </p>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default EditProfileHero;

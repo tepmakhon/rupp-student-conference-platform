@@ -1,17 +1,8 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import ProtectedRoute
-from "./ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import GuestRoute from "./GuestRoute";
-import {
-  ROLES,
-  ALL_ROLES,
-} from "../constants/roles";
+import { ROLES, ALL_ROLES } from "../constants/roles";
 
 /*
 |--------------------------------------------------------------------------
@@ -19,11 +10,9 @@ import {
 |--------------------------------------------------------------------------
 */
 
-import LoginPage
-from "../pages/auth/LoginPage";
+import LoginPage from "../pages/auth/LoginPage";
 
-import RegisterPage
-from "../pages/auth/RegisterPage";
+import RegisterPage from "../pages/auth/RegisterPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +20,7 @@ from "../pages/auth/RegisterPage";
 |--------------------------------------------------------------------------
 */
 
-import DashboardPage
-from "../pages/dashboard/DashboardPage";
+import DashboardPage from "../pages/dashboard/DashboardPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -40,8 +28,7 @@ from "../pages/dashboard/DashboardPage";
 |--------------------------------------------------------------------------
 */
 
-import LeaderboardPage
-from "../pages/leaderboard/LeaderboardPage";
+import LeaderboardPage from "../pages/leaderboard/LeaderboardPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -49,11 +36,9 @@ from "../pages/leaderboard/LeaderboardPage";
 |--------------------------------------------------------------------------
 */
 
-import ProfilePage
-from "../pages/profile/ProfilePage";
+import ProfilePage from "../pages/profile/ProfilePage";
 
-import EditProfilePage
-from "../pages/profile/EditProfilePage";
+import EditProfilePage from "../pages/profile/EditProfilePage";
 
 /*
 |--------------------------------------------------------------------------
@@ -61,14 +46,11 @@ from "../pages/profile/EditProfilePage";
 |--------------------------------------------------------------------------
 */
 
-import EventListPage
-from "../pages/events/EventListPage";
+import EventListPage from "../pages/events/EventListPage";
 
-import EventDetailPage
-from "../pages/events/EventDetailPage";
+import EventDetailPage from "../pages/events/EventDetailPage";
 
-import EventTicketPage
-from "../pages/ticket/EventTicketPage";
+import EventTicketPage from "../pages/ticket/EventTicketPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -76,17 +58,13 @@ from "../pages/ticket/EventTicketPage";
 |--------------------------------------------------------------------------
 */
 
-import OpportunityListPage
-from "../pages/opportunities/OpportunityListPage";
+import OpportunityListPage from "../pages/opportunities/OpportunityListPage";
 
-import OpportunityDetailPage
-from "../pages/opportunities/OpportunityDetailPage";
+import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage";
 
-import CreateOpportunityPage
-from "../pages/opportunities/CreateOpportunityPage";
+import CreateOpportunityPage from "../pages/opportunities/CreateOpportunityPage";
 
-import SavedOpportunitiesPage
-from "../pages/opportunities/SavedOpportunitiesPage";
+import SavedOpportunitiesPage from "../pages/opportunities/SavedOpportunitiesPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -94,52 +72,38 @@ from "../pages/opportunities/SavedOpportunitiesPage";
 |--------------------------------------------------------------------------
 */
 
-import MyApplicationsPage
-from "../pages/student/MyApplicationsPage";
+import MyApplicationsPage from "../pages/student/MyApplicationsPage";
 
-import StudentMyEventsPage
-from "../pages/student/MyEventsPage";
+import StudentMyEventsPage from "../pages/student/MyEventsPage";
 
-import ActivityHistoryPage
-from "../pages/student/ActivityHistoryPage";
+import ActivityHistoryPage from "../pages/student/ActivityHistoryPage";
 
-import StudentBadgesPage
-from "../pages/student/StudentBadgesPage";
+import StudentBadgesPage from "../pages/student/StudentBadgesPage";
 
-import RecommendationsPage
-from "../pages/student/RecommendationsPage";
+import RecommendationsPage from "../pages/student/RecommendationsPage";
 /*
 |--------------------------------------------------------------------------
 | Organization
 |--------------------------------------------------------------------------
 */
 
-import MyOpportunitiesPage
-from "../pages/organization/MyOpportunitiesPage";
+import MyOpportunitiesPage from "../pages/organization/MyOpportunitiesPage";
 
-import EditOpportunityPage
-from "../pages/organization/EditOpportunityPage";
+import EditOpportunityPage from "../pages/organization/EditOpportunityPage";
 
-import EventRegistrationsPage
-from "../pages/organization/EventRegistrationsPage";
+import EventRegistrationsPage from "../pages/organization/EventRegistrationsPage";
 
-import EventAttendancePage
-from "../pages/organization/EventAttendancePage";
+import EventAttendancePage from "../pages/organization/EventAttendancePage";
 
-import OpportunityApplicantsPage
-from "../pages/organization/OpportunityApplicantsPage";
+import OpportunityApplicantsPage from "../pages/organization/OpportunityApplicantsPage";
 
-import CreateEventPage
-from "../pages/events/CreateEventPage";
+import CreateEventPage from "../pages/events/CreateEventPage";
 
-import EditEventPage
-from "../pages/organization/EditEventPage";
+import EditEventPage from "../pages/organization/EditEventPage";
 
-import OrganizationMyEventsPage
-from "../pages/organization/MyEventsPage";
+import OrganizationMyEventsPage from "../pages/organization/MyEventsPage";
 
-import AttendanceScannerPage
-from "../pages/organization/AttendanceScannerPage";
+import AttendanceScannerPage from "../pages/organization/AttendanceScannerPage";
 
 /*
 |--------------------------------------------------------------------------
@@ -147,91 +111,54 @@ from "../pages/organization/AttendanceScannerPage";
 |--------------------------------------------------------------------------
 */
 
-import AdminPendingEventsPage
-from "../pages/admin/AdminPendingEventsPage";
+import AdminPendingEventsPage from "../pages/admin/AdminPendingEventsPage";
 
-import AdminPendingOpportunitiesPage
-from "../pages/admin/AdminPendingOpportunitiesPage";
+import AdminPendingOpportunitiesPage from "../pages/admin/AdminPendingOpportunitiesPage";
 
-import AdminEventCategoriesPage
-from "../pages/admin/AdminEventCategoriesPage";
+import AdminEventCategoriesPage from "../pages/admin/AdminEventCategoriesPage";
 
-import AdminOpportunityTypesPage
-from "../pages/admin/AdminOpportunityTypesPage";
+import AdminOpportunityTypesPage from "../pages/admin/AdminOpportunityTypesPage";
 
-import AdminUniversitiesPage
-from "../pages/admin/AdminUniversitiesPage";
+import AdminUniversitiesPage from "../pages/admin/AdminUniversitiesPage";
 
-import AdminFacultiesPage
-from "../pages/admin/AdminFacultiesPage";
+import AdminFacultiesPage from "../pages/admin/AdminFacultiesPage";
 
-import AdminMajorsPage
-from "../pages/admin/AdminMajorsPage";
+import AdminMajorsPage from "../pages/admin/AdminMajorsPage";
 
-import AdminSkillsPage
-from "../pages/admin/AdminSkillsPage";
+import AdminSkillsPage from "../pages/admin/AdminSkillsPage";
 
 /*
 |--------------------------------------------------------------------------
 | Notifications
 |--------------------------------------------------------------------------
 */
-import NotificationPage
-from "../pages/notifications/NotificationPage";
+import NotificationPage from "../pages/notifications/NotificationPage";
 
 //Analytics
 import AnalyticsPage from "../pages/analytics/AnalyticsPage";
 
 function AppRoutes() {
-
   const protect = (
-
     element,
 
-    allowedRoles
-
-  ) => (
-
-    <ProtectedRoute
-
-      allowedRoles={
-
-        allowedRoles
-
-      }
-
-    >
-
-      {element}
-
-    </ProtectedRoute>
-
-  );
+    allowedRoles,
+  ) => <ProtectedRoute allowedRoles={allowedRoles}>{element}</ProtectedRoute>;
 
   return (
-
     <BrowserRouter>
-
       <Routes>
-
         {/* Home */}
 
         <Route
-
           path="/"
 
           element={
-
             <Navigate
-
               to="/dashboard"
 
               replace
-
             />
-
           }
-
         />
 
         {/* Auth */}
@@ -256,317 +183,163 @@ function AppRoutes() {
         {/* Shared */}
 
         <Route
-
           path="/dashboard"
 
-          element={
+          element={protect(
+            <DashboardPage />,
 
-            protect(
-
-              <DashboardPage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
 
         <Route
-
           path="/leaderboard"
 
-          element={
+          element={protect(
+            <LeaderboardPage />,
 
-            protect(
-
-              <LeaderboardPage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
 
         <Route
-
           path="/notifications"
 
-          element={
+          element={protect(
+            <NotificationPage />,
 
-            protect(
-
-              <NotificationPage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
-        <Route
-          path="/analytics"
-          element={<AnalyticsPage />}
-        />
+        <Route path="/analytics" element={<AnalyticsPage />} />
 
         <Route
-
           path="/profile"
 
-          element={
+          element={protect(
+            <ProfilePage />,
 
-            protect(
-
-              <ProfilePage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
 
         <Route
-
           path="/profile/edit"
 
-          element={
-
-            <EditProfilePage />
-
-          }
-
+          element={<EditProfilePage />}
         />
 
         <Route
-
           path="/events"
 
-          element={
+          element={protect(
+            <EventListPage />,
 
-            protect(
-
-              <EventListPage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
 
         <Route
-
           path="/events/create"
 
-          element={
+          element={protect(
+            <CreateEventPage />,
 
-            protect(
-
-              <CreateEventPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
 
         <Route
-
           path="/events/:id"
 
-          element={
+          element={protect(
+            <EventDetailPage />,
 
-            protect(
-
-              <EventDetailPage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
 
         <Route
-
           path="/opportunities"
 
-          element={
+          element={protect(
+            <OpportunityListPage />,
 
-            protect(
-
-              <OpportunityListPage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
 
         <Route
-
           path="/opportunities/create"
 
-          element={
+          element={protect(
+            <CreateOpportunityPage />,
 
-            protect(
-
-              <CreateOpportunityPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
 
         <Route
-
           path="/opportunities/:id"
 
-          element={
+          element={protect(
+            <OpportunityDetailPage />,
 
-            protect(
-
-              <OpportunityDetailPage />,
-
-              ALL_ROLES
-
-            )
-
-          }
-
+            ALL_ROLES,
+          )}
         />
 
         {/* Student */}
 
         <Route
-
           path="/saved-opportunities"
 
-          element={
+          element={protect(
+            <SavedOpportunitiesPage />,
 
-            protect(
-
-              <SavedOpportunitiesPage />,
-
-              [
-
-                ROLES.STUDENT,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.STUDENT],
+          )}
         />
 
         <Route
-
           path="/my-applications"
 
-          element={
+          element={protect(
+            <MyApplicationsPage />,
 
-            protect(
-
-              <MyApplicationsPage />,
-
-              [
-
-                ROLES.STUDENT,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.STUDENT],
+          )}
         />
 
         <Route
-
           path="/my-events"
 
-          element={
+          element={protect(
+            <StudentMyEventsPage />,
 
-            protect(
-
-              <StudentMyEventsPage />,
-
-              [
-
-                ROLES.STUDENT,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.STUDENT],
+          )}
         />
 
         <Route
-
           path="/activity-history"
 
-          element={
+          element={protect(
+            <ActivityHistoryPage />,
 
-            protect(
-
-              <ActivityHistoryPage />,
-
-              [
-
-                ROLES.STUDENT,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.STUDENT],
+          )}
         />
-        
+
         <Route
           path="/recommendations"
-          element={
-            protect(
-              <RecommendationsPage />,
-              [
-                ROLES.STUDENT,
-              ]
-            )
-          }
+          element={protect(<RecommendationsPage />, [ROLES.STUDENT])}
         />
 
         <Route
           path="/badges"
           element={
-            <ProtectedRoute
-              roles={["STUDENT"]}
-            >
+            <ProtectedRoute roles={["STUDENT"]}>
               <StudentBadgesPage />
             </ProtectedRoute>
           }
@@ -575,8 +348,7 @@ function AppRoutes() {
         <Route
           path="/events/:eventId/ticket"
           element={
-            <ProtectedRoute
-            roles={["STUDENT"]}>
+            <ProtectedRoute roles={["STUDENT"]}>
               <EventTicketPage />
             </ProtectedRoute>
           }
@@ -585,33 +357,19 @@ function AppRoutes() {
         {/* Organization */}
 
         <Route
-
           path="/organization/events"
 
-          element={
+          element={protect(
+            <OrganizationMyEventsPage />,
 
-            protect(
-
-              <OrganizationMyEventsPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
 
         <Route
           path="/organization/attendance/scanner"
           element={
-            <ProtectedRoute
-              roles={["ORGANIZATION"]}
-            >
+            <ProtectedRoute roles={["ORGANIZATION"]}>
               <AttendanceScannerPage />
             </ProtectedRoute>
           }
@@ -619,338 +377,162 @@ function AppRoutes() {
 
         <Route
           path="/events/:id/scanner"
-          element={
-            protect(
-              <AttendanceScannerPage />,
-              [ROLES.ORGANIZATION]
-            )
-          }
+          element={protect(<AttendanceScannerPage />, [ROLES.ORGANIZATION])}
         />
 
         <Route
-
           path="/organization/events/:id/edit"
 
-          element={
+          element={protect(
+            <EditEventPage />,
 
-            protect(
-
-              <EditEventPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
 
         <Route
-
           path="/organization/events/:id/registrations"
 
-          element={
+          element={protect(
+            <EventRegistrationsPage />,
 
-            protect(
-
-              <EventRegistrationsPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
-        
+
         <Route
           path="/events/:id/attendance"
-          element={
-            protect(
-              <EventAttendancePage />,
-              [ROLES.ORGANIZATION]
-            )
-          }
+          element={protect(<EventAttendancePage />, [ROLES.ORGANIZATION])}
         />
 
         <Route
-
           path="/organization/opportunities"
 
-          element={
+          element={protect(
+            <MyOpportunitiesPage />,
 
-            protect(
-
-              <MyOpportunitiesPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
 
         <Route
-
           path="/organization/opportunities/:id/edit"
 
-          element={
+          element={protect(
+            <EditOpportunityPage />,
 
-            protect(
-
-              <EditOpportunityPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
 
         <Route
-
           path="/organization/opportunities/:id/applicants"
 
-          element={
+          element={protect(
+            <OpportunityApplicantsPage />,
 
-            protect(
-
-              <OpportunityApplicantsPage />,
-
-              [
-
-                ROLES.ORGANIZATION,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ORGANIZATION],
+          )}
         />
 
         {/* Admin */}
 
         <Route
-
           path="/admin/events/pending"
 
-          element={
+          element={protect(
+            <AdminPendingEventsPage />,
 
-            protect(
-
-              <AdminPendingEventsPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         <Route
-
           path="/admin/opportunities/pending"
 
-          element={
+          element={protect(
+            <AdminPendingOpportunitiesPage />,
 
-            protect(
-
-              <AdminPendingOpportunitiesPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         <Route
-
           path="/admin/event-categories"
 
-          element={
+          element={protect(
+            <AdminEventCategoriesPage />,
 
-            protect(
-
-              <AdminEventCategoriesPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         <Route
-
           path="/admin/opportunity-types"
 
-          element={
+          element={protect(
+            <AdminOpportunityTypesPage />,
 
-            protect(
-
-              <AdminOpportunityTypesPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         <Route
-
           path="/admin/universities"
 
-          element={
+          element={protect(
+            <AdminUniversitiesPage />,
 
-            protect(
-
-              <AdminUniversitiesPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         <Route
-
           path="/admin/faculties"
 
-          element={
+          element={protect(
+            <AdminFacultiesPage />,
 
-            protect(
-
-              <AdminFacultiesPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         <Route
-
           path="/admin/majors"
 
-          element={
+          element={protect(
+            <AdminMajorsPage />,
 
-            protect(
-
-              <AdminMajorsPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         <Route
-
           path="/admin/skills"
 
-          element={
+          element={protect(
+            <AdminSkillsPage />,
 
-            protect(
-
-              <AdminSkillsPage />,
-
-              [
-
-                ROLES.ADMIN,
-
-              ]
-
-            )
-
-          }
-
+            [ROLES.ADMIN],
+          )}
         />
 
         {/* 404 */}
 
         <Route
-
           path="*"
 
           element={
-
             <Navigate
-
               to="/dashboard"
 
               replace
-
             />
-
           }
-
         />
-
       </Routes>
-
     </BrowserRouter>
-
   );
-
 }
 
 export default AppRoutes;

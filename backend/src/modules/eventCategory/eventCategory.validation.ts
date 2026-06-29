@@ -1,41 +1,27 @@
 import { z } from "zod";
 
-export const createEventCategorySchema =
+export const createEventCategorySchema = z.object({
+  categoryName: z
+    .string()
 
-  z.object({
+    .trim()
 
-    categoryName:
+    .min(
+      2,
 
-      z.string()
+      "Category name is required",
+    ),
+});
 
-      .trim()
+export const updateEventCategorySchema = z.object({
+  categoryName: z
+    .string()
 
-      .min(
+    .trim()
 
-        2,
+    .min(
+      2,
 
-        "Category name is required"
-
-      ),
-
-  });
-
-export const updateEventCategorySchema =
-
-  z.object({
-
-    categoryName:
-
-      z.string()
-
-      .trim()
-
-      .min(
-
-        2,
-
-        "Category name is required"
-
-      ),
-
-  });
+      "Category name is required",
+    ),
+});

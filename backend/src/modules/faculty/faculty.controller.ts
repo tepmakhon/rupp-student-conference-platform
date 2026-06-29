@@ -1,185 +1,99 @@
-import { Request, Response }
-from "express";
+import { Request, Response } from "express";
 
-import * as service
-from "./faculty.service.js";
+import * as service from "./faculty.service.js";
 
-import {
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-  successResponse,
-
-  errorResponse,
-
-}
-
-from "../../utils/apiResponse.js";
-
-export const getAllFaculties =
-async (
-  req:Request,
-  res: Response
-) => {
-
+export const getAllFaculties = async (req: Request, res: Response) => {
   try {
-
-    const data =
-
-      await service.getAllFaculties();
+    const data = await service.getAllFaculties();
 
     return successResponse(
-
       res,
 
       data,
 
-      "Faculties retrieved"
-
+      "Faculties retrieved",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 500
-
+      error.statusCode || 500,
     );
-
   }
-
 };
 
-export const createFaculty =
-async (
-  req: Request,
-  res: Response
-) => {
-
+export const createFaculty = async (req: Request, res: Response) => {
   try {
-
-    const data =
-
-      await service.createFaculty(
-
-        req.body
-
-      );
+    const data = await service.createFaculty(req.body);
 
     return successResponse(
-
       res,
 
       data,
 
       "Faculty created",
 
-      201
-
+      201,
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const updateFaculty =
-async (
-  req: Request,
-  res: Response
-) => {
-
+export const updateFaculty = async (req: Request, res: Response) => {
   try {
+    const data = await service.updateFaculty(
+      BigInt(req.params.id as string),
 
-    const data =
-
-      await service.updateFaculty(
-
-        BigInt(
-          req.params.id as string
-        ),
-
-        req.body
-
-      );
+      req.body,
+    );
 
     return successResponse(
-
       res,
 
       data,
 
-      "Faculty updated"
-
+      "Faculty updated",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const deleteFaculty =
-async (
-  req: Request,
-  res: Response
-) => {
-
+export const deleteFaculty = async (req: Request, res: Response) => {
   try {
-
-    await service.deleteFaculty(
-
-      BigInt(
-        req.params.id as string
-      )
-
-    );
+    await service.deleteFaculty(BigInt(req.params.id as string));
 
     return successResponse(
-
       res,
 
       null,
 
-      "Faculty deleted"
-
+      "Faculty deleted",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };

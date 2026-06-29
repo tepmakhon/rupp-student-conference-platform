@@ -1,11 +1,5 @@
-function OpportunityRequirements({
-
-  requirements,
-
-}) {
-
+function OpportunityRequirements({ requirements }) {
   return (
-
     <div
       className="
         bg-white
@@ -15,7 +9,6 @@ function OpportunityRequirements({
         border
       "
     >
-
       <h2
         className="
           text-3xl
@@ -24,9 +17,7 @@ function OpportunityRequirements({
           mb-5
         "
       >
-
         Requirements
-
       </h2>
 
       <p
@@ -35,19 +26,10 @@ function OpportunityRequirements({
           whitespace-pre-line
         "
       >
-
-        {
-          requirements ||
-
-          "No requirements provided."
-        }
-
+        {requirements || "No requirements provided."}
       </p>
-
     </div>
-
   );
-
 }
 
 export default OpportunityRequirements;

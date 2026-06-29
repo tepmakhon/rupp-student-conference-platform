@@ -1,15 +1,10 @@
 function AuthHeader({
-
   title,
 
   subtitle,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         text-center
@@ -17,11 +12,8 @@ function AuthHeader({
         mb-10
 
       "
-
     >
-
       <h1
-
         className="
 
           text-4xl
@@ -31,15 +23,11 @@ function AuthHeader({
           text-primary
 
         "
-
       >
-
         RUPP Platform
-
       </h1>
 
       <h2
-
         className="
 
           text-2xl
@@ -49,15 +37,11 @@ function AuthHeader({
           mt-6
 
         "
-
       >
-
         {title}
-
       </h2>
 
       <p
-
         className="
 
           text-gray-500
@@ -65,17 +49,11 @@ function AuthHeader({
           mt-2
 
         "
-
       >
-
         {subtitle}
-
       </p>
-
     </div>
-
   );
-
 }
 
 export default AuthHeader;

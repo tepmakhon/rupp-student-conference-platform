@@ -1,56 +1,31 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-import {
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import {
-  getRecentOpportunities,
-} from "../../api/opportunityApi";
+import { getRecentOpportunities } from "../../api/opportunityApi";
 
 function RecentOpportunities() {
+  const [opportunities, setOpportunities] = useState([]);
 
-  const [
-    opportunities,
-    setOpportunities,
-  ] = useState([]);
-
-  const [
-    loading,
-    setLoading,
-  ] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     loadRecentOpportunities();
-
   }, []);
 
-  const loadRecentOpportunities =
-    async () => {
+  const loadRecentOpportunities = async () => {
+    try {
+      const data = await getRecentOpportunities();
 
-      try {
-
-        const data =
-          await getRecentOpportunities();
-
-        setOpportunities(data);
-
-      } catch (error) {
-
-        console.error(error);
-
-      } finally {
-
-        setLoading(false);
-      }
-    };
+      setOpportunities(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
-
     return (
       <div
         className="
@@ -66,7 +41,6 @@ function RecentOpportunities() {
   }
 
   return (
-
     <div
       className="
         bg-white
@@ -75,7 +49,6 @@ function RecentOpportunities() {
         shadow-md
       "
     >
-
       <h2
         className="
           text-2xl
@@ -88,19 +61,11 @@ function RecentOpportunities() {
       </h2>
 
       <div className="space-y-4">
-
-        {
-          opportunities.map(
-            (
-              opportunity
-            ) => (
-
-              <Link
-                key={
-                  opportunity.id
-                }
-                to={`/opportunities/${opportunity.id}`}
-                className="
+        {opportunities.map((opportunity) => (
+          <Link
+            key={opportunity.id}
+            to={`/opportunities/${opportunity.id}`}
+            className="
                   flex
                   items-center
                   gap-4
@@ -110,71 +75,52 @@ function RecentOpportunities() {
                   rounded-lg
                   p-2
                 "
-              >
-
-                <img
-                  src={
-                    opportunity.coverImageUrl ||
-                    "https://placehold.co/120x80?text=Opportunity"
-                  }
-                  alt={
-                    opportunity.title
-                  }
-                  className="
+          >
+            <img
+              src={
+                opportunity.coverImageUrl ||
+                "https://placehold.co/120x80?text=Opportunity"
+              }
+              alt={opportunity.title}
+              className="
                     w-24
                     h-16
                     rounded-lg
                     object-cover
                   "
-                />
+            />
 
-                <div>
-
-                  <h3
-                    className="
+            <div>
+              <h3
+                className="
                       font-semibold
                       text-primary
                     "
-                  >
-                    {
-                      opportunity.title
-                    }
-                  </h3>
+              >
+                {opportunity.title}
+              </h3>
 
-                  <p
-                    className="
+              <p
+                className="
                       text-sm
                       text-gray-500
                     "
-                  >
-                    {
-                      opportunity.organization
-                        ?.organizationName
-                    }
-                  </p>
+              >
+                {opportunity.organization?.organizationName}
+              </p>
 
-                  <p
-                    className="
+              <p
+                className="
                       text-xs
                       text-secondary
                     "
-                  >
-                    {
-                      opportunity.type
-                        ?.typeName
-                    }
-                  </p>
-
-                </div>
-
-              </Link>
-
-            )
-          )
-        }
-
+              >
+                {opportunity.type?.typeName}
+              </p>
+            </div>
+          </Link>
+        ))}
       </div>
-
     </div>
   );
 }

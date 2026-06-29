@@ -2,427 +2,205 @@ import { Request, Response } from "express";
 
 import * as opportunityService from "./opportunity.service.js";
 
-import {
-  successResponse,
-  errorResponse,
-} from "../../utils/apiResponse.js";
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-export const createOpportunity = async (
-  req: Request,
-  res: Response
-) => {
+export const createOpportunity = async (req: Request, res: Response) => {
   try {
-
     const user = req.user!;
 
-    const opportunity =
-      await opportunityService.createOpportunity(
-        req.body,
-        BigInt(user.id)
-      );
-
-    return successResponse(
-      res,
-      opportunity,
-      "Opportunity created",
-      201
+    const opportunity = await opportunityService.createOpportunity(
+      req.body,
+      BigInt(user.id),
     );
 
+    return successResponse(res, opportunity, "Opportunity created", 201);
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const getAllOpportunities = async (
-  req: Request,
-  res: Response
-) => {
+export const getAllOpportunities = async (req: Request, res: Response) => {
   try {
+    const page = Number(req.query.page) || 1;
 
-    const page =
-      Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-    const limit =
-      Number(req.query.limit) || 10;
+    const keyword = req.query.keyword as string;
 
-    const keyword =
-      req.query.keyword as string;
+    const typeId = req.query.typeId as string;
 
-    const typeId =
-      req.query.typeId as string;
+    const status = req.query.status as string;
 
-    const status =
-      req.query.status as string;
+    const result = await opportunityService.getAllOpportunities({
+      page,
+      limit,
+      keyword,
+      typeId,
+      status,
+    });
 
-    const result =
-      await opportunityService.getAllOpportunities(
-        {
-          page,
-          limit,
-          keyword,
-          typeId,
-          status,
-        }
-      );
-
-    return successResponse(
-      res,
-      result,
-      "Opportunities retrieved"
-    );
-
+    return successResponse(res, result, "Opportunities retrieved");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 500
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 500);
   }
 };
 
-export const getOpportunityById = async (
-  req: Request,
-  res: Response
-) => {
+export const getOpportunityById = async (req: Request, res: Response) => {
   try {
-
     const id = BigInt(
-      Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id
+      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const opportunity =
-      await opportunityService.getOpportunityById(
-        id
-      );
+    const opportunity = await opportunityService.getOpportunityById(id);
 
-    return successResponse(
-      res,
-      opportunity,
-      "Opportunity retrieved"
-    );
-
+    return successResponse(res, opportunity, "Opportunity retrieved");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 404
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 404);
   }
 };
 
-export const getPendingOpportunities = async (
-  req: Request,
-  res: Response
-) => {
+export const getPendingOpportunities = async (req: Request, res: Response) => {
   try {
-
-    const opportunities =
-      await opportunityService.getPendingOpportunities();
+    const opportunities = await opportunityService.getPendingOpportunities();
 
     return successResponse(
       res,
       opportunities,
-      "Pending opportunities retrieved"
+      "Pending opportunities retrieved",
     );
-
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 500
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 500);
   }
 };
 
-export const approveOpportunity = async (
-  req: Request,
-  res: Response
-) => {
+export const approveOpportunity = async (req: Request, res: Response) => {
   try {
-
     const id = BigInt(
-      Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id
+      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const opportunity =
-      await opportunityService.approveOpportunity(
-        id
-      );
+    const opportunity = await opportunityService.approveOpportunity(id);
 
-    return successResponse(
-      res,
-      opportunity,
-      "Opportunity approved"
-    );
-
+    return successResponse(res, opportunity, "Opportunity approved");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const applyOpportunity = async (
-  req: Request,
-  res: Response
-) => {
+export const applyOpportunity = async (req: Request, res: Response) => {
   try {
-
     const opportunityId = BigInt(
-      Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id
+      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const user =
-      req.user!;
+    const user = req.user!;
 
-    const application =
-      await opportunityService.applyOpportunity(
-        opportunityId,
-        BigInt(user.id),
-        req.body
-      );
+    const application = await opportunityService.applyOpportunity(
+      opportunityId,
+      BigInt(user.id),
+      req.body,
+    );
 
     return successResponse(
       res,
       application,
       "Application submitted successfully",
-      201
+      201,
     );
-
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const rejectOpportunity = async (
-  req: Request,
-  res: Response
-) => {
-
+export const rejectOpportunity = async (req: Request, res: Response) => {
   try {
-
     const id = BigInt(
-      Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id
+      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
-    const opportunity =
-      await opportunityService.rejectOpportunity(
-        id
-      );
+    const opportunity = await opportunityService.rejectOpportunity(id);
 
-    return successResponse(
-      res,
-      opportunity,
-      "Opportunity rejected"
-    );
-
+    return successResponse(res, opportunity, "Opportunity rejected");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const saveOpportunity = async (
-  req: Request,
-  res: Response
-) => {
-
+export const saveOpportunity = async (req: Request, res: Response) => {
   try {
-
-    const user =
-      req.user!;
+    const user = req.user!;
 
     const opportunityId = BigInt(
-      Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id
+      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
-    const result =
-      await opportunityService.saveOpportunity(
-        opportunityId,
-        BigInt(user.id)
-      );
-
-    return successResponse(
-      res,
-      result,
-      "Opportunity saved"
+    const result = await opportunityService.saveOpportunity(
+      opportunityId,
+      BigInt(user.id),
     );
 
+    return successResponse(res, result, "Opportunity saved");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const unsaveOpportunity = async (
-  req: Request,
-  res: Response
-) => {
-
+export const unsaveOpportunity = async (req: Request, res: Response) => {
   try {
-
-    const user =
-      req.user!;
+    const user = req.user!;
 
     const opportunityId = BigInt(
-      Array.isArray(req.params.id)
-        ? req.params.id[0]
-        : req.params.id
+      Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const result =
-      await opportunityService.unsaveOpportunity(
-        opportunityId,
-        BigInt(user.id)
-      );
-
-    return successResponse(
-      res,
-      result,
-      "Opportunity removed from saved list"
+    const result = await opportunityService.unsaveOpportunity(
+      opportunityId,
+      BigInt(user.id),
     );
 
+    return successResponse(res, result, "Opportunity removed from saved list");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const getSavedOpportunities =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-
-    try {
-
-      const user =
-        req.user!;
-
-      const result =
-        await opportunityService.getSavedOpportunities(
-          BigInt(user.id)
-        );
-
-      return successResponse(
-        res,
-        result,
-        "Saved opportunities retrieved"
-      );
-
-    } catch (error: any) {
-
-      return errorResponse(
-        res,
-        error.message,
-        error.statusCode || 400
-      );
-
-    }
-  };
-
-export const getRecentOpportunities = async (
-  req: Request,
-  res: Response
-) => {
+export const getSavedOpportunities = async (req: Request, res: Response) => {
   try {
+    const user = req.user!;
 
-    const data =
-      await opportunityService.getRecentOpportunities();
-
-    return successResponse(
-      res,
-      data,
-      "Recent opportunities retrieved"
+    const result = await opportunityService.getSavedOpportunities(
+      BigInt(user.id),
     );
 
+    return successResponse(res, result, "Saved opportunities retrieved");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 500
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const getOrganizationOpportunities =
-async (
-  req: Request,
-  res: Response
-) => {
-
+export const getRecentOpportunities = async (req: Request, res: Response) => {
   try {
+    const data = await opportunityService.getRecentOpportunities();
 
-    const user =
-      req.user!;
-
-    const data =
-      await opportunityService.getOrganizationOpportunities(
-        BigInt(user.id)
-      );
-
-    return successResponse(
-      res,
-      data,
-      "Organization opportunities retrieved"
-    );
-
+    return successResponse(res, data, "Recent opportunities retrieved");
   } catch (error: any) {
+    return errorResponse(res, error.message, error.statusCode || 500);
+  }
+};
 
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
+export const getOrganizationOpportunities = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const user = req.user!;
+
+    const data = await opportunityService.getOrganizationOpportunities(
+      BigInt(user.id),
     );
 
+    return successResponse(res, data, "Organization opportunities retrieved");
+  } catch (error: any) {
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
-
 };
 
 /*
@@ -431,58 +209,33 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const getMyOpportunities =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-
-    try {
-
-      const user =
-        req.user!;
-
-      const data =
-        await opportunityService.getMyOpportunities(
-          BigInt(user.id)
-        );
-
-      return successResponse(
-
-        res,
-
-        data,
-
-        "My opportunities retrieved"
-
-      );
-
-    } catch (error: any) {
-
-      return errorResponse(
-
-        res,
-
-        error.message,
-
-        error.statusCode || 500
-
-      );
-
-    }
-
-  };
-
-  export const updateOpportunity =
-async (
-  req: Request,
-  res: Response
-) => {
-
+export const getMyOpportunities = async (req: Request, res: Response) => {
   try {
+    const user = req.user!;
 
-    const user =
-      req.user!;
+    const data = await opportunityService.getMyOpportunities(BigInt(user.id));
+
+    return successResponse(
+      res,
+
+      data,
+
+      "My opportunities retrieved",
+    );
+  } catch (error: any) {
+    return errorResponse(
+      res,
+
+      error.message,
+
+      error.statusCode || 500,
+    );
+  }
+};
+
+export const updateOpportunity = async (req: Request, res: Response) => {
+  try {
+    const user = req.user!;
 
     const getBigIntId = (id: any): bigint => {
       if (!id) {
@@ -498,55 +251,35 @@ async (
     // Usage in your controller:
     const id = getBigIntId(req.params.id);
 
-    const data =
-      await opportunityService.updateOpportunity(
+    const data = await opportunityService.updateOpportunity(
+      id,
 
-        id,
+      BigInt(user.id),
 
-        BigInt(user.id),
-
-        req.body
-
-      );
+      req.body,
+    );
 
     return successResponse(
-
       res,
 
       data,
 
-      "Opportunity updated"
-
+      "Opportunity updated",
     );
-
-  }
-
-  catch (error: any) {
-
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const deleteOpportunity =
-async (
-  req: Request,
-  res: Response
-) => {
-
+export const deleteOpportunity = async (req: Request, res: Response) => {
   try {
-
-    const user =
-      req.user!;
+    const user = req.user!;
 
     const getBigIntId = (id: any): bigint => {
       if (!id) {
@@ -563,37 +296,25 @@ async (
     const id = getBigIntId(req.params.id);
 
     await opportunityService.deleteOpportunity(
-
       id,
 
-      BigInt(user.id)
-
+      BigInt(user.id),
     );
 
     return successResponse(
-
       res,
 
       null,
 
-      "Opportunity deleted"
-
+      "Opportunity deleted",
     );
-
-  }
-
-  catch (error: any) {
-
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };

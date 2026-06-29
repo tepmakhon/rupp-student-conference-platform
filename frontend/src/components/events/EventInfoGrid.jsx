@@ -1,29 +1,14 @@
 import {
-
   CalendarDaysIcon,
-
   MapPinIcon,
-
   UserGroupIcon,
-
 } from "@heroicons/react/24/outline";
 
-import {
+import { formatDate } from "../../utils/formatDate";
 
-  formatDate,
-
-} from "../../utils/formatDate";
-
-function EventInfoGrid({
-
-  event,
-
-}) {
-
+function EventInfoGrid({ event }) {
   return (
-
     <div
-
       className="
 
         grid
@@ -33,89 +18,43 @@ function EventInfoGrid({
         gap-6
 
       "
-
     >
-
       <InfoCard
-
-        icon={
-
-          CalendarDaysIcon
-
-        }
+        icon={CalendarDaysIcon}
 
         title="Date"
 
-        value={
-
-          formatDate(
-
-            event.eventDate
-
-          )
-
-        }
-
+        value={formatDate(event.eventDate)}
       />
 
       <InfoCard
-
-        icon={
-
-          MapPinIcon
-
-        }
+        icon={MapPinIcon}
 
         title="Location"
 
-        value={
-
-          event.location
-
-        }
-
+        value={event.location}
       />
 
       <InfoCard
-
-        icon={
-
-          UserGroupIcon
-
-        }
+        icon={UserGroupIcon}
 
         title="Capacity"
 
-        value={
-
-          event.capacity ||
-
-          "Unlimited"
-
-        }
-
+        value={event.capacity || "Unlimited"}
       />
-
     </div>
-
   );
-
 }
 
 function InfoCard({
-
   icon: Icon,
 
   title,
 
   value,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -129,11 +68,8 @@ function InfoCard({
         shadow-sm
 
       "
-
     >
-
       <Icon
-
         className="
 
           w-8
@@ -145,11 +81,9 @@ function InfoCard({
           mb-4
 
         "
-
       />
 
       <p
-
         className="
 
           text-sm
@@ -157,19 +91,11 @@ function InfoCard({
           text-gray-500
 
         "
-
       >
-
-        {
-
-          title
-
-        }
-
+        {title}
       </p>
 
       <h3
-
         className="
 
           text-lg
@@ -179,21 +105,11 @@ function InfoCard({
           mt-2
 
         "
-
       >
-
-        {
-
-          value
-
-        }
-
+        {value}
       </h3>
-
     </div>
-
   );
-
 }
 
 export default EventInfoGrid;

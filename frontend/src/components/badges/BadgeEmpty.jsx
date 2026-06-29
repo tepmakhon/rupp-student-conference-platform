@@ -1,9 +1,6 @@
 function BadgeEmpty() {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -17,17 +14,10 @@ function BadgeEmpty() {
         border
 
       "
-
     >
-
-      <div className="text-6xl">
-
-        🏅
-
-      </div>
+      <div className="text-6xl">🏅</div>
 
       <h2
-
         className="
 
           text-2xl
@@ -37,15 +27,11 @@ function BadgeEmpty() {
           mt-5
 
         "
-
       >
-
         No Badges Yet
-
       </h2>
 
       <p
-
         className="
 
           mt-3
@@ -53,18 +39,11 @@ function BadgeEmpty() {
           text-gray-500
 
         "
-
       >
-
-        Join events and apply for opportunities
-        to earn badges.
-
+        Join events and apply for opportunities to earn badges.
       </p>
-
     </div>
-
   );
-
 }
 
 export default BadgeEmpty;

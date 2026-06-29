@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-export const updateApplicationStatusSchema =
-  z.object({
-    status: z.enum([
-      "PENDING",
-      "REVIEWING",
-      "ACCEPTED",
-      "REJECTED",
-    ]),
-  });
+export const updateApplicationStatusSchema = z.object({
+  status: z.enum(["PENDING", "REVIEWING", "ACCEPTED", "REJECTED"]),
+});

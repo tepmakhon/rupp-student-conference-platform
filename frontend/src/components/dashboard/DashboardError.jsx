@@ -1,19 +1,8 @@
-import {
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
-  ExclamationTriangleIcon,
-
-} from "@heroicons/react/24/outline";
-
-function DashboardError({
-
-  message,
-
-}) {
-
+function DashboardError({ message }) {
   return (
-
     <div
-
       className="
 
         bg-red-50
@@ -33,11 +22,8 @@ function DashboardError({
         gap-4
 
       "
-
     >
-
       <ExclamationTriangleIcon
-
         className="
 
           w-7
@@ -47,13 +33,10 @@ function DashboardError({
           text-red-600
 
         "
-
       />
 
       <div>
-
         <h3
-
           className="
 
             font-semibold
@@ -61,33 +44,22 @@ function DashboardError({
             text-red-700
 
           "
-
         >
-
           Something went wrong
-
         </h3>
 
         <p
-
           className="
 
             text-red-500
 
           "
-
         >
-
           {message}
-
         </p>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default DashboardError;

@@ -1,118 +1,77 @@
 import { Response } from "express";
 
-import { createObjectCsvStringifier }
-from "csv-writer";
+import { createObjectCsvStringifier } from "csv-writer";
 
-import {
-  getAttendanceExportData,
-} from "./attendance.service.js";
+import { getAttendanceExportData } from "./attendance.service.js";
 
-export const exportCSV = async (
-  eventId: bigint,
-  res: Response
-) => {
+export const exportCSV = async (eventId: bigint, res: Response) => {
+  const registrations = await getAttendanceExportData(eventId);
 
-  const registrations =
-    await getAttendanceExportData(
-      eventId
-    );
+  const csv = createObjectCsvStringifier({
+    header: [
+      {
+        id: "name",
+        title: "Student Name",
+      },
 
-  const csv =
-    createObjectCsvStringifier({
+      {
+        id: "email",
+        title: "Email",
+      },
 
-      header: [
+      {
+        id: "university",
+        title: "University",
+      },
 
-        {
-          id: "name",
-          title: "Student Name",
-        },
+      {
+        id: "faculty",
+        title: "Faculty",
+      },
 
-        {
-          id: "email",
-          title: "Email",
-        },
+      {
+        id: "major",
+        title: "Major",
+      },
 
-        {
-          id: "university",
-          title: "University",
-        },
+      {
+        id: "checkedIn",
+        title: "Checked In",
+      },
 
-        {
-          id: "faculty",
-          title: "Faculty",
-        },
+      {
+        id: "checkInTime",
+        title: "Check In Time",
+      },
+    ],
+  });
 
-        {
-          id: "major",
-          title: "Major",
-        },
+  const records = registrations.map((registration) => ({
+    name: registration.student.user.profile?.fullName || "",
 
-        {
-          id: "checkedIn",
-          title: "Checked In",
-        },
+    email: registration.student.user.email,
 
-        {
-          id: "checkInTime",
-          title: "Check In Time",
-        },
+    university: registration.student.university?.universityName || "",
 
-      ],
+    faculty: registration.student.faculty?.facultyName || "",
 
-    });
+    major: registration.student.major?.majorName || "",
 
-  const records =
-    registrations.map(
-      registration => ({
+    checkedIn: registration.attendanceRecord ? "Yes" : "No",
 
-        name:
-          registration.student.user.profile
-            ?.fullName || "",
+    checkInTime: registration.attendanceRecord?.checkInTime
+      ? registration.attendanceRecord.checkInTime.toLocaleString()
+      : "-",
+  }));
 
-        email:
-          registration.student.user.email,
+  const output = csv.getHeaderString() + csv.stringifyRecords(records);
 
-        university:
-          registration.student.university
-            ?.universityName || "",
-
-        faculty:
-          registration.student.faculty
-            ?.facultyName || "",
-
-        major:
-          registration.student.major
-            ?.majorName || "",
-
-        checkedIn:
-          registration.attendanceRecord
-            ? "Yes"
-            : "No",
-
-        checkInTime:
-        registration.attendanceRecord?.checkInTime
-            ? registration.attendanceRecord.checkInTime.toLocaleString()
-            : "-",
-
-      })
-    );
-
-  const output =
-
-    csv.getHeaderString() +
-
-    csv.stringifyRecords(records);
-
-  res.setHeader(
-    "Content-Type",
-    "text/csv"
-  );
+  res.setHeader("Content-Type", "text/csv");
 
   res.setHeader(
     "Content-Disposition",
-    `attachment; filename=attendance-${eventId}.csv`
+    `attachment; filename=attendance-${eventId}.csv`,
   );
 
   res.send(output);
-
 };

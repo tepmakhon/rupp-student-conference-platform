@@ -1,13 +1,6 @@
-function PageSection({
-
-  children,
-
-}) {
-
+function PageSection({ children }) {
   return (
-
     <section
-
       className="
 
         bg-white
@@ -21,15 +14,10 @@ function PageSection({
         p-6
 
       "
-
     >
-
       {children}
-
     </section>
-
   );
-
 }
 
 export default PageSection;

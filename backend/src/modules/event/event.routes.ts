@@ -15,23 +15,13 @@ import {
   getEventRegistrationsController,
 } from "./event.controller.js";
 
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import {
-  authMiddleware,
-} from "../../middlewares/auth.middleware.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import {
-  rbac,
-} from "../../middlewares/rbac.middleware.js";
+import { validate } from "../../middlewares/validate.middleware.js";
 
-import {
-  validate,
-} from "../../middlewares/validate.middleware.js";
-
-import {
-  createEventSchema,
-  updateEventSchema,
-} from "./event.validation.js";
+import { createEventSchema, updateEventSchema } from "./event.validation.js";
 
 const router = Router();
 
@@ -94,7 +84,7 @@ router.post(
   authMiddleware,
   rbac(["ORGANIZATION"]),
   validate(createEventSchema),
-  createEventController
+  createEventController,
 );
 
 /**
@@ -118,10 +108,7 @@ router.post(
  *       200:
  *         description: Approved events retrieved successfully
  */
-router.get(
-  "/approved",
-  getApprovedEventsController
-);
+router.get("/approved", getApprovedEventsController);
 
 /**
  * @swagger
@@ -143,7 +130,7 @@ router.get(
   "/pending",
   authMiddleware,
   rbac(["ADMIN"]),
-  getPendingEventsController
+  getPendingEventsController,
 );
 
 /**
@@ -169,25 +156,18 @@ router.get(
 router.get(
   "/my-registrations",
   authMiddleware,
-  rbac([
-    "STUDENT",
-  ]),
-  getMyRegistrationsController
+  rbac(["STUDENT"]),
+  getMyRegistrationsController,
 );
 
 router.get(
   "/my-events",
   authMiddleware,
-  rbac([
-    "ORGANIZATION",
-  ]),
-  getMyEventsController
+  rbac(["ORGANIZATION"]),
+  getMyEventsController,
 );
 
-router.get(
-  "/:id",
-  getEventByIdController
-);
+router.get("/:id", getEventByIdController);
 
 /**
  * @swagger
@@ -218,17 +198,15 @@ router.get(
 router.get(
   "/:id/registrations",
   authMiddleware,
-  rbac([
-    "ORGANIZATION",
-  ]),
-  getEventRegistrationsController
+  rbac(["ORGANIZATION"]),
+  getEventRegistrationsController,
 );
 
 router.patch(
   "/:id/approve",
   authMiddleware,
   rbac(["ADMIN"]),
-  approveEventController
+  approveEventController,
 );
 
 /**
@@ -260,7 +238,7 @@ router.patch(
   "/:id/reject",
   authMiddleware,
   rbac(["ADMIN"]),
-  rejectEventController
+  rejectEventController,
 );
 
 /**
@@ -294,29 +272,23 @@ router.patch(
 router.patch(
   "/:id",
   authMiddleware,
-  rbac([
-    "ORGANIZATION",
-  ]),
-  validate(
-    updateEventSchema
-  ),
-  updateEventController
+  rbac(["ORGANIZATION"]),
+  validate(updateEventSchema),
+  updateEventController,
 );
 
 router.delete(
   "/:id",
   authMiddleware,
-  rbac([
-    "ORGANIZATION",
-  ]),
-  deleteEventController
+  rbac(["ORGANIZATION"]),
+  deleteEventController,
 );
 
 router.post(
   "/:id/register",
   authMiddleware,
   rbac(["STUDENT"]),
-  registerEventController
+  registerEventController,
 );
 
 export default router;

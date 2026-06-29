@@ -7,10 +7,7 @@ import { AppError } from "../../utils/AppError.js";
 |--------------------------------------------------------------------------
 */
 
-export const getStudentAnalytics = async (
-  userId: bigint
-) => {
-
+export const getStudentAnalytics = async (userId: bigint) => {
   const student = await prisma.student.findUnique({
     where: {
       userId,
@@ -18,18 +15,10 @@ export const getStudentAnalytics = async (
   });
 
   if (!student) {
-    throw new AppError(
-      "Student not found",
-      404
-    );
+    throw new AppError("Student not found", 404);
   }
 
-  const [
-    registrations,
-    applications,
-    saved,
-  ] = await Promise.all([
-
+  const [registrations, applications, saved] = await Promise.all([
     prisma.eventRegistration.count({
       where: {
         studentId: student.id,
@@ -47,22 +36,17 @@ export const getStudentAnalytics = async (
         studentId: student.id,
       },
     }),
-
   ]);
 
   return {
-
-    activityScore:
-      student.activityScore,
+    activityScore: student.activityScore,
 
     registrations,
 
     applications,
 
     saved,
-
   };
-
 };
 
 /*
@@ -71,139 +55,83 @@ export const getStudentAnalytics = async (
 |--------------------------------------------------------------------------
 */
 
-export const getOrganizationAnalytics =
-async (
-  userId: bigint
-) => {
-
-  const organization =
-    await prisma.organization.findUnique({
-      where: {
-        userId,
-      },
-    });
+export const getOrganizationAnalytics = async (userId: bigint) => {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!organization) {
-    throw new AppError(
-      "Organization not found",
-      404
-    );
+    throw new AppError("Organization not found", 404);
   }
 
-  const [
-    events,
-    opportunities,
-    registrations,
-    applications,
-  ] = await Promise.all([
-
-    prisma.event.count({
-      where: {
-        organizationId:
-          organization.id,
-      },
-    }),
-
-    prisma.opportunity.count({
-      where: {
-        organizationId:
-          organization.id,
-      },
-    }),
-
-    prisma.eventRegistration.count({
-      where: {
-        event: {
-          organizationId:
-            organization.id,
+  const [events, opportunities, registrations, applications] =
+    await Promise.all([
+      prisma.event.count({
+        where: {
+          organizationId: organization.id,
         },
-      },
-    }),
+      }),
 
-    prisma.application.count({
-      where: {
-        opportunity: {
-          organizationId:
-            organization.id,
+      prisma.opportunity.count({
+        where: {
+          organizationId: organization.id,
         },
-      },
-    }),
+      }),
 
-  ]);
-
-  const checkedIn =
-    await prisma.attendanceRecord.count({
-
-      where: {
-
-        registration: {
-
+      prisma.eventRegistration.count({
+        where: {
           event: {
-
-            organizationId:
-              organization.id,
-
+            organizationId: organization.id,
           },
-
         },
+      }),
 
+      prisma.application.count({
+        where: {
+          opportunity: {
+            organizationId: organization.id,
+          },
+        },
+      }),
+    ]);
+
+  const checkedIn = await prisma.attendanceRecord.count({
+    where: {
+      registration: {
+        event: {
+          organizationId: organization.id,
+        },
       },
-
-    });
+    },
+  });
 
   const attendanceRate =
-    registrations === 0
+    registrations === 0 ? 0 : Math.round((checkedIn / registrations) * 100);
+  const topEvents = await prisma.event.findMany({
+    where: {
+      organizationId: organization.id,
+    },
 
-      ? 0
-
-      : Math.round(
-
-          (checkedIn /
-            registrations)
-
-          * 100
-
-        );
-  const topEvents =
-    await prisma.event.findMany({
-
-      where: {
-
-        organizationId:
-          organization.id,
-
-      },
-
-      include: {
-
-        _count: {
-
-          select: {
-
-            registrations: true,
-
-          },
-
+    include: {
+      _count: {
+        select: {
+          registrations: true,
         },
-
       },
+    },
 
-      orderBy: {
-
-        registrations: {
-
-          _count: "desc",
-
-        },
-
+    orderBy: {
+      registrations: {
+        _count: "desc",
       },
+    },
 
-      take: 5,
-
-    });
+    take: 5,
+  });
 
   return {
-
     events,
 
     opportunities,
@@ -217,7 +145,6 @@ async (
     attendanceRate,
 
     topEvents,
-
   };
 };
 
@@ -227,11 +154,8 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const getAdminAnalytics =
-async () => {
-
+export const getAdminAnalytics = async () => {
   const [
-
     students,
 
     organizations,
@@ -243,9 +167,7 @@ async () => {
     registrations,
 
     applications,
-
   ] = await Promise.all([
-
     prisma.student.count(),
 
     prisma.organization.count(),
@@ -257,11 +179,9 @@ async () => {
     prisma.eventRegistration.count(),
 
     prisma.application.count(),
-
   ]);
 
   return {
-
     students,
 
     organizations,
@@ -273,7 +193,5 @@ async () => {
     registrations,
 
     applications,
-
   };
-
 };

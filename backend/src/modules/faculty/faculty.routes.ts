@@ -1,103 +1,59 @@
-import { Router }
-from "express";
+import { Router } from "express";
 
 import {
-
   getAllFaculties,
-
   createFaculty,
-
   updateFaculty,
-
   deleteFaculty,
+} from "./faculty.controller.js";
 
-}
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-from "./faculty.controller.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import {
-
-  authMiddleware,
-
-}
-
-from "../../middlewares/auth.middleware.js";
+import { validate } from "../../middlewares/validate.middleware.js";
 
 import {
-
-  rbac,
-
-}
-
-from "../../middlewares/rbac.middleware.js";
-
-import {
-
-  validate,
-
-}
-
-from "../../middlewares/validate.middleware.js";
-
-import {
-
   createFacultySchema,
-
   updateFacultySchema,
-
-}
-
-from "./faculty.validation.js";
+} from "./faculty.validation.js";
 
 const router = Router();
 
-router.get(
-  "/",
-  getAllFaculties
-);
+router.get("/", getAllFaculties);
 
 router.post(
-
   "/",
 
   authMiddleware,
 
   rbac(["ADMIN"]),
 
-  validate(
-    createFacultySchema
-  ),
+  validate(createFacultySchema),
 
-  createFaculty
-
+  createFaculty,
 );
 
 router.patch(
-
   "/:id",
 
   authMiddleware,
 
   rbac(["ADMIN"]),
 
-  validate(
-    updateFacultySchema
-  ),
+  validate(updateFacultySchema),
 
-  updateFaculty
-
+  updateFaculty,
 );
 
 router.delete(
-
   "/:id",
 
   authMiddleware,
 
   rbac(["ADMIN"]),
 
-  deleteFaculty
-
+  deleteFaculty,
 );
 
 export default router;

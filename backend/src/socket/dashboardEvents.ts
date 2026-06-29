@@ -5,13 +5,13 @@ export const refreshAdminDashboard = () => {
 };
 
 export const refreshOrganizationDashboard = (
-  organizationUserId: bigint | number | string
+  organizationUserId: bigint | number | string,
 ) => {
   emitDashboardUpdate(organizationUserId);
 };
 
 export const refreshStudentDashboard = (
-  studentUserId: bigint | number | string
+  studentUserId: bigint | number | string,
 ) => {
   emitDashboardUpdate(studentUserId);
 };

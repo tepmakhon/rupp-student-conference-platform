@@ -1,13 +1,6 @@
-function AuthCard({
-
-  children,
-
-}) {
-
+function AuthCard({ children }) {
   return (
-
     <div
-
       className="
 
         bg-white
@@ -19,15 +12,10 @@ function AuthCard({
         p-10
 
       "
-
     >
-
       {children}
-
     </div>
-
   );
-
 }
 
 export default AuthCard;

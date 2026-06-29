@@ -1,20 +1,12 @@
 import { Router } from "express";
 
-import {
-  getLeaderboard,
-} from "./leaderboard.controller.js";
+import { getLeaderboard } from "./leaderboard.controller.js";
 
-import {
-  authMiddleware,
-} from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get(
-  "/",
-  authMiddleware,
-  getLeaderboard
-);
+router.get("/", authMiddleware, getLeaderboard);
 
 /**
  * @swagger

@@ -1,15 +1,10 @@
 function ProfileCard({
-
   title,
 
   children,
-
 }) {
-
   return (
-
     <div
-
       className="
 
       bg-white
@@ -21,15 +16,9 @@ function ProfileCard({
       p-8
 
       "
-
     >
-
-      {
-
-        title && (
-
+      {title && (
         <h2
-
           className="
 
           text-2xl
@@ -41,23 +30,14 @@ function ProfileCard({
           mb-6
 
           "
-
         >
-
           {title}
-
         </h2>
-
-        )
-
-      }
+      )}
 
       {children}
-
     </div>
-
   );
-
 }
 
 export default ProfileCard;

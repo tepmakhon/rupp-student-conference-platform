@@ -1,17 +1,8 @@
-import RegistrationCard
+import RegistrationCard from "./RegistrationCard";
 
-from "./RegistrationCard";
-
-function RegistrationGrid({
-
-  registrations,
-
-}) {
-
+function RegistrationGrid({ registrations }) {
   return (
-
     <div
-
       className="
 
         grid
@@ -19,45 +10,16 @@ function RegistrationGrid({
         gap-6
 
       "
-
     >
+      {registrations.map((registration) => (
+        <RegistrationCard
+          key={registration.id}
 
-      {
-
-        registrations.map(
-
-          (
-
-            registration
-
-          ) => (
-
-            <RegistrationCard
-
-              key={
-
-                registration.id
-
-              }
-
-              registration={
-
-                registration
-
-              }
-
-            />
-
-          )
-
-        )
-
-      }
-
+          registration={registration}
+        />
+      ))}
     </div>
-
   );
-
 }
 
 export default RegistrationGrid;

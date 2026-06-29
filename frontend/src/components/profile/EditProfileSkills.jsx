@@ -1,193 +1,67 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import toast from "react-hot-toast";
 
-  useState,
-
-} from "react";
-
-import toast
-
-from "react-hot-toast";
-
-import {
-
-  getSkills,
-
-} from "../../api/skillApi";
+import { getSkills } from "../../api/skillApi";
 
 function EditProfileSkills({
-
   selectedSkills,
 
   setSelectedSkills,
-
 }) {
+  const [skills, setSkills] = useState([]);
 
-  const [
-
-    skills,
-
-    setSkills,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-
     loadSkills();
-
   }, []);
 
-  const loadSkills =
-
-  async () => {
-
+  const loadSkills = async () => {
     try {
+      setLoading(true);
 
-      setLoading(
+      const data = await getSkills();
 
-        true
+      setSkills(data || []);
+    } catch (error) {
+      console.error(error);
 
-      );
-
-      const data =
-
-      await getSkills();
-
-      setSkills(
-
-        data ||
-
-        []
-
-      );
-
+      toast.error("Failed to load skills");
+    } finally {
+      setLoading(false);
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-      toast.error(
-
-        "Failed to load skills"
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(
-
-        false
-
-      );
-
-    }
-
   };
 
-  const toggleSkill =
+  const toggleSkill = (skillId) => {
+    const exists = selectedSkills.includes(skillId);
 
-  (
-
-    skillId
-
-  ) => {
-
-    const exists =
-
-    selectedSkills.includes(
-
-      skillId
-
-    );
-
-    if (
-
-      exists
-
-    ) {
-
-      setSelectedSkills(
-
-        selectedSkills.filter(
-
-          (
-
-            id
-
-          ) =>
-
-          id !== skillId
-
-        )
-
-      );
+    if (exists) {
+      setSelectedSkills(selectedSkills.filter((id) => id !== skillId));
 
       return;
-
     }
 
-    setSelectedSkills([
-
-      ...selectedSkills,
-
-      skillId,
-
-    ]);
-
+    setSelectedSkills([...selectedSkills, skillId]);
   };
 
-  if (
-
-    loading
-
-  ) {
-
+  if (loading) {
     return (
-
       <div
-
         className="
 
         text-gray-500
 
         "
-
       >
-
         Loading skills...
-
       </div>
-
     );
-
   }
 
   return (
-
     <div>
-
       <h3
-
         className="
 
         text-2xl
@@ -199,15 +73,11 @@ function EditProfileSkills({
         mb-6
 
         "
-
       >
-
         Skills
-
       </h3>
 
       <div
-
         className="
 
         flex
@@ -217,50 +87,19 @@ function EditProfileSkills({
         gap-3
 
         "
-
       >
+        {skills.map((skill) => {
+          const active = selectedSkills.includes(skill.id);
 
-        {
+          return (
+            <button
+              key={skill.id}
 
-          skills.map(
+              type="button"
 
-            (
+              onClick={() => toggleSkill(skill.id)}
 
-              skill
-
-            ) => {
-
-              const active =
-
-              selectedSkills.includes(
-
-                skill.id
-
-              );
-
-              return (
-
-                <button
-
-                  key={
-
-                    skill.id
-
-                  }
-
-                  type="button"
-
-                  onClick={() =>
-
-                    toggleSkill(
-
-                      skill.id
-
-                    )
-
-                  }
-
-                  className={`
+              className={`
 
                   px-4
 
@@ -273,45 +112,20 @@ function EditProfileSkills({
                   transition
 
                   ${
-
                     active
-
-                    ?
-
-                    "bg-primary text-white border-primary"
-
-                    :
-
-                    "bg-white text-gray-700"
-
+                      ? "bg-primary text-white border-primary"
+                      : "bg-white text-gray-700"
                   }
 
                   `}
-
-                >
-
-                  {
-
-                    skill.skillName
-
-                  }
-
-                </button>
-
-              );
-
-            }
-
-          )
-
-        }
-
+            >
+              {skill.skillName}
+            </button>
+          );
+        })}
       </div>
-
     </div>
-
   );
-
 }
 
 export default EditProfileSkills;

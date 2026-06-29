@@ -1,115 +1,51 @@
-import {
+import { Request, Response, NextFunction } from "express";
 
-  Request,
+import { registerUser, loginUser } from "./auth.service.js";
 
-  Response,
+import { successResponse } from "../../utils/apiResponse.js";
 
-  NextFunction,
-
-}
-
-from "express";
-
-import {
-
-  registerUser,
-
-  loginUser,
-
-}
-
-from "./auth.service.js";
-
-import {
-
-  successResponse,
-
-}
-
-from "../../utils/apiResponse.js";
-
-export const register =
-
-async (
-
+export const register = async (
   req: Request,
 
   res: Response,
 
-  next: NextFunction
-
+  next: NextFunction,
 ) => {
-
   try {
-
-    const data =
-
-    await registerUser(
-
-      req.body
-
-    );
+    const data = await registerUser(req.body);
 
     return successResponse(
-
       res,
 
       data,
 
       "Registration successful",
 
-      201
-
+      201,
     );
-
-  }
-
-  catch (error) {
-
+  } catch (error) {
     next(error);
-
   }
-
 };
 
-export const login =
-
-async (
-
+export const login = async (
   req: Request,
 
   res: Response,
 
-  next: NextFunction
-
+  next: NextFunction,
 ) => {
-
   try {
-
-    const data =
-
-    await loginUser(
-
-      req.body
-
-    );
+    const data = await loginUser(req.body);
 
     return successResponse(
-
       res,
 
       data,
 
-      "Login successful"
-
+      "Login successful",
     );
-
-  }
-
-  catch (error) {
-
+  } catch (error) {
     next(error);
-
   }
-
 };

@@ -16,18 +16,12 @@ const router = Router();
  *   description: Student APIs
  */
 
-
-router.get(
-  "/dashboard",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  (req, res) => {
-    res.json({
-      message: "Student Dashboard",
-      user: (req as any).user,
-    });
-  }
-);
+router.get("/dashboard", authMiddleware, rbac(["STUDENT"]), (req, res) => {
+  res.json({
+    message: "Student Dashboard",
+    user: (req as any).user,
+  });
+});
 
 /**
  * @swagger
@@ -42,7 +36,7 @@ router.get(
  *         description: Student dashboard retrieved
  */
 
- /**
+/**
  * @swagger
  * /api/students/history:
  *   get:
@@ -55,12 +49,7 @@ router.get(
  *         description: Activity score history retrieved
  */
 
-router.get(
-  "/history",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  getMyHistory
-);
+router.get("/history", authMiddleware, rbac(["STUDENT"]), getMyHistory);
 /**
  * @swagger
  * /api/students/profile:
@@ -89,12 +78,7 @@ router.get(
  *         description: Student profile created
  */
 
-router.post(
-  "/profile",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  createProfile
-);
+router.post("/profile", authMiddleware, rbac(["STUDENT"]), createProfile);
 /**
  * @swagger
  * /api/students/profile:
@@ -108,12 +92,7 @@ router.post(
  *         description: Student profile retrieved
  */
 
-router.get(
-  "/profile",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  getMyProfile
-);
+router.get("/profile", authMiddleware, rbac(["STUDENT"]), getMyProfile);
 /**
  * @swagger
  * /api/students/profile:
@@ -124,11 +103,7 @@ router.get(
  *       - bearerAuth: []
  */
 
-router.get(
-  "/:id/public",
-  authMiddleware,
-  getPublicProfile
-);
+router.get("/:id/public", authMiddleware, getPublicProfile);
 /**
  * @swagger
  * /api/students/{id}/public:

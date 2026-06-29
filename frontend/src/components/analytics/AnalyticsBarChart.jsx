@@ -30,10 +30,7 @@ function AnalyticsBarChart({ data }) {
         Overview
       </h2>
 
-      <ResponsiveContainer
-        width="100%"
-        height={350}
-      >
+      <ResponsiveContainer width="100%" height={350}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
 
@@ -43,11 +40,7 @@ function AnalyticsBarChart({ data }) {
 
           <Tooltip />
 
-          <Bar
-            dataKey="value"
-            fill="#0F4C3A"
-            radius={[8, 8, 0, 0]}
-          />
+          <Bar dataKey="value" fill="#0F4C3A" radius={[8, 8, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>

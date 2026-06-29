@@ -2,133 +2,58 @@ import { Request, Response } from "express";
 
 import * as attendanceService from "./attendance.service.js";
 
-import * as attendanceExport
-from "./attendance.export.js";
+import * as attendanceExport from "./attendance.export.js";
 
-import * as attendancePdf
-from "./attendance.pdf.js";
+import * as attendancePdf from "./attendance.pdf.js";
 
-import {
-  successResponse,
-  errorResponse,
-} from "../../utils/apiResponse.js";
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-export const checkIn = async (
-  req: Request,
-  res: Response
-) => {
+export const checkIn = async (req: Request, res: Response) => {
   try {
+    const eventIdParam = req.params.eventId;
 
-    const eventIdParam =
-      req.params.eventId;
-
-    if (
-      !eventIdParam ||
-      Array.isArray(eventIdParam)
-    ) {
-      throw new Error(
-        "Invalid eventId"
-      );
+    if (!eventIdParam || Array.isArray(eventIdParam)) {
+      throw new Error("Invalid eventId");
     }
 
-    const eventId =
-      BigInt(eventIdParam);
+    const eventId = BigInt(eventIdParam);
 
-    const user =
-      req.user!;
+    const user = req.user!;
 
-    const attendance =
-      await attendanceService.checkInEvent(
-        eventId,
-        BigInt(user.id)
-      );
-
-    return successResponse(
-      res,
-      attendance,
-      "Check-in successful"
+    const attendance = await attendanceService.checkInEvent(
+      eventId,
+      BigInt(user.id),
     );
 
+    return successResponse(res, attendance, "Check-in successful");
   } catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
 };
 
-export const getMyAttendance = async (
-  req: Request,
-  res: Response
-) => {
-
+export const getMyAttendance = async (req: Request, res: Response) => {
   try {
+    const data = await attendanceService.getMyAttendance(BigInt(req.user!.id));
 
-    const data =
-      await attendanceService.getMyAttendance(
-        BigInt(req.user!.id)
-      );
-
-    return successResponse(
-      res,
-      data,
-      "Attendance retrieved"
-    );
-
+    return successResponse(res, data, "Attendance retrieved");
+  } catch (error: any) {
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
-
-  catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
-  }
-
 };
 
-export const scanAttendance = async (
-  req: Request,
-  res: Response
-) => {
-
+export const scanAttendance = async (req: Request, res: Response) => {
   try {
+    const { registrationId } = req.body;
 
-    const {
-
-      registrationId,
-
-    } = req.body;
-
-    const data =
-      await attendanceService.scanAttendance(
-        BigInt(registrationId),
-        BigInt(req.user!.id)
-      );
-
-    return successResponse(
-      res,
-      data,
-      "Attendance verified"
+    const data = await attendanceService.scanAttendance(
+      BigInt(registrationId),
+      BigInt(req.user!.id),
     );
 
+    return successResponse(res, data, "Attendance verified");
+  } catch (error: any) {
+    return errorResponse(res, error.message, error.statusCode || 400);
   }
-
-  catch (error: any) {
-
-    return errorResponse(
-      res,
-      error.message,
-      error.statusCode || 400
-    );
-
-  }
-
 };
 
 /*
@@ -137,113 +62,66 @@ export const scanAttendance = async (
 |--------------------------------------------------------------------------
 */
 
-export const getAttendanceStatistics =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const getAttendanceStatistics = async (req: Request, res: Response) => {
+  try {
+    const eventIdParam = req.params.eventId;
 
-    try {
-      const eventIdParam =
-        req.params.eventId;
-
-      if (
-        !eventIdParam ||
-        Array.isArray(eventIdParam)
-      ) {
-        throw new Error(
-          "Invalid eventId"
-        );
-      }
-
-      const eventId =
-        BigInt(eventIdParam);
-
-      const statistics =
-        await attendanceService.getAttendanceStatistics(
-          eventId
-        );
-
-      return successResponse(
-
-        res,
-
-        statistics,
-
-        "Attendance statistics retrieved"
-
-      );
-
+    if (!eventIdParam || Array.isArray(eventIdParam)) {
+      throw new Error("Invalid eventId");
     }
 
-    catch (error: any) {
+    const eventId = BigInt(eventIdParam);
 
-      return errorResponse(
+    const statistics = await attendanceService.getAttendanceStatistics(eventId);
 
-        res,
+    return successResponse(
+      res,
 
-        error.message,
+      statistics,
 
-        error.statusCode || 400
+      "Attendance statistics retrieved",
+    );
+  } catch (error: any) {
+    return errorResponse(
+      res,
 
-      );
+      error.message,
 
-    }
+      error.statusCode || 400,
+    );
+  }
+};
 
-  };
-
-  /*
+/*
 |--------------------------------------------------------------------------
 | Export CSV
 |--------------------------------------------------------------------------
 */
 
 export const exportAttendanceCSV = async (
-
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
+    const eventIdParam = req.params.eventId;
 
-     const eventIdParam =
-        req.params.eventId;
+    if (!eventIdParam || Array.isArray(eventIdParam)) {
+      throw new Error("Invalid eventId");
+    }
 
-      if (
-        !eventIdParam ||
-        Array.isArray(eventIdParam)
-      ) {
-        throw new Error(
-          "Invalid eventId"
-        );
-      }
+    const eventId = BigInt(eventIdParam);
 
-      const eventId =
-        BigInt(eventIdParam);
-
-    await attendanceExport.exportCSV(
-      eventId,
-      res
-    );
-
-  }
-
-  catch (error: any) {
-
+    await attendanceExport.exportCSV(eventId, res);
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
 /*
@@ -252,53 +130,28 @@ export const exportAttendanceCSV = async (
 |--------------------------------------------------------------------------
 */
 
-export const exportAttendancePDF =
-async (
-  req: Request,
-  res: Response
-) => {
-
+export const exportAttendancePDF = async (req: Request, res: Response) => {
   try {
+    const eventIdParam = req.params.eventId;
 
-    const eventIdParam =
-      req.params.eventId;
-
-    if (
-      !eventIdParam ||
-      Array.isArray(eventIdParam)
-    ) {
-
-      throw new Error(
-        "Invalid eventId"
-      );
-
+    if (!eventIdParam || Array.isArray(eventIdParam)) {
+      throw new Error("Invalid eventId");
     }
 
-    const eventId =
-      BigInt(eventIdParam);
+    const eventId = BigInt(eventIdParam);
 
     await attendancePdf.exportPDF(
-
       eventId,
 
-      res
-
+      res,
     );
-
-  }
-
-  catch (error: any) {
-
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };

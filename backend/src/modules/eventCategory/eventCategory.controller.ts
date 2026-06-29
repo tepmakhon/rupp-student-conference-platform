@@ -1,199 +1,115 @@
-import { Request, Response }
-from "express";
+import { Request, Response } from "express";
 
-import * as eventCategoryService
-from "./eventCategory.service.js";
+import * as eventCategoryService from "./eventCategory.service.js";
 
-import {
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-  successResponse,
-
-  errorResponse,
-
-} from "../../utils/apiResponse.js";
-
-export const getAllCategories =
-async (
-
+export const getAllCategories = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    const categories =
-
-      await eventCategoryService.getAllCategories();
+    const categories = await eventCategoryService.getAllCategories();
 
     return successResponse(
-
       res,
 
       categories,
 
-      "Categories retrieved"
-
+      "Categories retrieved",
     );
-
-  }
-
-  catch (error:any) {
-
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 500
-
+      error.statusCode || 500,
     );
-
   }
-
 };
 
-export const createCategory =
-async (
-
+export const createCategory = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    const category =
-
-      await eventCategoryService.createCategory(
-
-        req.body
-
-      );
+    const category = await eventCategoryService.createCategory(req.body);
 
     return successResponse(
-
       res,
 
       category,
 
       "Category created",
 
-      201
-
+      201,
     );
-
-  }
-
-  catch (error:any) {
-
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const updateCategory =
-async (
-
+export const updateCategory = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
+    const category = await eventCategoryService.updateCategory(
+      BigInt(req.params.id as string),
 
-    const category =
-
-      await eventCategoryService.updateCategory(
-
-        BigInt(req.params.id as string),
-
-        req.body
-
-      );
+      req.body,
+    );
 
     return successResponse(
-
       res,
 
       category,
 
-      "Category updated"
-
+      "Category updated",
     );
-
-  }
-
-  catch (error:any) {
-
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const deleteCategory =
-async (
-
+export const deleteCategory = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    await eventCategoryService.deleteCategory(
-
-      BigInt(req.params.id as string)
-
-    );
+    await eventCategoryService.deleteCategory(BigInt(req.params.id as string));
 
     return successResponse(
-
       res,
 
       null,
 
-      "Category deleted"
-
+      "Category deleted",
     );
-
-  }
-
-  catch (error:any) {
-
+  } catch (error: any) {
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };

@@ -1,46 +1,24 @@
-import { Router }
-from "express";
+import { Router } from "express";
+
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
+
+import { rbac } from "../../middlewares/rbac.middleware.js";
+
+import { validate } from "../../middlewares/validate.middleware.js";
 
 import {
-
-  authMiddleware,
-
-} from "../../middlewares/auth.middleware.js";
-
-import {
-
-  rbac,
-
-} from "../../middlewares/rbac.middleware.js";
-
-import {
-
-  validate,
-
-} from "../../middlewares/validate.middleware.js";
-
-import {
-
   createEventCategorySchema,
-
   updateEventCategorySchema,
-
 } from "./eventCategory.validation.js";
 
 import {
-
   getAllCategories,
-
   createCategory,
-
   updateCategory,
-
   deleteCategory,
-
 } from "./eventCategory.controller.js";
 
-const router =
-  Router();
+const router = Router();
 
 /*
 |--------------------------------------------------------------------------
@@ -49,11 +27,9 @@ const router =
 */
 
 router.get(
-
   "/",
 
-  getAllCategories
-
+  getAllCategories,
 );
 
 /*
@@ -63,63 +39,37 @@ router.get(
 */
 
 router.post(
-
   "/",
 
   authMiddleware,
 
-  rbac([
+  rbac(["ADMIN"]),
 
-    "ADMIN",
+  validate(createEventCategorySchema),
 
-  ]),
-
-  validate(
-
-    createEventCategorySchema
-
-  ),
-
-  createCategory
-
+  createCategory,
 );
 
 router.patch(
-
   "/:id",
 
   authMiddleware,
 
-  rbac([
+  rbac(["ADMIN"]),
 
-    "ADMIN",
+  validate(updateEventCategorySchema),
 
-  ]),
-
-  validate(
-
-    updateEventCategorySchema
-
-  ),
-
-  updateCategory
-
+  updateCategory,
 );
 
 router.delete(
-
   "/:id",
 
   authMiddleware,
 
-  rbac([
+  rbac(["ADMIN"]),
 
-    "ADMIN",
-
-  ]),
-
-  deleteCategory
-
+  deleteCategory,
 );
 
 export default router;

@@ -1,17 +1,12 @@
 function LeaderboardPagination({
-
   page,
 
   totalPages,
 
   onPageChange,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         flex
@@ -21,26 +16,11 @@ function LeaderboardPagination({
         gap-4
 
       "
-
     >
-
       <button
+        disabled={page === 1}
 
-        disabled={
-
-          page === 1
-
-        }
-
-        onClick={() =>
-
-          onPageChange(
-
-            page - 1
-
-          )
-
-        }
+        onClick={() => onPageChange(page - 1)}
 
         className="
 
@@ -53,15 +33,11 @@ function LeaderboardPagination({
           border
 
         "
-
       >
-
         Previous
-
       </button>
 
       <span
-
         className="
 
           font-semibold
@@ -71,34 +47,14 @@ function LeaderboardPagination({
           items-center
 
         "
-
       >
-
-        {page}
-
-        /
-
-        {totalPages}
-
+        {page}/{totalPages}
       </span>
 
       <button
+        disabled={page === totalPages}
 
-        disabled={
-
-          page === totalPages
-
-        }
-
-        onClick={() =>
-
-          onPageChange(
-
-            page + 1
-
-          )
-
-        }
+        onClick={() => onPageChange(page + 1)}
 
         className="
 
@@ -111,17 +67,11 @@ function LeaderboardPagination({
           border
 
         "
-
       >
-
         Next
-
       </button>
-
     </div>
-
   );
-
 }
 
 export default LeaderboardPagination;

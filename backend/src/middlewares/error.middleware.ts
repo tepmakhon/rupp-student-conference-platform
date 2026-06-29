@@ -5,9 +5,8 @@ export const errorMiddleware = (
   error: Error,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
-
   if (error instanceof AppError) {
     return res.status(error.statusCode).json({
       success: false,

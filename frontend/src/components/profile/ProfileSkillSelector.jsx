@@ -1,101 +1,37 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
-
-  useState,
-
-} from "react";
-
-import {
-
-  getSkills,
-
-} from "../../api/skillApi";
+import { getSkills } from "../../api/skillApi";
 
 function ProfileSkillSelector({
-
   value = [],
 
   onChange,
-
 }) {
-
-  const [
-
-    skills,
-
-    setSkills,
-
-  ] = useState([]);
+  const [skills, setSkills] = useState([]);
 
   useEffect(() => {
-
     loadSkills();
-
   }, []);
 
-  const loadSkills =
+  const loadSkills = async () => {
+    const data = await getSkills();
 
-  async () => {
-
-    const data =
-
-    await getSkills();
-
-    setSkills(
-
-      data
-
-    );
-
+    setSkills(data);
   };
 
-  const toggleSkill =
-
-  skillId => {
-
-    if (
-
-      value.includes(
-
-        skillId
-
-      )
-
-    ) {
-
-      onChange(
-
-        value.filter(
-
-          id =>
-
-          id !== skillId
-
-        )
-
-      );
+  const toggleSkill = (skillId) => {
+    if (value.includes(skillId)) {
+      onChange(value.filter((id) => id !== skillId));
 
       return;
-
     }
 
-    onChange([
-
-      ...value,
-
-      skillId,
-
-    ]);
-
+    onChange([...value, skillId]);
   };
 
   return (
-
     <div>
-
       <h3
-
         className="
 
           text-2xl
@@ -107,15 +43,11 @@ function ProfileSkillSelector({
           mb-6
 
         "
-
       >
-
         Skills
-
       </h3>
 
       <div
-
         className="
 
           flex
@@ -125,36 +57,16 @@ function ProfileSkillSelector({
           gap-3
 
         "
-
       >
+        {skills.map((skill) => (
+          <button
+            key={skill.id}
 
-        {
+            type="button"
 
-          skills.map(
+            onClick={() => toggleSkill(skill.id)}
 
-            skill => (
-
-              <button
-
-                key={
-
-                  skill.id
-
-                }
-
-                type="button"
-
-                onClick={() =>
-
-                  toggleSkill(
-
-                    skill.id
-
-                  )
-
-                }
-
-                className={`
+            className={`
 
                   px-5
 
@@ -169,47 +81,19 @@ function ProfileSkillSelector({
                   transition
 
                   ${
-
-                    value.includes(
-
-                      skill.id
-
-                    )
-
-                    ?
-
-                    "bg-primary text-white"
-
-                    :
-
-                    "bg-white"
-
+                    value.includes(skill.id)
+                      ? "bg-primary text-white"
+                      : "bg-white"
                   }
 
                 `}
-
-              >
-
-                {
-
-                  skill.skillName
-
-                }
-
-              </button>
-
-            )
-
-          )
-
-        }
-
+          >
+            {skill.skillName}
+          </button>
+        ))}
       </div>
-
     </div>
-
   );
-
 }
 
 export default ProfileSkillSelector;

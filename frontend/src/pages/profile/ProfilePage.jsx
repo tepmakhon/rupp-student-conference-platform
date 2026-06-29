@@ -1,220 +1,78 @@
-import {
+import { useEffect } from "react";
 
-  useEffect,
+import { Link } from "react-router-dom";
 
-} from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import {
+import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
-  Link,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-} from "react-router-dom";
+import DashboardLoading from "../../components/dashboard/DashboardLoading";
 
-import {
+import DashboardError from "../../components/dashboard/DashboardError";
 
-  useDispatch,
+import ProfileHero from "../../components/profile/ProfileHero";
 
-  useSelector,
+import ProfileStatistics from "../../components/profile/ProfileStatistics";
 
-} from "react-redux";
+import ProfileCompletion from "../../components/profile/ProfileCompletion";
 
-import {
+import ProfileSkills from "../../components/profile/ProfileSkills";
 
-  PencilSquareIcon,
+import ProfileCard from "../../components/profile/ProfileCard";
 
-} from "@heroicons/react/24/outline";
+import ProfileInfoItem from "../../components/profile/ProfileInfoItem";
 
-import DashboardLayout
-
-from "../../components/layouts/DashboardLayout";
-
-import DashboardLoading
-
-from "../../components/dashboard/DashboardLoading";
-
-import DashboardError
-
-from "../../components/dashboard/DashboardError";
-
-import ProfileHero
-
-from "../../components/profile/ProfileHero";
-
-import ProfileStatistics
-
-from "../../components/profile/ProfileStatistics";
-
-import ProfileCompletion
-
-from "../../components/profile/ProfileCompletion";
-
-import ProfileSkills
-
-from "../../components/profile/ProfileSkills";
-
-import ProfileCard
-
-from "../../components/profile/ProfileCard";
-
-import ProfileInfoItem
-
-from "../../components/profile/ProfileInfoItem";
+import { getMyProfile } from "../../api/profileApi";
 
 import {
-
-  getMyProfile,
-
-} from "../../api/profileApi";
-
-import {
-
   setProfileLoading,
-
   setProfileData,
-
   setProfileError,
-
 } from "../../redux/slices/profileSlice";
 
 function ProfilePage() {
-
-  const dispatch =
-
-    useDispatch();
+  const dispatch = useDispatch();
 
   const {
-
     profile,
 
     loading,
 
     error,
+  } = useSelector((state) => state.profile);
+  const isStudent = Boolean(profile?.student);
 
-  } = useSelector(
+  const isOrganization = Boolean(profile?.organization);
 
-    state =>
-
-    state.profile
-
-  );
-  const isStudent =
-
-  Boolean(
-
-    profile?.student
-
-  );
-
-  const isOrganization =
-
-  Boolean(
-
-    profile?.organization
-
-  );
-
-  const isAdmin =
-
-  profile?.role
-
-  ?.roleName ===
-
-  "ADMIN";
+  const isAdmin = profile?.role?.roleName === "ADMIN";
 
   useEffect(() => {
-
     loadProfile();
-
   }, []);
 
-  const loadProfile =
-
-  async () => {
-
+  const loadProfile = async () => {
     try {
+      dispatch(setProfileLoading(true));
 
-      dispatch(
+      dispatch(setProfileError(null));
 
-        setProfileLoading(
+      const data = await getMyProfile();
 
-          true
+      dispatch(setProfileData(data));
+    } catch (error) {
+      console.error(error);
 
-        )
-
-      );
-
-      dispatch(
-
-        setProfileError(
-
-          null
-
-        )
-
-      );
-
-      const data =
-
-      await getMyProfile();
-
-      dispatch(
-
-        setProfileData(
-
-          data
-
-        )
-
-      );
-
+      dispatch(setProfileError("Failed to load profile"));
+    } finally {
+      dispatch(setProfileLoading(false));
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-      dispatch(
-
-        setProfileError(
-
-          "Failed to load profile"
-
-        )
-
-      );
-
-    }
-
-    finally {
-
-      dispatch(
-
-        setProfileLoading(
-
-          false
-
-        )
-
-      );
-
-    }
-
   };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -224,104 +82,30 @@ function ProfilePage() {
           space-y-8
 
         "
-
       >
+        {loading && <DashboardLoading />}
 
-        {
+        {!loading && error && <DashboardError message={error} />}
 
-          loading && (
+        {!loading && !error && profile && (
+          <>
+            {/* HERO */}
 
-            <DashboardLoading />
+            <ProfileHero profile={profile} />
 
-          )
+            {isStudent && (
+              <>
+                <ProfileStatistics profile={profile} />
 
-        }
+                <ProfileCompletion profile={profile} />
+              </>
+            )}
 
-        {
+            {/* PERSONAL */}
 
-          !loading &&
-
-          error && (
-
-            <DashboardError
-
-              message={
-
-                error
-
-              }
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading &&
-
-          !error &&
-
-          profile && (
-
-            <>
-
-              {/* HERO */}
-
-              <ProfileHero
-
-                profile={
-
-                  profile
-
-                }
-
-              />
-
-             {
-
-              isStudent && (
-
-                <>
-
-                  <ProfileStatistics
-
-                    profile={
-
-                      profile
-
-                    }
-
-                  />
-
-                  <ProfileCompletion
-
-                    profile={
-
-                      profile
-
-                    }
-
-                  />
-
-                </>
-
-              )
-
-            }
-
-              {/* PERSONAL */}
-
-              <ProfileCard
-
-                title="Personal Information"
-
-              >
-
-                <div
-
-                  className="
+            <ProfileCard title="Personal Information">
+              <div
+                className="
 
                     grid
 
@@ -330,122 +114,59 @@ function ProfilePage() {
                     gap-8
 
                   "
+              >
+                <ProfileInfoItem
+                  label="Email"
 
-                >
+                  value={profile.email}
+                />
 
-                  <ProfileInfoItem
+                <ProfileInfoItem
+                  label="Phone"
 
-                    label="Email"
+                  value={profile.profile?.phoneNumber}
+                />
 
-                    value={
+                <ProfileInfoItem
+                  label="Gender"
 
-                      profile.email
+                  value={profile.profile?.gender}
+                />
 
-                    }
+                <ProfileInfoItem
+                  label="Date Of Birth"
 
-                  />
+                  value={
+                    profile.profile?.dateOfBirth
+                      ? new Date(
+                          profile.profile.dateOfBirth,
+                        ).toLocaleDateString()
+                      : "-"
+                  }
+                />
 
-                  <ProfileInfoItem
-
-                    label="Phone"
-
-                    value={
-
-                      profile.profile
-
-                      ?.phoneNumber
-
-                    }
-
-                  />
-
-                  <ProfileInfoItem
-
-                    label="Gender"
-
-                    value={
-
-                      profile.profile
-
-                      ?.gender
-
-                    }
-
-                  />
-
-                  <ProfileInfoItem
-
-                    label="Date Of Birth"
-
-                    value={
-
-                      profile.profile
-
-                      ?.dateOfBirth
-
-                      ?
-
-                      new Date(
-
-                        profile.profile.dateOfBirth
-
-                      )
-
-                      .toLocaleDateString()
-
-                      :
-
-                      "-"
-
-                    }
-
-                  />
-
-                  <div
-
-                    className="
+                <div
+                  className="
 
                       md:col-span-2
 
                     "
+                >
+                  <ProfileInfoItem
+                    label="Bio"
 
-                  >
-
-                    <ProfileInfoItem
-
-                      label="Bio"
-
-                      value={
-
-                        profile.profile
-
-                        ?.bio
-
-                      }
-
-                    />
-
-                  </div>
-
+                    value={profile.profile?.bio}
+                  />
                 </div>
+              </div>
+            </ProfileCard>
 
-              </ProfileCard>
+            {/* STUDENT */}
 
-              {/* STUDENT */}
-
-              {
-
-                isStudent && (
-
-                  <ProfileCard
-
-                    title="Academic Information"
-
-                  >
-
-                    <div
-
-                      className="
+            {isStudent && (
+              <ProfileCard title="Academic Information">
+                <div
+                  className="
 
                         grid
 
@@ -454,118 +175,46 @@ function ProfilePage() {
                         gap-8
 
                       "
+                >
+                  <ProfileInfoItem
+                    label="University"
 
-                    >
-
-                      <ProfileInfoItem
-
-                        label="University"
-
-                        value={
-
-                          profile.student
-
-                          ?.university
-
-                          ?.universityName
-
-                        }
-
-                      />
-
-                      <ProfileInfoItem
-
-                        label="Faculty"
-
-                        value={
-
-                          profile.student
-
-                          ?.faculty
-
-                          ?.facultyName
-
-                        }
-
-                      />
-
-                      <ProfileInfoItem
-
-                        label="Major"
-
-                        value={
-
-                          profile.student
-
-                          ?.major
-
-                          ?.majorName
-
-                        }
-
-                      />
-
-                      <ProfileInfoItem
-
-                        label="Academic Year"
-
-                        value={
-
-                          profile.student
-
-                          ?.academicYear
-
-                        }
-
-                      />
-
-                    </div>
-
-                  </ProfileCard>
-
-                )
-
-              }
-
-              {/* SKILLS */}
-
-              {
-
-                isStudent && (
-
-                  <ProfileSkills
-
-                    skills={
-
-                      profile.student
-
-                      ?.studentSkills
-
-                      || []
-
-                    }
-
+                    value={profile.student?.university?.universityName}
                   />
 
-                )
+                  <ProfileInfoItem
+                    label="Faculty"
 
-              }
+                    value={profile.student?.faculty?.facultyName}
+                  />
 
-              {/* ORGANIZATION */}
+                  <ProfileInfoItem
+                    label="Major"
 
-              {
+                    value={profile.student?.major?.majorName}
+                  />
 
-                isOrganization && (
+                  <ProfileInfoItem
+                    label="Academic Year"
 
-                  <ProfileCard
+                    value={profile.student?.academicYear}
+                  />
+                </div>
+              </ProfileCard>
+            )}
 
-                    title="Organization Information"
+            {/* SKILLS */}
 
-                  >
+            {isStudent && (
+              <ProfileSkills skills={profile.student?.studentSkills || []} />
+            )}
 
-                    <div
+            {/* ORGANIZATION */}
 
-                      className="
+            {isOrganization && (
+              <ProfileCard title="Organization Information">
+                <div
+                  className="
 
                         grid
 
@@ -574,83 +223,40 @@ function ProfilePage() {
                         gap-8
 
                       "
+                >
+                  <ProfileInfoItem
+                    label="Organization"
 
-                    >
+                    value={profile.organization?.organizationName}
+                  />
 
-                      <ProfileInfoItem
+                  <ProfileInfoItem
+                    label="Website"
 
-                        label="Organization"
+                    value={profile.organization?.websiteUrl}
+                  />
 
-                        value={
-
-                          profile.organization
-
-                          ?.organizationName
-
-                        }
-
-                      />
-
-                      <ProfileInfoItem
-
-                        label="Website"
-
-                        value={
-
-                          profile.organization
-
-                          ?.websiteUrl
-
-                        }
-
-                      />
-
-                      <div
-
-                        className="
+                  <div
+                    className="
 
                           md:col-span-2
 
                         "
+                  >
+                    <ProfileInfoItem
+                      label="Description"
 
-                      >
-
-                        <ProfileInfoItem
-
-                          label="Description"
-
-                          value={
-
-                            profile.organization
-
-                            ?.description
-
-                          }
-
-                        />
-
-                      </div>
-
-                    </div>
-
-                  </ProfileCard>
-
-                )
-
-              }
-
-            </>
-
-          )
-
-        }
-
+                      value={profile.organization?.description}
+                    />
+                  </div>
+                </div>
+              </ProfileCard>
+            )}
+          </>
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default ProfilePage;

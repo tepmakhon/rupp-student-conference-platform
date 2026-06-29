@@ -1,26 +1,15 @@
-import AdminCrudPage
-from "../../components/admin/AdminCrudPage";
+import AdminCrudPage from "../../components/admin/AdminCrudPage";
 
 import {
-
   getSkills,
-
   createSkill,
-
   updateSkill,
-
   deleteSkill,
-
-}
-
-from "../../api/skillApi";
+} from "../../api/skillApi";
 
 function AdminSkillsPage() {
-
   return (
-
     <AdminCrudPage
-
       title="Skills"
 
       description="Manage skills used across the platform."
@@ -28,61 +17,32 @@ function AdminSkillsPage() {
       entityName="Skill"
 
       columns={[
-
         {
-
           key: "skillName",
 
           label: "Skill Name",
-
         },
-
       ]}
 
       formFields={[
-
         {
-
           name: "skillName",
 
           label: "Skill Name",
 
-          placeholder:
-
-            "Enter skill name",
-
+          placeholder: "Enter skill name",
         },
-
       ]}
 
-      getAll={
+      getAll={getSkills}
 
-        getSkills
+      create={createSkill}
 
-      }
+      update={updateSkill}
 
-      create={
-
-        createSkill
-
-      }
-
-      update={
-
-        updateSkill
-
-      }
-
-      remove={
-
-        deleteSkill
-
-      }
-
+      remove={deleteSkill}
     />
-
   );
-
 }
 
 export default AdminSkillsPage;

@@ -1,10 +1,8 @@
 import { Router } from "express";
 
-import { authMiddleware }
-from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import { rbac }
-from "../../middlewares/rbac.middleware.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
 import {
   getOrganizationProfile,
@@ -17,15 +15,10 @@ router.get(
   "/me",
   authMiddleware,
   rbac(["ORGANIZATION"]),
-  getOrganizationProfile
+  getOrganizationProfile,
 );
 
-router.patch(
-  "/logo",
-  authMiddleware,
-  rbac(["ORGANIZATION"]),
-  updateLogo
-);
+router.patch("/logo", authMiddleware, rbac(["ORGANIZATION"]), updateLogo);
 
 /**
  * @swagger

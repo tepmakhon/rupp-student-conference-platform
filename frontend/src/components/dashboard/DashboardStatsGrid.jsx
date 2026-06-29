@@ -1,13 +1,6 @@
-function DashboardStatsGrid({
-
-  children,
-
-}) {
-
+function DashboardStatsGrid({ children }) {
   return (
-
     <div
-
       className="
 
         grid
@@ -23,15 +16,10 @@ function DashboardStatsGrid({
         gap-6
 
       "
-
     >
-
       {children}
-
     </div>
-
   );
-
 }
 
 export default DashboardStatsGrid;

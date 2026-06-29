@@ -1,207 +1,129 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import {
-  getMyProfile,
-  createProfile,
-  updateProfile,
-} from "../../api/userApi";
+import { getMyProfile, createProfile, updateProfile } from "../../api/userApi";
 
 function ProfileForm() {
+  const [loading, setLoading] = useState(true);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const [saving, setSaving] =
-    useState(false);
+  const [hasProfile, setHasProfile] = useState(false);
 
-  const [hasProfile, setHasProfile] =
-    useState(false);
+  const [image, setImage] = useState(null);
 
-  const [image, setImage] =
-    useState(null);
-
-  const [formData, setFormData] =
-    useState({
-      fullName: "",
-      phoneNumber: "",
-      gender: "MALE",
-      dateOfBirth: "",
-      bio: "",
-      profileImageUrl: "",
-    });
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phoneNumber: "",
+    gender: "MALE",
+    dateOfBirth: "",
+    bio: "",
+    profileImageUrl: "",
+  });
 
   useEffect(() => {
-
     loadProfile();
-
   }, []);
 
   const loadProfile = async () => {
-
     try {
-
-      const profile =
-        await getMyProfile();
+      const profile = await getMyProfile();
 
       setFormData({
+        fullName: profile.fullName || "",
 
-        fullName:
-          profile.fullName || "",
+        phoneNumber: profile.phoneNumber || "",
 
-        phoneNumber:
-          profile.phoneNumber || "",
+        gender: profile.gender || "MALE",
 
-        gender:
-          profile.gender || "MALE",
+        dateOfBirth: profile.dateOfBirth
+          ? profile.dateOfBirth.split("T")[0]
+          : "",
 
-        dateOfBirth:
-          profile.dateOfBirth
-            ? profile.dateOfBirth
-                .split("T")[0]
-            : "",
+        bio: profile.bio || "",
 
-        bio:
-          profile.bio || "",
-
-        profileImageUrl:
-          profile.profileImageUrl || "",
+        profileImageUrl: profile.profileImageUrl || "",
       });
 
       setHasProfile(true);
-
     } catch (error) {
-
       setHasProfile(false);
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
   const handleChange = (e) => {
-
     setFormData({
       ...formData,
-      [e.target.name]:
-        e.target.value,
+      [e.target.name]: e.target.value,
     });
-
   };
 
-  const handleSubmit =
-    async (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      e.preventDefault();
+    if (!formData.fullName.trim()) {
+      alert("Full name is required");
 
-      if (
-        !formData.fullName.trim()
-      ) {
+      return;
+    }
 
-        alert(
-          "Full name is required"
+    try {
+      setSaving(true);
+
+      let profileImageUrl = formData.profileImageUrl;
+
+      if (image) {
+        const cloudData = new FormData();
+
+        cloudData.append("file", image);
+
+        cloudData.append("upload_preset", "rupp_platform_cloudnary");
+
+        const uploadRes = await axios.post(
+          "https://api.cloudinary.com/v1_1/dct61ygjw/image/upload",
+          cloudData,
         );
 
-        return;
+        profileImageUrl = uploadRes.data.secure_url;
       }
 
-      try {
+      const payload = {
+        ...formData,
 
-        setSaving(true);
+        profileImageUrl,
 
-        let profileImageUrl =
-          formData.profileImageUrl;
+        dateOfBirth: formData.dateOfBirth
+          ? new Date(formData.dateOfBirth).toISOString()
+          : undefined,
+      };
 
-        if (image) {
+      if (hasProfile) {
+        await updateProfile(payload);
 
-          const cloudData =
-            new FormData();
+        alert("Profile updated successfully");
+      } else {
+        await createProfile(payload);
 
-          cloudData.append(
-            "file",
-            image
-          );
+        alert("Profile created successfully");
 
-          cloudData.append(
-            "upload_preset",
-            "rupp_platform_cloudnary"
-          );
-
-          const uploadRes =
-            await axios.post(
-              "https://api.cloudinary.com/v1_1/dct61ygjw/image/upload",
-              cloudData
-            );
-
-          profileImageUrl =
-            uploadRes.data.secure_url;
-        }
-
-        const payload = {
-
-          ...formData,
-
-          profileImageUrl,
-
-          dateOfBirth:
-            formData.dateOfBirth
-              ? new Date(
-                  formData.dateOfBirth
-                ).toISOString()
-              : undefined,
-        };
-
-        if (hasProfile) {
-
-          await updateProfile(
-            payload
-          );
-
-          alert(
-            "Profile updated successfully"
-          );
-
-        } else {
-
-          await createProfile(
-            payload
-          );
-
-          alert(
-            "Profile created successfully"
-          );
-
-          setHasProfile(true);
-        }
-
-      } catch (error) {
-
-        console.error(error);
-
-        alert(
-          "Failed to save profile"
-        );
-
-      } finally {
-
-        setSaving(false);
-
+        setHasProfile(true);
       }
-    };
+    } catch (error) {
+      console.error(error);
+
+      alert("Failed to save profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (loading) {
-
-    return (
-      <div>
-        Loading profile...
-      </div>
-    );
+    return <div>Loading profile...</div>;
   }
 
   return (
-
     <form
       onSubmit={handleSubmit}
       className="
@@ -211,7 +133,6 @@ function ProfileForm() {
         shadow
       "
     >
-
       <div
         className="
           grid
@@ -219,7 +140,6 @@ function ProfileForm() {
           gap-6
         "
       >
-
         <input
           name="fullName"
           placeholder="Full Name"
@@ -254,18 +174,11 @@ function ProfileForm() {
             rounded-lg
           "
         >
-          <option value="MALE">
-            Male
-          </option>
+          <option value="MALE">Male</option>
 
-          <option value="FEMALE">
-            Female
-          </option>
+          <option value="FEMALE">Female</option>
 
-          <option value="OTHER">
-            Other
-          </option>
-
+          <option value="OTHER">Other</option>
         </select>
 
         <input
@@ -279,7 +192,6 @@ function ProfileForm() {
             rounded-lg
           "
         />
-
       </div>
 
       <textarea
@@ -298,7 +210,6 @@ function ProfileForm() {
       />
 
       <div className="mt-6">
-
         <label
           className="
             block
@@ -312,13 +223,8 @@ function ProfileForm() {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) =>
-            setImage(
-              e.target.files[0]
-            )
-          }
+          onChange={(e) => setImage(e.target.files[0])}
         />
-
       </div>
 
       <button
@@ -333,17 +239,13 @@ function ProfileForm() {
           rounded-lg
         "
       >
-        {
-          saving
-            ? "Saving..."
-            : hasProfile
-              ? "Update Profile"
-              : "Create Profile"
-        }
+        {saving
+          ? "Saving..."
+          : hasProfile
+            ? "Update Profile"
+            : "Create Profile"}
       </button>
-
     </form>
-
   );
 }
 

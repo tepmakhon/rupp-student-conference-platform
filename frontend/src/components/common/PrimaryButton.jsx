@@ -1,17 +1,12 @@
 function PrimaryButton({
-
   children,
 
   loading,
 
   ...props
-
 }) {
-
   return (
-
     <button
-
       {...props}
 
       disabled={loading}
@@ -35,15 +30,10 @@ function PrimaryButton({
         disabled:opacity-50
 
       "
-
     >
-
       {children}
-
     </button>
-
   );
-
 }
 
 export default PrimaryButton;

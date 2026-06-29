@@ -25,7 +25,7 @@ const adminMenu = [
     path: "/opportunities",
     icon: BriefcaseIcon,
   },
-  
+
   {
     name: "Pending Events",
     path: "/admin/events/pending",

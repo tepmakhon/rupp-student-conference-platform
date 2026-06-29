@@ -1,66 +1,32 @@
-import {
+import { Request, Response } from "express";
 
-  Request,
+import * as activityService from "./activity.service.js";
 
-  Response,
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-} from "express";
+export const getMyActivityHistoryController = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const user = req.user!;
 
-import * as activityService
+    const history = await activityService.getMyActivityHistory(BigInt(user.id));
 
-from "./activity.service.js";
+    return successResponse(
+      res,
 
-import {
+      history,
 
-  successResponse,
+      "Activity history retrieved",
+    );
+  } catch (error: any) {
+    return errorResponse(
+      res,
 
-  errorResponse,
+      error.message,
 
-} from "../../utils/apiResponse.js";
-
-export const getMyActivityHistoryController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-
-    try {
-
-      const user =
-        req.user!;
-
-      const history =
-
-        await activityService.getMyActivityHistory(
-
-          BigInt(user.id)
-
-        );
-
-      return successResponse(
-
-        res,
-
-        history,
-
-        "Activity history retrieved"
-
-      );
-
-    }
-
-    catch (error: any) {
-
-      return errorResponse(
-
-        res,
-
-        error.message,
-
-        error.statusCode || 400
-
-      );
-
-    }
-
+      error.statusCode || 400,
+    );
+  }
 };

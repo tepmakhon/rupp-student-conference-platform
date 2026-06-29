@@ -1,193 +1,115 @@
-import { Request, Response }
-from "express";
+import { Request, Response } from "express";
 
-import * as service
-from "./university.service.js";
+import * as service from "./university.service.js";
 
-import {
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-  successResponse,
-
-  errorResponse,
-
-}
-
-from "../../utils/apiResponse.js";
-
-export const getAllUniversities =
-async (
-
+export const getAllUniversities = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    const data =
-
-      await service.getAllUniversities();
+    const data = await service.getAllUniversities();
 
     return successResponse(
-
       res,
 
       data,
 
-      "Universities retrieved"
-
+      "Universities retrieved",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 500
-
+      error.statusCode || 500,
     );
-
   }
-
 };
 
-export const createUniversity =
-async (
-
+export const createUniversity = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    const data =
-
-      await service.createUniversity(
-
-        req.body
-
-      );
+    const data = await service.createUniversity(req.body);
 
     return successResponse(
-
       res,
 
       data,
 
       "University created",
 
-      201
-
+      201,
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const updateUniversity =
-async (
-
+export const updateUniversity = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
+    const data = await service.updateUniversity(
+      BigInt(req.params.id as string),
 
-    const data =
-
-      await service.updateUniversity(
-
-        BigInt(req.params.id as string),
-
-        req.body
-
-      );
+      req.body,
+    );
 
     return successResponse(
-
       res,
 
       data,
 
-      "University updated"
-
+      "University updated",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const deleteUniversity =
-async (
-
+export const deleteUniversity = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    await service.deleteUniversity(
-
-      BigInt(req.params.id as string)
-
-    );
+    await service.deleteUniversity(BigInt(req.params.id as string));
 
     return successResponse(
-
       res,
 
       null,
 
-      "University deleted"
-
+      "University deleted",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };

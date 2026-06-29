@@ -1,5 +1,4 @@
 function OpportunityActionButtons({
-
   saved,
 
   saving,
@@ -11,13 +10,9 @@ function OpportunityActionButtons({
   onSave,
 
   onApply,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         flex
@@ -27,20 +22,11 @@ function OpportunityActionButtons({
         gap-4
 
       "
-
     >
-
       <button
-
         onClick={onApply}
 
-        disabled={
-
-          applying ||
-
-          expired
-
-        }
+        disabled={applying || expired}
 
         className="
 
@@ -55,35 +41,11 @@ function OpportunityActionButtons({
           rounded-xl
 
         "
-
       >
-
-        {
-
-          expired
-
-          ?
-
-          "Expired"
-
-          :
-
-          applying
-
-          ?
-
-          "Applying..."
-
-          :
-
-          "Apply Now"
-
-        }
-
+        {expired ? "Expired" : applying ? "Applying..." : "Apply Now"}
       </button>
 
       <button
-
         onClick={onSave}
 
         disabled={saving}
@@ -99,37 +61,11 @@ function OpportunityActionButtons({
           rounded-xl
 
         "
-
       >
-
-        {
-
-          saving
-
-          ?
-
-          "Saving..."
-
-          :
-
-          saved
-
-          ?
-
-          "Saved"
-
-          :
-
-          "Save Opportunity"
-
-        }
-
+        {saving ? "Saving..." : saved ? "Saved" : "Save Opportunity"}
       </button>
-
     </div>
-
   );
-
 }
 
 export default OpportunityActionButtons;

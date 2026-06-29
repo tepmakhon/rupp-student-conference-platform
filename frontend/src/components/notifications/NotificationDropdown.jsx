@@ -1,444 +1,175 @@
-import {
+import { useEffect, useRef, useState } from "react";
 
-  useEffect,
+import { Link } from "react-router-dom";
 
-  useRef,
+import toast from "react-hot-toast";
 
-  useState,
+import { useDispatch, useSelector } from "react-redux";
 
-} from "react";
-
-import {
-
-  Link,
-
-} from "react-router-dom";
-
-import toast
-
-from "react-hot-toast";
+import { BellIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
 import {
-
-  useDispatch,
-
-  useSelector,
-
-} from "react-redux";
-
-import {
-
-  BellIcon,
-
-  ArrowRightIcon,
-
-} from "@heroicons/react/24/outline";
-
-import {
-
   getNotifications,
-
   readNotification,
-
   readAllNotifications,
-
 } from "../../api/notificationApi";
 
 import {
-
   setNotifications,
-
   setNotificationLoading,
-
   setNotificationError,
-
   markAsRead,
-
   markAllAsRead,
-
 } from "../../redux/slices/notificationSlice";
 
-import NotificationCard
-from "./NotificationCard";
+import NotificationCard from "./NotificationCard";
 
 import socket from "../../socket/socket";
-import {
-  playNotificationSound,
-} from "../../utils/playNotificationSound";
+import { playNotificationSound } from "../../utils/playNotificationSound";
 
 function NotificationDropdown() {
   useEffect(() => {
-
-    socket.on(
-      "new_notification",
-      handleNotification
-    );
+    socket.on("new_notification", handleNotification);
 
     return () => {
-
-      socket.off(
-        "new_notification",
-        handleNotification
-      );
-
+      socket.off("new_notification", handleNotification);
     };
-
   }, []);
-  const dispatch =
+  const dispatch = useDispatch();
 
-    useDispatch();
+  const dropdownRef = useRef(null);
 
-  const dropdownRef =
-
-    useRef(null);
-
-  const [
-
-    open,
-
-    setOpen,
-
-  ] = useState(
-
-    false
-
-  );
+  const [open, setOpen] = useState(false);
 
   const {
-
     notifications,
 
     unreadCount,
 
     loading,
-
-  } = useSelector(
-
-    state =>
-
-    state.notification
-
-  );
+  } = useSelector((state) => state.notification);
 
   useEffect(() => {
-
     loadNotifications();
 
     const interval = setInterval(() => {
-
       loadNotifications();
-
     }, 30000);
 
     return () => clearInterval(interval);
-
   }, []);
 
   useEffect(() => {
-
-    const handleClickOutside =
-
-      event => {
-
-        if (
-
-          dropdownRef.current &&
-
-          !dropdownRef.current.contains(
-
-            event.target
-
-          )
-
-        ) {
-
-          setOpen(
-
-            false
-
-          );
-
-        }
-
-      };
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
 
     document.addEventListener(
-
       "mousedown",
 
-      handleClickOutside
-
+      handleClickOutside,
     );
 
     return () =>
-
       document.removeEventListener(
-
         "mousedown",
 
-        handleClickOutside
-
+        handleClickOutside,
       );
-
   }, []);
 
-  const loadNotifications =
-
-  async () => {
-
+  const loadNotifications = async () => {
     try {
+      dispatch(setNotificationLoading(true));
 
-      dispatch(
+      dispatch(setNotificationError(null));
 
-        setNotificationLoading(
+      const data = await getNotifications(
+        1,
 
-          true
-
-        )
-
+        5,
       );
 
-      dispatch(
+      dispatch(setNotifications(data));
+    } catch (error) {
+      console.error(error);
 
-        setNotificationError(
-
-          null
-
-        )
-
-      );
-
-      const data =
-
-        await getNotifications(
-
-          1,
-
-          5
-
-        );
-
-      dispatch(
-
-        setNotifications(
-
-          data
-
-        )
-
-      );
-
+      toast.error("Failed to load notifications");
+    } finally {
+      dispatch(setNotificationLoading(false));
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-      toast.error(
-
-        "Failed to load notifications"
-
-      );
-
-    }
-
-    finally {
-
-      dispatch(
-
-        setNotificationLoading(
-
-          false
-
-        )
-
-      );
-
-    }
-
   };
-  const handleNotification = async (
-    notification
-  ) => {
-
+  const handleNotification = async (notification) => {
     playNotificationSound();
 
-    if (
-
-      "Notification" in window &&
-
-      Notification.permission === "granted"
-
-    ) {
-
+    if ("Notification" in window && Notification.permission === "granted") {
       new Notification(
-
-        notification.notification?.title ||
-
-        "New Notification",
+        notification.notification?.title || "New Notification",
 
         {
-
-          body:
-
-            notification.notification?.message ||
-
-            "",
+          body: notification.notification?.message || "",
 
           icon: "/logo.png",
-
-        }
-
+        },
       );
-
     }
 
-    toast.success(
-
-      notification.notification?.title ||
-
-      "New Notification"
-
-    );
+    toast.success(notification.notification?.title || "New Notification");
     console.log(
-
       "Socket notification:",
 
-      notification
-
+      notification,
     );
 
     playNotificationSound();
 
-    toast.success(
-
-      notification.notification?.title ||
-
-      "New Notification"
-
-    );
+    toast.success(notification.notification?.title || "New Notification");
     await loadNotifications();
-
   };
 
-  const handleRead =
-
-  async id => {
-
+  const handleRead = async (id) => {
     try {
+      await readNotification(id);
 
-      await readNotification(
-
-        id
-
-      );
-
-      dispatch(
-
-        markAsRead(
-
-          id
-
-        )
-
-      );
-
+      dispatch(markAsRead(id));
+    } catch (error) {
+      console.error(error);
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-    }
-
   };
 
-  const handleReadAll =
-
-  async () => {
-
+  const handleReadAll = async () => {
     try {
-
       await readAllNotifications();
 
-      dispatch(
+      dispatch(markAllAsRead());
 
-        markAllAsRead()
-
-      );
-
-      toast.success(
-
-        "All notifications marked as read"
-
-      );
-
+      toast.success("All notifications marked as read");
+    } catch (error) {
+      console.error(error);
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-    }
-
   };
 
   return (
-
     <div
-
-      ref={
-
-        dropdownRef
-
-      }
+      ref={dropdownRef}
 
       className="
 
         relative
 
       "
-
     >
-
       {/* Bell */}
 
       <button
-
         onClick={() => {
-
           if (!open) {
-
             loadNotifications();
-
           }
 
           setOpen(!open);
-
         }}
 
         className="
@@ -448,11 +179,8 @@ function NotificationDropdown() {
           p-2
 
         "
-
       >
-
         <BellIcon
-
           className="
 
             w-7
@@ -462,16 +190,11 @@ function NotificationDropdown() {
             text-primary
 
           "
-
         />
 
-        {
-
-          unreadCount > 0 && (
-
-            <span
-
-              className="
+        {unreadCount > 0 && (
+          <span
+            className="
 
                 absolute
 
@@ -500,38 +223,15 @@ function NotificationDropdown() {
                 rounded-full
 
               "
-
-            >
-
-              {
-
-                unreadCount > 99
-
-                ?
-
-                "99+"
-
-                :
-
-                unreadCount
-
-              }
-
-            </span>
-
-          )
-
-        }
-
+          >
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        )}
       </button>
 
-      {
-
-        open && (
-
-          <div
-
-            className="
+      {open && (
+        <div
+          className="
 
               absolute
 
@@ -562,14 +262,11 @@ function NotificationDropdown() {
               z-50
 
             "
+        >
+          {/* Header */}
 
-          >
-
-            {/* Header */}
-
-            <div
-
-              className="
+          <div
+            className="
 
                 p-5
 
@@ -582,14 +279,10 @@ function NotificationDropdown() {
                 items-center
 
               "
-
-            >
-
-              <div>
-
-                <h3
-
-                  className="
+          >
+            <div>
+              <h3
+                className="
 
                     text-lg
 
@@ -598,52 +291,28 @@ function NotificationDropdown() {
                     text-primary
 
                   "
+              >
+                Notifications
+              </h3>
 
-                >
-
-                  Notifications
-
-                </h3>
-
-                <p
-
-                  className="
+              <p
+                className="
 
                     text-sm
 
                     text-gray-500
 
                   "
+              >
+                {unreadCount} unread
+              </p>
+            </div>
 
-                >
+            {unreadCount > 0 && (
+              <button
+                onClick={handleReadAll}
 
-                  {
-
-                    unreadCount
-
-                  }
-
-                  {" "}
-
-                  unread
-
-                </p>
-
-              </div>
-
-              {
-
-                unreadCount > 0 && (
-
-                  <button
-
-                    onClick={
-
-                      handleReadAll
-
-                    }
-
-                    className="
+                className="
 
                       text-secondary
 
@@ -652,40 +321,26 @@ function NotificationDropdown() {
                       text-sm
 
                     "
+              >
+                Read All
+              </button>
+            )}
+          </div>
 
-                  >
+          {/* Body */}
 
-                    Read All
-
-                  </button>
-
-                )
-
-              }
-
-            </div>
-
-            {/* Body */}
-
-            <div
-
-              className="
+          <div
+            className="
 
                 max-h-96
 
                 overflow-y-auto
 
               "
-
-            >
-
-              {
-
-                loading && (
-
-                  <div
-
-                    className="
+          >
+            {loading && (
+              <div
+                className="
 
                       p-10
 
@@ -694,18 +349,13 @@ function NotificationDropdown() {
                       text-gray-500
 
                     "
+              >
+                <div className="p-8 space-y-3">
+                  {[1, 2, 3].map((item) => (
+                    <div
+                      key={item}
 
-                  >
-
-                    <div className="p-8 space-y-3">
-
-                      {[1,2,3].map(item => (
-
-                        <div
-
-                          key={item}
-
-                          className="
+                      className="
 
                             h-16
 
@@ -716,36 +366,24 @@ function NotificationDropdown() {
                             animate-pulse
 
                           "
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
-                        />
-
-                      ))}
-
-                    </div>
-
-                  </div>
-
-                )
-
-              }
-
-              {
-
-                !loading &&
-
-                notifications.length === 0 && (
-
-                  <div className="
+            {!loading && notifications.length === 0 && (
+              <div
+                className="
 
                   p-10
 
                   text-center
 
-                  ">
-
-                    <BellIcon
-
-                      className="
+                  "
+              >
+                <BellIcon
+                  className="
 
                         w-12
 
@@ -756,85 +394,50 @@ function NotificationDropdown() {
                         text-gray-300
 
                       "
+                />
 
-                    />
-
-                    <p
-
-                      className="
+                <p
+                  className="
 
                         mt-3
 
                         text-gray-500
 
                       "
+                >
+                  No notifications yet
+                </p>
+              </div>
+            )}
 
-                    >
+            {!loading &&
+              notifications.map((notification) => (
+                <div key={notification.id} className="border-b last:border-b-0">
+                  <NotificationCard
+                    notification={notification}
+                    onRead={handleRead}
+                  />
+                </div>
+              ))}
+          </div>
 
-                      No notifications yet
+          {/* Footer */}
 
-                    </p>
-
-                  </div>
-
-                )
-
-              }
-
-              {
-
-              !loading &&
-              notifications.map(
-                notification => (
-
-                  <div
-                    key={notification.id}
-                    className="border-b last:border-b-0"
-                  >
-
-                    <NotificationCard
-                      notification={notification}
-                      onRead={handleRead}
-                    />
-
-                  </div>
-
-                )
-              )
-
-              }
-
-            </div>
-
-            {/* Footer */}
-
-            <div
-
-              className="
+          <div
+            className="
 
                 p-4
 
                 border-t
 
               "
+          >
+            <Link
+              to="/notifications"
 
-            >
+              onClick={() => setOpen(false)}
 
-              <Link
-
-                to="/notifications"
-
-                onClick={() =>
-
-                  setOpen(
-
-                    false
-
-                  )
-
-                }
-
-                className="
+              className="
 
                   flex
 
@@ -851,37 +454,23 @@ function NotificationDropdown() {
                   hover:text-secondary
 
                 "
-
-              >
-
-                View All Notifications
-
-                <ArrowRightIcon
-
-                  className="
+            >
+              View All Notifications
+              <ArrowRightIcon
+                className="
 
                     w-4
 
                     h-4
 
                   "
-
-                />
-
-              </Link>
-
-            </div>
-
+              />
+            </Link>
           </div>
-
-        )
-
-      }
-
+        </div>
+      )}
     </div>
-
   );
-
 }
 
 export default NotificationDropdown;

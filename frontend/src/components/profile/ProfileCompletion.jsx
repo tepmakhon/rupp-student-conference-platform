@@ -1,57 +1,17 @@
-import {
-  CheckBadgeIcon,
-} from "@heroicons/react/24/outline";
+import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 
-function ProfileCompletion({
-  profile,
-}) {
+function ProfileCompletion({ profile }) {
   let completed = 0;
   let total = 7;
-  if (
-    profile?.profile
-    ?.fullName
-  )
-    completed++;
-  if (
-    profile?.profile
-    ?.phoneNumber
-  )
-    completed++;
-  if (
-    profile?.profile
-    ?.gender
-  )
-    completed++;
-  if (
-    profile?.profile
-    ?.dateOfBirth
-  )
-    completed++;
-  if (
-    profile?.profile
-    ?.bio
-  )
-    completed++;
-  if (
-    profile?.profile
-    ?.profileImageUrl
-  )
-    completed++;
-  if (
-    profile?.student
-    ?.academicYear
-  )
-    completed++;
+  if (profile?.profile?.fullName) completed++;
+  if (profile?.profile?.phoneNumber) completed++;
+  if (profile?.profile?.gender) completed++;
+  if (profile?.profile?.dateOfBirth) completed++;
+  if (profile?.profile?.bio) completed++;
+  if (profile?.profile?.profileImageUrl) completed++;
+  if (profile?.student?.academicYear) completed++;
 
-
-  const percentage =
-
-  Math.round(
-    (
-      completed /
-      total
-    ) * 100
-  );
+  const percentage = Math.round((completed / total) * 100);
 
   return (
     <div
@@ -127,8 +87,7 @@ function ProfileCompletion({
       >
         <div
           style={{
-            width:
-            `${percentage}%`,
+            width: `${percentage}%`,
           }}
           className="
             h-4

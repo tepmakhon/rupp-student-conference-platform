@@ -1,15 +1,8 @@
-import {
-
-  ArrowPathIcon,
-
-} from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 function DashboardLoading() {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -33,11 +26,8 @@ function DashboardLoading() {
         gap-4
 
       "
-
     >
-
       <ArrowPathIcon
-
         className="
 
           w-10
@@ -49,27 +39,19 @@ function DashboardLoading() {
           animate-spin
 
         "
-
       />
 
       <p
-
         className="
 
           text-gray-500
 
         "
-
       >
-
         Loading dashboard...
-
       </p>
-
     </div>
-
   );
-
 }
 
 export default DashboardLoading;

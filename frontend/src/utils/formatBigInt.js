@@ -1,25 +1,7 @@
-export default function formatBigInt(
-
-  value
-
-) {
-
-  if (
-
-    value === null ||
-
-    value === undefined
-
-  ) {
-
+export default function formatBigInt(value) {
+  if (value === null || value === undefined) {
     return "";
-
   }
 
-  return String(
-
-    value
-
-  );
-
+  return String(value);
 }

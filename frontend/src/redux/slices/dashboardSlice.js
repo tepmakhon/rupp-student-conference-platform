@@ -6,43 +6,29 @@ const initialState = {
   error: null,
 };
 
-const dashboardSlice =
-  createSlice({
-    name: "dashboard",
+const dashboardSlice = createSlice({
+  name: "dashboard",
 
-    initialState,
+  initialState,
 
-    reducers: {
-
-      setDashboardLoading:
-        (state, action) => {
-
-          state.loading =
-            action.payload;
-        },
-
-      setDashboardStats:
-        (state, action) => {
-
-          state.stats =
-            action.payload;
-
-          state.error = null;
-        },
-
-      setDashboardError:
-        (state, action) => {
-
-          state.error =
-            action.payload;
-        },
+  reducers: {
+    setDashboardLoading: (state, action) => {
+      state.loading = action.payload;
     },
-  });
 
-export const {
-  setDashboardLoading,
-  setDashboardStats,
-  setDashboardError,
-} = dashboardSlice.actions;
+    setDashboardStats: (state, action) => {
+      state.stats = action.payload;
+
+      state.error = null;
+    },
+
+    setDashboardError: (state, action) => {
+      state.error = action.payload;
+    },
+  },
+});
+
+export const { setDashboardLoading, setDashboardStats, setDashboardError } =
+  dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

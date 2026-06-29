@@ -2,10 +2,7 @@ import bcrypt from "bcrypt";
 import { prisma } from "../src/config/prisma.js";
 
 async function main() {
-  const passwordHash = await bcrypt.hash(
-    "123456",
-    10
-  );
+  const passwordHash = await bcrypt.hash("123456", 10);
 
   await prisma.user.update({
     where: {
@@ -16,9 +13,7 @@ async function main() {
     },
   });
 
-  console.log(
-    "✅ Admin password reset to: 123456"
-  );
+  console.log("✅ Admin password reset to: 123456");
 }
 
 main()

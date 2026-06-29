@@ -1,13 +1,9 @@
 export interface RegisterPayload {
-
   email: string;
 
   password: string;
 
-  roleName:
-    | "ADMIN"
-    | "STUDENT"
-    | "ORGANIZATION";
+  roleName: "ADMIN" | "STUDENT" | "ORGANIZATION";
 
   fullName?: string;
 
@@ -22,13 +18,10 @@ export interface RegisterPayload {
   organizationName?: string;
 
   description?: string;
-
 }
 
 export interface LoginPayload {
-
   email: string;
 
   password: string;
-
 }

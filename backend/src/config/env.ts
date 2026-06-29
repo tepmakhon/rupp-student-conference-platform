@@ -8,16 +8,10 @@ export const env = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "7d",
 };
 
-const JWT_SECRET =
-
-process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
- throw new Error(
- "JWT_SECRET missing"
- );
+  throw new Error("JWT_SECRET missing");
 }
 
-export {
- JWT_SECRET,
-};
+export { JWT_SECRET };

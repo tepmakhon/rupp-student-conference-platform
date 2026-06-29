@@ -14,91 +14,45 @@ const opportunitySlice = createSlice({
   initialState,
 
   reducers: {
-
-    setOpportunities: (
-      state,
-      action
-    ) => {
-
-      state.opportunities =
-        action.payload;
+    setOpportunities: (state, action) => {
+      state.opportunities = action.payload;
 
       state.error = null;
     },
 
-    setSelectedOpportunity: (
-      state,
-      action
-    ) => {
-
-      state.selectedOpportunity =
-        action.payload;
+    setSelectedOpportunity: (state, action) => {
+      state.selectedOpportunity = action.payload;
 
       state.error = null;
     },
 
-    setSavedOpportunities: (
-      state,
-      action
-    ) => {
-
-      state.savedOpportunities =
-        action.payload;
+    setSavedOpportunities: (state, action) => {
+      state.savedOpportunities = action.payload;
     },
 
-    addSavedOpportunity: (
-      state,
-      action
-    ) => {
+    addSavedOpportunity: (state, action) => {
+      state.savedOpportunities.unshift(action.payload);
+    },
 
-      state.savedOpportunities.unshift(
-        action.payload
+    removeSavedOpportunity: (state, action) => {
+      state.savedOpportunities = state.savedOpportunities.filter(
+        (item) => item.opportunityId !== action.payload,
       );
     },
 
-    removeSavedOpportunity: (
-      state,
-      action
-    ) => {
-
-      state.savedOpportunities =
-        state.savedOpportunities.filter(
-          (item) =>
-            item.opportunityId !==
-            action.payload
-        );
+    setOpportunityLoading: (state, action) => {
+      state.loading = action.payload;
     },
 
-    setOpportunityLoading: (
-      state,
-      action
-    ) => {
-
-      state.loading =
-        action.payload;
+    setOpportunityError: (state, action) => {
+      state.error = action.payload;
     },
 
-    setOpportunityError: (
-      state,
-      action
-    ) => {
-
-      state.error =
-        action.payload;
+    clearSelectedOpportunity: (state) => {
+      state.selectedOpportunity = null;
     },
 
-    clearSelectedOpportunity: (
-      state
-    ) => {
-
-      state.selectedOpportunity =
-        null;
-    },
-
-    clearOpportunityState: (
-      state
-    ) => {
-
+    clearOpportunityState: (state) => {
       state.opportunities = [];
       state.selectedOpportunity = null;
       state.savedOpportunities = [];

@@ -1,31 +1,10 @@
-import {
+import { Trophy, Medal, Award } from "lucide-react";
 
-  Trophy,
-
-  Medal,
-
-  Award,
-
-} from "lucide-react";
-
-function LeaderboardTable({
-
-  students = [],
-
-}) {
-
-  const getRankIcon = (
-
-    rank
-
-  ) => {
-
+function LeaderboardTable({ students = [] }) {
+  const getRankIcon = (rank) => {
     if (rank === 1) {
-
       return (
-
         <Trophy
-
           size={20}
 
           className="
@@ -33,19 +12,13 @@ function LeaderboardTable({
             text-yellow-500
 
           "
-
         />
-
       );
-
     }
 
     if (rank === 2) {
-
       return (
-
         <Medal
-
           size={20}
 
           className="
@@ -53,19 +26,13 @@ function LeaderboardTable({
             text-gray-500
 
           "
-
         />
-
       );
-
     }
 
     if (rank === 3) {
-
       return (
-
         <Award
-
           size={20}
 
           className="
@@ -73,29 +40,15 @@ function LeaderboardTable({
             text-orange-500
 
           "
-
         />
-
       );
-
     }
 
-    return (
-
-      <span>
-
-        {rank}
-
-      </span>
-
-    );
-
+    return <span>{rank}</span>;
   };
 
   return (
-
     <div
-
       className="
 
         bg-white
@@ -109,11 +62,8 @@ function LeaderboardTable({
         overflow-x-auto
 
       "
-
     >
-
       <table
-
         className="
 
           w-full
@@ -121,11 +71,8 @@ function LeaderboardTable({
           min-w-[900px]
 
         "
-
       >
-
         <thead
-
           className="
 
             bg-primary
@@ -133,13 +80,9 @@ function LeaderboardTable({
             text-white
 
           "
-
         >
-
           <tr>
-
             <th
-
               className="
 
                 p-5
@@ -147,15 +90,11 @@ function LeaderboardTable({
                 text-left
 
               "
-
             >
-
               Rank
-
             </th>
 
             <th
-
               className="
 
                 p-5
@@ -163,15 +102,11 @@ function LeaderboardTable({
                 text-left
 
               "
-
             >
-
               Student
-
             </th>
 
             <th
-
               className="
 
                 p-5
@@ -179,15 +114,11 @@ function LeaderboardTable({
                 text-left
 
               "
-
             >
-
               University
-
             </th>
 
             <th
-
               className="
 
                 p-5
@@ -195,15 +126,11 @@ function LeaderboardTable({
                 text-left
 
               "
-
             >
-
               Faculty
-
             </th>
 
             <th
-
               className="
 
                 p-5
@@ -211,15 +138,11 @@ function LeaderboardTable({
                 text-left
 
               "
-
             >
-
               Major
-
             </th>
 
             <th
-
               className="
 
                 p-5
@@ -227,32 +150,19 @@ function LeaderboardTable({
                 text-left
 
               "
-
             >
-
               Score
-
             </th>
-
           </tr>
-
         </thead>
 
         <tbody>
+          {students.length === 0 ? (
+            <tr>
+              <td
+                colSpan={6}
 
-          {
-
-            students.length === 0
-
-            ? (
-
-              <tr>
-
-                <td
-
-                  colSpan={6}
-
-                  className="
+                className="
 
                     p-10
 
@@ -261,36 +171,16 @@ function LeaderboardTable({
                     text-gray-500
 
                   "
+              >
+                No leaderboard data
+              </td>
+            </tr>
+          ) : (
+            students.map((student) => (
+              <tr
+                key={student.id}
 
-                >
-
-                  No leaderboard data
-
-                </td>
-
-              </tr>
-
-            )
-
-            : (
-
-              students.map(
-
-                (
-
-                  student
-
-                ) => (
-
-                  <tr
-
-                    key={
-
-                      student.id
-
-                    }
-
-                    className="
+                className="
 
                       border-b
 
@@ -299,22 +189,16 @@ function LeaderboardTable({
                       transition
 
                     "
-
-                  >
-
-                    <td
-
-                      className="
+              >
+                <td
+                  className="
 
                         p-5
 
                       "
-
-                    >
-
-                      <div
-
-                        className="
+                >
+                  <div
+                    className="
 
                           flex
 
@@ -325,100 +209,55 @@ function LeaderboardTable({
                           font-bold
 
                         "
+                  >
+                    {getRankIcon(student.rank)}
+                  </div>
+                </td>
 
-                      >
-
-                        {
-
-                          getRankIcon(
-
-                            student.rank
-
-                          )
-
-                        }
-
-                      </div>
-
-                    </td>
-
-                    <td
-
-                      className="
+                <td
+                  className="
 
                         p-5
 
                         font-semibold
 
                       "
+                >
+                  {student.fullName}
+                </td>
 
-                    >
-
-                      {
-
-                        student.fullName
-
-                      }
-
-                    </td>
-
-                    <td
-
-                      className="
+                <td
+                  className="
 
                         p-5
 
                       "
+                >
+                  {student.university}
+                </td>
 
-                    >
-
-                      {
-
-                        student.university
-
-                      }
-
-                    </td>
-
-                    <td
-
-                      className="
+                <td
+                  className="
 
                         p-5
 
                       "
+                >
+                  {student.faculty}
+                </td>
 
-                    >
-
-                      {
-
-                        student.faculty
-
-                      }
-
-                    </td>
-
-                    <td
-
-                      className="
+                <td
+                  className="
 
                         p-5
 
                       "
+                >
+                  {student.major}
+                </td>
 
-                    >
-
-                      {
-
-                        student.major
-
-                      }
-
-                    </td>
-
-                    <td
-
-                      className="
+                <td
+                  className="
 
                         p-5
 
@@ -427,35 +266,16 @@ function LeaderboardTable({
                         text-primary
 
                       "
-
-                    >
-
-                      {
-
-                        student.activityScore
-
-                      }
-
-                    </td>
-
-                  </tr>
-
-                )
-
-              )
-
-            )
-
-          }
-
+                >
+                  {student.activityScore}
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
-
       </table>
-
     </div>
-
   );
-
 }
 
 export default LeaderboardTable;

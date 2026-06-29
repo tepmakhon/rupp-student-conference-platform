@@ -1,165 +1,55 @@
-import {
+import { useEffect, useState, useCallback } from "react";
 
-  useEffect,
+import toast from "react-hot-toast";
 
-  useState,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-  useCallback,
+import PageHeader from "../../components/common/PageHeader";
 
-} from "react";
+import LoadingState from "../../components/common/LoadingState";
 
-import toast
-from "react-hot-toast";
+import EmptyState from "../../components/common/EmptyState";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import OpportunityCard from "../../components/opportunities/OpportunityCard";
 
-import PageHeader
-from "../../components/common/PageHeader";
-
-import LoadingState
-from "../../components/common/LoadingState";
-
-import EmptyState
-from "../../components/common/EmptyState";
-
-import OpportunityCard
-from "../../components/opportunities/OpportunityCard";
-
-import {
-
-  getSavedOpportunities,
-
-} from "../../api/opportunityApi";
+import { getSavedOpportunities } from "../../api/opportunityApi";
 
 function SavedOpportunitiesPage() {
+  const [opportunities, setOpportunities] = useState([]);
 
-  const [
+  const [loading, setLoading] = useState(true);
 
-    opportunities,
+  const loadSavedOpportunities = useCallback(async () => {
+    try {
+      setLoading(true);
 
-    setOpportunities,
+      const data = await getSavedOpportunities();
 
-  ] = useState([]);
+      const normalized = Array.isArray(data)
+        ? data
 
-  const [
+            .map((item) => item.opportunity)
 
-    loading,
+            .filter(Boolean)
+        : [];
 
-    setLoading,
+      setOpportunities(normalized);
+    } catch (error) {
+      console.error(error);
 
-  ] = useState(true);
-
-  const loadSavedOpportunities =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          const data =
-
-            await getSavedOpportunities();
-
-          const normalized =
-
-            Array.isArray(
-
-              data
-
-            )
-
-            ?
-
-            data
-
-            .map(
-
-              (
-
-                item
-
-              ) =>
-
-              item.opportunity
-
-            )
-
-            .filter(
-
-              Boolean
-
-            )
-
-            :
-
-            [];
-
-          setOpportunities(
-
-            normalized
-
-          );
-
-        }
-
-        catch (error) {
-
-          console.error(
-
-            error
-
-          );
-
-          toast.error(
-
-            "Failed to load saved opportunities"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
+      toast.error("Failed to load saved opportunities");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-
     loadSavedOpportunities();
-
-  },
-
-  [
-
-    loadSavedOpportunities,
-
-  ]);
+  }, [loadSavedOpportunities]);
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -167,66 +57,26 @@ function SavedOpportunitiesPage() {
           mx-auto
 
         "
-
       >
-
         <PageHeader
-
           title="Saved Opportunities"
 
           description="Manage opportunities you saved for later."
-
         />
 
-        {
+        {loading && <LoadingState />}
 
-          loading
+        {!loading && opportunities.length === 0 && (
+          <EmptyState
+            title="No Saved Opportunities"
 
-          &&
+            description="You haven't saved any opportunities yet."
+          />
+        )}
 
-          <LoadingState />
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          opportunities.length === 0
-
-          &&
-
-          (
-
-            <EmptyState
-
-              title="No Saved Opportunities"
-
-              description="You haven't saved any opportunities yet."
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          opportunities.length > 0
-
-          &&
-
-          (
-
-            <div
-
-              className="
+        {!loading && opportunities.length > 0 && (
+          <div
+            className="
 
                 grid
 
@@ -239,53 +89,19 @@ function SavedOpportunitiesPage() {
                 gap-6
 
               "
+          >
+            {opportunities.map((opportunity) => (
+              <OpportunityCard
+                key={opportunity.id}
 
-            >
-
-              {
-
-                opportunities.map(
-
-                  (
-
-                    opportunity
-
-                  ) => (
-
-                    <OpportunityCard
-
-                      key={
-
-                        opportunity.id
-
-                      }
-
-                      opportunity={
-
-                        opportunity
-
-                      }
-
-                    />
-
-                  )
-
-                )
-
-              }
-
-            </div>
-
-          )
-
-        }
-
+                opportunity={opportunity}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default SavedOpportunitiesPage;

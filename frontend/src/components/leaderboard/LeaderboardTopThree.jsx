@@ -1,23 +1,10 @@
-import {
+import { TrophyIcon } from "@heroicons/react/24/solid";
 
-  TrophyIcon,
-
-} from "@heroicons/react/24/solid";
-
-function LeaderboardTopThree({
-
-  students = [],
-
-}) {
-
-  const topStudents =
-
-  students.slice(0,3);
+function LeaderboardTopThree({ students = [] }) {
+  const topStudents = students.slice(0, 3);
 
   return (
-
     <div
-
       className="
 
         grid
@@ -29,20 +16,12 @@ function LeaderboardTopThree({
         mb-8
 
       "
-
     >
+      {topStudents.map((student) => (
+        <div
+          key={student.id}
 
-      {
-
-        topStudents.map(
-
-          student => (
-
-            <div
-
-              key={student.id}
-
-              className="
+          className="
 
                 bg-white
 
@@ -57,12 +36,9 @@ function LeaderboardTopThree({
                 text-center
 
               "
-
-            >
-
-              <TrophyIcon
-
-                className="
+        >
+          <TrophyIcon
+            className="
 
                   w-10
 
@@ -75,44 +51,34 @@ function LeaderboardTopThree({
                   mb-4
 
                 "
+          />
 
-              />
-
-              <h3
-
-                className="
+          <h3
+            className="
 
                   font-bold
 
                   text-xl
 
                 "
+          >
+            {student.fullName}
+          </h3>
 
-              >
-
-                {student.fullName}
-
-              </h3>
-
-              <p
-
-                className="
+          <p
+            className="
 
                   text-gray-500
 
                   mt-1
 
                 "
+          >
+            {student.university}
+          </p>
 
-              >
-
-                {student.university}
-
-              </p>
-
-              <p
-
-                className="
+          <p
+            className="
 
                   mt-4
 
@@ -123,25 +89,13 @@ function LeaderboardTopThree({
                   text-primary
 
                 "
-
-              >
-
-                {student.activityScore}
-
-              </p>
-
-            </div>
-
-          )
-
-        )
-
-      }
-
+          >
+            {student.activityScore}
+          </p>
+        </div>
+      ))}
     </div>
-
   );
-
 }
 
 export default LeaderboardTopThree;

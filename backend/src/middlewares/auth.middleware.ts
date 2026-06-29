@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "secret";
 export const authMiddleware = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authHeader = req.headers.authorization;
@@ -27,10 +27,7 @@ export const authMiddleware = (
       });
     }
 
-    const decoded = jwt.verify(
-      token,
-      JWT_SECRET
-    ) as {
+    const decoded = jwt.verify(token, JWT_SECRET) as {
       id: string;
       email: string;
       roleName: string;

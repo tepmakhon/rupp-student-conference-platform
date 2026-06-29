@@ -1,32 +1,12 @@
-import {
+import { Router } from "express";
 
-  Router,
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-} from "express";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import {
+import { getMySkills, updateMySkills } from "./studentSkill.controller.js";
 
-  authMiddleware,
-
-} from "../../middlewares/auth.middleware.js";
-
-import {
-
-  rbac,
-
-} from "../../middlewares/rbac.middleware.js";
-
-import {
-
-  getMySkills,
-
-  updateMySkills,
-
-} from "./studentSkill.controller.js";
-
-const router =
-
-Router();
+const router = Router();
 
 /*
 |--------------------------------------------------------------------------
@@ -35,19 +15,13 @@ Router();
 */
 
 router.get(
-
   "/",
 
   authMiddleware,
 
-  rbac([
+  rbac(["STUDENT"]),
 
-    "STUDENT",
-
-  ]),
-
-  getMySkills
-
+  getMySkills,
 );
 
 /*
@@ -57,19 +31,13 @@ router.get(
 */
 
 router.put(
-
   "/",
 
   authMiddleware,
 
-  rbac([
+  rbac(["STUDENT"]),
 
-    "STUDENT",
-
-  ]),
-
-  updateMySkills
-
+  updateMySkills,
 );
 
 export default router;

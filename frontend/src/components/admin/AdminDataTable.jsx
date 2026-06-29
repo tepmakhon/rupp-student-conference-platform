@@ -1,18 +1,12 @@
 import {
-
   PencilSquareIcon,
-
   TrashIcon,
-
   MagnifyingGlassIcon,
-
 } from "@heroicons/react/24/outline";
 
-import Input
-from "../ui/Input";
+import Input from "../ui/Input";
 
 function AdminDataTable({
-
   columns,
 
   data,
@@ -26,25 +20,18 @@ function AdminDataTable({
   onEdit,
 
   onDelete,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         space-y-6
 
       "
-
     >
-
       {/* Search */}
 
       <div
-
         className="
 
           relative
@@ -52,11 +39,8 @@ function AdminDataTable({
           max-w-md
 
         "
-
       >
-
         <MagnifyingGlassIcon
-
           className="
 
             absolute
@@ -76,43 +60,26 @@ function AdminDataTable({
             z-10
 
           "
-
         />
 
         <Input
-
-          value={
-
-            search
-
-          }
+          value={search}
 
           placeholder="Search..."
 
-          onChange={(e) =>
-
-            setSearch?.(
-
-              e.target.value
-
-            )
-
-          }
+          onChange={(e) => setSearch?.(e.target.value)}
 
           className="
 
             pl-12
 
           "
-
         />
-
       </div>
 
       {/* Table */}
 
       <div
-
         className="
 
           overflow-hidden
@@ -128,56 +95,34 @@ function AdminDataTable({
           shadow-sm
 
         "
-
       >
-
         <div
-
           className="
 
             overflow-x-auto
 
           "
-
         >
-
           <table
-
             className="
 
               w-full
 
             "
-
           >
-
             <thead>
-
               <tr
-
                 className="
 
                   bg-gray-50
 
                 "
-
               >
+                {columns.map((column) => (
+                  <th
+                    key={column.key}
 
-                {
-
-                  columns.map(
-
-                    (column) => (
-
-                      <th
-
-                        key={
-
-                          column.key
-
-                        }
-
-                        className="
+                    className="
 
                           px-6
 
@@ -192,25 +137,12 @@ function AdminDataTable({
                           text-gray-700
 
                         "
-
-                      >
-
-                        {
-
-                          column.label
-
-                        }
-
-                      </th>
-
-                    )
-
-                  )
-
-                }
+                  >
+                    {column.label}
+                  </th>
+                ))}
 
                 <th
-
                   className="
 
                     px-6
@@ -226,38 +158,19 @@ function AdminDataTable({
                     text-gray-700
 
                   "
-
                 >
-
                   Actions
-
                 </th>
-
               </tr>
-
             </thead>
 
             <tbody>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={columns.length + 1}
 
-              {
-
-                loading
-
-                ? (
-
-                  <tr>
-
-                    <td
-
-                      colSpan={
-
-                        columns.length
-
-                        + 1
-
-                      }
-
-                      className="
+                    className="
 
                         py-16
 
@@ -266,36 +179,16 @@ function AdminDataTable({
                         text-gray-500
 
                       "
+                  >
+                    Loading...
+                  </td>
+                </tr>
+              ) : data.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={columns.length + 1}
 
-                    >
-
-                      Loading...
-
-                    </td>
-
-                  </tr>
-
-                )
-
-                :
-
-                data.length === 0
-
-                ? (
-
-                  <tr>
-
-                    <td
-
-                      colSpan={
-
-                        columns.length
-
-                        + 1
-
-                      }
-
-                      className="
+                    className="
 
                         py-16
 
@@ -304,32 +197,16 @@ function AdminDataTable({
                         text-gray-500
 
                       "
+                  >
+                    No data found
+                  </td>
+                </tr>
+              ) : (
+                data.map((item) => (
+                  <tr
+                    key={item.id}
 
-                    >
-
-                      No data found
-
-                    </td>
-
-                  </tr>
-
-                )
-
-                :
-
-                data.map(
-
-                  (item) => (
-
-                    <tr
-
-                      key={
-
-                        item.id
-
-                      }
-
-                      className="
+                    className="
 
                         border-t
 
@@ -338,24 +215,12 @@ function AdminDataTable({
                         transition
 
                       "
+                  >
+                    {columns.map((column) => (
+                      <td
+                        key={column.key}
 
-                    >
-
-                      {
-
-                        columns.map(
-
-                          (column) => (
-
-                            <td
-
-                              key={
-
-                                column.key
-
-                              }
-
-                              className="
+                        className="
 
                                 px-6
 
@@ -364,54 +229,22 @@ function AdminDataTable({
                                 text-gray-700
 
                               "
+                      >
+                        {column.render ? column.render(item) : item[column.key]}
+                      </td>
+                    ))}
 
-                            >
-
-                              {
-
-                                column.render
-
-                                ?
-
-                                column.render(
-
-                                  item
-
-                                )
-
-                                :
-
-                                item[
-
-                                  column.key
-
-                                ]
-
-                              }
-
-                            </td>
-
-                          )
-
-                        )
-
-                      }
-
-                      <td
-
-                        className="
+                    <td
+                      className="
 
                           px-6
 
                           py-5
 
                         "
-
-                      >
-
-                        <div
-
-                          className="
+                    >
+                      <div
+                        className="
 
                             flex
 
@@ -420,24 +253,13 @@ function AdminDataTable({
                             gap-3
 
                           "
+                      >
+                        <button
+                          type="button"
 
-                        >
+                          onClick={() => onEdit(item)}
 
-                          <button
-
-                            type="button"
-
-                            onClick={() =>
-
-                              onEdit(
-
-                                item
-
-                              )
-
-                            }
-
-                            className="
+                          className="
 
                               p-2
 
@@ -448,12 +270,9 @@ function AdminDataTable({
                               transition
 
                             "
-
-                          >
-
-                            <PencilSquareIcon
-
-                              className="
+                        >
+                          <PencilSquareIcon
+                            className="
 
                                 w-5
 
@@ -462,26 +281,15 @@ function AdminDataTable({
                                 text-blue-600
 
                               "
+                          />
+                        </button>
 
-                            />
+                        <button
+                          type="button"
 
-                          </button>
+                          onClick={() => onDelete(item)}
 
-                          <button
-
-                            type="button"
-
-                            onClick={() =>
-
-                              onDelete(
-
-                                item
-
-                              )
-
-                            }
-
-                            className="
+                          className="
 
                               p-2
 
@@ -492,12 +300,9 @@ function AdminDataTable({
                               transition
 
                             "
-
-                          >
-
-                            <TrashIcon
-
-                              className="
+                        >
+                          <TrashIcon
+                            className="
 
                                 w-5
 
@@ -506,35 +311,19 @@ function AdminDataTable({
                                 text-red-600
 
                               "
-
-                            />
-
-                          </button>
-
-                        </div>
-
-                      </td>
-
-                    </tr>
-
-                  )
-
-                )
-
-              }
-
+                          />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
-
           </table>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default AdminDataTable;

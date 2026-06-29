@@ -1,11 +1,5 @@
-function OpportunityInfoGrid({
-
-  opportunity,
-
-}) {
-
+function OpportunityInfoGrid({ opportunity }) {
   return (
-
     <div
       className="
         grid
@@ -13,7 +7,6 @@ function OpportunityInfoGrid({
         gap-6
       "
     >
-
       <div
         className="
           bg-white
@@ -23,15 +16,12 @@ function OpportunityInfoGrid({
           border
         "
       >
-
         <p
           className="
             text-gray-500
           "
         >
-
           Organization
-
         </p>
 
         <h3
@@ -41,14 +31,8 @@ function OpportunityInfoGrid({
             mt-2
           "
         >
-
-          {
-            opportunity.organization
-            ?.organizationName
-          }
-
+          {opportunity.organization?.organizationName}
         </h3>
-
       </div>
 
       <div
@@ -60,15 +44,12 @@ function OpportunityInfoGrid({
           border
         "
       >
-
         <p
           className="
             text-gray-500
           "
         >
-
           Type
-
         </p>
 
         <h3
@@ -78,14 +59,8 @@ function OpportunityInfoGrid({
             mt-2
           "
         >
-
-          {
-            opportunity.type
-            ?.typeName
-          }
-
+          {opportunity.type?.typeName}
         </h3>
-
       </div>
 
       <div
@@ -97,15 +72,12 @@ function OpportunityInfoGrid({
           border
         "
       >
-
         <p
           className="
             text-gray-500
           "
         >
-
           Status
-
         </p>
 
         <h3
@@ -115,19 +87,11 @@ function OpportunityInfoGrid({
             mt-2
           "
         >
-
-          {
-            opportunity.status
-          }
-
+          {opportunity.status}
         </h3>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default OpportunityInfoGrid;

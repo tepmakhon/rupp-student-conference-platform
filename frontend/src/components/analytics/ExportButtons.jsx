@@ -1,22 +1,16 @@
 import {
-
-DocumentArrowDownIcon,
-
-TableCellsIcon,
-
+  DocumentArrowDownIcon,
+  TableCellsIcon,
 } from "@heroicons/react/24/outline";
 
 function ExportButtons() {
-
   return (
-
     <div
       className="
         flex
         gap-4
       "
     >
-
       <button
         className="
           flex
@@ -29,16 +23,13 @@ function ExportButtons() {
           text-white
         "
       >
-
         <DocumentArrowDownIcon
           className="
             w-5
             h-5
           "
         />
-
         Export PDF
-
       </button>
 
       <button
@@ -59,14 +50,10 @@ function ExportButtons() {
             h-5
           "
         />
-
         Export Excel
       </button>
-
     </div>
-
   );
-
 }
 
 export default ExportButtons;

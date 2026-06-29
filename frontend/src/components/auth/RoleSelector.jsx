@@ -1,15 +1,10 @@
 function RoleSelector({
-
   role,
 
   setRole,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         grid
@@ -19,22 +14,11 @@ function RoleSelector({
         gap-4
 
       "
-
     >
-
       <button
-
         type="button"
 
-        onClick={() =>
-
-          setRole(
-
-            "STUDENT"
-
-          )
-
-        }
+        onClick={() => setRole("STUDENT")}
 
         className={`
 
@@ -49,42 +33,20 @@ function RoleSelector({
           transition
 
           ${
-
-            role ===
-
-            "STUDENT"
-
-            ?
-
-            "border-primary bg-primary text-white"
-
-            :
-
-            "border-gray-300"
-
+            role === "STUDENT"
+              ? "border-primary bg-primary text-white"
+              : "border-gray-300"
           }
 
         `}
-
       >
-
         Student
-
       </button>
 
       <button
-
         type="button"
 
-        onClick={() =>
-
-          setRole(
-
-            "ORGANIZATION"
-
-          )
-
-        }
+        onClick={() => setRole("ORGANIZATION")}
 
         className={`
 
@@ -99,33 +61,17 @@ function RoleSelector({
           transition
 
           ${
-
-            role ===
-
-            "ORGANIZATION"
-
-            ?
-
-            "border-primary bg-primary text-white"
-
-            :
-
-            "border-gray-300"
-
+            role === "ORGANIZATION"
+              ? "border-primary bg-primary text-white"
+              : "border-gray-300"
           }
 
         `}
-
       >
-
         Organization
-
       </button>
-
     </div>
-
   );
-
 }
 
 export default RoleSelector;

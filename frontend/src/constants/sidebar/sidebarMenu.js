@@ -5,14 +5,11 @@ import organizationMenu from "./organizationMenu";
 import adminMenu from "./adminMenu";
 
 const sidebarMenu = {
-  [ROLES.STUDENT]: 
-    studentMenu,
+  [ROLES.STUDENT]: studentMenu,
 
-  [ROLES.ORGANIZATION]:
-    organizationMenu,
+  [ROLES.ORGANIZATION]: organizationMenu,
 
-  [ROLES.ADMIN]:
-    adminMenu,
+  [ROLES.ADMIN]: adminMenu,
 };
 
 export default sidebarMenu;

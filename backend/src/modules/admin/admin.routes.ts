@@ -4,25 +4,16 @@ import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import {
-
-  getSystemStatsController,
-
-} from "./admin.controller.js";
+import { getSystemStatsController } from "./admin.controller.js";
 
 const router = Router();
 
-router.get(
-  "/dashboard",
-  authMiddleware,
-  rbac(["ADMIN"]),
-  (req, res) => {
-    res.json({
-      message: "Admin Dashboard",
-      user: (req as any).user,
-    });
-  }
-);
+router.get("/dashboard", authMiddleware, rbac(["ADMIN"]), (req, res) => {
+  res.json({
+    message: "Admin Dashboard",
+    user: (req as any).user,
+  });
+});
 
 /**
  * @swagger
@@ -75,12 +66,7 @@ router.get(
  *         description: User not found
  */
 
-router.get(
-  "/stats",
-  authMiddleware,
-  rbac(["ADMIN"]),
-  getSystemStatsController
-);
+router.get("/stats", authMiddleware, rbac(["ADMIN"]), getSystemStatsController);
 /**
  * @swagger
  * /api/admin/stats:
@@ -98,6 +84,5 @@ router.get(
  *       403:
  *         description: Forbidden - Admin access required
  */
-
 
 export default router;

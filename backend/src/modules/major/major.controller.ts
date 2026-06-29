@@ -1,197 +1,115 @@
-import { Request, Response }
-from "express";
+import { Request, Response } from "express";
 
-import * as service
-from "./major.service.js";
+import * as service from "./major.service.js";
 
-import {
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-  successResponse,
-
-  errorResponse,
-
-}
-
-from "../../utils/apiResponse.js";
-
-export const getAllMajors =
-async (
-
+export const getAllMajors = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    const data =
-
-      await service.getAllMajors();
+    const data = await service.getAllMajors();
 
     return successResponse(
-
       res,
 
       data,
 
-      "Majors retrieved"
-
+      "Majors retrieved",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 500
-
+      error.statusCode || 500,
     );
-
   }
-
 };
 
-export const createMajor =
-async (
-
+export const createMajor = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    const data =
-
-      await service.createMajor(
-
-        req.body
-
-      );
+    const data = await service.createMajor(req.body);
 
     return successResponse(
-
       res,
 
       data,
 
       "Major created",
 
-      201
-
+      201,
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const updateMajor =
-async (
-
+export const updateMajor = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
+    const data = await service.updateMajor(
+      BigInt(req.params.id as string),
 
-    const data =
-
-      await service.updateMajor(
-
-        BigInt(
-          req.params.id as string
-        ),
-
-        req.body
-
-      );
+      req.body,
+    );
 
     return successResponse(
-
       res,
 
       data,
 
-      "Major updated"
-
+      "Major updated",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };
 
-export const deleteMajor =
-async (
-
+export const deleteMajor = async (
   req: Request,
 
-  res: Response
-
+  res: Response,
 ) => {
-
   try {
-
-    await service.deleteMajor(
-
-      BigInt(
-        req.params.id as string
-      )
-
-    );
+    await service.deleteMajor(BigInt(req.params.id as string));
 
     return successResponse(
-
       res,
 
       null,
 
-      "Major deleted"
-
+      "Major deleted",
     );
-
   } catch (error: any) {
-
     return errorResponse(
-
       res,
 
       error.message,
 
-      error.statusCode || 400
-
+      error.statusCode || 400,
     );
-
   }
-
 };

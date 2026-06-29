@@ -1,17 +1,11 @@
 function ProfileInfoItem({
-
   label,
 
   value,
-
 }) {
-
   return (
-
     <div>
-
       <p
-
         className="
 
         text-sm
@@ -23,15 +17,11 @@ function ProfileInfoItem({
         mb-1
 
         "
-
       >
-
         {label}
-
       </p>
 
       <p
-
         className="
 
         text-lg
@@ -43,23 +33,11 @@ function ProfileInfoItem({
         break-words
 
         "
-
       >
-
-        {
-
-          value ||
-
-          "-"
-
-        }
-
+        {value || "-"}
       </p>
-
     </div>
-
   );
-
 }
 
 export default ProfileInfoItem;

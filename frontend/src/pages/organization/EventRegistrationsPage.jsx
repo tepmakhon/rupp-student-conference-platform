@@ -1,155 +1,53 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { useParams } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import {
+import PageHeader from "../../components/common/PageHeader";
 
-  useParams,
+import LoadingState from "../../components/common/LoadingState";
 
-} from "react-router-dom";
+import RegistrationGrid from "../../components/events/RegistrationGrid";
 
-import toast
+import RegistrationEmpty from "../../components/events/RegistrationEmpty";
 
-from "react-hot-toast";
-
-import DashboardLayout
-
-from "../../components/layouts/DashboardLayout";
-
-import PageHeader
-
-from "../../components/common/PageHeader";
-
-import LoadingState
-
-from "../../components/common/LoadingState";
-
-import RegistrationGrid
-
-from "../../components/events/RegistrationGrid";
-
-import RegistrationEmpty
-
-from "../../components/events/RegistrationEmpty";
-
-import {
-
-  getEventRegistrations,
-
-} from "../../api/eventApi";
+import { getEventRegistrations } from "../../api/eventApi";
 
 function EventRegistrationsPage() {
+  const { id } = useParams();
 
-  const {
+  const [registrations, setRegistrations] = useState([]);
 
-    id,
-
-  } = useParams();
-
-  const [
-
-    registrations,
-
-    setRegistrations,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     loadRegistrations();
-
   }, []);
 
-  const loadRegistrations =
+  const loadRegistrations = async () => {
+    try {
+      setLoading(true);
 
-    async () => {
+      const data = await getEventRegistrations(id);
 
-      try {
+      setRegistrations(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
 
-        setLoading(
-
-          true
-
-        );
-
-        const data =
-
-          await getEventRegistrations(
-
-            id
-
-          );
-
-        setRegistrations(
-
-          Array.isArray(
-
-            data
-
-          )
-
-          ? data
-
-          : []
-
-        );
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message ||
-
-          "Failed to load registrations"
-
-        );
-
-      }
-
-      finally {
-
-        setLoading(
-
-          false
-
-        );
-
-      }
-
-    };
+      toast.error(
+        error?.response?.data?.message || "Failed to load registrations",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -159,61 +57,23 @@ function EventRegistrationsPage() {
           space-y-8
 
         "
-
       >
-
         <PageHeader
-
           title="Event Registrations"
 
           description="Students who registered for this event"
-
         />
 
-        {
+        {loading && <LoadingState />}
 
-          loading &&
+        {!loading && registrations.length === 0 && <RegistrationEmpty />}
 
-          <LoadingState />
-
-        }
-
-        {
-
-          !loading &&
-
-          registrations.length === 0 &&
-
-          <RegistrationEmpty />
-
-        }
-
-        {
-
-          !loading &&
-
-          registrations.length > 0 && (
-
-            <RegistrationGrid
-
-              registrations={
-
-                registrations
-
-              }
-
-            />
-
-          )
-
-        }
-
+        {!loading && registrations.length > 0 && (
+          <RegistrationGrid registrations={registrations} />
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default EventRegistrationsPage;

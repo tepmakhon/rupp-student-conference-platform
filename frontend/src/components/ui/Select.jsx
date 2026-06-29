@@ -1,5 +1,4 @@
 function Select({
-
   label,
 
   value,
@@ -17,24 +16,12 @@ function Select({
   required = false,
 
   className = "",
-
 }) {
-
   return (
-
-    <div
-
-      className="space-y-2"
-
-    >
-
-      {
-
-        label && (
-
-          <label
-
-            className="
+    <div className="space-y-2">
+      {label && (
+        <label
+          className="
 
               block
 
@@ -43,19 +30,12 @@ function Select({
               text-gray-700
 
             "
-
-          >
-
-            {label}
-
-          </label>
-
-        )
-
-      }
+        >
+          {label}
+        </label>
+      )}
 
       <select
-
         value={value}
 
         required={required}
@@ -83,69 +63,21 @@ function Select({
           ${className}
 
         `}
-
       >
+        <option value="">{placeholder}</option>
 
-        <option value="">
+        {options.map((option) => (
+          <option
+            key={option[optionValue]}
 
-          {placeholder}
-
-        </option>
-
-        {
-
-          options.map(
-
-            (option) => (
-
-              <option
-
-                key={
-
-                  option[
-
-                    optionValue
-
-                  ]
-
-                }
-
-                value={
-
-                  option[
-
-                    optionValue
-
-                  ]
-
-                }
-
-              >
-
-                {
-
-                  option[
-
-                    optionLabel
-
-                  ]
-
-                }
-
-              </option>
-
-            )
-
-          )
-
-        }
-
+            value={option[optionValue]}
+          >
+            {option[optionLabel]}
+          </option>
+        ))}
       </select>
-
     </div>
-
   );
-
 }
 
 export default Select;

@@ -3,9 +3,7 @@ import TicketInfo from "./TicketInfo";
 import TicketQRCode from "./TicketQRCode";
 
 function TicketCard({ ticket }) {
-
   return (
-
     <div
       className="
         bg-white
@@ -16,10 +14,7 @@ function TicketCard({ ticket }) {
         mx-auto
       "
     >
-
-      <TicketHeader
-        title={ticket.eventTitle}
-      />
+      <TicketHeader title={ticket.eventTitle} />
 
       <div
         className="
@@ -30,21 +25,12 @@ function TicketCard({ ticket }) {
           items-center
         "
       >
+        <TicketInfo ticket={ticket} />
 
-        <TicketInfo
-          ticket={ticket}
-        />
-
-        <TicketQRCode
-          value={ticket.qrCode}
-        />
-
+        <TicketQRCode value={ticket.qrCode} />
       </div>
-
     </div>
-
   );
-
 }
 
 export default TicketCard;

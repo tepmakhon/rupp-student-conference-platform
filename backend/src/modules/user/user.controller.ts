@@ -1,22 +1,12 @@
-import {
-  Request,
-  Response,
-} from "express";
+import { Request, Response } from "express";
 
 import * as userService from "./user.service.js";
 
-import {
-  createProfileSchema,
-  updateProfileSchema,
-} from "./user.validation.js";
+import { createProfileSchema, updateProfileSchema } from "./user.validation.js";
 
-import {
-  successResponse,
-  errorResponse,
-} from "../../utils/apiResponse.js";
+import { successResponse, errorResponse } from "../../utils/apiResponse.js";
 
-interface AuthRequest
-  extends Request {
+interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;
@@ -25,107 +15,36 @@ interface AuthRequest
   };
 }
 
-export const createProfile =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const createProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    const data = createProfileSchema.parse(req.body);
 
-    try {
+    const profile = await userService.createProfile(BigInt(req.user!.id), data);
 
-      const data =
-        createProfileSchema.parse(
-          req.body
-        );
+    return successResponse(res, profile, "Profile created successfully");
+  } catch (error: any) {
+    return errorResponse(res, error.message, 400);
+  }
+};
 
-      const profile =
-        await userService.createProfile(
-          BigInt(
-            req.user!.id
-          ),
-          data
-        );
+export const getMyProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    const profile = await userService.getProfile(BigInt(req.user!.id));
 
-      return successResponse(
-        res,
-        profile,
-        "Profile created successfully"
-      );
+    return successResponse(res, profile, "Profile fetched successfully");
+  } catch (error: any) {
+    return errorResponse(res, error.message, 400);
+  }
+};
 
-    } catch (error: any) {
+export const updateMyProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    const data = updateProfileSchema.parse(req.body);
 
-      return errorResponse(
-        res,
-        error.message,
-        400
-      );
-    }
-  };
+    const profile = await userService.updateProfile(BigInt(req.user!.id), data);
 
-export const getMyProfile =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
-
-    try {
-
-      const profile =
-        await userService.getProfile(
-          BigInt(
-            req.user!.id
-          )
-        );
-
-      return successResponse(
-        res,
-        profile,
-        "Profile fetched successfully"
-      );
-
-    } catch (error: any) {
-
-      return errorResponse(
-        res,
-        error.message,
-        400
-      );
-    }
-  };
-
-export const updateMyProfile =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
-
-    try {
-
-      const data =
-        updateProfileSchema.parse(
-          req.body
-        );
-
-      const profile =
-        await userService.updateProfile(
-          BigInt(
-            req.user!.id
-          ),
-          data
-        );
-
-      return successResponse(
-        res,
-        profile,
-        "Profile updated successfully"
-      );
-
-    } catch (error: any) {
-
-      return errorResponse(
-        res,
-        error.message,
-        400
-      );
-    }
-  };
+    return successResponse(res, profile, "Profile updated successfully");
+  } catch (error: any) {
+    return errorResponse(res, error.message, 400);
+  }
+};

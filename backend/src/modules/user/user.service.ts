@@ -1,78 +1,50 @@
-import {prisma} from "../../config/prisma.js";
+import { prisma } from "../../config/prisma.js";
 
-import {
-  CreateProfileInput,
-  UpdateProfileInput,
-} from "./user.validation.js";
+import { CreateProfileInput, UpdateProfileInput } from "./user.validation.js";
 
-export const createProfile =
-  async (
-    userId: bigint,
-    data: CreateProfileInput
-  ) => {
+export const createProfile = async (
+  userId: bigint,
+  data: CreateProfileInput,
+) => {
+  const existing = await prisma.userProfile.findUnique({
+    where: { userId },
+  });
 
-    const existing =
-      await prisma.userProfile.findUnique(
-        {
-          where: { userId },
-        }
-      );
+  if (existing) {
+    throw new Error("Profile already exists");
+  }
 
-    if (existing) {
-      throw new Error(
-        "Profile already exists"
-      );
-    }
+  return prisma.userProfile.create({
+    data: {
+      userId,
+      ...data,
 
-    return prisma.userProfile.create({
-      data: {
-        userId,
-        ...data,
+      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+    },
+  });
+};
 
-        dateOfBirth:
-          data.dateOfBirth
-            ? new Date(
-                data.dateOfBirth
-              )
-            : null,
-      },
-    });
-  };
+export const getProfile = async (userId: bigint) => {
+  return prisma.userProfile.findUnique({
+    where: {
+      userId,
+    },
+  });
+};
 
-export const getProfile =
-  async (
-    userId: bigint
-  ) => {
+export const updateProfile = async (
+  userId: bigint,
+  data: UpdateProfileInput,
+) => {
+  return prisma.userProfile.update({
+    where: {
+      userId,
+    },
 
-    return prisma.userProfile.findUnique(
-      {
-        where: {
-          userId,
-        },
-      }
-    );
-  };
+    data: {
+      ...data,
 
-export const updateProfile =
-  async (
-    userId: bigint,
-    data: UpdateProfileInput
-  ) => {
-
-    return prisma.userProfile.update({
-      where: {
-        userId,
-      },
-
-      data: {
-        ...data,
-
-        dateOfBirth:
-          data.dateOfBirth
-            ? new Date(
-                data.dateOfBirth
-              )
-            : undefined,
-      },
-    });
-  };
+      dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : undefined,
+    },
+  });
+};

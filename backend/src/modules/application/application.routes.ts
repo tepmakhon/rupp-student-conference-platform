@@ -1,10 +1,8 @@
 import { Router } from "express";
 
-import { authMiddleware }
-from "../../middlewares/auth.middleware.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
-import { rbac }
-from "../../middlewares/rbac.middleware.js";
+import { rbac } from "../../middlewares/rbac.middleware.js";
 
 import {
   getMyApplications,
@@ -12,12 +10,9 @@ import {
   updateStatus,
 } from "./application.controller.js";
 
-import { validate }
-from "../../middlewares/validate.middleware.js";
+import { validate } from "../../middlewares/validate.middleware.js";
 
-import {
-  updateApplicationStatusSchema,
-} from "./application.validation.js";
+import { updateApplicationStatusSchema } from "./application.validation.js";
 
 const router = Router();
 
@@ -27,12 +22,7 @@ const router = Router();
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/me",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  getMyApplications
-);
+router.get("/me", authMiddleware, rbac(["STUDENT"]), getMyApplications);
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +34,7 @@ router.get(
   "/opportunity/:id",
   authMiddleware,
   rbac(["ORGANIZATION"]),
-  getApplicants
+  getApplicants,
 );
 
 router.patch(
@@ -52,7 +42,7 @@ router.patch(
   authMiddleware,
   rbac(["ORGANIZATION"]),
   validate(updateApplicationStatusSchema),
-  updateStatus
+  updateStatus,
 );
 
 /**

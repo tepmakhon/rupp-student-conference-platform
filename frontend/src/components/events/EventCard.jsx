@@ -1,6 +1,4 @@
-import {
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
   CalendarDaysIcon,
@@ -9,28 +7,16 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 
-import {
-  formatDate,
-} from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate";
 
-function EventCard({
-
-  event,
-
-}) {
-
+function EventCard({ event }) {
   return (
-
     <Link
-
       to={`/events/${event.id}`}
 
       className="group"
-
     >
-
       <div
-
         className="
 
           bg-white
@@ -52,13 +38,10 @@ function EventCard({
           hover:-translate-y-1
 
         "
-
       >
-
         {/* Banner */}
 
         <div
-
           className="
 
             relative
@@ -66,24 +49,13 @@ function EventCard({
             overflow-hidden
 
           "
-
         >
-
           <img
-
             src={
-
-              event.bannerImageUrl ||
-
-              "https://placehold.co/800x500?text=Event"
-
+              event.bannerImageUrl || "https://placehold.co/800x500?text=Event"
             }
 
-            alt={
-
-              event.title
-
-            }
+            alt={event.title}
 
             className="
 
@@ -100,13 +72,11 @@ function EventCard({
               duration-500
 
             "
-
           />
 
           {/* Category */}
 
           <div
-
             className="
 
               absolute
@@ -116,11 +86,8 @@ function EventCard({
               left-4
 
             "
-
           >
-
             <span
-
               className="
 
                 bg-white/95
@@ -140,27 +107,14 @@ function EventCard({
                 text-primary
 
               "
-
             >
-
-              {
-
-                event.category
-
-                ?.categoryName ||
-
-                "Event"
-
-              }
-
+              {event.category?.categoryName || "Event"}
             </span>
-
           </div>
 
           {/* Status */}
 
           <div
-
             className="
 
               absolute
@@ -170,11 +124,8 @@ function EventCard({
               right-4
 
             "
-
           >
-
             <span
-
               className={`
 
                 px-4
@@ -188,53 +139,23 @@ function EventCard({
                 font-semibold
 
                 ${
-
-                  event.status ===
-
-                  "APPROVED"
-
-                  ?
-
-                  "bg-green-100 text-green-700"
-
-                  :
-
-                  event.status ===
-
-                  "PENDING"
-
-                  ?
-
-                  "bg-yellow-100 text-yellow-700"
-
-                  :
-
-                  "bg-red-100 text-red-700"
-
+                  event.status === "APPROVED"
+                    ? "bg-green-100 text-green-700"
+                    : event.status === "PENDING"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-red-100 text-red-700"
                 }
 
               `}
-
             >
-
-              {
-
-                event.status ||
-
-                "APPROVED"
-
-              }
-
+              {event.status || "APPROVED"}
             </span>
-
           </div>
-
         </div>
 
         {/* Body */}
 
         <div
-
           className="
 
             p-6
@@ -242,13 +163,10 @@ function EventCard({
             space-y-5
 
           "
-
         >
-
           {/* Title */}
 
           <h2
-
             className="
 
               text-2xl
@@ -260,21 +178,13 @@ function EventCard({
               line-clamp-2
 
             "
-
           >
-
-            {
-
-              event.title
-
-            }
-
+            {event.title}
           </h2>
 
           {/* Organization */}
 
           <div
-
             className="
 
               flex
@@ -286,11 +196,8 @@ function EventCard({
               text-gray-600
 
             "
-
           >
-
             <BuildingOffice2Icon
-
               className="
 
                 w-5
@@ -298,29 +205,16 @@ function EventCard({
                 h-5
 
               "
-
             />
 
             <span>
-
-              {
-
-                event.organization
-
-                ?.organizationName ||
-
-                "Organization"
-
-              }
-
+              {event.organization?.organizationName || "Organization"}
             </span>
-
           </div>
 
           {/* Date */}
 
           <div
-
             className="
 
               flex
@@ -332,11 +226,8 @@ function EventCard({
               text-gray-600
 
             "
-
           >
-
             <CalendarDaysIcon
-
               className="
 
                 w-5
@@ -344,29 +235,14 @@ function EventCard({
                 h-5
 
               "
-
             />
 
-            <span>
-
-              {
-
-                formatDate(
-
-                  event.eventDate
-
-                )
-
-              }
-
-            </span>
-
+            <span>{formatDate(event.eventDate)}</span>
           </div>
 
           {/* Footer */}
 
           <div
-
             className="
 
               border-t
@@ -380,13 +256,10 @@ function EventCard({
               items-center
 
             "
-
           >
-
             {/* Capacity */}
 
             <div
-
               className="
 
                 flex
@@ -400,11 +273,8 @@ function EventCard({
                 text-sm
 
               "
-
             >
-
               <UserGroupIcon
-
                 className="
 
                   w-5
@@ -412,27 +282,14 @@ function EventCard({
                   h-5
 
                 "
-
               />
 
-              <span>
-
-                {
-
-                  event.capacity ||
-
-                  "Unlimited"
-
-                }
-
-              </span>
-
+              <span>{event.capacity || "Unlimited"}</span>
             </div>
 
             {/* Category */}
 
             <div
-
               className="
 
                 flex
@@ -448,11 +305,8 @@ function EventCard({
                 font-medium
 
               "
-
             >
-
               <TagIcon
-
                 className="
 
                   w-5
@@ -460,29 +314,15 @@ function EventCard({
                   h-5
 
                 "
-
               />
 
-              {
-
-                event.category
-
-                ?.categoryName
-
-              }
-
+              {event.category?.categoryName}
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </Link>
-
   );
-
 }
 
 export default EventCard;

@@ -1,28 +1,17 @@
 import { z } from "zod";
 
-export const createOpportunityTypeSchema =
-  z.object({
+export const createOpportunityTypeSchema = z.object({
+  typeName: z
+    .string()
 
-    typeName:
+    .min(2, "Type name is required"),
+});
 
-      z.string()
+export const updateOpportunityTypeSchema = z.object({
+  typeName: z
+    .string()
 
-      .min(
-        2,
-        "Type name is required"
-      ),
+    .min(2)
 
-  });
-
-export const updateOpportunityTypeSchema =
-  z.object({
-
-    typeName:
-
-      z.string()
-
-      .min(2)
-
-      .optional(),
-
-  });
+    .optional(),
+});

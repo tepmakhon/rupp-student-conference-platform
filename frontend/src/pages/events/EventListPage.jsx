@@ -76,7 +76,7 @@ function EventListPage() {
           page: 1,
           totalPages: 1,
           total: 0,
-        }
+        },
       );
     } catch (error) {
       console.error(error);
@@ -88,10 +88,7 @@ function EventListPage() {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto space-y-8">
-        <PageHeader
-          title="Events"
-          description="Explore approved events"
-        />
+        <PageHeader title="Events" description="Explore approved events" />
 
         <div className="flex flex-col md:flex-row gap-4">
           <StudentEventsSearch
@@ -114,29 +111,22 @@ function EventListPage() {
 
         {loading && <LoadingState />}
 
-        {!loading && error && (
-          <ErrorState message={error} />
-        )}
+        {!loading && error && <ErrorState message={error} />}
 
         {!loading && !error && events.length === 0 && (
-          <EmptyState
-            title="No Events"
-            description="No events found"
-          />
+          <EmptyState title="No Events" description="No events found" />
         )}
 
-        {!loading &&
-          !error &&
-          events.length > 0 && (
-            <>
-              <EventGrid events={events} />
+        {!loading && !error && events.length > 0 && (
+          <>
+            <EventGrid events={events} />
 
-              <Pagination
-                page={pagination.page}
-                totalPages={pagination.totalPages}
-                onPageChange={setPage}
-              />
-            </>
+            <Pagination
+              page={pagination.page}
+              totalPages={pagination.totalPages}
+              onPageChange={setPage}
+            />
+          </>
         )}
       </div>
     </DashboardLayout>

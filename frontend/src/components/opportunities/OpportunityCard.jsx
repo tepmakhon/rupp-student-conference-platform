@@ -1,35 +1,12 @@
-import {
+import { Link } from "react-router-dom";
 
-  Link,
+import { Calendar, Building2, ArrowRight } from "lucide-react";
 
-} from "react-router-dom";
+import { formatDate } from "../../utils/formatDate";
 
-import {
-
-  Calendar,
-
-  Building2,
-
-  ArrowRight,
-
-} from "lucide-react";
-
-import {
-
-  formatDate,
-
-} from "../../utils/formatDate";
-
-function OpportunityCard({
-
-  opportunity,
-
-}) {
-
+function OpportunityCard({ opportunity }) {
   return (
-
     <div
-
       className="
 
         bg-white
@@ -51,11 +28,8 @@ function OpportunityCard({
         duration-300
 
       "
-
     >
-
       <div
-
         className="
 
           relative
@@ -63,26 +37,11 @@ function OpportunityCard({
           h-60
 
         "
-
       >
-
         <img
+          src={opportunity.coverImageUrl || "https://placehold.co/800x500"}
 
-          src={
-
-            opportunity.coverImageUrl
-
-            ||
-
-            "https://placehold.co/800x500"
-
-          }
-
-          alt={
-
-            opportunity.title
-
-          }
+          alt={opportunity.title}
 
           className="
 
@@ -93,11 +52,9 @@ function OpportunityCard({
             object-cover
 
           "
-
         />
 
         <div
-
           className="
 
             absolute
@@ -107,11 +64,8 @@ function OpportunityCard({
             left-5
 
           "
-
         >
-
           <span
-
             className="
 
               px-4
@@ -129,25 +83,13 @@ function OpportunityCard({
               text-sm
 
             "
-
           >
-
-            {
-
-              opportunity.type
-
-              ?.typeName
-
-            }
-
+            {opportunity.type?.typeName}
           </span>
-
         </div>
-
       </div>
 
       <div
-
         className="
 
           p-7
@@ -155,13 +97,9 @@ function OpportunityCard({
           space-y-5
 
         "
-
       >
-
         <div>
-
           <h2
-
             className="
 
               text-2xl
@@ -173,19 +111,11 @@ function OpportunityCard({
               line-clamp-2
 
             "
-
           >
-
-            {
-
-              opportunity.title
-
-            }
-
+            {opportunity.title}
           </h2>
 
           <p
-
             className="
 
               text-gray-600
@@ -195,21 +125,12 @@ function OpportunityCard({
               line-clamp-3
 
             "
-
           >
-
-            {
-
-              opportunity.description
-
-            }
-
+            {opportunity.description}
           </p>
-
         </div>
 
         <div
-
           className="
 
             space-y-3
@@ -219,11 +140,8 @@ function OpportunityCard({
             text-sm
 
           "
-
         >
-
           <div
-
             className="
 
               flex
@@ -233,34 +151,15 @@ function OpportunityCard({
               gap-2
 
             "
-
           >
-
-            <Building2
-
-              size={18}
-
-            />
+            <Building2 size={18} />
 
             <span>
-
-              {
-
-                opportunity.organization
-                ?.organizationName
-
-                ||
-
-                "Organization"
-
-              }
-
+              {opportunity.organization?.organizationName || "Organization"}
             </span>
-
           </div>
 
           <div
-
             className="
 
               flex
@@ -270,43 +169,18 @@ function OpportunityCard({
               gap-2
 
             "
-
           >
-
-            <Calendar
-
-              size={18}
-
-            />
+            <Calendar size={18} />
 
             <span>
-
-              {
-
-                opportunity.deadline
-
-                ?
-
-                formatDate(
-
-                  opportunity.deadline
-
-                )
-
-                :
-
-                "No deadline"
-
-              }
-
+              {opportunity.deadline
+                ? formatDate(opportunity.deadline)
+                : "No deadline"}
             </span>
-
           </div>
-
         </div>
 
         <Link
-
           to={`/opportunities/${opportunity.id}`}
 
           className="
@@ -336,25 +210,13 @@ function OpportunityCard({
             transition
 
           "
-
         >
-
           View Details
-
-          <ArrowRight
-
-            size={18}
-
-          />
-
+          <ArrowRight size={18} />
         </Link>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default OpportunityCard;

@@ -1,29 +1,17 @@
 import { z } from "zod";
 
-export const createUniversitySchema =
-  z.object({
+export const createUniversitySchema = z.object({
+  universityName: z
+    .string()
 
-    universityName:
+    .min(2, "University name is required"),
+});
 
-      z.string()
+export const updateUniversitySchema = z.object({
+  universityName: z
+    .string()
 
-      .min(
-        2,
-        "University name is required"
-      ),
+    .min(2)
 
-  });
-
-export const updateUniversitySchema =
-  z.object({
-
-    universityName:
-
-      z.string()
-
-      .min(2)
-
-      .optional(),
-
-  });
-  
+    .optional(),
+});

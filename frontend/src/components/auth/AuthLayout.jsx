@@ -1,13 +1,6 @@
-function AuthLayout({
-
-  children,
-
-}) {
-
+function AuthLayout({ children }) {
   return (
-
     <div
-
       className="
 
         min-h-screen
@@ -23,11 +16,8 @@ function AuthLayout({
         px-4
 
       "
-
     >
-
       <div
-
         className="
 
           w-full
@@ -35,17 +25,11 @@ function AuthLayout({
           max-w-3xl
 
         "
-
       >
-
         {children}
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default AuthLayout;

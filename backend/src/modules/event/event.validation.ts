@@ -1,101 +1,81 @@
 import { z } from "zod";
 
 export const createEventSchema = z.object({
-
-  title:
-
-    z.string()
+  title: z
+    .string()
 
     .min(3),
 
-  description:
-
-    z.string()
-
-    .min(1),
-
-  location:
-
-    z.string()
+  description: z
+    .string()
 
     .min(1),
 
-  categoryId:
+  location: z
+    .string()
 
-    z.string(),
+    .min(1),
 
-  capacity:
+  categoryId: z.string(),
 
-    z.coerce.number()
+  capacity: z.coerce
+    .number()
 
     .positive()
 
     .optional(),
 
-  bannerImageUrl:
-
-    z.string()
+  bannerImageUrl: z
+    .string()
 
     .optional(),
 
-  eventDate:
-
-    z.string(),
-
+  eventDate: z.string(),
 });
 
 export const updateEventSchema = z.object({
-
-  title:
-
-    z.string()
+  title: z
+    .string()
 
     .min(3)
 
     .optional(),
 
-  description:
-
-    z.string()
+  description: z
+    .string()
 
     .min(10)
 
     .optional(),
 
-  location:
-
-    z.string()
+  location: z
+    .string()
 
     .min(3)
 
     .optional(),
 
-  categoryId:
-
-    z.string()
+  categoryId: z
+    .string()
 
     .optional(),
 
-  capacity:
-
-    z.coerce.number()
+  capacity: z.coerce
+    .number()
 
     .positive()
 
     .optional(),
 
-  bannerImageUrl:
-
-    z.string()
+  bannerImageUrl: z
+    .string()
 
     .url()
 
     .optional(),
 
-  eventDate:
-
-    z.string()
+  eventDate: z
+    .string()
 
     .optional(),
-
 });

@@ -1,15 +1,10 @@
 function ProfileStatCard({
-
   label,
 
   value,
-
 }) {
-
   return (
-
     <div
-
       className="
 
       bg-gray-50
@@ -21,11 +16,8 @@ function ProfileStatCard({
       text-center
 
       "
-
     >
-
       <p
-
         className="
 
         text-sm
@@ -33,15 +25,11 @@ function ProfileStatCard({
         text-gray-500
 
         "
-
       >
-
         {label}
-
       </p>
 
       <h3
-
         className="
 
         text-3xl
@@ -53,17 +41,11 @@ function ProfileStatCard({
         mt-2
 
         "
-
       >
-
         {value}
-
       </h3>
-
     </div>
-
   );
-
 }
 
 export default ProfileStatCard;

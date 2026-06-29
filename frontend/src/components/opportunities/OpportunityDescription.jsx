@@ -1,11 +1,5 @@
-function OpportunityDescription({
-
-  description,
-
-}) {
-
+function OpportunityDescription({ description }) {
   return (
-
     <div
       className="
         bg-white
@@ -15,7 +9,6 @@ function OpportunityDescription({
         border
       "
     >
-
       <h2
         className="
           text-3xl
@@ -24,9 +17,7 @@ function OpportunityDescription({
           mb-5
         "
       >
-
         Description
-
       </h2>
 
       <p
@@ -35,17 +26,10 @@ function OpportunityDescription({
           whitespace-pre-line
         "
       >
-
-        {
-          description
-        }
-
+        {description}
       </p>
-
     </div>
-
   );
-
 }
 
 export default OpportunityDescription;

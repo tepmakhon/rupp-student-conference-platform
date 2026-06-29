@@ -1,11 +1,6 @@
-import {
-
-  createSlice,
-
-} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-
   notifications: [],
 
   unreadCount: 0,
@@ -17,7 +12,6 @@ const initialState = {
   filter: "ALL",
 
   pagination: {
-
     page: 1,
 
     limit: 10,
@@ -25,257 +19,116 @@ const initialState = {
     total: 0,
 
     totalPages: 1,
-
   },
-
 };
 
-const notificationSlice =
-
-createSlice({
-
-  name:
-
-  "notification",
+const notificationSlice = createSlice({
+  name: "notification",
 
   initialState,
 
   reducers: {
-
-    setNotifications:
-
-    (
-
+    setNotifications: (
       state,
 
-      action
-
+      action,
     ) => {
+      const payload = action.payload || {};
 
-      const payload =
+      state.notifications = payload.userNotifications || [];
 
-      action.payload ||
+      state.pagination = payload.pagination || {
+        page: 1,
 
-      {};
+        limit: 10,
 
-      state.notifications =
+        total: 0,
 
-      payload
-
-      .userNotifications
-
-      || [];
-
-      state.pagination =
-
-      payload
-
-      .pagination
-
-      || {
-
-        page:1,
-
-        limit:10,
-
-        total:0,
-
-        totalPages:1,
-
+        totalPages: 1,
       };
 
-      state.unreadCount =
-
-      state.notifications
-
-      .filter(
-
-        item =>
-
-        !item.isRead
-
-      )
-
-      .length;
-
+      state.unreadCount = state.notifications.filter(
+        (item) => !item.isRead,
+      ).length;
     },
 
-    addNotification:
-
-    (
-
+    addNotification: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      state.notifications
-
-      .unshift(
-
-        action.payload
-
-      );
+      state.notifications.unshift(action.payload);
 
       state.unreadCount += 1;
-
     },
 
-    markAsRead:
-
-    (
-
+    markAsRead: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      const notification =
-
-      state.notifications
-
-      .find(
-
-        item =>
-
-        item.id ===
-
-        action.payload
-
+      const notification = state.notifications.find(
+        (item) => item.id === action.payload,
       );
 
-      if (
-
-        notification &&
-
-        !notification.isRead
-
-      ) {
-
-        notification.isRead =
-
-        true;
+      if (notification && !notification.isRead) {
+        notification.isRead = true;
 
         state.unreadCount -= 1;
-
       }
-
     },
 
-    markAllAsRead:
+    markAllAsRead: (state) => {
+      state.notifications = state.notifications.map((item) => ({
+        ...item,
 
-    (
-
-      state
-
-    ) => {
-
-      state.notifications =
-
-      state.notifications
-
-      .map(
-
-        item => ({
-
-          ...item,
-
-          isRead:true,
-
-        })
-
-      );
+        isRead: true,
+      }));
 
       state.unreadCount = 0;
-
     },
 
-    clearNotifications:
-
-    (
-
-      state
-
-    ) => {
-
+    clearNotifications: (state) => {
       state.notifications = [];
 
       state.unreadCount = 0;
-
     },
 
-    setNotificationLoading:
-
-    (
-
+    setNotificationLoading: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      state.loading =
-
-      action.payload;
-
+      state.loading = action.payload;
     },
 
-    setNotificationError:
-
-    (
-
+    setNotificationError: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      state.error =
-
-      action.payload;
-
+      state.error = action.payload;
     },
 
-    setFilter:
-
-    (
-
+    setFilter: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      state.filter =
-
-      action.payload;
-
+      state.filter = action.payload;
     },
 
-    setPagination:
-
-    (
-
+    setPagination: (
       state,
 
-      action
-
+      action,
     ) => {
-
-      state.pagination =
-
-      action.payload;
-
+      state.pagination = action.payload;
     },
-
   },
-
 });
 
 export const {
-
   setNotifications,
 
   addNotification,
@@ -293,11 +146,6 @@ export const {
   setFilter,
 
   setPagination,
+} = notificationSlice.actions;
 
-} =
-
-notificationSlice.actions;
-
-export default
-
-notificationSlice.reducer;
+export default notificationSlice.reducer;

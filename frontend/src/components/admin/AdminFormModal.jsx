@@ -1,14 +1,8 @@
-import {
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
-  XMarkIcon,
-
-} from "@heroicons/react/24/outline";
-
-import Button
-from "../ui/Button";
+import Button from "../ui/Button";
 
 function AdminFormModal({
-
   open,
 
   title,
@@ -18,19 +12,13 @@ function AdminFormModal({
   onClose,
 
   onSubmit,
-
 }) {
-
   if (!open) {
-
     return null;
-
   }
 
   return (
-
     <div
-
       className="
 
         fixed
@@ -50,11 +38,8 @@ function AdminFormModal({
         p-4
 
       "
-
     >
-
       <div
-
         className="
 
           w-full
@@ -70,13 +55,10 @@ function AdminFormModal({
           overflow-hidden
 
         "
-
       >
-
         {/* Header */}
 
         <div
-
           className="
 
             flex
@@ -92,11 +74,8 @@ function AdminFormModal({
             py-5
 
           "
-
         >
-
           <h2
-
             className="
 
               text-2xl
@@ -106,15 +85,11 @@ function AdminFormModal({
               text-primary
 
             "
-
           >
-
             {title}
-
           </h2>
 
           <button
-
             type="button"
 
             onClick={onClose}
@@ -130,11 +105,8 @@ function AdminFormModal({
               transition
 
             "
-
           >
-
             <XMarkIcon
-
               className="
 
                 w-6
@@ -144,17 +116,13 @@ function AdminFormModal({
                 text-gray-500
 
               "
-
             />
-
           </button>
-
         </div>
 
         {/* Form */}
 
         <form
-
           onSubmit={onSubmit}
 
           className="
@@ -164,13 +132,10 @@ function AdminFormModal({
             space-y-6
 
           "
-
         >
-
           {children}
 
           <div
-
             className="
 
               flex
@@ -182,43 +147,23 @@ function AdminFormModal({
               pt-4
 
             "
-
           >
-
             <Button
-
               type="button"
 
               variant="outline"
 
               onClick={onClose}
-
             >
-
               Cancel
-
             </Button>
 
-            <Button
-
-              type="submit"
-
-            >
-
-              Save
-
-            </Button>
-
+            <Button type="submit">Save</Button>
           </div>
-
         </form>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default AdminFormModal;

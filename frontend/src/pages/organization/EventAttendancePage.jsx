@@ -1,40 +1,24 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useState, useCallback } from "react";
 
-import {
-  useParams,
-  Link,
-} from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import PageHeader
-from "../../components/common/PageHeader";
+import PageHeader from "../../components/common/PageHeader";
 
-import LoadingState
-from "../../components/common/LoadingState";
+import LoadingState from "../../components/common/LoadingState";
 
-import ErrorState
-from "../../components/common/ErrorState";
+import ErrorState from "../../components/common/ErrorState";
 
-import AttendanceStatistics
-from "../../components/organization/AttendanceStatistics";
+import AttendanceStatistics from "../../components/organization/AttendanceStatistics";
 
-import AttendanceTable
-from "../../components/organization/AttendanceTable";
+import AttendanceTable from "../../components/organization/AttendanceTable";
 
-import AttendanceSearch
-from "../../components/organization/AttendanceSearch";
+import AttendanceSearch from "../../components/organization/AttendanceSearch";
 
-import {
-  getEventRegistrations,
-} from "../../api/eventApi";
+import { getEventRegistrations } from "../../api/eventApi";
 
 import {
   getAttendanceStatistics,
@@ -42,37 +26,28 @@ import {
   exportAttendancePDF,
 } from "../../api/attendanceApi";
 
-import socket
-from "../../socket/socket";
+import socket from "../../socket/socket";
 
 function EventAttendancePage() {
-
   const { id } = useParams();
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
-  const [registrations, setRegistrations] =
-    useState([]);
+  const [registrations, setRegistrations] = useState([]);
 
-  const [statistics, setStatistics] =
-    useState({
+  const [statistics, setStatistics] = useState({
+    totalRegistrations: 0,
 
-      totalRegistrations: 0,
+    checkedIn: 0,
 
-      checkedIn: 0,
+    remaining: 0,
 
-      remaining: 0,
+    attendanceRate: 0,
+  });
 
-      attendanceRate: 0,
-
-    });
-
-  const [keyword, setKeyword] =
-    useState("");
+  const [keyword, setKeyword] = useState("");
 
   /*
   |--------------------------------------------------------------------------
@@ -81,63 +56,27 @@ function EventAttendancePage() {
   */
 
   const loadData = useCallback(async () => {
-
     try {
-
       setLoading(true);
 
       setError("");
 
-      const [
-
-        registrationData,
-
-        statisticsData,
-
-      ] = await Promise.all([
-
+      const [registrationData, statisticsData] = await Promise.all([
         getEventRegistrations(id),
 
         getAttendanceStatistics(id),
-
       ]);
 
-      setRegistrations(
+      setRegistrations(Array.isArray(registrationData) ? registrationData : []);
 
-        Array.isArray(registrationData)
-
-          ? registrationData
-
-          : []
-
-      );
-
-      setStatistics(
-
-        statisticsData
-
-      );
-
-    }
-
-    catch (error) {
-
+      setStatistics(statisticsData);
+    } catch (error) {
       console.error(error);
 
-      setError(
-
-        "Failed to load attendance"
-
-      );
-
-    }
-
-    finally {
-
+      setError("Failed to load attendance");
+    } finally {
       setLoading(false);
-
     }
-
   }, [id]);
 
   /*
@@ -147,29 +86,21 @@ function EventAttendancePage() {
   */
 
   useEffect(() => {
-
     loadData();
 
     socket.emit(
-
       "join_attendance",
 
-      id
-
+      id,
     );
 
     return () => {
-
       socket.emit(
-
         "leave_attendance",
 
-        id
-
+        id,
       );
-
     };
-
   }, [id, loadData]);
 
   /*
@@ -179,34 +110,23 @@ function EventAttendancePage() {
   */
 
   useEffect(() => {
-
-    const handleAttendanceUpdate =
-      async () => {
-
-        await loadData();
-
-      };
+    const handleAttendanceUpdate = async () => {
+      await loadData();
+    };
 
     socket.on(
-
       "attendance_update",
 
-      handleAttendanceUpdate
-
+      handleAttendanceUpdate,
     );
 
     return () => {
-
       socket.off(
-
         "attendance_update",
 
-        handleAttendanceUpdate
-
+        handleAttendanceUpdate,
       );
-
     };
-
   }, [loadData]);
 
   /*
@@ -215,27 +135,15 @@ function EventAttendancePage() {
   |--------------------------------------------------------------------------
   */
 
-  const filtered =
+  const filtered = registrations.filter((item) => {
+    const name = item.student.user.profile?.fullName || "";
 
-    registrations.filter(item => {
+    return name
 
-      const name =
+      .toLowerCase()
 
-        item.student.user.profile?.fullName ||
-
-        "";
-
-      return name
-
-        .toLowerCase()
-
-        .includes(
-
-          keyword.toLowerCase()
-
-        );
-
-    });
+      .includes(keyword.toLowerCase());
+  });
 
   /*
   |--------------------------------------------------------------------------
@@ -243,54 +151,29 @@ function EventAttendancePage() {
   |--------------------------------------------------------------------------
   */
 
-  const handleExportCsv =
-    async () => {
+  const handleExportCsv = async () => {
+    try {
+      const blob = await exportAttendanceCSV(id);
 
-      try {
+      const url = window.URL.createObjectURL(blob);
 
-        const blob =
+      const link = document.createElement("a");
 
-          await exportAttendanceCSV(id);
+      link.href = url;
 
-        const url =
+      link.download = `attendance-${id}.csv`;
 
-          window.URL.createObjectURL(blob);
+      link.click();
 
-        const link =
+      window.URL.revokeObjectURL(url);
 
-          document.createElement("a");
+      toast.success("CSV downloaded");
+    } catch (error) {
+      console.error(error);
 
-        link.href = url;
-
-        link.download =
-
-          `attendance-${id}.csv`;
-
-        link.click();
-
-        window.URL.revokeObjectURL(url);
-
-        toast.success(
-
-          "CSV downloaded"
-
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        toast.error(
-
-          "Export failed"
-
-        );
-
-      }
-
-    };
+      toast.error("Export failed");
+    }
+  };
 
   /*
   |--------------------------------------------------------------------------
@@ -298,59 +181,32 @@ function EventAttendancePage() {
   |--------------------------------------------------------------------------
   */
 
-  const handleExportPdf =
-    async () => {
+  const handleExportPdf = async () => {
+    try {
+      const blob = await exportAttendancePDF(id);
 
-      try {
+      const url = window.URL.createObjectURL(blob);
 
-        const blob =
+      const link = document.createElement("a");
 
-          await exportAttendancePDF(id);
+      link.href = url;
 
-        const url =
+      link.download = `attendance-${id}.pdf`;
 
-          window.URL.createObjectURL(blob);
+      link.click();
 
-        const link =
+      window.URL.revokeObjectURL(url);
 
-          document.createElement("a");
+      toast.success("PDF downloaded");
+    } catch (error) {
+      console.error(error);
 
-        link.href = url;
-
-        link.download =
-
-          `attendance-${id}.pdf`;
-
-        link.click();
-
-        window.URL.revokeObjectURL(url);
-
-        toast.success(
-
-          "PDF downloaded"
-
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        toast.error(
-
-          "Export failed"
-
-        );
-
-      }
-
-    };
+      toast.error("Export failed");
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
         className="
           max-w-7xl
@@ -358,7 +214,6 @@ function EventAttendancePage() {
           space-y-8
         "
       >
-
         <div
           className="
             flex
@@ -368,7 +223,6 @@ function EventAttendancePage() {
             gap-4
           "
         >
-
           <PageHeader
             title="Attendance"
             description="Manage event attendance."
@@ -381,7 +235,6 @@ function EventAttendancePage() {
               flex-wrap
             "
           >
-
             <Link
               to={`/events/${id}/scanner`}
               className="
@@ -424,48 +277,21 @@ function EventAttendancePage() {
             >
               Export PDF
             </button>
-
           </div>
-
         </div>
 
-        {!loading && !error && (
+        {!loading && !error && <AttendanceStatistics statistics={statistics} />}
 
-          <AttendanceStatistics
-            statistics={statistics}
-          />
-
-        )}
-
-        <AttendanceSearch
-          value={keyword}
-          onChange={setKeyword}
-        />
+        <AttendanceSearch value={keyword} onChange={setKeyword} />
 
         {loading && <LoadingState />}
 
-        {!loading && error && (
+        {!loading && error && <ErrorState message={error} />}
 
-          <ErrorState
-            message={error}
-          />
-
-        )}
-
-        {!loading && !error && (
-
-          <AttendanceTable
-            registrations={filtered}
-          />
-
-        )}
-
+        {!loading && !error && <AttendanceTable registrations={filtered} />}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default EventAttendancePage;

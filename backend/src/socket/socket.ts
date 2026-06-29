@@ -2,90 +2,37 @@ import { Server } from "socket.io";
 
 let io: Server;
 
-export const initializeSocket = (
-  server: any
-) => {
-
+export const initializeSocket = (server: any) => {
   io = new Server(server, {
-
     cors: {
-
-      origin: [
-
-        "http://localhost:5173",
-
-        "http://localhost:3000",
-
-      ],
+      origin: ["http://localhost:5173", "http://localhost:3000"],
 
       credentials: true,
-
     },
-
   });
 
-  io.on(
-    "connection",
-    socket => {
+  io.on("connection", (socket) => {
+    console.log("Socket Connected:", socket.id);
 
-      console.log(
-        "Socket Connected:",
-        socket.id
-      );
+    socket.on("join", (data) => {
+      socket.join(String(data.userId));
 
-      socket.on(
-        "join",
-        data => {
+      if (data.role === "ADMIN") {
+        socket.join("admin");
+      }
+    });
 
-          socket.join(
-            String(data.userId)
-          );
+    socket.on("disconnect", () => {
+      console.log("Socket Disconnected:", socket.id);
+    });
+    socket.on("join_attendance", (eventId) => {
+      socket.join(`attendance-${eventId}`);
+    });
 
-          if (data.role === "ADMIN") {
-
-            socket.join("admin");
-
-          }
-
-        }
-      );
-
-      socket.on(
-        "disconnect",
-        () => {
-
-          console.log(
-            "Socket Disconnected:",
-            socket.id
-          );
-
-        }
-      );
-        socket.on(
-        "join_attendance",
-        eventId => {
-
-            socket.join(
-            `attendance-${eventId}`
-            );
-
-        }
-        );
-
-        socket.on(
-        "leave_attendance",
-        eventId => {
-
-            socket.leave(
-            `attendance-${eventId}`
-            );
-
-        }
-        );
-
-    }
-  );
-
+    socket.on("leave_attendance", (eventId) => {
+      socket.leave(`attendance-${eventId}`);
+    });
+  });
 };
 
 export const getIO = () => io;
@@ -97,23 +44,15 @@ export const getIO = () => io;
 */
 
 export const emitNotification = (
-
   userId: bigint | number | string,
 
-  notification: unknown
-
+  notification: unknown,
 ) => {
-
-  io.to(
-    String(userId)
-  ).emit(
-
+  io.to(String(userId)).emit(
     "new_notification",
 
-    notification
-
+    notification,
   );
-
 };
 
 /*
@@ -122,20 +61,8 @@ export const emitNotification = (
 |--------------------------------------------------------------------------
 */
 
-export const emitDashboardUpdate = (
-
-  userId: bigint | number | string
-
-) => {
-
-  io.to(
-    String(userId)
-  ).emit(
-
-    "dashboard_update"
-
-  );
-
+export const emitDashboardUpdate = (userId: bigint | number | string) => {
+  io.to(String(userId)).emit("dashboard_update");
 };
 
 /*
@@ -143,12 +70,6 @@ export const emitDashboardUpdate = (
 | Attendance Socket Event
 |--------------------------------------------------------------------------
 */
-export const emitAttendanceUpdate = (
-  eventId: bigint | number | string
-) => {
-
-  io.to(`attendance-${eventId}`).emit(
-    "attendance_update"
-  );
-
+export const emitAttendanceUpdate = (eventId: bigint | number | string) => {
+  io.to(`attendance-${eventId}`).emit("attendance_update");
 };

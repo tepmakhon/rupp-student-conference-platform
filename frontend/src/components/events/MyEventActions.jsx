@@ -1,15 +1,10 @@
-import {
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function MyEventActions({
-
   event,
 
   onDelete,
-
 }) {
-
   const buttonStyle = `
     min-w-[110px]
     text-center
@@ -23,7 +18,6 @@ function MyEventActions({
   `;
 
   return (
-
     <div
       className="
         flex
@@ -32,7 +26,6 @@ function MyEventActions({
         gap-2
       "
     >
-
       <Link
         to={`/organization/events/${event.id}/registrations`}
         className={`
@@ -80,11 +73,8 @@ function MyEventActions({
       >
         Delete
       </button>
-
     </div>
-
   );
-
 }
 
 export default MyEventActions;

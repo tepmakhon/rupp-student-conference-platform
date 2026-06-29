@@ -1,130 +1,48 @@
-import {
+import { useEffect, useMemo, useState, useCallback } from "react";
 
-  useEffect,
+import toast from "react-hot-toast";
 
-  useMemo,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-  useState,
+import AdminPageHeader from "../../components/admin/AdminPageHeader";
 
-  useCallback,
+import AdminDataTable from "../../components/admin/AdminDataTable";
 
-} from "react";
+import AdminFormModal from "../../components/admin/AdminFormModal";
 
-import toast
-from "react-hot-toast";
+import DeleteConfirmationModal from "../../components/admin/DeleteConfirmationModal";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import Input from "../../components/ui/Input";
 
-import AdminPageHeader
-from "../../components/admin/AdminPageHeader";
+import Select from "../../components/ui/Select";
 
-import AdminDataTable
-from "../../components/admin/AdminDataTable";
-
-import AdminFormModal
-from "../../components/admin/AdminFormModal";
-
-import DeleteConfirmationModal
-from "../../components/admin/DeleteConfirmationModal";
-
-import Input
-from "../../components/ui/Input";
-
-import Select
-from "../../components/ui/Select";
-
-import Textarea
-from "../../components/ui/Textarea";
+import Textarea from "../../components/ui/Textarea";
 
 import {
-
   getMajors,
-
   createMajor,
-
   updateMajor,
-
   deleteMajor,
+} from "../../api/majorApi";
 
-}
-
-from "../../api/majorApi";
-
-import {
-
-  getFaculties,
-
-}
-
-from "../../api/facultyApi";
+import { getFaculties } from "../../api/facultyApi";
 
 function AdminMajorsPage() {
+  const [majors, setMajors] = useState([]);
 
-  const [
+  const [faculties, setFaculties] = useState([]);
 
-    majors,
+  const [loading, setLoading] = useState(true);
 
-    setMajors,
+  const [search, setSearch] = useState("");
 
-  ] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const [
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
-    faculties,
+  const [selected, setSelected] = useState(null);
 
-    setFaculties,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    search,
-
-    setSearch,
-
-  ] = useState("");
-
-  const [
-
-    modalOpen,
-
-    setModalOpen,
-
-  ] = useState(false);
-
-  const [
-
-    deleteOpen,
-
-    setDeleteOpen,
-
-  ] = useState(false);
-
-  const [
-
-    selected,
-
-    setSelected,
-
-  ] = useState(null);
-
-  const [
-
-    form,
-
-    setForm,
-
-  ] = useState({
-
+  const [form, setForm] = useState({
     majorName: "",
 
     facultyId: "",
@@ -132,393 +50,127 @@ function AdminMajorsPage() {
     description: "",
 
     careerPath: "",
-
   });
 
-  const loadData =
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
 
-    useCallback(
+      const [majorData, facultyData] = await Promise.all([
+        getMajors(),
 
-      async () => {
+        getFaculties(),
+      ]);
 
-        try {
+      setMajors(Array.isArray(majorData) ? majorData : []);
 
-          setLoading(
+      setFaculties(Array.isArray(facultyData) ? facultyData : []);
+    } catch (error) {
+      console.error(error);
 
-            true
-
-          );
-
-          const [
-
-            majorData,
-
-            facultyData,
-
-          ] = await Promise.all([
-
-            getMajors(),
-
-            getFaculties(),
-
-          ]);
-
-          setMajors(
-
-            Array.isArray(
-
-              majorData
-
-            )
-
-            ?
-
-            majorData
-
-            :
-
-            []
-
-          );
-
-          setFaculties(
-
-            Array.isArray(
-
-              facultyData
-
-            )
-
-            ?
-
-            facultyData
-
-            :
-
-            []
-
-          );
-
-        }
-
-        catch (
-
-          error
-
-        ) {
-
-          console.error(
-
-            error
-
-          );
-
-          toast.error(
-
-            "Failed to load majors"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      []
-
-    );
+      toast.error("Failed to load majors");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-
     loadData();
+  }, [loadData]);
 
-  },
+  const filtered = useMemo(() => {
+    if (!search) {
+      return majors;
+    }
 
-  [
+    return majors.filter((item) =>
+      item.majorName
 
-    loadData,
+        ?.toLowerCase()
 
-  ]);
-
-  const filtered =
-
-    useMemo(
-
-      () => {
-
-        if (
-
-          !search
-
-        ) {
-
-          return majors;
-
-        }
-
-        return majors.filter(
-
-          (item) =>
-
-            item.majorName
-
-            ?.toLowerCase()
-
-            .includes(
-
-              search.toLowerCase()
-
-            )
-
-        );
-
-      },
-
-      [
-
-        majors,
-
-        search,
-
-      ]
-
+        .includes(search.toLowerCase()),
     );
+  }, [majors, search]);
 
-  const handleAdd =
+  const handleAdd = () => {
+    setSelected(null);
 
-    () => {
+    setForm({
+      majorName: "",
 
-      setSelected(
+      facultyId: "",
 
-        null
+      description: "",
 
-      );
+      careerPath: "",
+    });
 
-      setForm({
+    setModalOpen(true);
+  };
 
-        majorName: "",
+  const handleEdit = (item) => {
+    setSelected(item);
 
-        facultyId: "",
+    setForm({
+      majorName: item.majorName || "",
 
-        description: "",
+      facultyId: item.facultyId || "",
 
-        careerPath: "",
+      description: item.description || "",
 
-      });
+      careerPath: item.careerPath || "",
+    });
 
-      setModalOpen(
+    setModalOpen(true);
+  };
 
-        true
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      );
+    try {
+      if (selected) {
+        await updateMajor(
+          selected.id,
 
-    };
-
-  const handleEdit =
-
-    (item) => {
-
-      setSelected(
-
-        item
-
-      );
-
-      setForm({
-
-        majorName:
-
-          item.majorName
-
-          || "",
-
-        facultyId:
-
-          item.facultyId
-
-          || "",
-
-        description:
-
-          item.description
-
-          || "",
-
-        careerPath:
-
-          item.careerPath
-
-          || "",
-
-      });
-
-      setModalOpen(
-
-        true
-
-      );
-
-    };
-
-  const handleSubmit =
-
-    async (
-
-      e
-
-    ) => {
-
-      e.preventDefault();
-
-      try {
-
-        if (
-
-          selected
-
-        ) {
-
-          await updateMajor(
-
-            selected.id,
-
-            form
-
-          );
-
-          toast.success(
-
-            "Major updated"
-
-          );
-
-        }
-
-        else {
-
-          await createMajor(
-
-            form
-
-          );
-
-          toast.success(
-
-            "Major created"
-
-          );
-
-        }
-
-        setModalOpen(
-
-          false
-
+          form,
         );
 
-        loadData();
+        toast.success("Major updated");
+      } else {
+        await createMajor(form);
 
+        toast.success("Major created");
       }
 
-      catch (
+      setModalOpen(false);
 
-        error
+      loadData();
+    } catch (error) {
+      console.error(error);
 
-      ) {
+      toast.error(error?.response?.data?.message || "Operation failed");
+    }
+  };
 
-        console.error(
+  const handleDelete = async () => {
+    try {
+      await deleteMajor(selected.id);
 
-          error
+      toast.success("Major deleted");
 
-        );
+      setDeleteOpen(false);
 
-        toast.error(
+      loadData();
+    } catch (error) {
+      console.error(error);
 
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Operation failed"
-
-        );
-
-      }
-
-    };
-
-  const handleDelete =
-
-    async () => {
-
-      try {
-
-        await deleteMajor(
-
-          selected.id
-
-        );
-
-        toast.success(
-
-          "Major deleted"
-
-        );
-
-        setDeleteOpen(
-
-          false
-
-        );
-
-        loadData();
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Delete failed"
-
-        );
-
-      }
-
-    };
+      toast.error(error?.response?.data?.message || "Delete failed");
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -526,206 +178,88 @@ function AdminMajorsPage() {
           mx-auto
 
         "
-
       >
-
         <AdminPageHeader
-
           title="Majors"
 
           description="Manage majors across the platform."
 
           addLabel="Add Major"
 
-          onAdd={
-
-            handleAdd
-
-          }
-
+          onAdd={handleAdd}
         />
 
         <AdminDataTable
-
           columns={[
-
             {
+              key: "majorName",
 
-              key:
-
-              "majorName",
-
-              label:
-
-              "Major",
-
+              label: "Major",
             },
 
             {
+              key: "faculty",
 
-              key:
+              label: "Faculty",
 
-              "faculty",
-
-              label:
-
-              "Faculty",
-
-              render:
-
-              (item) =>
-
-              item.faculty
-
-              ?.facultyName,
-
+              render: (item) => item.faculty?.facultyName,
             },
 
             {
+              key: "careerPath",
 
-              key:
-
-              "careerPath",
-
-              label:
-
-              "Career Path",
-
+              label: "Career Path",
             },
-
           ]}
 
-          data={
+          data={filtered}
 
-            filtered
+          loading={loading}
 
-          }
+          search={search}
 
-          loading={
+          setSearch={setSearch}
 
-            loading
-
-          }
-
-          search={
-
-            search
-
-          }
-
-          setSearch={
-
-            setSearch
-
-          }
-
-          onEdit={
-
-            handleEdit
-
-          }
+          onEdit={handleEdit}
 
           onDelete={(item) => {
+            setSelected(item);
 
-            setSelected(
-
-              item
-
-            );
-
-            setDeleteOpen(
-
-              true
-
-            );
-
+            setDeleteOpen(true);
           }}
-
         />
 
         <AdminFormModal
+          open={modalOpen}
 
-          open={
+          title={selected ? "Edit Major" : "Create Major"}
 
-            modalOpen
+          onClose={() => setModalOpen(false)}
 
-          }
-
-          title={
-
-            selected
-
-            ?
-
-            "Edit Major"
-
-            :
-
-            "Create Major"
-
-          }
-
-          onClose={() =>
-
-            setModalOpen(
-
-              false
-
-            )
-
-          }
-
-          onSubmit={
-
-            handleSubmit
-
-          }
-
+          onSubmit={handleSubmit}
         >
-
           <Input
-
             label="Major Name"
 
-            value={
-
-              form.majorName
-
-            }
+            value={form.majorName}
 
             placeholder="Enter major name"
 
             onChange={(e) =>
-
               setForm({
-
                 ...form,
 
-                majorName:
-
-                e.target.value,
-
+                majorName: e.target.value,
               })
-
             }
-
           />
 
           <Select
-
             label="Faculty"
 
-            value={
+            value={form.facultyId}
 
-              form.facultyId
-
-            }
-
-            options={
-
-              faculties
-
-            }
+            options={faculties}
 
             optionValue="id"
 
@@ -734,121 +268,61 @@ function AdminMajorsPage() {
             placeholder="Select faculty"
 
             onChange={(e) =>
-
               setForm({
-
                 ...form,
 
-                facultyId:
-
-                e.target.value,
-
+                facultyId: e.target.value,
               })
-
             }
-
           />
 
           <Textarea
-
             label="Description"
 
             rows={4}
 
-            value={
-
-              form.description
-
-            }
+            value={form.description}
 
             placeholder="Enter description"
 
             onChange={(e) =>
-
               setForm({
-
                 ...form,
 
-                description:
-
-                e.target.value,
-
+                description: e.target.value,
               })
-
             }
-
           />
 
           <Input
-
             label="Career Path"
 
-            value={
-
-              form.careerPath
-
-            }
+            value={form.careerPath}
 
             placeholder="Enter career path"
 
             onChange={(e) =>
-
               setForm({
-
                 ...form,
 
-                careerPath:
-
-                e.target.value,
-
+                careerPath: e.target.value,
               })
-
             }
-
           />
-
         </AdminFormModal>
 
         <DeleteConfirmationModal
+          open={deleteOpen}
 
-          open={
+          title={selected?.majorName}
 
-            deleteOpen
+          onClose={() => setDeleteOpen(false)}
 
-          }
-
-          title={
-
-            selected
-
-            ?.majorName
-
-          }
-
-          onClose={() =>
-
-            setDeleteOpen(
-
-              false
-
-            )
-
-          }
-
-          onConfirm={
-
-            handleDelete
-
-          }
-
+          onConfirm={handleDelete}
         />
-
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default AdminMajorsPage;

@@ -1,33 +1,16 @@
-import {
-
-  Link,
-
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
-
   PencilSquareIcon,
-
   EnvelopeIcon,
-
   UserCircleIcon,
-
 } from "@heroicons/react/24/outline";
 
-import ProfileAvatar
+import ProfileAvatar from "./ProfileAvatar";
 
-from "./ProfileAvatar";
-
-function ProfileHero({
-
-  profile,
-
-}) {
-
+function ProfileHero({ profile }) {
   return (
-
     <div
-
       className="
 
         bg-white
@@ -41,11 +24,8 @@ function ProfileHero({
         p-8
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -61,13 +41,10 @@ function ProfileHero({
           gap-8
 
         "
-
       >
-
         {/* LEFT */}
 
         <div
-
           className="
 
             flex
@@ -81,35 +58,17 @@ function ProfileHero({
             gap-8
 
           "
-
         >
-
           <ProfileAvatar
-
             size="xl"
 
-            value={
+            value={profile?.profile?.profileImageUrl}
 
-              profile?.profile
-
-              ?.profileImageUrl
-
-            }
-
-            fullName={
-
-              profile?.profile
-
-              ?.fullName
-
-            }
-
+            fullName={profile?.profile?.fullName}
           />
 
           <div>
-
             <h1
-
               className="
 
                 text-4xl
@@ -119,23 +78,11 @@ function ProfileHero({
                 text-primary
 
               "
-
             >
-
-              {
-
-                profile?.profile
-
-                ?.fullName ||
-
-                "Unknown User"
-
-              }
-
+              {profile?.profile?.fullName || "Unknown User"}
             </h1>
 
             <div
-
               className="
 
                 flex
@@ -147,11 +94,8 @@ function ProfileHero({
                 mt-4
 
               "
-
             >
-
               <div
-
                 className="
 
                   flex
@@ -163,11 +107,8 @@ function ProfileHero({
                   text-gray-600
 
                 "
-
               >
-
                 <EnvelopeIcon
-
                   className="
 
                     w-5
@@ -175,19 +116,12 @@ function ProfileHero({
                     h-5
 
                   "
-
                 />
 
-                {
-
-                  profile?.email
-
-                }
-
+                {profile?.email}
               </div>
 
               <div
-
                 className="
 
                   flex
@@ -197,11 +131,8 @@ function ProfileHero({
                   gap-3
 
                 "
-
               >
-
                 <UserCircleIcon
-
                   className="
 
                     w-5
@@ -211,11 +142,9 @@ function ProfileHero({
                     text-primary
 
                   "
-
                 />
 
                 <span
-
                   className="
 
                     px-4
@@ -233,35 +162,18 @@ function ProfileHero({
                     text-sm
 
                   "
-
                 >
-
-                  {
-
-                    profile?.role
-
-                    ?.roleName ||
-
-                    "USER"
-
-                  }
-
+                  {profile?.role?.roleName || "USER"}
                 </span>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
 
         {/* RIGHT */}
 
         <div>
-
           <Link
-
             to="/profile/edit"
 
             className="
@@ -287,11 +199,8 @@ function ProfileHero({
               transition
 
             "
-
           >
-
             <PencilSquareIcon
-
               className="
 
                 w-5
@@ -299,21 +208,13 @@ function ProfileHero({
                 h-5
 
               "
-
             />
-
             Edit Profile
-
           </Link>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default ProfileHero;

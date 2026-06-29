@@ -1,17 +1,8 @@
-function RegistrationCard({
-
-  registration,
-
-}) {
-
-  const student =
-
-    registration.student;
+function RegistrationCard({ registration }) {
+  const student = registration.student;
 
   return (
-
     <div
-
       className="
 
         bg-white
@@ -25,11 +16,8 @@ function RegistrationCard({
         p-6
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -43,13 +31,9 @@ function RegistrationCard({
           gap-6
 
         "
-
       >
-
         <div>
-
           <h2
-
             className="
 
               text-2xl
@@ -59,27 +43,11 @@ function RegistrationCard({
               text-primary
 
             "
-
           >
-
-            {
-
-              student.user
-
-              ?.profile
-
-              ?.fullName ||
-
-              student.user
-
-              ?.email
-
-            }
-
+            {student.user?.profile?.fullName || student.user?.email}
           </h2>
 
           <p
-
             className="
 
               text-gray-500
@@ -87,23 +55,12 @@ function RegistrationCard({
               mt-2
 
             "
-
           >
-
-            {
-
-              student.user
-
-              ?.email
-
-            }
-
+            {student.user?.email}
           </p>
-
         </div>
 
         <div
-
           className="
 
             grid
@@ -115,117 +72,56 @@ function RegistrationCard({
             text-sm
 
           "
-
         >
-
           <div>
-
             <p
-
               className="
 
                 font-semibold
 
               "
-
             >
-
               University
-
             </p>
 
             <p>
-
-              {
-
-                student.university
-
-                ?.universityName ||
-
-                student.university
-
-                ?.name ||
-
-                "N/A"
-
-              }
-
+              {student.university?.universityName ||
+                student.university?.name ||
+                "N/A"}
             </p>
-
           </div>
 
           <div>
-
             <p
-
               className="
 
                 font-semibold
 
               "
-
             >
-
               Faculty
-
             </p>
 
-            <p>
-
-              {
-
-                student.faculty
-
-                ?.facultyName ||
-
-                "N/A"
-
-              }
-
-            </p>
-
+            <p>{student.faculty?.facultyName || "N/A"}</p>
           </div>
 
           <div>
-
             <p
-
               className="
 
                 font-semibold
 
               "
-
             >
-
               Major
-
             </p>
 
-            <p>
-
-              {
-
-                student.major
-
-                ?.majorName ||
-
-                "N/A"
-
-              }
-
-            </p>
-
+            <p>{student.major?.majorName || "N/A"}</p>
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default RegistrationCard;

@@ -1,212 +1,73 @@
-import {
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useState, useCallback } from "react";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import PageHeader
-from "../../components/common/PageHeader";
+import PageHeader from "../../components/common/PageHeader";
 
-import LoadingState
-from "../../components/common/LoadingState";
+import LoadingState from "../../components/common/LoadingState";
 
-import ErrorState
-from "../../components/common/ErrorState";
+import ErrorState from "../../components/common/ErrorState";
 
-import EmptyState
-from "../../components/common/EmptyState";
+import EmptyState from "../../components/common/EmptyState";
 
-import Pagination
-from "../../components/common/Pagination";
+import Pagination from "../../components/common/Pagination";
 
-import OpportunityCard
-from "../../components/opportunities/OpportunityCard";
+import OpportunityCard from "../../components/opportunities/OpportunityCard";
 
-import OpportunityFilters
-from "../../components/opportunities/OpportunityFilters";
+import OpportunityFilters from "../../components/opportunities/OpportunityFilters";
 
-import {
-  getOpportunities,
-}
-from "../../api/opportunityApi";
+import { getOpportunities } from "../../api/opportunityApi";
 
 function OpportunityListPage() {
+  const [opportunities, setOpportunities] = useState([]);
 
-  const [
+  const [loading, setLoading] = useState(true);
 
-    opportunities,
+  const [error, setError] = useState("");
 
-    setOpportunities,
+  const [keyword, setKeyword] = useState("");
 
-  ] = useState([]);
+  const [typeId, setTypeId] = useState("");
 
-  const [
+  const [page, setPage] = useState(1);
 
-    loading,
+  const [totalPages, setTotalPages] = useState(1);
 
-    setLoading,
+  const loadOpportunities = useCallback(async () => {
+    try {
+      setLoading(true);
 
-  ] = useState(true);
+      setError("");
 
-  const [
-
-    error,
-
-    setError,
-
-  ] = useState("");
-
-  const [
-
-    keyword,
-
-    setKeyword,
-
-  ] = useState("");
-
-  const [
-
-    typeId,
-
-    setTypeId,
-
-  ] = useState("");
-
-  const [
-
-    page,
-
-    setPage,
-
-  ] = useState(1);
-
-  const [
-
-    totalPages,
-
-    setTotalPages,
-
-  ] = useState(1);
-
-  const loadOpportunities =
-
-    useCallback(
-
-      async () => {
-
-        try {
-
-          setLoading(
-
-            true
-
-          );
-
-          setError(
-
-            ""
-
-          );
-
-          const data =
-
-            await getOpportunities(
-
-              page,
-
-              10,
-
-              keyword,
-
-              typeId
-
-            );
-
-          setOpportunities(
-
-            data?.opportunities
-
-            ||
-
-            []
-
-          );
-
-          setTotalPages(
-
-            data?.pagination
-
-            ?.totalPages
-
-            ||
-
-            1
-
-          );
-
-        }
-
-        catch (error) {
-
-          console.error(
-
-            error
-
-          );
-
-          setError(
-
-            "Failed to load opportunities"
-
-          );
-
-        }
-
-        finally {
-
-          setLoading(
-
-            false
-
-          );
-
-        }
-
-      },
-
-      [
-
+      const data = await getOpportunities(
         page,
+
+        10,
 
         keyword,
 
         typeId,
+      );
 
-      ]
+      setOpportunities(data?.opportunities || []);
 
-    );
+      setTotalPages(data?.pagination?.totalPages || 1);
+    } catch (error) {
+      console.error(error);
+
+      setError("Failed to load opportunities");
+    } finally {
+      setLoading(false);
+    }
+  }, [page, keyword, typeId]);
 
   useEffect(() => {
-
     loadOpportunities();
-
-  },
-
-  [
-
-    loadOpportunities,
-
-  ]);
+  }, [loadOpportunities]);
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -216,142 +77,47 @@ function OpportunityListPage() {
           space-y-8
 
         "
-
       >
-
         <div
-
           className="
 
             space-y-6
 
           "
-
         >
-
           <PageHeader
-
             title="Opportunities"
 
             description="Discover opportunities available across the platform."
-
           />
 
           <OpportunityFilters
+            keyword={keyword}
 
-            keyword={
+            setKeyword={setKeyword}
 
-              keyword
+            typeId={typeId}
 
-            }
-
-            setKeyword={
-
-              setKeyword
-
-            }
-
-            typeId={
-
-              typeId
-
-            }
-
-            setTypeId={
-
-              setTypeId
-
-            }
-
+            setTypeId={setTypeId}
           />
-
         </div>
 
-        {
+        {loading && <LoadingState />}
 
-          loading
+        {!loading && error && <ErrorState message={error} />}
 
-          &&
+        {!loading && !error && opportunities.length === 0 && (
+          <EmptyState
+            title="No Opportunities"
 
-          <LoadingState />
+            description="No opportunities available."
+          />
+        )}
 
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          error
-
-          &&
-
-          (
-
-            <ErrorState
-
-              message={
-
-                error
-
-              }
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          !error
-
-          &&
-
-          opportunities.length === 0
-
-          &&
-
-          (
-
-            <EmptyState
-
-              title="No Opportunities"
-
-              description="No opportunities available."
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          !error
-
-          &&
-
-          opportunities.length > 0
-
-          &&
-
-          (
-
-            <>
-
-              <div
-
-                className="
+        {!loading && !error && opportunities.length > 0 && (
+          <>
+            <div
+              className="
 
                   grid
 
@@ -364,77 +130,28 @@ function OpportunityListPage() {
                   gap-6
 
                 "
+            >
+              {opportunities.map((opportunity) => (
+                <OpportunityCard
+                  key={opportunity.id}
 
-              >
+                  opportunity={opportunity}
+                />
+              ))}
+            </div>
 
-                {
+            <Pagination
+              page={page}
 
-                  opportunities.map(
+              totalPages={totalPages}
 
-                    (
-
-                      opportunity
-
-                    ) => (
-
-                      <OpportunityCard
-
-                        key={
-
-                          opportunity.id
-
-                        }
-
-                        opportunity={
-
-                          opportunity
-
-                        }
-
-                      />
-
-                    )
-
-                  )
-
-                }
-
-              </div>
-
-              <Pagination
-
-                page={
-
-                  page
-
-                }
-
-                totalPages={
-
-                  totalPages
-
-                }
-
-                setPage={
-
-                  setPage
-
-                }
-
-              />
-
-            </>
-
-          )
-
-        }
-
+              setPage={setPage}
+            />
+          </>
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default OpportunityListPage;

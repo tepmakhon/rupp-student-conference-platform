@@ -1,184 +1,71 @@
-import {
+import { useState } from "react";
 
-  useState,
-
-} from "react";
-
-import toast
-from "react-hot-toast";
+import toast from "react-hot-toast";
 
 import {
-
   approveOpportunity,
-
   rejectOpportunity,
-
 } from "../../api/opportunityApi";
 
 import {
-
   BriefcaseIcon,
-
   BuildingOfficeIcon,
-
   CalendarDaysIcon,
-
   CheckCircleIcon,
-
   XCircleIcon,
-
 } from "@heroicons/react/24/outline";
 
-import {
-
-  formatDate,
-
-} from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate";
 
 function PendingOpportunityCard({
-
   opportunity,
 
   onAction,
-
 }) {
-
-  const [
-
-    processing,
-
-    setProcessing,
-
-  ] = useState(false);
-
-  const handleApprove =
-
-    async () => {
-
-      try {
-
-        setProcessing(
-
-          true
-
-        );
-
-        await approveOpportunity(
-
-          opportunity.id
-
-        );
-
-        toast.success(
-
-          "Opportunity approved"
-
-        );
-
-        await onAction();
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Failed to approve opportunity"
-
-        );
-
-      }
-
-      finally {
-
-        setProcessing(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  const handleReject =
-
-    async () => {
-
-      try {
-
-        setProcessing(
-
-          true
-
-        );
-
-        await rejectOpportunity(
-
-          opportunity.id
-
-        );
-
-        toast.success(
-
-          "Opportunity rejected"
-
-        );
-
-        await onAction();
-
-      }
-
-      catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message
-
-          ||
-
-          "Failed to reject opportunity"
-
-        );
-
-      }
-
-      finally {
-
-        setProcessing(
-
-          false
-
-        );
-
-      }
-
-    };
+  const [processing, setProcessing] = useState(false);
+
+  const handleApprove = async () => {
+    try {
+      setProcessing(true);
+
+      await approveOpportunity(opportunity.id);
+
+      toast.success("Opportunity approved");
+
+      await onAction();
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error?.response?.data?.message || "Failed to approve opportunity",
+      );
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      setProcessing(true);
+
+      await rejectOpportunity(opportunity.id);
+
+      toast.success("Opportunity rejected");
+
+      await onAction();
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error?.response?.data?.message || "Failed to reject opportunity",
+      );
+    } finally {
+      setProcessing(false);
+    }
+  };
 
   return (
-
     <div
-
       className="
 
         bg-white
@@ -200,15 +87,11 @@ function PendingOpportunityCard({
         p-6
 
       "
-
     >
-
       {/* Header */}
 
       <div>
-
         <h2
-
           className="
 
             text-2xl
@@ -218,19 +101,11 @@ function PendingOpportunityCard({
             text-primary
 
           "
-
         >
-
-          {
-
-            opportunity.title
-
-          }
-
+          {opportunity.title}
         </h2>
 
         <span
-
           className="
 
             inline-flex
@@ -254,19 +129,14 @@ function PendingOpportunityCard({
             text-yellow-700
 
           "
-
         >
-
           Pending Approval
-
         </span>
-
       </div>
 
       {/* Description */}
 
       <p
-
         className="
 
           mt-5
@@ -276,25 +146,13 @@ function PendingOpportunityCard({
           leading-relaxed
 
         "
-
       >
-
-        {
-
-          opportunity.description
-
-          ||
-
-          "No description available"
-
-        }
-
+        {opportunity.description || "No description available"}
       </p>
 
       {/* Information */}
 
       <div
-
         className="
 
           mt-6
@@ -302,11 +160,8 @@ function PendingOpportunityCard({
           space-y-4
 
         "
-
       >
-
         <div
-
           className="
 
             flex
@@ -318,11 +173,8 @@ function PendingOpportunityCard({
             text-gray-700
 
           "
-
         >
-
           <BuildingOfficeIcon
-
             className="
 
               w-5
@@ -330,29 +182,15 @@ function PendingOpportunityCard({
               h-5
 
             "
-
           />
 
           <span>
-
-            {
-
-              opportunity.organization
-
-              ?.organizationName
-
-              ||
-
-              "Unknown Organization"
-
-            }
-
+            {opportunity.organization?.organizationName ||
+              "Unknown Organization"}
           </span>
-
         </div>
 
         <div
-
           className="
 
             flex
@@ -364,11 +202,8 @@ function PendingOpportunityCard({
             text-gray-700
 
           "
-
         >
-
           <BriefcaseIcon
-
             className="
 
               w-5
@@ -376,36 +211,14 @@ function PendingOpportunityCard({
               h-5
 
             "
-
           />
 
-          <span>
-
-            {
-
-              opportunity.type
-
-              ?.typeName
-
-              ||
-
-              "Unknown Type"
-
-            }
-
-          </span>
-
+          <span>{opportunity.type?.typeName || "Unknown Type"}</span>
         </div>
 
-        {
-
-          opportunity.deadline
-
-          && (
-
-            <div
-
-              className="
+        {opportunity.deadline && (
+          <div
+            className="
 
                 flex
 
@@ -416,47 +229,25 @@ function PendingOpportunityCard({
                 text-gray-700
 
               "
-
-            >
-
-              <CalendarDaysIcon
-
-                className="
+          >
+            <CalendarDaysIcon
+              className="
 
                   w-5
 
                   h-5
 
                 "
+            />
 
-              />
-
-              <span>
-
-                {
-
-                  formatDate(
-
-                    opportunity.deadline
-
-                  )
-
-                }
-
-              </span>
-
-            </div>
-
-          )
-
-        }
-
+            <span>{formatDate(opportunity.deadline)}</span>
+          </div>
+        )}
       </div>
 
       {/* Actions */}
 
       <div
-
         className="
 
           flex
@@ -470,22 +261,11 @@ function PendingOpportunityCard({
           mt-8
 
         "
-
       >
-
         <button
+          onClick={handleApprove}
 
-          onClick={
-
-            handleApprove
-
-          }
-
-          disabled={
-
-            processing
-
-          }
+          disabled={processing}
 
           className="
 
@@ -516,11 +296,8 @@ function PendingOpportunityCard({
             disabled:opacity-50
 
           "
-
         >
-
           <CheckCircleIcon
-
             className="
 
               w-5
@@ -528,38 +305,15 @@ function PendingOpportunityCard({
               h-5
 
             "
-
           />
 
-          {
-
-            processing
-
-            ?
-
-            "Processing..."
-
-            :
-
-            "Approve"
-
-          }
-
+          {processing ? "Processing..." : "Approve"}
         </button>
 
         <button
+          onClick={handleReject}
 
-          onClick={
-
-            handleReject
-
-          }
-
-          disabled={
-
-            processing
-
-          }
+          disabled={processing}
 
           className="
 
@@ -590,11 +344,8 @@ function PendingOpportunityCard({
             disabled:opacity-50
 
           "
-
         >
-
           <XCircleIcon
-
             className="
 
               w-5
@@ -602,31 +353,13 @@ function PendingOpportunityCard({
               h-5
 
             "
-
           />
 
-          {
-
-            processing
-
-            ?
-
-            "Processing..."
-
-            :
-
-            "Reject"
-
-          }
-
+          {processing ? "Processing..." : "Reject"}
         </button>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default PendingOpportunityCard;

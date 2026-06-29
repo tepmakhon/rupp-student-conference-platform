@@ -7,20 +7,16 @@ function OpportunityForm({
   loading = false,
   onSubmit,
 }) {
-
   const [form, setForm] = useState({
     title: initialData.title || "",
     description: initialData.description || "",
     requirements: initialData.requirements || "",
     coverImageUrl: initialData.coverImageUrl || "",
-    deadline: initialData.deadline
-      ? initialData.deadline.slice(0, 10)
-      : "",
+    deadline: initialData.deadline ? initialData.deadline.slice(0, 10) : "",
     typeId: initialData.typeId || "",
   });
 
-  const [uploading, setUploading] =
-    useState(false);
+  const [uploading, setUploading] = useState(false);
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
 
@@ -29,75 +25,45 @@ function OpportunityForm({
     try {
       setUploading(true);
 
-      const imageUrl =
-        await uploadToCloudinary(file);
+      const imageUrl = await uploadToCloudinary(file);
 
       setForm((prev) => ({
         ...prev,
         coverImageUrl: imageUrl,
       }));
 
-      toast.success(
-        "Image uploaded successfully"
-      );
+      toast.success("Image uploaded successfully");
     } catch (error) {
       console.error(error);
 
-      toast.error(
-        error.message ||
-        "Upload failed"
-      );
+      toast.error(error.message || "Upload failed");
     } finally {
       setUploading(false);
     }
   };
-  const handleChange =
+  const handleChange = (e) => {
+    const {
+      name,
 
-    (e) => {
+      value,
+    } = e.target;
 
-      const {
+    setForm({
+      ...form,
 
-        name,
+      [name]: value,
+    });
+  };
 
-        value,
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-      } = e.target;
-
-      setForm({
-
-        ...form,
-
-        [name]:
-
-        value,
-
-      });
-
-    };
-
-  const handleSubmit =
-
-    (e) => {
-
-      e.preventDefault();
-
-      onSubmit?.(
-
-        form
-
-      );
-
-    };
+    onSubmit?.(form);
+  };
 
   return (
-
     <form
-
-      onSubmit={
-
-        handleSubmit
-
-      }
+      onSubmit={handleSubmit}
 
       className="
 
@@ -114,15 +80,11 @@ function OpportunityForm({
         space-y-8
 
       "
-
     >
-
       {/* Title */}
 
       <div>
-
         <label
-
           className="
 
             block
@@ -134,30 +96,18 @@ function OpportunityForm({
             text-primary
 
           "
-
         >
-
           Title
-
         </label>
 
         <input
-
           type="text"
 
           name="title"
 
-          value={
+          value={form.title}
 
-            form.title
-
-          }
-
-          onChange={
-
-            handleChange
-
-          }
+          onChange={handleChange}
 
           required
 
@@ -178,17 +128,13 @@ function OpportunityForm({
             focus:ring-secondary
 
           "
-
         />
-
       </div>
 
       {/* Type */}
 
       <div>
-
         <label
-
           className="
 
             block
@@ -200,28 +146,16 @@ function OpportunityForm({
             text-primary
 
           "
-
         >
-
           Opportunity Type
-
         </label>
 
         <select
-
           name="typeId"
 
-          value={
+          value={form.typeId}
 
-            form.typeId
-
-          }
-
-          onChange={
-
-            handleChange
-
-          }
+          onChange={handleChange}
 
           required
 
@@ -242,65 +176,25 @@ function OpportunityForm({
             focus:ring-secondary
 
           "
-
         >
+          <option value="">Select Type</option>
 
-          <option value="">
+          {opportunityTypes.map((type) => (
+            <option
+              key={type.id}
 
-            Select Type
-
-          </option>
-
-          {
-
-            opportunityTypes.map(
-
-              (
-
-                type
-
-              ) => (
-
-                <option
-
-                  key={
-
-                    type.id
-
-                  }
-
-                  value={
-
-                    type.id
-
-                  }
-
-                >
-
-                  {
-
-                    type.typeName
-
-                  }
-
-                </option>
-
-              )
-
-            )
-
-          }
-
+              value={type.id}
+            >
+              {type.typeName}
+            </option>
+          ))}
         </select>
-
       </div>
 
       {/* Description */}
 
       <div>
-
         <label
-
           className="
 
             block
@@ -312,30 +206,18 @@ function OpportunityForm({
             text-primary
 
           "
-
         >
-
           Description
-
         </label>
 
         <textarea
-
           rows={6}
 
           name="description"
 
-          value={
+          value={form.description}
 
-            form.description
-
-          }
-
-          onChange={
-
-            handleChange
-
-          }
+          onChange={handleChange}
 
           required
 
@@ -356,17 +238,13 @@ function OpportunityForm({
             focus:ring-secondary
 
           "
-
         />
-
       </div>
 
       {/* Requirements */}
 
       <div>
-
         <label
-
           className="
 
             block
@@ -378,30 +256,18 @@ function OpportunityForm({
             text-primary
 
           "
-
         >
-
           Requirements
-
         </label>
 
         <textarea
-
           rows={6}
 
           name="requirements"
 
-          value={
+          value={form.requirements}
 
-            form.requirements
-
-          }
-
-          onChange={
-
-            handleChange
-
-          }
+          onChange={handleChange}
 
           className="
 
@@ -420,35 +286,30 @@ function OpportunityForm({
             focus:ring-secondary
 
           "
-
         />
-
       </div>
 
       {/* Cover Image */}
 
-        <div className="space-y-8">
-
-          <div>
-
-            <label
-              className="
+      <div className="space-y-8">
+        <div>
+          <label
+            className="
                 block
                 mb-3
                 font-semibold
                 text-primary
               "
-            >
-              Cover Image
-            </label>
+          >
+            Cover Image
+          </label>
 
-            <div className="space-y-4">
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="
+          <div className="space-y-4">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="
                   w-full
                   border
                   rounded-2xl
@@ -464,29 +325,27 @@ function OpportunityForm({
                   file:cursor-pointer
                   hover:file:bg-secondary
                 "
-              />
+            />
 
-              <div
-                className="
+            <div
+              className="
                   flex
                   items-center
                   gap-3
                 "
-              >
-                <div className="flex-1 h-px bg-gray-200" />
-                <span className="text-gray-400 text-sm">
-                  OR
-                </span>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
+            >
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-gray-400 text-sm">OR</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
 
-              <input
-                type="text"
-                name="coverImageUrl"
-                placeholder="Paste image URL..."
-                value={form.coverImageUrl}
-                onChange={handleChange}
-                className="
+            <input
+              type="text"
+              name="coverImageUrl"
+              placeholder="Paste image URL..."
+              value={form.coverImageUrl}
+              onChange={handleChange}
+              className="
                   w-full
                   border
                   rounded-2xl
@@ -495,18 +354,15 @@ function OpportunityForm({
                   focus:ring-2
                   focus:ring-secondary
                 "
-              />
+            />
 
-              {uploading && (
-                <p className="text-blue-600 font-medium">
-                  Uploading image...
-                </p>
-              )}
+            {uploading && (
+              <p className="text-blue-600 font-medium">Uploading image...</p>
+            )}
 
-              {form.coverImageUrl && (
-
-                <div
-                  className="
+            {form.coverImageUrl && (
+              <div
+                className="
                     relative
                     rounded-3xl
                     overflow-hidden
@@ -514,27 +370,26 @@ function OpportunityForm({
                     shadow-sm
                     bg-gray-100
                   "
-                >
-
-                  <img
-                    src={form.coverImageUrl}
-                    alt="Preview"
-                    className="
+              >
+                <img
+                  src={form.coverImageUrl}
+                  alt="Preview"
+                  className="
                       w-full
                       max-h-[500px]
                       object-contain
                     "
-                  />
+                />
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setForm({
-                        ...form,
-                        coverImageUrl: "",
-                      })
-                    }
-                    className="
+                <button
+                  type="button"
+                  onClick={() =>
+                    setForm({
+                      ...form,
+                      coverImageUrl: "",
+                    })
+                  }
+                  className="
                       absolute
                       top-4
                       right-4
@@ -547,39 +402,34 @@ function OpportunityForm({
                       shadow
                       transition
                     "
-                  >
-                    Remove
-                  </button>
-
-                </div>
-
-              )}
-
-            </div>
-
+                >
+                  Remove
+                </button>
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* Deadline */}
+        {/* Deadline */}
 
-          <div>
-
-            <label
-              className="
+        <div>
+          <label
+            className="
                 block
                 mb-3
                 font-semibold
                 text-primary
               "
-            >
-              Deadline
-            </label>
+          >
+            Deadline
+          </label>
 
-            <input
-              type="date"
-              name="deadline"
-              value={form.deadline}
-              onChange={handleChange}
-              className="
+          <input
+            type="date"
+            name="deadline"
+            value={form.deadline}
+            onChange={handleChange}
+            className="
                 w-full
                 border
                 rounded-2xl
@@ -588,21 +438,14 @@ function OpportunityForm({
                 focus:ring-2
                 focus:ring-secondary
               "
-            />
-
-          </div>
-
+          />
         </div>
+      </div>
 
       <button
-
         type="submit"
 
-        disabled={
-
-          loading
-
-        }
+        disabled={loading}
 
         className="
 
@@ -625,29 +468,11 @@ function OpportunityForm({
           disabled:opacity-50
 
         "
-
       >
-
-        {
-
-          loading
-
-          ?
-
-          "Saving..."
-
-          :
-
-          "Save Opportunity"
-
-        }
-
+        {loading ? "Saving..." : "Save Opportunity"}
       </button>
-
     </form>
-
   );
-
 }
 
 export default OpportunityForm;

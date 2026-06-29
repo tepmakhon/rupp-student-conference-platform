@@ -3,25 +3,13 @@ import { Router } from "express";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { rbac } from "../../middlewares/rbac.middleware.js";
 
-import {
-  getAuditLogs,
-  getMyAuditLogs,
-} from "./audit.controller.js";
+import { getAuditLogs, getMyAuditLogs } from "./audit.controller.js";
 
 const router = Router();
 
-router.get(
-  "/",
-  authMiddleware,
-  rbac(["ADMIN"]),
-  getAuditLogs
-);
+router.get("/", authMiddleware, rbac(["ADMIN"]), getAuditLogs);
 
-router.get(
-  "/me",
-  authMiddleware,
-  getMyAuditLogs
-);
+router.get("/me", authMiddleware, getMyAuditLogs);
 
 /**
  * @swagger

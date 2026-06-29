@@ -1,13 +1,6 @@
-function RecentActivities({
-
-  activities = [],
-
-}) {
-
+function RecentActivities({ activities = [] }) {
   return (
-
     <div
-
       className="
         bg-white
         rounded-3xl
@@ -15,117 +8,63 @@ function RecentActivities({
         shadow-sm
         p-6
       "
-
     >
-
       <h3
-
         className="
           text-2xl
           font-bold
           text-primary
           mb-6
         "
-
       >
-
         Recent Activities
-
       </h3>
 
       <div
-
         className="
           space-y-4
         "
-
       >
-
-        {
-
-          activities.length === 0
-
-          && (
-
-            <p
-
-              className="
+        {activities.length === 0 && (
+          <p
+            className="
                 text-gray-500
               "
+          >
+            No activities
+          </p>
+        )}
 
-            >
+        {activities.map((activity) => (
+          <div
+            key={activity.id}
 
-              No activities
-
-            </p>
-
-          )
-
-        }
-
-        {
-
-          activities.map(
-
-            activity => (
-
-              <div
-
-                key={activity.id}
-
-                className="
+            className="
                   border-b
                   pb-4
                 "
-
-              >
-
-                <h4
-
-                  className="
+          >
+            <h4
+              className="
                     font-semibold
                   "
+            >
+              {activity.reason}
+            </h4>
 
-                >
-
-                  {activity.reason}
-
-                </h4>
-
-                <p
-
-                  className="
+            <p
+              className="
                     text-secondary
                   "
-
-                >
-
-                  +
-
-                  {
-
-                    activity.scoreChange
-
-                  }
-
-                  points
-
-                </p>
-
-              </div>
-
-            )
-
-          )
-
-        }
-
+            >
+              +{activity.scoreChange}
+              points
+            </p>
+          </div>
+        ))}
       </div>
-
     </div>
-
   );
-
 }
 
 export default RecentActivities;

@@ -1,17 +1,8 @@
-import ApplicationCard
+import ApplicationCard from "./ApplicationCard";
 
-from "./ApplicationCard";
-
-function ApplicationsGrid({
-
-  applications,
-
-}) {
-
+function ApplicationsGrid({ applications }) {
   return (
-
     <div
-
       className="
 
         grid
@@ -19,45 +10,16 @@ function ApplicationsGrid({
         gap-6
 
       "
-
     >
+      {applications.map((application) => (
+        <ApplicationCard
+          key={application.id}
 
-      {
-
-        applications.map(
-
-          (
-
-            application
-
-          ) => (
-
-            <ApplicationCard
-
-              key={
-
-                application.id
-
-              }
-
-              application={
-
-                application
-
-              }
-
-            />
-
-          )
-
-        )
-
-      }
-
+          application={application}
+        />
+      ))}
     </div>
-
   );
-
 }
 
 export default ApplicationsGrid;

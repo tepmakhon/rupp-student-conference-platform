@@ -1,14 +1,6 @@
-import {
+import { prisma } from "../../config/prisma.js";
 
-  prisma,
-
-} from "../../config/prisma.js";
-
-import {
-
-  AppError,
-
-} from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -16,58 +8,30 @@ import {
 |--------------------------------------------------------------------------
 */
 
-export const getMySkills =
-
-async (
-
-  userId: bigint
-
-) => {
-
-  const student =
-
-  await prisma.student.findUnique({
-
+export const getMySkills = async (userId: bigint) => {
+  const student = await prisma.student.findUnique({
     where: {
-
       userId,
-
     },
 
     include: {
-
       studentSkills: {
-
         include: {
-
           skill: true,
-
         },
-
       },
-
     },
-
   });
 
-  if (
-
-    !student
-
-  ) {
-
+  if (!student) {
     throw new AppError(
-
       "Student not found",
 
-      404
-
+      404,
     );
-
   }
 
   return student.studentSkills;
-
 };
 
 /*
@@ -76,42 +40,23 @@ async (
 |--------------------------------------------------------------------------
 */
 
-export const updateMySkills =
-
-async (
-
+export const updateMySkills = async (
   userId: bigint,
 
-  skillIds: string[]
-
+  skillIds: string[],
 ) => {
-
-  const student =
-
-  await prisma.student.findUnique({
-
+  const student = await prisma.student.findUnique({
     where: {
-
       userId,
-
     },
-
   });
 
-  if (
-
-    !student
-
-  ) {
-
+  if (!student) {
     throw new AppError(
-
       "Student not found",
 
-      404
-
+      404,
     );
-
   }
 
   /*
@@ -121,15 +66,9 @@ async (
   */
 
   await prisma.studentSkill.deleteMany({
-
     where: {
-
-      studentId:
-
-      student.id,
-
+      studentId: student.id,
     },
-
   });
 
   /*
@@ -138,48 +77,15 @@ async (
   |--------------------------------------------------------------------------
   */
 
-  if (
-
-    skillIds.length > 0
-
-  ) {
-
+  if (skillIds.length > 0) {
     await prisma.studentSkill.createMany({
+      data: skillIds.map((skillId) => ({
+        studentId: student.id,
 
-      data:
-
-      skillIds.map(
-
-        (
-
-          skillId
-
-        ) => ({
-
-          studentId:
-
-          student.id,
-
-          skillId:
-
-          BigInt(
-
-            skillId
-
-          ),
-
-        })
-
-      ),
-
+        skillId: BigInt(skillId),
+      })),
     });
-
   }
 
-  return getMySkills(
-
-    userId
-
-  );
-
+  return getMySkills(userId);
 };

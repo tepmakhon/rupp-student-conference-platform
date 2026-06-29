@@ -1,26 +1,15 @@
-import AdminCrudPage
-from "../../components/admin/AdminCrudPage";
+import AdminCrudPage from "../../components/admin/AdminCrudPage";
 
 import {
-
   getEventCategories,
-
   createEventCategory,
-
   updateEventCategory,
-
   deleteEventCategory,
-
-}
-
-from "../../api/eventCategoryApi";
+} from "../../api/eventCategoryApi";
 
 function AdminEventCategoriesPage() {
-
   return (
-
     <AdminCrudPage
-
       title="Event Categories"
 
       description="Manage event categories used across the platform."
@@ -28,61 +17,32 @@ function AdminEventCategoriesPage() {
       entityName="Category"
 
       columns={[
-
         {
-
           key: "categoryName",
 
           label: "Category Name",
-
         },
-
       ]}
 
       formFields={[
-
         {
-
           name: "categoryName",
 
           label: "Category Name",
 
-          placeholder:
-
-            "Enter category name",
-
+          placeholder: "Enter category name",
         },
-
       ]}
 
-      getAll={
+      getAll={getEventCategories}
 
-        getEventCategories
+      create={createEventCategory}
 
-      }
+      update={updateEventCategory}
 
-      create={
-
-        createEventCategory
-
-      }
-
-      update={
-
-        updateEventCategory
-
-      }
-
-      remove={
-
-        deleteEventCategory
-
-      }
-
+      remove={deleteEventCategory}
     />
-
   );
-
 }
 
 export default AdminEventCategoriesPage;

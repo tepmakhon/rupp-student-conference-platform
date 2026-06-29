@@ -3,7 +3,6 @@ import { AppError } from "../../utils/AppError.js";
 
 export const getSystemStats = async () => {
   try {
-
     const [
       totalUsers,
       totalStudents,
@@ -40,13 +39,7 @@ export const getSystemStats = async () => {
       totalApplications,
       totalNotifications,
     };
-
   } catch (error) {
-
-    throw new AppError(
-      "Failed to load system statistics",
-      500
-    );
-
+    throw new AppError("Failed to load system statistics", 500);
   }
 };

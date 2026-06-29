@@ -1,16 +1,11 @@
 import {
-
   ExclamationTriangleIcon,
-
   XMarkIcon,
-
 } from "@heroicons/react/24/outline";
 
-import Button
-from "../ui/Button";
+import Button from "../ui/Button";
 
 function DeleteConfirmationModal({
-
   open,
 
   title,
@@ -18,19 +13,13 @@ function DeleteConfirmationModal({
   onClose,
 
   onConfirm,
-
 }) {
-
   if (!open) {
-
     return null;
-
   }
 
   return (
-
     <div
-
       className="
 
         fixed
@@ -50,11 +39,8 @@ function DeleteConfirmationModal({
         p-4
 
       "
-
     >
-
       <div
-
         className="
 
           w-full
@@ -70,13 +56,10 @@ function DeleteConfirmationModal({
           overflow-hidden
 
         "
-
       >
-
         {/* Header */}
 
         <div
-
           className="
 
             flex
@@ -92,11 +75,8 @@ function DeleteConfirmationModal({
             py-5
 
           "
-
         >
-
           <div
-
             className="
 
               flex
@@ -106,11 +86,8 @@ function DeleteConfirmationModal({
               gap-3
 
             "
-
           >
-
             <div
-
               className="
 
                 p-2
@@ -120,11 +97,8 @@ function DeleteConfirmationModal({
                 bg-red-100
 
               "
-
             >
-
               <ExclamationTriangleIcon
-
                 className="
 
                   w-6
@@ -134,13 +108,10 @@ function DeleteConfirmationModal({
                   text-red-600
 
                 "
-
               />
-
             </div>
 
             <h2
-
               className="
 
                 text-xl
@@ -150,17 +121,12 @@ function DeleteConfirmationModal({
                 text-gray-800
 
               "
-
             >
-
               Delete Item
-
             </h2>
-
           </div>
 
           <button
-
             type="button"
 
             onClick={onClose}
@@ -176,11 +142,8 @@ function DeleteConfirmationModal({
               transition
 
             "
-
           >
-
             <XMarkIcon
-
               className="
 
                 w-5
@@ -190,17 +153,13 @@ function DeleteConfirmationModal({
                 text-gray-500
 
               "
-
             />
-
           </button>
-
         </div>
 
         {/* Body */}
 
         <div
-
           className="
 
             px-6
@@ -208,11 +167,8 @@ function DeleteConfirmationModal({
             py-8
 
           "
-
         >
-
           <p
-
             className="
 
               text-gray-600
@@ -220,13 +176,9 @@ function DeleteConfirmationModal({
               leading-relaxed
 
             "
-
           >
-
             Are you sure you want to delete
-
             <span
-
               className="
 
                 font-semibold
@@ -236,19 +188,13 @@ function DeleteConfirmationModal({
                 mx-1
 
               "
-
             >
-
               {title}
-
             </span>
-
             ?
-
           </p>
 
           <p
-
             className="
 
               text-sm
@@ -258,19 +204,14 @@ function DeleteConfirmationModal({
               mt-2
 
             "
-
           >
-
             This action cannot be undone.
-
           </p>
-
         </div>
 
         {/* Footer */}
 
         <div
-
           className="
 
             flex
@@ -286,45 +227,30 @@ function DeleteConfirmationModal({
             py-5
 
           "
-
         >
-
           <Button
-
             type="button"
 
             variant="outline"
 
             onClick={onClose}
-
           >
-
             Cancel
-
           </Button>
 
           <Button
-
             type="button"
 
             variant="danger"
 
             onClick={onConfirm}
-
           >
-
             Delete
-
           </Button>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default DeleteConfirmationModal;

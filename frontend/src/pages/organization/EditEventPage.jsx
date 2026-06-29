@@ -1,255 +1,107 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { useNavigate, useParams } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import {
+import EventForm from "../../components/events/EventForm";
 
-  useNavigate,
+import { getEventById, updateEvent } from "../../api/eventApi";
 
-  useParams,
-
-} from "react-router-dom";
-
-import toast
-
-from "react-hot-toast";
-
-import DashboardLayout
-
-from "../../components/layouts/DashboardLayout";
-
-import EventForm
-from "../../components/events/EventForm";
-
-import {
-
-  getEventById,
-
-  updateEvent,
-
-} from "../../api/eventApi";
-
-import {
-
-  getEventCategories,
-
-} from "../../api/eventCategoryApi";
+import { getEventCategories } from "../../api/eventCategoryApi";
 
 function EditEventPage() {
+  const { id } = useParams();
 
-  const { id } =
+  const navigate = useNavigate();
 
-    useParams();
+  const [loading, setLoading] = useState(true);
 
-  const navigate =
+  const [categories, setCategories] = useState([]);
 
-    useNavigate();
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    categories,
-
-    setCategories,
-
-  ] = useState([]);
-
-  const [
-
-    initialData,
-
-    setInitialData,
-
-  ] = useState(null);
+  const [initialData, setInitialData] = useState(null);
 
   useEffect(() => {
-
     loadPage();
-
   }, []);
 
-  const loadPage =
+  const loadPage = async () => {
+    try {
+      const [event, categoriesData] = await Promise.all([
+        getEventById(id),
 
-    async () => {
+        getEventCategories(),
+      ]);
 
-      try {
+      setCategories(categoriesData);
 
-        const [
+      setInitialData({
+        title: event.title || "",
 
-          event,
+        description: event.description || "",
 
-          categoriesData,
+        location: event.location || "",
 
-        ] = await Promise.all([
+        categoryId: String(event.categoryId),
 
-          getEventById(id),
+        capacity: event.capacity || "",
 
-          getEventCategories(),
+        eventDate: event.eventDate
+          ? new Date(event.eventDate)
 
-        ]);
+              .toISOString()
 
-        setCategories(
+              .slice(
+                0,
 
-          categoriesData
+                16,
+              )
+          : "",
 
-        );
+        bannerImageUrl: event.bannerImageUrl || "",
+      });
+    } catch (error) {
+      console.error(error);
 
-        setInitialData({
+      toast.error("Failed to load event");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          title:
+  const handleUpdate = async (form) => {
+    try {
+      await updateEvent(
+        id,
 
-            event.title || "",
+        form,
+      );
 
-          description:
+      toast.success("Event updated");
 
-            event.description || "",
+      navigate("/organization/events");
+    } catch (error) {
+      console.error(error);
 
-          location:
-
-            event.location || "",
-
-          categoryId:
-
-            String(
-
-              event.categoryId
-
-            ),
-
-          capacity:
-
-            event.capacity || "",
-
-          eventDate:
-
-            event.eventDate
-
-            ?
-
-            new Date(
-
-              event.eventDate
-
-            )
-
-            .toISOString()
-
-            .slice(
-
-              0,
-
-              16
-
-            )
-
-            : "",
-
-          bannerImageUrl:
-
-            event.bannerImageUrl || "",
-
-        });
-
-      } catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          "Failed to load event"
-
-        );
-
-      } finally {
-
-        setLoading(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  const handleUpdate =
-
-    async (form) => {
-
-      try {
-
-        await updateEvent(
-
-          id,
-
-          form
-
-        );
-
-        toast.success(
-
-          "Event updated"
-
-        );
-
-        navigate(
-
-          "/organization/events"
-
-        );
-
-      } catch (error) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response?.data?.message ||
-
-          "Failed to update event"
-
-        );
-
-      }
-
-    };
+      toast.error(error?.response?.data?.message || "Failed to update event");
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
         className="
           max-w-4xl
           mx-auto
         "
       >
-
         <div
           className="
             mb-8
           "
         >
-
           <h1
             className="
               text-4xl
@@ -257,9 +109,7 @@ function EditEventPage() {
               text-primary
             "
           >
-
             Edit Event
-
           </h1>
 
           <p
@@ -268,62 +118,33 @@ function EditEventPage() {
               mt-2
             "
           >
-
             Update your event information.
-
           </p>
-
         </div>
 
-        {
-
-          loading
-
-          ? (
-
-            <div
-              className="
+        {loading ? (
+          <div
+            className="
                 text-center
                 py-20
               "
-            >
+          >
+            Loading...
+          </div>
+        ) : (
+          <EventForm
+            initialData={initialData}
 
-              Loading...
+            categories={categories}
 
-            </div>
+            onSubmit={handleUpdate}
 
-          )
-
-          : (
-
-            <EventForm
-
-              initialData={
-                initialData
-              }
-
-              categories={
-                categories
-              }
-
-              onSubmit={
-                handleUpdate
-              }
-
-              submitText="Save Changes"
-
-            />
-
-          )
-
-        }
-
+            submitText="Save Changes"
+          />
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default EditEventPage;

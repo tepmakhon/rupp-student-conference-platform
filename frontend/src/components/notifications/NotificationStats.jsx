@@ -1,149 +1,65 @@
 import {
-
   BellIcon,
-
   EnvelopeOpenIcon,
-
   EnvelopeIcon,
-
   CalendarDaysIcon,
-
 } from "@heroicons/react/24/outline";
 
-function NotificationStats({
+function NotificationStats({ notifications = [] }) {
+  const total = notifications.length;
 
-  notifications = [],
+  const unread = notifications.filter(
+    (notification) => !notification.isRead,
+  ).length;
 
-}) {
+  const read = total - unread;
 
-  const total =
+  const today = notifications.filter((notification) => {
+    const createdDate = new Date(
+      notification.notification?.createdAt || notification.createdAt,
+    );
 
-    notifications.length;
+    const now = new Date();
 
-  const unread =
-
-    notifications.filter(
-
-      notification =>
-
-      !notification.isRead
-
-    ).length;
-
-  const read =
-
-    total - unread;
-
-  const today =
-
-    notifications.filter(
-
-      notification => {
-
-        const createdDate =
-
-          new Date(
-
-            notification.notification
-
-            ?.createdAt ||
-
-            notification.createdAt
-
-          );
-
-        const now =
-
-          new Date();
-
-        return (
-
-          createdDate
-
-          .toDateString()
-
-          ===
-
-          now.toDateString()
-
-        );
-
-      }
-
-    ).length;
+    return createdDate.toDateString() === now.toDateString();
+  }).length;
 
   const stats = [
-
     {
+      title: "Total",
 
-      title:
+      value: total,
 
-      "Total",
-
-      value:
-
-      total,
-
-      icon:
-
-      BellIcon,
-
+      icon: BellIcon,
     },
 
     {
+      title: "Unread",
 
-      title:
+      value: unread,
 
-      "Unread",
-
-      value:
-
-      unread,
-
-      icon:
-
-      EnvelopeIcon,
-
+      icon: EnvelopeIcon,
     },
 
     {
+      title: "Read",
 
-      title:
+      value: read,
 
-      "Read",
-
-      value:
-
-      read,
-
-      icon:
-
-      EnvelopeOpenIcon,
-
+      icon: EnvelopeOpenIcon,
     },
 
     {
+      title: "Today",
 
-      title:
+      value: today,
 
-      "Today",
-
-      value:
-
-      today,
-
-      icon:
-
-      CalendarDaysIcon,
-
+      icon: CalendarDaysIcon,
     },
-
   ];
 
   return (
-
     <div
-
       className="
 
         grid
@@ -155,24 +71,12 @@ function NotificationStats({
         gap-6
 
       "
-
     >
+      {stats.map((stat) => (
+        <div
+          key={stat.title}
 
-      {
-
-        stats.map(
-
-          stat => (
-
-            <div
-
-              key={
-
-                stat.title
-
-              }
-
-              className="
+          className="
 
                 bg-white
 
@@ -183,12 +87,9 @@ function NotificationStats({
                 p-6
 
               "
-
-            >
-
-              <div
-
-                className="
+        >
+          <div
+            className="
 
                   flex
 
@@ -197,34 +98,22 @@ function NotificationStats({
                   justify-between
 
                 "
-
-              >
-
-                <div>
-
-                  <p
-
-                    className="
+          >
+            <div>
+              <p
+                className="
 
                       text-gray-500
 
                       text-sm
 
                     "
+              >
+                {stat.title}
+              </p>
 
-                  >
-
-                    {
-
-                      stat.title
-
-                    }
-
-                  </p>
-
-                  <h3
-
-                    className="
+              <h3
+                className="
 
                       text-3xl
 
@@ -235,22 +124,13 @@ function NotificationStats({
                       mt-2
 
                     "
+              >
+                {stat.value}
+              </h3>
+            </div>
 
-                  >
-
-                    {
-
-                      stat.value
-
-                    }
-
-                  </h3>
-
-                </div>
-
-                <div
-
-                  className="
+            <div
+              className="
 
                     w-14
 
@@ -267,12 +147,9 @@ function NotificationStats({
                     justify-center
 
                   "
-
-                >
-
-                  <stat.icon
-
-                    className="
+            >
+              <stat.icon
+                className="
 
                       w-7
 
@@ -281,25 +158,13 @@ function NotificationStats({
                       text-primary
 
                     "
-
-                  />
-
-                </div>
-
-              </div>
-
+              />
             </div>
-
-          )
-
-        )
-
-      }
-
+          </div>
+        </div>
+      ))}
     </div>
-
   );
-
 }
 
 export default NotificationStats;

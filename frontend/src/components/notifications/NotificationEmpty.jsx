@@ -1,15 +1,8 @@
-import {
-
-  BellSlashIcon,
-
-} from "@heroicons/react/24/outline";
+import { BellSlashIcon } from "@heroicons/react/24/outline";
 
 function NotificationEmpty() {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -21,11 +14,8 @@ function NotificationEmpty() {
         p-16
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -39,11 +29,8 @@ function NotificationEmpty() {
           text-center
 
         "
-
       >
-
         <div
-
           className="
 
             w-20
@@ -61,11 +48,8 @@ function NotificationEmpty() {
             justify-center
 
           "
-
         >
-
           <BellSlashIcon
-
             className="
 
               w-10
@@ -75,13 +59,10 @@ function NotificationEmpty() {
               text-gray-400
 
             "
-
           />
-
         </div>
 
         <h3
-
           className="
 
             text-2xl
@@ -93,15 +74,11 @@ function NotificationEmpty() {
             mt-6
 
           "
-
         >
-
           No Notifications
-
         </h3>
 
         <p
-
           className="
 
             text-gray-500
@@ -109,19 +86,12 @@ function NotificationEmpty() {
             mt-3
 
           "
-
         >
-
           You're all caught up.
-
         </p>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default NotificationEmpty;

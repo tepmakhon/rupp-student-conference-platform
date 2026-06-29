@@ -11,81 +11,44 @@ import {
 } from "../../utils/formatRelativeDate";
 
 function NotificationCard({
-
   notification,
 
   onRead,
-
 }) {
+  const isUnread = !notification.isRead;
 
-  const isUnread =
-    !notification.isRead;
+  const notificationType = notification.notification?.type;
 
-  const notificationType =
-    notification.notification?.type;
+  const NotificationIcon =
+    {
+      EVENT: CalendarDaysIcon,
 
-  const NotificationIcon = {
+      OPPORTUNITY: BriefcaseIcon,
 
-    EVENT:
-      CalendarDaysIcon,
+      SYSTEM: Cog6ToothIcon,
+    }[notificationType] || BellAlertIcon;
 
-    OPPORTUNITY:
-      BriefcaseIcon,
+  const iconBg =
+    {
+      EVENT: "bg-blue-100",
 
-    SYSTEM:
-      Cog6ToothIcon,
+      OPPORTUNITY: "bg-green-100",
 
-  }[notificationType]
+      SYSTEM: "bg-purple-100",
+    }[notificationType] || "bg-gray-100";
 
-  ||
+  const badgeColor =
+    {
+      EVENT: "bg-blue-100 text-blue-700",
 
-  BellAlertIcon;
+      OPPORTUNITY: "bg-green-100 text-green-700",
 
-  const iconBg = {
-
-    EVENT:
-      "bg-blue-100",
-
-    OPPORTUNITY:
-      "bg-green-100",
-
-    SYSTEM:
-      "bg-purple-100",
-
-  }[notificationType]
-
-  ||
-
-  "bg-gray-100";
-
-  const badgeColor = {
-
-    EVENT:
-      "bg-blue-100 text-blue-700",
-
-    OPPORTUNITY:
-      "bg-green-100 text-green-700",
-
-    SYSTEM:
-      "bg-purple-100 text-purple-700",
-
-  }[notificationType]
-
-  ||
-
-  "bg-gray-100 text-gray-700";
+      SYSTEM: "bg-purple-100 text-purple-700",
+    }[notificationType] || "bg-gray-100 text-gray-700";
 
   return (
-
     <div
-
-      onClick={() =>
-
-        isUnread &&
-
-        onRead(notification.id)
-
-      }
+      onClick={() => isUnread && onRead(notification.id)}
 
       className={`
 
@@ -109,26 +72,11 @@ function NotificationCard({
 
         border
 
-        ${
-
-          isUnread
-
-            ?
-
-            "border-primary/20 bg-green-50"
-
-            :
-
-            "border-transparent"
-
-        }
+        ${isUnread ? "border-primary/20 bg-green-50" : "border-transparent"}
 
       `}
-
     >
-
       <div
-
         className="
 
           flex
@@ -138,13 +86,10 @@ function NotificationCard({
           gap-5
 
         "
-
       >
-
         {/* Icon */}
 
         <div
-
           className={`
 
             w-14
@@ -164,11 +109,8 @@ function NotificationCard({
             flex-shrink-0
 
           `}
-
         >
-
           <NotificationIcon
-
             className="
 
               w-7
@@ -178,25 +120,19 @@ function NotificationCard({
               text-primary
 
             "
-
           />
-
         </div>
 
         {/* Content */}
 
         <div
-
           className="
 
             flex-1
 
           "
-
         >
-
           <div
-
             className="
 
               flex
@@ -208,13 +144,9 @@ function NotificationCard({
               gap-4
 
             "
-
           >
-
             <div>
-
               <h3
-
                 className="
 
                   text-lg
@@ -224,23 +156,11 @@ function NotificationCard({
                   text-gray-800
 
                 "
-
               >
-
-                {
-
-                  notification.notification?.title
-
-                  ||
-
-                  "Notification"
-
-                }
-
+                {notification.notification?.title || "Notification"}
               </h3>
 
               <p
-
                 className="
 
                   text-gray-600
@@ -248,23 +168,11 @@ function NotificationCard({
                   mt-2
 
                 "
-
               >
-
-                {
-
-                  notification.notification?.message
-
-                  ||
-
-                  "-"
-
-                }
-
+                {notification.notification?.message || "-"}
               </p>
 
               <span
-
                 className={`
 
                   inline-block
@@ -284,30 +192,14 @@ function NotificationCard({
                   ${badgeColor}
 
                 `}
-
               >
-
-                {
-
-                  notificationType
-
-                  ||
-
-                  "SYSTEM"
-
-                }
-
+                {notificationType || "SYSTEM"}
               </span>
-
             </div>
 
-            {
-
-              isUnread && (
-
-                <div
-
-                  className="
+            {isUnread && (
+              <div
+                className="
 
                     w-3
 
@@ -324,27 +216,18 @@ function NotificationCard({
                     flex-shrink-0
 
                   "
-
-                />
-
-              )
-
-            }
-
+              />
+            )}
           </div>
 
           <div
-
             className="
 
               mt-4
 
             "
-
           >
-
             <p
-
               className="
                 text-sm
                 text-gray-400
@@ -353,52 +236,26 @@ function NotificationCard({
                 gap-2
               "
 
-              title={
-                formatFullDate(
-                  notification.notification?.createdAt ||
-                  notification.createdAt
-                )
-              }
-
+              title={formatFullDate(
+                notification.notification?.createdAt || notification.createdAt,
+              )}
             >
-
               🕒
-
-              {
-
-                formatRelativeDate(
-
-                  notification.notification?.createdAt ||
-
-                  notification.createdAt
-
-                )
-
-              }
-
+              {formatRelativeDate(
+                notification.notification?.createdAt || notification.createdAt,
+              )}
             </p>
 
             <div
-
               className="
 
                 mt-3
 
               "
-
             >
-
-              {
-
-                notification.isRead
-
-                  ?
-
-                  (
-
-                    <span
-
-                      className="
+              {notification.isRead ? (
+                <span
+                  className="
 
                         text-xs
 
@@ -407,22 +264,12 @@ function NotificationCard({
                         text-green-600
 
                       "
-
-                    >
-
-                      ✓ Read
-
-                    </span>
-
-                  )
-
-                  :
-
-                  (
-
-                    <span
-
-                      className="
+                >
+                  ✓ Read
+                </span>
+              ) : (
+                <span
+                  className="
 
                         text-xs
 
@@ -431,29 +278,16 @@ function NotificationCard({
                         text-blue-600
 
                       "
-
-                    >
-
-                      ● New
-
-                    </span>
-
-                  )
-
-              }
-
+                >
+                  ● New
+                </span>
+              )}
             </div>
-
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default NotificationCard;

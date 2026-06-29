@@ -1,41 +1,22 @@
-import {
-
-  ChevronLeftIcon,
-
-  ChevronRightIcon,
-
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 function NotificationPagination({
-
   pagination,
 
   onPageChange,
-
 }) {
-
   const {
-
     page,
 
     totalPages,
-
   } = pagination;
 
-  if (
-
-    totalPages <= 1
-
-  ) {
-
+  if (totalPages <= 1) {
     return null;
-
   }
 
   return (
-
     <div
-
       className="
 
         bg-white
@@ -47,11 +28,8 @@ function NotificationPagination({
         p-6
 
       "
-
     >
-
       <div
-
         className="
 
           flex
@@ -61,28 +39,13 @@ function NotificationPagination({
           justify-between
 
         "
-
       >
-
         <button
-
           type="button"
 
-          disabled={
+          disabled={page === 1}
 
-            page === 1
-
-          }
-
-          onClick={() =>
-
-            onPageChange(
-
-              page - 1
-
-            )
-
-          }
+          onClick={() => onPageChange(page - 1)}
 
           className="
 
@@ -107,11 +70,8 @@ function NotificationPagination({
             hover:bg-gray-50
 
           "
-
         >
-
           <ChevronLeftIcon
-
             className="
 
               w-5
@@ -119,15 +79,11 @@ function NotificationPagination({
               h-5
 
             "
-
           />
-
           Previous
-
         </button>
 
         <div
-
           className="
 
             text-gray-600
@@ -135,44 +91,16 @@ function NotificationPagination({
             font-medium
 
           "
-
         >
-
-          Page
-
-          {" "}
-
-          {page}
-
-          {" "}
-
-          of
-
-          {" "}
-
-          {totalPages}
-
+          Page {page} of {totalPages}
         </div>
 
         <button
-
           type="button"
 
-          disabled={
+          disabled={page === totalPages}
 
-            page === totalPages
-
-          }
-
-          onClick={() =>
-
-            onPageChange(
-
-              page + 1
-
-            )
-
-          }
+          onClick={() => onPageChange(page + 1)}
 
           className="
 
@@ -197,13 +125,9 @@ function NotificationPagination({
             hover:bg-gray-50
 
           "
-
         >
-
           Next
-
           <ChevronRightIcon
-
             className="
 
               w-5
@@ -211,17 +135,11 @@ function NotificationPagination({
               h-5
 
             "
-
           />
-
         </button>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default NotificationPagination;

@@ -1,19 +1,12 @@
-import MyEventCard
-
-from "./MyEventCard";
+import MyEventCard from "./MyEventCard";
 
 function MyEventsGrid({
-
   events,
 
   onDelete,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         grid
@@ -21,55 +14,18 @@ function MyEventsGrid({
         gap-6
 
       "
-
     >
+      {events.map((event) => (
+        <MyEventCard
+          key={event.id}
 
-      {
+          event={event}
 
-        events.map(
-
-          (
-
-            event
-
-          ) => (
-
-            <MyEventCard
-
-              key={
-
-                event.id
-
-              }
-
-              event={
-
-                event
-
-              }
-
-              onDelete={() =>
-
-                onDelete(
-
-                  event
-
-                )
-
-              }
-
-            />
-
-          )
-
-        )
-
-      }
-
+          onDelete={() => onDelete(event)}
+        />
+      ))}
     </div>
-
   );
-
 }
 
 export default MyEventsGrid;

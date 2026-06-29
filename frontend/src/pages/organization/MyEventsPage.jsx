@@ -1,239 +1,77 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { Link } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import {
+import PageHeader from "../../components/common/PageHeader";
 
-  Link,
+import LoadingState from "../../components/common/LoadingState";
 
-} from "react-router-dom";
+import EmptyState from "../../components/common/EmptyState";
 
-import toast
+import DeleteConfirmationModal from "../../components/admin/DeleteConfirmationModal";
 
-from "react-hot-toast";
+import MyEventsGrid from "../../components/events/MyEventsGrid";
 
-import DashboardLayout
-
-from "../../components/layouts/DashboardLayout";
-
-import PageHeader
-
-from "../../components/common/PageHeader";
-
-import LoadingState
-
-from "../../components/common/LoadingState";
-
-import EmptyState
-
-from "../../components/common/EmptyState";
-
-import DeleteConfirmationModal
-
-from "../../components/admin/DeleteConfirmationModal";
-
-import MyEventsGrid
-
-from "../../components/events/MyEventsGrid";
-
-import {
-
-  getMyEvents,
-
-  deleteEvent,
-
-} from "../../api/eventApi";
+import { getMyEvents, deleteEvent } from "../../api/eventApi";
 
 function MyEventsPage() {
+  const [events, setEvents] = useState([]);
 
-  const [
+  const [loading, setLoading] = useState(true);
 
-    events,
+  const [selected, setSelected] = useState(null);
 
-    setEvents,
-
-  ] = useState([]);
-
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    selected,
-
-    setSelected,
-
-  ] = useState(null);
-
-  const [
-
-    deleteOpen,
-
-    setDeleteOpen,
-
-  ] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   useEffect(() => {
-
     loadEvents();
-
   }, []);
 
-  const loadEvents =
+  const loadEvents = async () => {
+    try {
+      setLoading(true);
 
-    async () => {
+      const data = await getMyEvents();
 
-      try {
+      setEvents(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
 
-        setLoading(
+      toast.error("Failed to load events");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-          true
+  const openDelete = (event) => {
+    setSelected(event);
 
-        );
+    setDeleteOpen(true);
+  };
 
-        const data =
+  const handleDelete = async () => {
+    try {
+      await deleteEvent(selected.id);
 
-          await getMyEvents();
+      toast.success("Event deleted");
 
-        setEvents(
+      setDeleteOpen(false);
 
-          Array.isArray(
+      loadEvents();
+    } catch (error) {
+      console.error(error);
 
-            data
-
-          )
-
-          ? data
-
-          : []
-
-        );
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          "Failed to load events"
-
-        );
-
-      }
-
-      finally {
-
-        setLoading(
-
-          false
-
-        );
-
-      }
-
-    };
-
-  const openDelete =
-
-    (
-
-      event
-
-    ) => {
-
-      setSelected(
-
-        event
-
-      );
-
-      setDeleteOpen(
-
-        true
-
-      );
-
-    };
-
-  const handleDelete =
-
-    async () => {
-
-      try {
-
-        await deleteEvent(
-
-          selected.id
-
-        );
-
-        toast.success(
-
-          "Event deleted"
-
-        );
-
-        setDeleteOpen(
-
-          false
-
-        );
-
-        loadEvents();
-
-      }
-
-      catch (
-
-        error
-
-      ) {
-
-        console.error(
-
-          error
-
-        );
-
-        toast.error(
-
-          error?.response
-
-          ?.data?.message ||
-
-          "Delete failed"
-
-        );
-
-      }
-
-    };
+      toast.error(error?.response?.data?.message || "Delete failed");
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -243,11 +81,8 @@ function MyEventsPage() {
           space-y-8
 
         "
-
       >
-
         <div
-
           className="
 
             flex
@@ -263,19 +98,14 @@ function MyEventsPage() {
             gap-6
 
           "
-
         >
-
           <PageHeader
-
             title="My Events"
 
             description="Manage all your events"
-
           />
 
           <Link
-
             to="/events/create"
 
             className="
@@ -295,105 +125,41 @@ function MyEventsPage() {
               font-medium
 
             "
-
           >
-
             Create Event
-
           </Link>
-
         </div>
 
-        {
+        {loading && <LoadingState />}
 
-          loading &&
+        {!loading && events.length === 0 && (
+          <EmptyState
+            title="No Events Yet"
 
-          <LoadingState />
+            description="Create your first event"
+          />
+        )}
 
-        }
+        {!loading && events.length > 0 && (
+          <MyEventsGrid
+            events={events}
 
-        {
-
-          !loading &&
-
-          events.length === 0 && (
-
-            <EmptyState
-
-              title="No Events Yet"
-
-              description="Create your first event"
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading &&
-
-          events.length > 0 && (
-
-            <MyEventsGrid
-
-              events={
-
-                events
-
-              }
-
-              onDelete={
-
-                openDelete
-
-              }
-
-            />
-
-          )
-
-        }
+            onDelete={openDelete}
+          />
+        )}
 
         <DeleteConfirmationModal
+          open={deleteOpen}
 
-          open={
+          title={selected?.title}
 
-            deleteOpen
+          onClose={() => setDeleteOpen(false)}
 
-          }
-
-          title={
-
-            selected?.title
-
-          }
-
-          onClose={() =>
-
-            setDeleteOpen(
-
-              false
-
-            )
-
-          }
-
-          onConfirm={
-
-            handleDelete
-
-          }
-
+          onConfirm={handleDelete}
         />
-
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default MyEventsPage;

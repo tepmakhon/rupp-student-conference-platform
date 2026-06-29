@@ -1,96 +1,55 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
-import {
-  useParams,
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-import DashboardLayout
-from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import ApplicantCard
-from "../../components/organization/ApplicantCard";
+import ApplicantCard from "../../components/organization/ApplicantCard";
 
-import {
-  getApplicants,
-} from "../../api/applicationApi";
+import { getApplicants } from "../../api/applicationApi";
 
-import toast
-from "react-hot-toast";
+import toast from "react-hot-toast";
 
 function OpportunityApplicantsPage() {
+  const { id } = useParams();
 
-  const {
-    id,
-  } = useParams();
+  const [applicants, setApplicants] = useState([]);
 
-  const [
-    applicants,
-    setApplicants,
-  ] = useState([]);
-
-  const [
-    loading,
-    setLoading,
-  ] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     loadApplicants();
-
   }, [id]);
 
-  const loadApplicants =
-    async () => {
+  const loadApplicants = async () => {
+    try {
+      setLoading(true);
 
-      try {
+      const data = await getApplicants(id);
 
-        setLoading(true);
+      setApplicants(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
 
-        const data =
-          await getApplicants(id);
-
-        setApplicants(
-          Array.isArray(data)
-            ? data
-            : []
-        );
-
-      } catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          "Failed to load applicants"
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    };
+      toast.error("Failed to load applicants");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
         className="
           max-w-7xl
           mx-auto
         "
       >
-
         <div
           className="
             mb-8
           "
         >
-
           <h1
             className="
               text-4xl
@@ -98,9 +57,7 @@ function OpportunityApplicantsPage() {
               text-primary
             "
           >
-
             Opportunity Applicants
-
           </h1>
 
           <p
@@ -109,123 +66,70 @@ function OpportunityApplicantsPage() {
               mt-2
             "
           >
-
             Review and manage applicants.
-
           </p>
-
         </div>
 
-        {
-
-          loading
-
-          ? (
-
-            <div
-              className="
+        {loading ? (
+          <div
+            className="
                 flex
                 justify-center
                 py-20
               "
-            >
-
-              Loading...
-
-            </div>
-
-          )
-
-          : applicants.length === 0
-
-          ? (
-
-            <div
-              className="
+          >
+            Loading...
+          </div>
+        ) : applicants.length === 0 ? (
+          <div
+            className="
                 bg-white
                 rounded-2xl
                 shadow-md
                 p-10
                 text-center
               "
-            >
-
-              <h2
-                className="
+          >
+            <h2
+              className="
                   text-2xl
                   font-bold
                   text-primary
                 "
-              >
+            >
+              No Applicants Yet
+            </h2>
 
-                No Applicants Yet
-
-              </h2>
-
-              <p
-                className="
+            <p
+              className="
                   text-gray-500
                   mt-2
                 "
-              >
-
-                Nobody has applied yet.
-
-              </p>
-
-            </div>
-
-          )
-
-          : (
-
-            <div
-              className="
+            >
+              Nobody has applied yet.
+            </p>
+          </div>
+        ) : (
+          <div
+            className="
                 grid
                 gap-6
               "
-            >
+          >
+            {applicants.map((applicant) => (
+              <ApplicantCard
+                key={applicant.id}
 
-              {
+                applicant={applicant}
 
-                applicants.map(
-                  (
-                    applicant
-                  ) => (
-
-                    <ApplicantCard
-
-                      key={
-                        applicant.id
-                      }
-
-                      applicant={
-                        applicant
-                      }
-
-                      onUpdate={
-                        loadApplicants
-                      }
-
-                    />
-
-                  )
-                )
-
-              }
-
-            </div>
-
-          )
-
-        }
-
+                onUpdate={loadApplicants}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default OpportunityApplicantsPage;

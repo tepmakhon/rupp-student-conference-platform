@@ -1,28 +1,15 @@
 function EventFilterBar({
-
   categories,
 
   value,
 
   onChange,
-
 }) {
-
   return (
-
     <select
-
       value={value}
 
-      onChange={(e) =>
-
-        onChange(
-
-          e.target.value
-
-        )
-
-      }
+      onChange={(e) => onChange(e.target.value)}
 
       className="
 
@@ -35,59 +22,20 @@ function EventFilterBar({
         py-3
 
       "
-
     >
+      <option value="">All Categories</option>
 
-      <option value="">
+      {categories.map((category) => (
+        <option
+          key={category.id}
 
-        All Categories
-
-      </option>
-
-      {
-
-        categories.map(
-
-          (
-
-            category
-
-          ) => (
-
-            <option
-
-              key={
-
-                category.id
-
-              }
-
-              value={
-
-                category.id
-
-              }
-
-            >
-
-              {
-
-                category.categoryName
-
-              }
-
-            </option>
-
-          )
-
-        )
-
-      }
-
+          value={category.id}
+        >
+          {category.categoryName}
+        </option>
+      ))}
     </select>
-
   );
-
 }
 
 export default EventFilterBar;

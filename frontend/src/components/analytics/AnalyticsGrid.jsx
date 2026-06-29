@@ -1,13 +1,7 @@
 import AnalyticsCard from "./AnalyticsCard";
 
-function AnalyticsGrid({
-
-  cards,
-
-}) {
-
+function AnalyticsGrid({ cards }) {
   return (
-
     <div
       className="
         grid
@@ -16,27 +10,15 @@ function AnalyticsGrid({
         gap-6
       "
     >
+      {cards.map((card) => (
+        <AnalyticsCard
+          key={card.title}
 
-      {
-
-        cards.map(card => (
-
-          <AnalyticsCard
-
-            key={card.title}
-
-            {...card}
-
-          />
-
-        ))
-
-      }
-
+          {...card}
+        />
+      ))}
     </div>
-
   );
-
 }
 
 export default AnalyticsGrid;

@@ -1,177 +1,74 @@
-import {
+import { useState } from "react";
 
-  useState,
+import { useDispatch } from "react-redux";
 
-} from "react";
+import { useNavigate } from "react-router-dom";
 
-import {
+import toast from "react-hot-toast";
 
-  useDispatch,
+import { loginUser } from "../../api/authApi";
 
-} from "react-redux";
-
-import {
-
-  useNavigate,
-
-} from "react-router-dom";
-
-import toast
-
-from "react-hot-toast";
-
-import {
-
-  loginUser,
-
-} from "../../api/authApi";
-
-import {
-
-  loginSuccess,
-
-} from "../../redux/slices/authSlice";
+import { loginSuccess } from "../../redux/slices/authSlice";
 
 function LoginPage() {
+  const dispatch = useDispatch();
 
-  const dispatch =
+  const navigate = useNavigate();
 
-    useDispatch();
+  const [loading, setLoading] = useState(false);
 
-  const navigate =
+  const [email, setEmail] = useState("");
 
-    useNavigate();
+  const [password, setPassword] = useState("");
 
-  const [
-
-    loading,
-
-    setLoading,
-
-  ] = useState(false);
-
-  const [
-
-    email,
-
-    setEmail,
-
-  ] = useState("");
-
-  const [
-
-    password,
-
-    setPassword,
-
-  ] = useState("");
-
-  const handleSubmit =
-
-  async (e) => {
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-
       if (!email) {
-
-        return toast.error(
-
-          "Email is required"
-
-        );
-
+        return toast.error("Email is required");
       }
 
       if (!password) {
-
-        return toast.error(
-
-          "Password is required"
-
-        );
-
+        return toast.error("Password is required");
       }
 
       setLoading(true);
 
-      const data =
-
-      await loginUser({
-
-        email:
-
-        email.trim(),
+      const data = await loginUser({
+        email: email.trim(),
 
         password,
-
       });
 
       dispatch(
-
         loginSuccess({
+          user: data.user,
 
-          user:
-
-          data.user,
-
-          token:
-
-          data.token,
-
-        })
-
+          token: data.token,
+        }),
       );
 
-      toast.success(
-
-        "Login successful"
-
-      );
+      toast.success("Login successful");
 
       navigate(
-
         "/dashboard",
 
         {
-
           replace: true,
-
-        }
-
+        },
       );
-
-    }
-
-    catch (error) {
-
+    } catch (error) {
       console.error(error);
 
-      toast.error(
-
-        error?.response
-
-        ?.data?.message ||
-
-        "Login failed"
-
-      );
-
-    }
-
-    finally {
-
+      toast.error(error?.response?.data?.message || "Login failed");
+    } finally {
       setLoading(false);
-
     }
-
   };
 
   return (
-
     <div
-
       className="
 
       min-h-screen
@@ -187,11 +84,8 @@ function LoginPage() {
       px-4
 
       "
-
     >
-
       <div
-
         className="
 
         w-full
@@ -207,13 +101,9 @@ function LoginPage() {
         p-10
 
         "
-
       >
-
         <div className="text-center mb-8">
-
           <h1
-
             className="
 
             text-4xl
@@ -223,15 +113,11 @@ function LoginPage() {
             text-primary
 
             "
-
           >
-
             RUPP Platform
-
           </h1>
 
           <p
-
             className="
 
             text-gray-500
@@ -239,31 +125,18 @@ function LoginPage() {
             mt-3
 
             "
-
           >
-
             Welcome back
-
           </p>
-
         </div>
 
         <form
-
-          onSubmit={
-
-            handleSubmit
-
-          }
+          onSubmit={handleSubmit}
 
           className="space-y-5"
-
         >
-
           <div>
-
             <label
-
               className="
 
               block
@@ -273,28 +146,16 @@ function LoginPage() {
               font-medium
 
               "
-
             >
-
               Email
-
             </label>
 
             <input
-
               type="email"
 
               value={email}
 
-              onChange={(e)=>
-
-                setEmail(
-
-                  e.target.value
-
-                )
-
-              }
+              onChange={(e) => setEmail(e.target.value)}
 
               placeholder="Enter email"
 
@@ -311,15 +172,11 @@ function LoginPage() {
               py-3
 
               "
-
             />
-
           </div>
 
           <div>
-
             <label
-
               className="
 
               block
@@ -329,28 +186,16 @@ function LoginPage() {
               font-medium
 
               "
-
             >
-
               Password
-
             </label>
 
             <input
-
               type="password"
 
               value={password}
 
-              onChange={(e)=>
-
-                setPassword(
-
-                  e.target.value
-
-                )
-
-              }
+              onChange={(e) => setPassword(e.target.value)}
 
               placeholder="Enter password"
 
@@ -367,13 +212,10 @@ function LoginPage() {
               py-3
 
               "
-
             />
-
           </div>
 
           <button
-
             disabled={loading}
 
             className="
@@ -393,29 +235,12 @@ function LoginPage() {
             transition
 
             "
-
           >
-
-            {
-
-              loading
-
-              ?
-
-              "Signing In..."
-
-              :
-
-              "Login"
-
-            }
-
+            {loading ? "Signing In..." : "Login"}
           </button>
-
         </form>
 
         <div
-
           className="
 
           mt-8
@@ -423,22 +248,10 @@ function LoginPage() {
           text-center
 
           "
-
         >
-
           Don't have an account?
-
           <button
-
-            onClick={()=>
-
-              navigate(
-
-                "/register"
-
-              )
-
-            }
+            onClick={() => navigate("/register")}
 
             className="
 
@@ -449,21 +262,13 @@ function LoginPage() {
             font-semibold
 
             "
-
           >
-
             Register
-
           </button>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default LoginPage;

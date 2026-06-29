@@ -1,17 +1,10 @@
 function ErrorState({
-
-  message =
-
-    "Something went wrong.",
+  message = "Something went wrong.",
 
   action,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         bg-red-50
@@ -27,11 +20,8 @@ function ErrorState({
         text-center
 
       "
-
     >
-
       <h2
-
         className="
 
           text-2xl
@@ -43,15 +33,11 @@ function ErrorState({
           mb-3
 
         "
-
       >
-
         Error
-
       </h2>
 
       <p
-
         className="
 
           text-gray-600
@@ -59,23 +45,13 @@ function ErrorState({
           mb-6
 
         "
-
       >
-
         {message}
-
       </p>
 
-      {
-
-        action
-
-      }
-
+      {action}
     </div>
-
   );
-
 }
 
 export default ErrorState;

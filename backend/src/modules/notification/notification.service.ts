@@ -11,24 +11,15 @@ import { emitNotification } from "../../socket/socket.js";
 export const getMyNotifications = async (
   userId: bigint,
   page = 1,
-  limit = 10
+  limit = 10,
 ) => {
-
   if (page < 1 || limit < 1) {
-    throw new AppError(
-      "Invalid pagination values",
-      400
-    );
+    throw new AppError("Invalid pagination values", 400);
   }
 
-  const { skip } =
-    getPagination(page, limit);
+  const { skip } = getPagination(page, limit);
 
-  const [
-    userNotifications,
-    total,
-  ] = await Promise.all([
-
+  const [userNotifications, total] = await Promise.all([
     prisma.userNotification.findMany({
       where: {
         userId,
@@ -62,8 +53,7 @@ export const getMyNotifications = async (
       page,
       limit,
       total,
-      totalPages:
-        Math.ceil(total / limit),
+      totalPages: Math.ceil(total / limit),
     },
   };
 };
@@ -74,24 +64,16 @@ export const getMyNotifications = async (
 |--------------------------------------------------------------------------
 */
 
-export const markAsRead = async (
-  notificationId: bigint,
-  userId: bigint
-) => {
-
-  const notification =
-    await prisma.userNotification.findFirst({
-      where: {
-        id: notificationId,
-        userId,
-      },
-    });
+export const markAsRead = async (notificationId: bigint, userId: bigint) => {
+  const notification = await prisma.userNotification.findFirst({
+    where: {
+      id: notificationId,
+      userId,
+    },
+  });
 
   if (!notification) {
-    throw new AppError(
-      "Notification not found",
-      404
-    );   
+    throw new AppError("Notification not found", 404);
   }
 
   return prisma.userNotification.update({
@@ -111,10 +93,7 @@ export const markAsRead = async (
 |--------------------------------------------------------------------------
 */
 
-export const markAllAsRead = async (
-  userId: bigint
-) => {
-
+export const markAllAsRead = async (userId: bigint) => {
   return prisma.userNotification.updateMany({
     where: {
       userId,
@@ -134,38 +113,29 @@ export const markAllAsRead = async (
 */
 
 export const createNotification = async (
-
   userId: bigint,
 
   title: string,
 
   message: string,
 
-  type: "EVENT" | "OPPORTUNITY" | "SYSTEM" = "SYSTEM"
-
+  type: "EVENT" | "OPPORTUNITY" | "SYSTEM" = "SYSTEM",
 ) => {
-
   /*
   |--------------------------------------------------------------------------
   | Create Notification
   |--------------------------------------------------------------------------
   */
 
-  const notification =
+  const notification = await prisma.notification.create({
+    data: {
+      title,
 
-    await prisma.notification.create({
+      message,
 
-      data: {
-
-        title,
-
-        message,
-
-        type,
-
-      },
-
-    });
+      type,
+    },
+  });
 
   /*
   |--------------------------------------------------------------------------
@@ -173,25 +143,17 @@ export const createNotification = async (
   |--------------------------------------------------------------------------
   */
 
-  const userNotification =
+  const userNotification = await prisma.userNotification.create({
+    data: {
+      userId,
 
-    await prisma.userNotification.create({
+      notificationId: notification.id,
+    },
 
-      data: {
-
-        userId,
-
-        notificationId: notification.id,
-
-      },
-
-      include: {
-
-        notification: true,
-
-      },
-
-    });
+    include: {
+      notification: true,
+    },
+  });
 
   /*
   |--------------------------------------------------------------------------
@@ -200,15 +162,12 @@ export const createNotification = async (
   */
 
   emitNotification(
-
     userId,
 
-    userNotification
-
+    userNotification,
   );
 
   return userNotification;
-
 };
 
 /*
@@ -220,61 +179,35 @@ export const createNotification = async (
 export const notifyAdmins = async (
   title: string,
   message: string,
-  type:
-    | "EVENT"
-    | "OPPORTUNITY"
-    | "SYSTEM" = "SYSTEM"
+  type: "EVENT" | "OPPORTUNITY" | "SYSTEM" = "SYSTEM",
 ) => {
-
-  const adminRole =
-    await prisma.role.findUnique({
-
-      where: {
-
-        roleName: "ADMIN",
-
-      },
-
-    });
+  const adminRole = await prisma.role.findUnique({
+    where: {
+      roleName: "ADMIN",
+    },
+  });
 
   if (!adminRole) {
-
     return;
-
   }
 
-  const admins =
-    await prisma.user.findMany({
-
-      where: {
-
-        roleId:
-          adminRole.id,
-
-      },
-
-    });
+  const admins = await prisma.user.findMany({
+    where: {
+      roleId: adminRole.id,
+    },
+  });
 
   await Promise.all(
+    admins.map((admin) =>
+      createNotification(
+        admin.id,
 
-    admins.map(
+        title,
 
-      (admin) =>
+        message,
 
-        createNotification(
-
-          admin.id,
-
-          title,
-
-          message,
-
-          type
-
-        )
-
-    )
-
+        type,
+      ),
+    ),
   );
-
 };

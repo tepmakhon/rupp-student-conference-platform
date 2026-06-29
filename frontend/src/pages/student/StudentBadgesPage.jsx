@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import toast from "react-hot-toast";
 
@@ -19,101 +16,46 @@ import BadgeGrid from "../../components/badges/BadgeGrid";
 
 import BadgeEmpty from "../../components/badges/BadgeEmpty";
 
-import {
-  getMyBadges,
-} from "../../api/badgeApi";
+import { getMyBadges } from "../../api/badgeApi";
 
 function StudentBadgesPage() {
+  const [loading, setLoading] = useState(true);
 
-  const [
+  const [error, setError] = useState("");
 
-    loading,
+  const [badges, setBadges] = useState([]);
 
-    setLoading,
-
-  ] = useState(true);
-
-  const [
-
-    error,
-
-    setError,
-
-  ] = useState("");
-
-  const [
-
-    badges,
-
-    setBadges,
-
-  ] = useState([]);
-
-  const [
-
-    activityScore,
-
-    setActivityScore,
-
-  ] = useState(0);
+  const [activityScore, setActivityScore] = useState(0);
 
   useEffect(() => {
-
     loadBadges();
-
   }, []);
 
-  const loadBadges =
+  const loadBadges = async () => {
+    try {
+      setLoading(true);
 
-    async () => {
+      setError("");
 
-      try {
+      const data = await getMyBadges();
 
-        setLoading(true);
+      setBadges(data.badges);
 
-        setError("");
+      setActivityScore(data.activityScore);
+    } catch (error) {
+      console.error(error);
 
-        const data =
-          await getMyBadges();
+      toast.error("Failed to load badges");
 
-        setBadges(
-          data.badges
-        );
-
-        setActivityScore(
-          data.activityScore
-        );
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        toast.error(
-          "Failed to load badges"
-        );
-
-        setError(
-          "Failed to load badges"
-        );
-
-      }
-
-      finally {
-
-        setLoading(false);
-
-      }
-
-    };
+      setError("Failed to load badges");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -123,85 +65,35 @@ function StudentBadgesPage() {
           space-y-8
 
         "
-
       >
-
         <PageHeader
-
           title="My Badges"
 
           description="Achievements earned from your activities."
-
         />
 
-        {
+        {loading && <LoadingState />}
 
-          loading &&
+        {!loading && error && <ErrorState message={error} />}
 
-          <LoadingState />
-
-        }
-
-        {
-
-          !loading &&
-
-          error &&
-
-          <ErrorState
-
-            message={error}
-
-          />
-
-        }
-
-        {
-
-          !loading &&
-
-          !error &&
-
+        {!loading && !error && (
           <>
-
             <BadgeStats
               activityScore={activityScore}
               badgeCount={badges.length}
               badges={badges}
             />
 
-            {
-
-              badges.length === 0
-
-              ?
-
+            {badges.length === 0 ? (
               <BadgeEmpty />
-
-              :
-
-              <BadgeGrid
-
-                badges={
-
-                  badges
-
-                }
-
-              />
-
-            }
-
+            ) : (
+              <BadgeGrid badges={badges} />
+            )}
           </>
-
-        }
-
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default StudentBadgesPage;

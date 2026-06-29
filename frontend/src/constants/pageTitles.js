@@ -1,69 +1,47 @@
 const pageTitles = {
-  "/dashboard":
-    "Dashboard",
+  "/dashboard": "Dashboard",
 
-  "/leaderboard":
-    "Leaderboard",
+  "/leaderboard": "Leaderboard",
 
-  "/events":
-    "Events",
+  "/events": "Events",
 
-  "/opportunities":
-    "Opportunities",
-    
-  "/recommendations":
-    "Recommended",
+  "/opportunities": "Opportunities",
 
-  "/saved-opportunities":
-    "Saved Opportunities",
+  "/recommendations": "Recommended",
 
-  "/my-events":
-    "My Events",
+  "/saved-opportunities": "Saved Opportunities",
 
-  "/my-applications":
-    "My Applications",
+  "/my-events": "My Events",
 
-  "/activity-history":
-    "Activity History",
+  "/my-applications": "My Applications",
 
-  "/badges":
-    "My Badges",
+  "/activity-history": "Activity History",
 
-  "/organization/events":
-    "My Events",
+  "/badges": "My Badges",
 
-  "/organization/opportunities":
-    "My Opportunities",
+  "/organization/events": "My Events",
 
-  "/admin/events/pending":
-    "Pending Events",
+  "/organization/opportunities": "My Opportunities",
 
-  "/admin/opportunities/pending":
-    "Pending Opportunities",
+  "/admin/events/pending": "Pending Events",
 
-  "/admin/event-categories":
-    "Event Categories",
+  "/admin/opportunities/pending": "Pending Opportunities",
 
-  "/admin/opportunity-types":
-    "Opportunity Types",
+  "/admin/event-categories": "Event Categories",
 
-  "/admin/universities":
-    "Universities",
+  "/admin/opportunity-types": "Opportunity Types",
 
-  "/admin/faculties":
-    "Faculties",
+  "/admin/universities": "Universities",
 
-  "/admin/majors":
-    "Majors",
+  "/admin/faculties": "Faculties",
 
-  "/admin/skills":
-    "Skills",
+  "/admin/majors": "Majors",
 
-  "/profile":
-    "Profile",
+  "/admin/skills": "Skills",
 
-  "/analytics":
-    "Analytics",
+  "/profile": "Profile",
+
+  "/analytics": "Analytics",
 };
 
 export default pageTitles;

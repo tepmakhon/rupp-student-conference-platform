@@ -1,46 +1,22 @@
-import {
-  Bars3Icon,
-} from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 
-import {
-  useLocation,
-} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-import pageTitles
-from "../../constants/pageTitles";
+import pageTitles from "../../constants/pageTitles";
 
-import NavbarSearch
-from "./NavbarSearch";
+import NavbarSearch from "./NavbarSearch";
 
-import NavbarNotifications
-from "./NavbarNotifications";
+import NavbarNotifications from "./NavbarNotifications";
 
-import NavbarProfile
-from "./NavbarProfile";
+import NavbarProfile from "./NavbarProfile";
 
-function Navbar({
+function Navbar({ setSidebarOpen }) {
+  const location = useLocation();
 
-  setSidebarOpen,
-
-}) {
-
-  const location =
-    useLocation();
-
-  const currentTitle =
-
-    pageTitles[
-      location.pathname
-    ]
-
-    ||
-
-    "Dashboard";
+  const currentTitle = pageTitles[location.pathname] || "Dashboard";
 
   return (
-
     <header
-
       className="
         sticky
         top-0
@@ -64,11 +40,8 @@ function Navbar({
 
         shadow-sm
       "
-
     >
-
       <div
-
         className="
           flex
 
@@ -76,40 +49,26 @@ function Navbar({
 
           gap-5
         "
-
       >
-
         <button
-
-          onClick={() =>
-            setSidebarOpen(
-              true
-            )
-          }
+          onClick={() => setSidebarOpen(true)}
 
           className="
             md:hidden
           "
-
         >
-
           <Bars3Icon
-
             className="
               w-8
               h-8
 
               text-primary
             "
-
           />
-
         </button>
 
         <div>
-
           <p
-
             className="
               text-sm
 
@@ -117,15 +76,11 @@ function Navbar({
 
               text-yellow-500
             "
-
           >
-
             RUPP Platform
-
           </p>
 
           <h1
-
             className="
               text-2xl
 
@@ -133,21 +88,15 @@ function Navbar({
 
               text-primary
             "
-
           >
-
             {currentTitle}
-
           </h1>
-
         </div>
-
       </div>
 
       <NavbarSearch />
 
       <div
-
         className="
           flex
 
@@ -155,19 +104,13 @@ function Navbar({
 
           gap-5
         "
-
       >
-
         <NavbarNotifications />
 
         <NavbarProfile />
-
       </div>
-
     </header>
-
   );
-
 }
 
 export default Navbar;

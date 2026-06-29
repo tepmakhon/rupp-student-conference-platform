@@ -1,15 +1,10 @@
 function EmptyState({
-
   title,
 
   description,
-
 }) {
-
   return (
-
     <div
-
       className="
 
         bg-white
@@ -25,11 +20,8 @@ function EmptyState({
         text-center
 
       "
-
     >
-
       <h2
-
         className="
 
           text-2xl
@@ -39,15 +31,11 @@ function EmptyState({
           text-primary
 
         "
-
       >
-
         {title}
-
       </h2>
 
       <p
-
         className="
 
           text-gray-500
@@ -55,17 +43,11 @@ function EmptyState({
           mt-2
 
         "
-
       >
-
         {description}
-
       </p>
-
     </div>
-
   );
-
 }
 
 export default EmptyState;

@@ -1,26 +1,13 @@
 function EventRegisterButton({
-
   registering,
 
   onRegister,
-
 }) {
-
   return (
-
     <button
+      onClick={onRegister}
 
-      onClick={
-
-        onRegister
-
-      }
-
-      disabled={
-
-        registering
-
-      }
+      disabled={registering}
 
       className="
 
@@ -45,27 +32,10 @@ function EventRegisterButton({
         transition
 
       "
-
     >
-
-      {
-
-        registering
-
-        ?
-
-        "Registering..."
-
-        :
-
-        "Register Event"
-
-      }
-
+      {registering ? "Registering..." : "Register Event"}
     </button>
-
   );
-
 }
 
 export default EventRegisterButton;

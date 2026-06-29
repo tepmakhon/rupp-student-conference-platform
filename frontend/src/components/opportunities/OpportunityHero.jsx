@@ -1,21 +1,9 @@
-import {
-  Briefcase,
-  Building2,
-  Calendar,
-} from "lucide-react";
+import { Briefcase, Building2, Calendar } from "lucide-react";
 
-import {
-  formatDate,
-} from "../../utils/formatDate";
+import { formatDate } from "../../utils/formatDate";
 
-function OpportunityHero({
-
-  opportunity,
-
-}) {
-
+function OpportunityHero({ opportunity }) {
   return (
-
     <div
       className="
         relative
@@ -24,24 +12,16 @@ function OpportunityHero({
         overflow-hidden
       "
     >
-
       <img
+        src={opportunity.coverImageUrl || "https://placehold.co/1200x500"}
 
-        src={
-          opportunity.coverImageUrl ||
-          "https://placehold.co/1200x500"
-        }
-
-        alt={
-          opportunity.title
-        }
+        alt={opportunity.title}
 
         className="
           w-full
           h-full
           object-cover
         "
-
       />
 
       <div
@@ -65,7 +45,6 @@ function OpportunityHero({
           text-white
         "
       >
-
         <div
           className="
             flex
@@ -74,7 +53,6 @@ function OpportunityHero({
             mb-5
           "
         >
-
           <span
             className="
               px-4
@@ -85,12 +63,7 @@ function OpportunityHero({
               font-semibold
             "
           >
-
-            {
-              opportunity.type
-              ?.typeName
-            }
-
+            {opportunity.type?.typeName}
           </span>
 
           <span
@@ -102,13 +75,8 @@ function OpportunityHero({
               backdrop-blur-sm
             "
           >
-
-            {
-              opportunity.status
-            }
-
+            {opportunity.status}
           </span>
-
         </div>
 
         <h1
@@ -117,11 +85,7 @@ function OpportunityHero({
             font-bold
           "
         >
-
-          {
-            opportunity.title
-          }
-
+          {opportunity.title}
         </h1>
 
         <div
@@ -132,7 +96,6 @@ function OpportunityHero({
             mt-6
           "
         >
-
           <div
             className="
               flex
@@ -140,18 +103,9 @@ function OpportunityHero({
               gap-2
             "
           >
-
             <Building2 size={20} />
 
-            <span>
-
-              {
-                opportunity.organization
-                ?.organizationName
-              }
-
-            </span>
-
+            <span>{opportunity.organization?.organizationName}</span>
           </div>
 
           <div
@@ -161,28 +115,13 @@ function OpportunityHero({
               gap-2
             "
           >
-
             <Calendar size={20} />
 
             <span>
-
-              {
-                opportunity.deadline
-
-                ?
-
-                formatDate(
-                  opportunity.deadline
-                )
-
-                :
-
-                "No deadline"
-
-              }
-
+              {opportunity.deadline
+                ? formatDate(opportunity.deadline)
+                : "No deadline"}
             </span>
-
           </div>
 
           <div
@@ -192,28 +131,14 @@ function OpportunityHero({
               gap-2
             "
           >
-
             <Briefcase size={20} />
 
-            <span>
-
-              {
-                opportunity.type
-                ?.typeName
-              }
-
-            </span>
-
+            <span>{opportunity.type?.typeName}</span>
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 }
 
 export default OpportunityHero;

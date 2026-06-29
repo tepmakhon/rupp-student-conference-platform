@@ -1,169 +1,50 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { useNavigate } from "react-router-dom";
 
-  useState,
+import toast from "react-hot-toast";
 
-} from "react";
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-import {
+import DashboardLoading from "../../components/dashboard/DashboardLoading";
 
-  useNavigate,
+import DashboardError from "../../components/dashboard/DashboardError";
 
-} from "react-router-dom";
+import ProfileCard from "../../components/profile/ProfileCard";
 
-import toast
+import ProfileAvatar from "../../components/profile/ProfileAvatar";
 
-from "react-hot-toast";
+import ProfileCompletion from "../../components/profile/ProfileCompletion";
 
-import DashboardLayout
+import EditProfileHero from "../../components/profile/EditProfileHero";
 
-from "../../components/layouts/DashboardLayout";
+import EditProfileActions from "../../components/profile/EditProfileActions";
 
-import DashboardLoading
+import EditProfileSkills from "../../components/profile/EditProfileSkills";
 
-from "../../components/dashboard/DashboardLoading";
+import { getMyProfile, updateMyProfile } from "../../api/profileApi";
 
-import DashboardError
-
-from "../../components/dashboard/DashboardError";
-
-import ProfileCard
-
-from "../../components/profile/ProfileCard";
-
-import ProfileAvatar
-
-from "../../components/profile/ProfileAvatar";
-
-import ProfileCompletion
-
-from "../../components/profile/ProfileCompletion";
-
-import EditProfileHero
-
-from "../../components/profile/EditProfileHero";
-
-import EditProfileActions
-
-from "../../components/profile/EditProfileActions";
-
-import EditProfileSkills
-
-from "../../components/profile/EditProfileSkills";
-
-import {
-
-  getMyProfile,
-
-  updateMyProfile,
-
-}
-
-from "../../api/profileApi";
-
-import {
-
-  updateMySkills,
-
-}
-
-from "../../api/studentSkillApi";
+import { updateMySkills } from "../../api/studentSkillApi";
 
 function EditProfilePage() {
+  const navigate = useNavigate();
 
-  const navigate =
+  const [loading, setLoading] = useState(true);
 
-    useNavigate();
+  const [saving, setSaving] = useState(false);
 
-  const [
+  const [error, setError] = useState(null);
 
-    loading,
+  const [profile, setProfile] = useState(null);
+  const isStudent = Boolean(profile?.student);
 
-    setLoading,
+  const isOrganization = Boolean(profile?.organization);
 
-  ] = useState(
+  const isAdmin = profile?.role?.roleName === "ADMIN";
 
-    true
+  const [selectedSkills, setSelectedSkills] = useState([]);
 
-  );
-
-  const [
-
-    saving,
-
-    setSaving,
-
-  ] = useState(
-
-    false
-
-  );
-
-  const [
-
-    error,
-
-    setError,
-
-  ] = useState(
-
-    null
-
-  );
-
-  const [
-
-    profile,
-
-    setProfile,
-
-  ] = useState(
-
-    null
-
-  );
-    const isStudent =
-
-    Boolean(
-
-      profile?.student
-
-    );
-
-    const isOrganization =
-
-    Boolean(
-
-      profile?.organization
-
-    );
-
-    const isAdmin =
-
-    profile?.role
-
-    ?.roleName ===
-
-    "ADMIN";
-
-
-  const [
-
-    selectedSkills,
-
-    setSelectedSkills,
-
-  ] = useState([]);
-
-  const [
-
-    form,
-
-    setForm,
-
-  ] = useState({
-
+  const [form, setForm] = useState({
     fullName: "",
 
     phoneNumber: "",
@@ -179,345 +60,105 @@ function EditProfilePage() {
     academicYear: "",
 
     websiteUrl: "",
-
   });
 
   useEffect(() => {
-
     loadProfile();
-
   }, []);
 
-  const loadProfile =
-
-  async () => {
-
+  const loadProfile = async () => {
     try {
+      setLoading(true);
 
-      setLoading(
+      setError(null);
 
-        true
+      const data = await getMyProfile();
 
-      );
-
-      setError(
-
-        null
-
-      );
-
-      const data =
-
-      await getMyProfile();
-
-      setProfile(
-
-        data
-
-      );
+      setProfile(data);
 
       setForm({
+        fullName: data.profile?.fullName || "",
 
-        fullName:
+        phoneNumber: data.profile?.phoneNumber || "",
 
-        data.profile
+        gender: data.profile?.gender || "",
 
-        ?.fullName ||
+        dateOfBirth: data.profile?.dateOfBirth
+          ? new Date(data.profile.dateOfBirth)
 
-        "",
+              .toISOString()
 
-        phoneNumber:
+              .split("T")[0]
+          : "",
 
-        data.profile
+        bio: data.profile?.bio || "",
 
-        ?.phoneNumber ||
+        profileImageUrl: data.profile?.profileImageUrl || "",
 
-        "",
+        academicYear: data.student?.academicYear || "",
 
-        gender:
-
-        data.profile
-
-        ?.gender ||
-
-        "",
-
-        dateOfBirth:
-
-        data.profile
-
-        ?.dateOfBirth
-
-        ?
-
-        new Date(
-
-          data.profile
-
-          .dateOfBirth
-
-        )
-
-        .toISOString()
-
-        .split(
-
-          "T"
-
-        )[0]
-
-        :
-
-        "",
-
-        bio:
-
-        data.profile
-
-        ?.bio ||
-
-        "",
-
-        profileImageUrl:
-
-        data.profile
-
-        ?.profileImageUrl ||
-
-        "",
-
-        academicYear:
-
-        data.student
-
-        ?.academicYear ||
-
-        "",
-
-        websiteUrl:
-
-        data.organization
-
-        ?.websiteUrl ||
-
-        "",
-
+        websiteUrl: data.organization?.websiteUrl || "",
       });
 
-      if (
-
-        data.student
-
-        ?.studentSkills
-
-      ) {
-
+      if (data.student?.studentSkills) {
         setSelectedSkills(
-
-          data.student
-
-          .studentSkills
-
-          .map(
-
-            (
-
-              item
-
-            ) =>
-
-            item.skillId
-
-            .toString()
-
-          )
-
+          data.student.studentSkills.map((item) => item.skillId.toString()),
         );
-
       }
+    } catch (error) {
+      console.error(error);
 
+      setError("Failed to load profile");
+
+      toast.error("Failed to load profile");
+    } finally {
+      setLoading(false);
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-      setError(
-
-        "Failed to load profile"
-
-      );
-
-      toast.error(
-
-        "Failed to load profile"
-
-      );
-
-    }
-
-    finally {
-
-      setLoading(
-
-        false
-
-      );
-
-    }
-
   };
 
-  const handleSubmit =
-
-  async (
-
-    e
-
-  ) => {
-
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setSaving(true);
 
-      setSaving(
+      await updateMyProfile(form);
 
-        true
-
-      );
-
-      await updateMyProfile(
-
-        form
-
-      );
-
-      if (
-
-        profile?.student
-
-      ) {
-
-        await updateMySkills(
-
-          selectedSkills
-
-        );
-
+      if (profile?.student) {
+        await updateMySkills(selectedSkills);
       }
 
-      toast.success(
+      toast.success("Profile updated");
 
-        "Profile updated"
+      navigate("/profile");
+    } catch (error) {
+      console.error(error);
 
-      );
-
-      navigate(
-
-        "/profile"
-
-      );
-
+      toast.error(error?.response?.data?.message || "Update failed");
+    } finally {
+      setSaving(false);
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-      toast.error(
-
-        error
-
-        ?.response
-
-        ?.data
-
-        ?.message ||
-
-        "Update failed"
-
-      );
-
-    }
-
-    finally {
-
-      setSaving(
-
-        false
-
-      );
-
-    }
-
   };
 
-  if (
-
-    loading
-
-  ) {
-
+  if (loading) {
     return (
-
       <DashboardLayout>
-
         <DashboardLoading />
-
       </DashboardLayout>
-
     );
-
   }
 
-  if (
-
-    error
-
-  ) {
-
+  if (error) {
     return (
-
       <DashboardLayout>
-
-        <DashboardError
-
-          message={
-
-            error
-
-          }
-
-        />
-
+        <DashboardError message={error} />
       </DashboardLayout>
-
     );
-
   }
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
         max-w-7xl
@@ -527,31 +168,20 @@ function EditProfilePage() {
         space-y-8
 
         "
-
       >
-
         <EditProfileHero />
 
         <form
-
-          onSubmit={
-
-            handleSubmit
-
-          }
+          onSubmit={handleSubmit}
 
           className="
 
           space-y-8
 
           "
-
         >
-
           <ProfileCard>
-
             <div
-
               className="
 
               flex
@@ -559,101 +189,47 @@ function EditProfilePage() {
               justify-center
 
               "
-
             >
-
               <ProfileAvatar
-
                 editable
 
                 size="xl"
 
-                value={
+                value={form.profileImageUrl}
 
-                  form.profileImageUrl
+                fullName={form.fullName}
 
-                }
-
-                fullName={
-
-                  form.fullName
-
-                }
-
-                onChange={
-
-                  (
-
-                    url
-
-                  ) =>
-
+                onChange={(url) =>
                   setForm({
-
                     ...form,
 
-                    profileImageUrl:
-
-                    url,
-
+                    profileImageUrl: url,
                   })
-
                 }
-
               />
-
             </div>
-
           </ProfileCard>
 
-            {
+          {isStudent && (
+            <ProfileCompletion
+              profile={{
+                profile: {
+                  fullName: form.fullName,
 
-              isStudent && (
+                  phoneNumber: form.phoneNumber,
 
-                <ProfileCompletion
+                  gender: form.gender,
 
-                  profile={{
+                  bio: form.bio,
 
-                    profile: {
+                  profileImageUrl: form.profileImageUrl,
+                },
+              }}
+            />
+          )}
 
-                      fullName:
-
-                      form.fullName,
-
-                      phoneNumber:
-
-                      form.phoneNumber,
-
-                      gender:
-
-                      form.gender,
-
-                      bio:
-
-                      form.bio,
-
-                      profileImageUrl:
-
-                      form.profileImageUrl,
-
-                    },
-
-                  }}
-
-                />
-
-              )
-
-            }
-
-          <ProfileCard
-
-            title="Personal Information"
-
-          >
-
+          <ProfileCard title="Personal Information">
             <div
-
               className="
 
               grid
@@ -663,77 +239,37 @@ function EditProfilePage() {
               gap-6
 
               "
-
             >
-
               <InputField
-
                 label="Full Name"
 
-                value={
+                value={form.fullName}
 
-                  form.fullName
-
-                }
-
-                onChange={
-
-                  (
-
-                    value
-
-                  ) =>
-
+                onChange={(value) =>
                   setForm({
-
                     ...form,
 
-                    fullName:
-
-                    value,
-
+                    fullName: value,
                   })
-
                 }
-
               />
 
               <InputField
-
                 label="Phone Number"
 
-                value={
+                value={form.phoneNumber}
 
-                  form.phoneNumber
-
-                }
-
-                onChange={
-
-                  (
-
-                    value
-
-                  ) =>
-
+                onChange={(value) =>
                   setForm({
-
                     ...form,
 
-                    phoneNumber:
-
-                    value,
-
+                    phoneNumber: value,
                   })
-
                 }
-
               />
 
               <div>
-
                 <label
-
                   className="
 
                   block
@@ -743,39 +279,19 @@ function EditProfilePage() {
                   font-medium
 
                   "
-
                 >
-
                   Gender
-
                 </label>
 
                 <select
+                  value={form.gender}
 
-                  value={
-
-                    form.gender
-
-                  }
-
-                  onChange={
-
-                    (
-
-                      e
-
-                    ) =>
-
+                  onChange={(e) =>
                     setForm({
-
                       ...form,
 
-                      gender:
-
-                      e.target.value,
-
+                      gender: e.target.value,
                     })
-
                   }
 
                   className="
@@ -791,35 +307,17 @@ function EditProfilePage() {
                   py-3
 
                   "
-
                 >
+                  <option value="">Select Gender</option>
 
-                  <option value="">
+                  <option value="MALE">Male</option>
 
-                    Select Gender
-
-                  </option>
-
-                  <option value="MALE">
-
-                    Male
-
-                  </option>
-
-                  <option value="FEMALE">
-
-                    Female
-
-                  </option>
-
+                  <option value="FEMALE">Female</option>
                 </select>
-
               </div>
 
               <div>
-
                 <label
-
                   className="
 
                   block
@@ -829,41 +327,21 @@ function EditProfilePage() {
                   font-medium
 
                   "
-
                 >
-
                   Date Of Birth
-
                 </label>
 
                 <input
-
                   type="date"
 
-                  value={
+                  value={form.dateOfBirth}
 
-                    form.dateOfBirth
-
-                  }
-
-                  onChange={
-
-                    (
-
-                      e
-
-                    ) =>
-
+                  onChange={(e) =>
                     setForm({
-
                       ...form,
 
-                      dateOfBirth:
-
-                      e.target.value,
-
+                      dateOfBirth: e.target.value,
                     })
-
                   }
 
                   className="
@@ -879,25 +357,18 @@ function EditProfilePage() {
                   py-3
 
                   "
-
                 />
-
               </div>
-
             </div>
 
             <div
-
               className="
 
               mt-6
 
               "
-
             >
-
               <label
-
                 className="
 
                 block
@@ -907,41 +378,21 @@ function EditProfilePage() {
                 font-medium
 
                 "
-
               >
-
                 Bio
-
               </label>
 
               <textarea
-
                 rows="5"
 
-                value={
+                value={form.bio}
 
-                  form.bio
-
-                }
-
-                onChange={
-
-                  (
-
-                    e
-
-                  ) =>
-
+                onChange={(e) =>
                   setForm({
-
                     ...form,
 
-                    bio:
-
-                    e.target.value,
-
+                    bio: e.target.value,
                   })
-
                 }
 
                 className="
@@ -957,179 +408,77 @@ function EditProfilePage() {
                 py-3
 
                 "
-
               />
-
             </div>
-
           </ProfileCard>
 
-          {
-
-            isStudent && (
-
-              <>
-
-                <ProfileCard
-
-                  title="Academic Information"
-
-                >
-
-                  <InputField
-
-                    label="Academic Year"
-
-                    value={
-
-                      form.academicYear
-
-                    }
-
-                    onChange={
-
-                      (
-
-                        value
-
-                      ) =>
-
-                      setForm({
-
-                        ...form,
-
-                        academicYear:
-
-                        value,
-
-                      })
-
-                    }
-
-                  />
-
-                </ProfileCard>
-
-                <ProfileCard>
-
-                  <EditProfileSkills
-
-                    selectedSkills={
-
-                      selectedSkills
-
-                    }
-
-                    setSelectedSkills={
-
-                      setSelectedSkills
-
-                    }
-
-                  />
-
-                </ProfileCard>
-
-              </>
-
-            )
-
-          }
-
-          {
-
-            isOrganization && (
-
-              <ProfileCard
-
-                title="Organization Information"
-
-              >
-
+          {isStudent && (
+            <>
+              <ProfileCard title="Academic Information">
                 <InputField
+                  label="Academic Year"
 
-                  label="Website URL"
+                  value={form.academicYear}
 
-                  value={
-
-                    form.websiteUrl
-
-                  }
-
-                  onChange={
-
-                    (
-
-                      value
-
-                    ) =>
-
+                  onChange={(value) =>
                     setForm({
-
                       ...form,
 
-                      websiteUrl:
-
-                      value,
-
+                      academicYear: value,
                     })
-
                   }
-
                 />
-
               </ProfileCard>
 
-            )
+              <ProfileCard>
+                <EditProfileSkills
+                  selectedSkills={selectedSkills}
 
-          }
+                  setSelectedSkills={setSelectedSkills}
+                />
+              </ProfileCard>
+            </>
+          )}
+
+          {isOrganization && (
+            <ProfileCard title="Organization Information">
+              <InputField
+                label="Website URL"
+
+                value={form.websiteUrl}
+
+                onChange={(value) =>
+                  setForm({
+                    ...form,
+
+                    websiteUrl: value,
+                  })
+                }
+              />
+            </ProfileCard>
+          )}
 
           <EditProfileActions
+            saving={saving}
 
-            saving={
-
-              saving
-
-            }
-
-            onCancel={() =>
-
-              navigate(
-
-                "/profile"
-
-              )
-
-            }
-
+            onCancel={() => navigate("/profile")}
           />
-
         </form>
-
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 function InputField({
-
   label,
 
   value,
 
   onChange,
-
 }) {
-
   return (
-
     <div>
-
       <label
-
         className="
 
         block
@@ -1139,42 +488,16 @@ function InputField({
         font-medium
 
         "
-
       >
-
-        {
-
-          label
-
-        }
-
+        {label}
       </label>
 
       <input
-
         type="text"
 
-        value={
+        value={value}
 
-          value
-
-        }
-
-        onChange={
-
-          (
-
-            e
-
-          ) =>
-
-          onChange(
-
-            e.target.value
-
-          )
-
-        }
+        onChange={(e) => onChange(e.target.value)}
 
         className="
 
@@ -1189,13 +512,9 @@ function InputField({
         py-3
 
         "
-
       />
-
     </div>
-
   );
-
 }
 
 export default EditProfilePage;

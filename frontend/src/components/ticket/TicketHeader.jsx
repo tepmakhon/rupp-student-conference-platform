@@ -1,18 +1,11 @@
-function TicketHeader({
-
-  title,
-
-}) {
-
+function TicketHeader({ title }) {
   return (
-
     <div
       className="
         border-b
         pb-6
       "
     >
-
       <p
         className="
           text-sm
@@ -41,11 +34,8 @@ function TicketHeader({
       >
         Official Event Admission Ticket
       </p>
-
     </div>
-
   );
-
 }
 
 export default TicketHeader;

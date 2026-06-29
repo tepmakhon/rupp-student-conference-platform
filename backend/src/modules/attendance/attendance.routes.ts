@@ -13,46 +13,31 @@ import {
 } from "./attendance.controller.js";
 const router = Router();
 
-router.post(
-  "/checkin/:eventId",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  checkIn
-);
+router.post("/checkin/:eventId", authMiddleware, rbac(["STUDENT"]), checkIn);
 
-router.get(
-  "/my",
-  authMiddleware,
-  rbac(["STUDENT"]),
-  getMyAttendance
-);
+router.get("/my", authMiddleware, rbac(["STUDENT"]), getMyAttendance);
 
-router.post(
-  "/scan",
-  authMiddleware,
-  rbac(["ORGANIZATION"]),
-  scanAttendance
-);
+router.post("/scan", authMiddleware, rbac(["ORGANIZATION"]), scanAttendance);
 
 router.get(
   "/statistics/:eventId",
   authMiddleware,
   rbac(["ORGANIZATION"]),
-  getAttendanceStatistics
+  getAttendanceStatistics,
 );
 
 router.get(
   "/export/:eventId/csv",
   authMiddleware,
   rbac(["ORGANIZATION"]),
-  exportAttendanceCSV
+  exportAttendanceCSV,
 );
 
 router.get(
   "/export/:eventId/pdf",
   authMiddleware,
   rbac(["ORGANIZATION"]),
-  exportAttendancePDF
+  exportAttendancePDF,
 );
 /**
  * @swagger

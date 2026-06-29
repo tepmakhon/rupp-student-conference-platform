@@ -1,32 +1,18 @@
-function BadgeCard({
-
-  badge,
-
-}) {
-
+function BadgeCard({ badge }) {
   const colors = {
+    bronze: "bg-orange-100",
 
-    bronze:
-      "bg-orange-100",
+    silver: "bg-gray-100",
 
-    silver:
-      "bg-gray-100",
+    gold: "bg-yellow-100",
 
-    gold:
-      "bg-yellow-100",
+    purple: "bg-purple-100",
 
-    purple:
-      "bg-purple-100",
-
-    blue:
-      "bg-blue-100",
-
+    blue: "bg-blue-100",
   };
 
   return (
-
     <div
-
       className={`
 
         rounded-3xl
@@ -41,26 +27,11 @@ function BadgeCard({
 
         hover:shadow-lg
 
-        ${
-
-          badge.unlocked
-
-          ?
-
-          "bg-white"
-
-          :
-
-          "bg-gray-100 opacity-60"
-
-        }
+        ${badge.unlocked ? "bg-white" : "bg-gray-100 opacity-60"}
 
       `}
-
     >
-
       <div
-
         className={`
 
           w-20
@@ -79,34 +50,14 @@ function BadgeCard({
 
           text-4xl
 
-          ${
-
-            colors[badge.color]
-
-          }
+          ${colors[badge.color]}
 
         `}
-
       >
-
-        {
-
-          badge.unlocked
-
-          ?
-
-          badge.icon
-
-          :
-
-          "🔒"
-
-        }
-
+        {badge.unlocked ? badge.icon : "🔒"}
       </div>
 
       <h3
-
         className="
 
           mt-5
@@ -116,15 +67,11 @@ function BadgeCard({
           font-bold
 
         "
-
       >
-
         {badge.name}
-
       </h3>
 
       <p
-
         className="
 
           mt-2
@@ -134,29 +81,13 @@ function BadgeCard({
           text-gray-500
 
         "
-
       >
-
-        {
-
-          badge.unlocked
-
-          ?
-
-          "Unlocked"
-
-          :
-
-          `Need ${badge.requiredScore} Activity Score`
-
-        }
-
+        {badge.unlocked
+          ? "Unlocked"
+          : `Need ${badge.requiredScore} Activity Score`}
       </p>
-
     </div>
-
   );
-
 }
 
 export default BadgeCard;

@@ -1,93 +1,39 @@
-import {
+import { useEffect, useState } from "react";
 
-  useEffect,
+import { useDispatch, useSelector } from "react-redux";
 
-  useState,
+import DashboardLayout from "../../components/layouts/DashboardLayout";
 
-} from "react";
+import DashboardHeader from "../../components/dashboard/DashboardHeader";
 
-import {
+import DashboardLoading from "../../components/dashboard/DashboardLoading";
 
-  useDispatch,
+import DashboardError from "../../components/dashboard/DashboardError";
 
-  useSelector,
+import LeaderboardHero from "../../components/leaderboard/LeaderboardHero";
 
-} from "react-redux";
+import LeaderboardFilters from "../../components/leaderboard/LeaderboardFilters";
 
-import DashboardLayout
+import LeaderboardTable from "../../components/leaderboard/LeaderboardTable";
 
-from "../../components/layouts/DashboardLayout";
+import LeaderboardPagination from "../../components/leaderboard/LeaderboardPagination";
 
-import DashboardHeader
-
-from "../../components/dashboard/DashboardHeader";
-
-import DashboardLoading
-
-from "../../components/dashboard/DashboardLoading";
-
-import DashboardError
-
-from "../../components/dashboard/DashboardError";
-
-import LeaderboardHero
-
-from "../../components/leaderboard/LeaderboardHero";
-
-import LeaderboardFilters
-
-from "../../components/leaderboard/LeaderboardFilters";
-
-import LeaderboardTable
-
-from "../../components/leaderboard/LeaderboardTable";
-
-import LeaderboardPagination
-
-from "../../components/leaderboard/LeaderboardPagination";
+import { getLeaderboard } from "../../api/leaderboardApi";
 
 import {
-
-  getLeaderboard,
-
-} from "../../api/leaderboardApi";
-
-import {
-
   setLeaderboardLoading,
-
   setLeaderboardData,
-
   setLeaderboardError,
-
-}
-
-from "../../redux/slices/leaderboardSlice";
+} from "../../redux/slices/leaderboardSlice";
 
 function LeaderboardPage() {
+  const dispatch = useDispatch();
 
-  const dispatch =
+  const [page, setPage] = useState(1);
 
-    useDispatch();
-
-  const [
-
-    page,
-
-    setPage,
-
-  ] = useState(1);
-
-  const [
-
-    search,
-
-    setSearch,
-
-  ] = useState("");
+  const [search, setSearch] = useState("");
 
   const {
-
     students,
 
     pagination,
@@ -95,139 +41,45 @@ function LeaderboardPage() {
     loading,
 
     error,
-
-  } = useSelector(
-
-    state =>
-
-    state.leaderboard
-
-  );
+  } = useSelector((state) => state.leaderboard);
 
   useEffect(() => {
-
     loadLeaderboard();
+  }, [page]);
 
-  }, [
-
-    page,
-
-  ]);
-
-  const loadLeaderboard =
-
-  async () => {
-
+  const loadLeaderboard = async () => {
     try {
+      dispatch(setLeaderboardLoading(true));
 
-      dispatch(
+      dispatch(setLeaderboardError(null));
 
-        setLeaderboardLoading(
-
-          true
-
-        )
-
-      );
-
-      dispatch(
-
-        setLeaderboardError(
-
-          null
-
-        )
-
-      );
-
-      const data =
-
-      await getLeaderboard(
-
+      const data = await getLeaderboard(
         page,
 
-        10
-
+        10,
       );
 
-      dispatch(
+      dispatch(setLeaderboardData(data));
+    } catch (error) {
+      console.error(error);
 
-        setLeaderboardData(
-
-          data
-
-        )
-
-      );
-
+      dispatch(setLeaderboardError("Failed to load leaderboard"));
+    } finally {
+      dispatch(setLeaderboardLoading(false));
     }
-
-    catch (
-
-      error
-
-    ) {
-
-      console.error(
-
-        error
-
-      );
-
-      dispatch(
-
-        setLeaderboardError(
-
-          "Failed to load leaderboard"
-
-        )
-
-      );
-
-    }
-
-    finally {
-
-      dispatch(
-
-        setLeaderboardLoading(
-
-          false
-
-        )
-
-      );
-
-    }
-
   };
 
-  const filteredStudents =
-
-  students.filter(
-
-    student =>
-
-      student.fullName
+  const filteredStudents = students.filter((student) =>
+    student.fullName
 
       .toLowerCase()
 
-      .includes(
-
-        search
-
-        .toLowerCase()
-
-      )
-
+      .includes(search.toLowerCase()),
   );
 
   return (
-
     <DashboardLayout>
-
       <div
-
         className="
 
           max-w-7xl
@@ -237,151 +89,45 @@ function LeaderboardPage() {
           space-y-8
 
         "
-
       >
-
         <DashboardHeader
-
           title="Leaderboard"
 
           subtitle="Top active students across the platform"
 
-          loading={
+          loading={loading}
 
-            loading
-
-          }
-
-          onRefresh={
-
-            loadLeaderboard
-
-          }
-
+          onRefresh={loadLeaderboard}
         />
 
-        {
+        {loading && <DashboardLoading />}
 
-          loading &&
+        {!loading && error && <DashboardError message={error} />}
 
-          <DashboardLoading />
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          error
-
-          &&
-
-          (
-
-            <DashboardError
-
-              message={
-
-                error
-
-              }
-
-            />
-
-          )
-
-        }
-
-        {
-
-          !loading
-
-          &&
-
-          !error
-
-          &&
-
+        {!loading && !error && (
           <>
-
-            <LeaderboardHero
-
-              students={
-
-                filteredStudents
-
-              }
-
-            />
+            <LeaderboardHero students={filteredStudents} />
 
             <LeaderboardFilters
+              search={search}
 
-              search={
-
-                search
-
-              }
-
-              setSearch={
-
-                setSearch
-
-              }
-
+              setSearch={setSearch}
             />
 
-            <LeaderboardTable
-
-              students={
-
-                filteredStudents
-
-              }
-
-            />
+            <LeaderboardTable students={filteredStudents} />
 
             <LeaderboardPagination
+              page={pagination?.page || 1}
 
-              page={
+              totalPages={pagination?.totalPages || 1}
 
-                pagination?.page
-
-                ||
-
-                1
-
-              }
-
-              totalPages={
-
-                pagination?.totalPages
-
-                ||
-
-                1
-
-              }
-
-              onPageChange={
-
-                setPage
-
-              }
-
+              onPageChange={setPage}
             />
-
           </>
-
-        }
-
+        )}
       </div>
-
     </DashboardLayout>
-
   );
-
 }
 
 export default LeaderboardPage;

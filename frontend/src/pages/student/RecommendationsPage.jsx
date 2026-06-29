@@ -44,7 +44,6 @@ function RecommendationsPage() {
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto space-y-8">
-
         <PageHeader
           title="Recommended For You"
           description="Personalized recommendations based on your profile and skills."
@@ -52,9 +51,7 @@ function RecommendationsPage() {
 
         {loading && <LoadingState />}
 
-        {!loading && error && (
-          <ErrorState message={error} />
-        )}
+        {!loading && error && <ErrorState message={error} />}
 
         {!loading &&
           !error &&
@@ -76,33 +73,25 @@ function RecommendationsPage() {
               </h2>
 
               <div className="grid md:grid-cols-2 gap-4 text-gray-700">
-
                 <p>
-                  <strong>University:</strong>{" "}
-                  {student?.university || "-"}
+                  <strong>University:</strong> {student?.university || "-"}
                 </p>
 
                 <p>
-                  <strong>Faculty:</strong>{" "}
-                  {student?.faculty || "-"}
+                  <strong>Faculty:</strong> {student?.faculty || "-"}
                 </p>
 
                 <p>
-                  <strong>Major:</strong>{" "}
-                  {student?.major || "-"}
+                  <strong>Major:</strong> {student?.major || "-"}
                 </p>
 
                 <p>
                   <strong>Skills:</strong>{" "}
-                  {student?.skills?.length
-                    ? student.skills.join(", ")
-                    : "-"}
+                  {student?.skills?.length ? student.skills.join(", ") : "-"}
                 </p>
-
               </div>
 
               <div className="mt-6 flex flex-wrap gap-2">
-
                 {keywords.map((keyword) => (
                   <span
                     key={keyword}
@@ -118,7 +107,6 @@ function RecommendationsPage() {
                     {keyword}
                   </span>
                 ))}
-
               </div>
             </div>
 
@@ -130,14 +118,10 @@ function RecommendationsPage() {
               </h2>
 
               {events.length === 0 ? (
-                <p className="text-gray-500">
-                  No recommended events.
-                </p>
+                <p className="text-gray-500">No recommended events.</p>
               ) : (
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-
                   {events.map((event) => (
-
                     <div
                       key={event.id}
                       className="
@@ -148,7 +132,6 @@ function RecommendationsPage() {
                         overflow-hidden
                       "
                     >
-
                       {event.bannerImageUrl && (
                         <img
                           src={event.bannerImageUrl}
@@ -162,10 +145,7 @@ function RecommendationsPage() {
                       )}
 
                       <div className="p-5">
-
-                        <h3 className="font-bold text-lg">
-                          {event.title}
-                        </h3>
+                        <h3 className="font-bold text-lg">{event.title}</h3>
 
                         <p className="text-gray-500 mt-2 line-clamp-2">
                           {event.description}
@@ -186,13 +166,9 @@ function RecommendationsPage() {
                         >
                           View Event
                         </Link>
-
                       </div>
-
                     </div>
-
                   ))}
-
                 </div>
               )}
             </div>
@@ -205,14 +181,10 @@ function RecommendationsPage() {
               </h2>
 
               {opportunities.length === 0 ? (
-                <p className="text-gray-500">
-                  No recommended opportunities.
-                </p>
+                <p className="text-gray-500">No recommended opportunities.</p>
               ) : (
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-
                   {opportunities.map((opportunity) => (
-
                     <div
                       key={opportunity.id}
                       className="
@@ -223,7 +195,6 @@ function RecommendationsPage() {
                         overflow-hidden
                       "
                     >
-
                       {opportunity.coverImageUrl && (
                         <img
                           src={opportunity.coverImageUrl}
@@ -237,7 +208,6 @@ function RecommendationsPage() {
                       )}
 
                       <div className="p-5">
-
                         <h3 className="font-bold text-lg">
                           {opportunity.title}
                         </h3>
@@ -261,13 +231,9 @@ function RecommendationsPage() {
                         >
                           View Opportunity
                         </Link>
-
                       </div>
-
                     </div>
-
                   ))}
-
                 </div>
               )}
             </div>

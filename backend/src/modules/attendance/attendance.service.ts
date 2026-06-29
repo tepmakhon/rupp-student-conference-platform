@@ -2,20 +2,14 @@ import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 import { createAuditLog } from "../audit/audit.service.js";
 import { createNotification } from "../notification/notification.service.js";
-import {
-  addActivityScore,
-} from "../activity/activityScore.service.js";
+import { addActivityScore } from "../activity/activityScore.service.js";
 import {
   refreshAdminDashboard,
   refreshOrganizationDashboard,
   refreshStudentDashboard,
 } from "../../socket/dashboardEvents.js";
 
-export const checkInEvent = async (
-  eventId: bigint,
-  userId: bigint
-) => {
-
+export const checkInEvent = async (eventId: bigint, userId: bigint) => {
   const student = await prisma.student.findUnique({
     where: {
       userId,
@@ -23,87 +17,67 @@ export const checkInEvent = async (
   });
 
   if (!student) {
-    throw new AppError(
-      "Please complete your student profile first",
-      404
-    );
+    throw new AppError("Please complete your student profile first", 404);
   }
 
-  const registration =
-    await prisma.eventRegistration.findFirst({
-      where: {
-        eventId,
-        studentId: student.id,
-      },
+  const registration = await prisma.eventRegistration.findFirst({
+    where: {
+      eventId,
+      studentId: student.id,
+    },
 
-      include: {
-        event: {
-          include: {
-            organization: true,
-          },
+    include: {
+      event: {
+        include: {
+          organization: true,
         },
       },
-    });
+    },
+  });
 
   if (!registration) {
-    throw new AppError(
-      "You are not registered for this event",
-      400
-    );
+    throw new AppError("You are not registered for this event", 400);
   }
 
-  const existingAttendance =
-    await prisma.attendanceRecord.findUnique({
-      where: {
+  const existingAttendance = await prisma.attendanceRecord.findUnique({
+    where: {
+      registrationId: registration.id,
+    },
+  });
+
+  if (existingAttendance) {
+    throw new AppError("Already checked in", 409);
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    const attendance = await tx.attendanceRecord.create({
+      data: {
         registrationId: registration.id,
+        verificationMethod: "MANUAL",
+        checkInTime: new Date(),
       },
     });
 
-  if (existingAttendance) {
-    throw new AppError(
-      "Already checked in",
-      409
+    await addActivityScore(
+      student.id,
+      20,
+      `Attended ${registration.event.title}`,
     );
-  }
 
-  const result = await prisma.$transaction(
-    async (tx) => {
+    return attendance;
+  });
 
-      const attendance =
-        await tx.attendanceRecord.create({
-          data: {
-            registrationId: registration.id,
-            verificationMethod: "MANUAL",
-            checkInTime: new Date(),
-          },
-        });
-
-      await addActivityScore(
-        student.id,
-        20,
-        `Attended ${registration.event.title}`
-      );
-
-      return attendance;
-    }
-  );
-
-  await createAuditLog(
-    userId,
-    `EVENT_CHECKIN:${registration.event.title}`
-  );
+  await createAuditLog(userId, `EVENT_CHECKIN:${registration.event.title}`);
 
   await createNotification(
     registration.event.organization.userId,
     "Student Checked In",
-    `A student checked in to ${registration.event.title}`
+    `A student checked in to ${registration.event.title}`,
   );
 
   refreshStudentDashboard(userId);
 
-  refreshOrganizationDashboard(
-    registration.event.organization.userId
-  );
+  refreshOrganizationDashboard(registration.event.organization.userId);
 
   refreshAdminDashboard();
 
@@ -116,26 +90,18 @@ export const checkInEvent = async (
 |--------------------------------------------------------------------------
 */
 
-export const getMyAttendance = async (
-  userId: bigint
-) => {
-
-  const student =
-    await prisma.student.findUnique({
-      where: {
-        userId,
-      },
-    });
+export const getMyAttendance = async (userId: bigint) => {
+  const student = await prisma.student.findUnique({
+    where: {
+      userId,
+    },
+  });
 
   if (!student) {
-    throw new AppError(
-      "Student not found",
-      404
-    );
+    throw new AppError("Student not found", 404);
   }
 
   return prisma.attendanceRecord.findMany({
-
     where: {
       registration: {
         studentId: student.id,
@@ -143,37 +109,23 @@ export const getMyAttendance = async (
     },
 
     include: {
-
       registration: {
-
         include: {
-
           event: {
-
             include: {
-
               organization: true,
 
               category: true,
-
             },
-
           },
-
         },
-
       },
-
     },
 
     orderBy: {
-
       checkInTime: "desc",
-
     },
-
   });
-
 };
 
 /*
@@ -184,127 +136,79 @@ export const getMyAttendance = async (
 
 export const scanAttendance = async (
   registrationId: bigint,
-  organizationUserId: bigint
+  organizationUserId: bigint,
 ) => {
+  const registration = await prisma.eventRegistration.findUnique({
+    where: {
+      id: registrationId,
+    },
 
-  const registration =
-    await prisma.eventRegistration.findUnique({
-
-      where: {
-        id: registrationId,
-      },
-
-      include: {
-
-        student: {
-          include: {
-            user: {
-              include: {
-                profile: true,
-              },
+    include: {
+      student: {
+        include: {
+          user: {
+            include: {
+              profile: true,
             },
           },
         },
-
-        event: {
-          include: {
-            organization: true,
-          },
-        },
-
       },
 
-    });
+      event: {
+        include: {
+          organization: true,
+        },
+      },
+    },
+  });
 
   if (!registration) {
-
-    throw new AppError(
-      "Registration not found",
-      404
-    );
-
+    throw new AppError("Registration not found", 404);
   }
 
-  if (
-
-    registration.event.organization.userId !==
-
-    organizationUserId
-
-  ) {
-
-    throw new AppError(
-      "Unauthorized",
-      403
-    );
-
+  if (registration.event.organization.userId !== organizationUserId) {
+    throw new AppError("Unauthorized", 403);
   }
 
-  const existing =
-    await prisma.attendanceRecord.findUnique({
-
-      where: {
-
-        registrationId,
-
-      },
-
-    });
+  const existing = await prisma.attendanceRecord.findUnique({
+    where: {
+      registrationId,
+    },
+  });
 
   if (existing) {
-
-    throw new AppError(
-      "Student already checked in",
-      409
-    );
-
+    throw new AppError("Student already checked in", 409);
   }
 
-  const attendance =
-    await prisma.attendanceRecord.create({
+  const attendance = await prisma.attendanceRecord.create({
+    data: {
+      registrationId,
 
-      data: {
+      verificationMethod: "QR_CODE",
 
-        registrationId,
-
-        verificationMethod:
-          "QR_CODE",
-
-        checkInTime:
-          new Date(),
-
-      },
-
-    });
+      checkInTime: new Date(),
+    },
+  });
 
   await addActivityScore(
-
     registration.student.id,
 
     20,
 
-    `Attended ${registration.event.title}`
+    `Attended ${registration.event.title}`,
+  );
+  refreshStudentDashboard(registration.student.userId);
 
-  );
-  refreshStudentDashboard(
-    registration.student.userId
-  );
-
-  refreshOrganizationDashboard(
-    organizationUserId
-  );
+  refreshOrganizationDashboard(organizationUserId);
 
   refreshAdminDashboard();
 
   await createAuditLog(
-
     organizationUserId,
 
-    `QR_CHECKIN:${registration.event.title}`
-
+    `QR_CHECKIN:${registration.event.title}`,
   );
   return attendance;
-
 };
 
 /*
@@ -313,48 +217,29 @@ export const scanAttendance = async (
 |--------------------------------------------------------------------------
 */
 
-export const getAttendanceStatistics = async (
-  eventId: bigint
-) => {
+export const getAttendanceStatistics = async (eventId: bigint) => {
+  const totalRegistrations = await prisma.eventRegistration.count({
+    where: {
+      eventId,
+    },
+  });
 
-  const totalRegistrations =
-    await prisma.eventRegistration.count({
-
-      where: {
+  const checkedIn = await prisma.attendanceRecord.count({
+    where: {
+      registration: {
         eventId,
       },
+    },
+  });
 
-    });
-
-  const checkedIn =
-    await prisma.attendanceRecord.count({
-
-      where: {
-
-        registration: {
-          eventId,
-        },
-
-      },
-
-    });
-
-  const remaining =
-    totalRegistrations - checkedIn;
+  const remaining = totalRegistrations - checkedIn;
 
   const attendanceRate =
     totalRegistrations === 0
-
       ? 0
-
-      : Math.round(
-
-          (checkedIn / totalRegistrations) * 100
-
-        );
+      : Math.round((checkedIn / totalRegistrations) * 100);
 
   return {
-
     totalRegistrations,
 
     checkedIn,
@@ -362,9 +247,7 @@ export const getAttendanceStatistics = async (
     remaining,
 
     attendanceRate,
-
   };
-
 };
 
 /*
@@ -373,42 +256,27 @@ export const getAttendanceStatistics = async (
 |--------------------------------------------------------------------------
 */
 
-export const getAttendanceExportData = async (
-  eventId: bigint
-) => {
-
+export const getAttendanceExportData = async (eventId: bigint) => {
   return prisma.eventRegistration.findMany({
-
     where: {
       eventId,
     },
 
     include: {
-
       event: {
-
         include: {
-
           organization: true,
 
           category: true,
-
         },
-
       },
 
       student: {
-
         include: {
-
           user: {
-
             include: {
-
               profile: true,
-
             },
-
           },
 
           university: true,
@@ -416,21 +284,14 @@ export const getAttendanceExportData = async (
           faculty: true,
 
           major: true,
-
         },
-
       },
 
       attendanceRecord: true,
-
     },
 
     orderBy: {
-
       registeredAt: "asc",
-
     },
-
   });
-
 };

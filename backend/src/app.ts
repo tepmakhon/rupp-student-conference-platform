@@ -6,47 +6,22 @@ import path from "path";
 
 import swaggerUi from "swagger-ui-express";
 
-import { swaggerSpec }
+import { swaggerSpec } from "./config/swagger.js";
 
-from "./config/swagger.js";
+import { setupBigIntSerialization } from "./utils/bigint.js";
 
-import { setupBigIntSerialization }
+import { AppError } from "./utils/AppError.js";
 
-from "./utils/bigint.js";
+import { successResponse } from "./utils/apiResponse.js";
 
-import { AppError }
-
-from "./utils/AppError.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 
 import {
-
- successResponse,
-
-}
-
-from "./utils/apiResponse.js";
-
-import {
-
- errorMiddleware,
-
-}
-
-from "./middlewares/error.middleware.js";
-
-import {
-
- helmetMiddleware,
-
- compressionMiddleware,
-
- hppMiddleware,
-
- apiLimiter,
-
-}
-
-from "./middlewares/security.middleware.js";
+  helmetMiddleware,
+  compressionMiddleware,
+  hppMiddleware,
+  apiLimiter,
+} from "./middlewares/security.middleware.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -118,11 +93,7 @@ setupBigIntSerialization();
 
 const app = express();
 
-app.disable(
-
- "x-powered-by"
-
-);
+app.disable("x-powered-by");
 
 /*
 |--------------------------------------------------------------------------
@@ -130,29 +101,13 @@ app.disable(
 |--------------------------------------------------------------------------
 */
 
-app.use(
+app.use(helmetMiddleware);
 
- helmetMiddleware
+app.use(compressionMiddleware);
 
-);
+app.use(hppMiddleware);
 
-app.use(
-
- compressionMiddleware
-
-);
-
-app.use(
-
- hppMiddleware
-
-);
-
-app.use(
-
- apiLimiter
-
-);
+app.use(apiLimiter);
 
 /*
 |--------------------------------------------------------------------------
@@ -161,21 +116,11 @@ app.use(
 */
 
 app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:3000"],
 
- cors({
-
-  origin: [
-
-   "http://localhost:5173",
-
-   "http://localhost:3000",
-
-  ],
-
-  credentials: true,
-
- })
-
+    credentials: true,
+  }),
 );
 
 /*
@@ -184,20 +129,12 @@ app.use(
 |--------------------------------------------------------------------------
 */
 
-app.use(
-
- express.json()
-
-);
+app.use(express.json());
 
 app.use(
-
- express.urlencoded({
-
-  extended: true,
-
- })
-
+  express.urlencoded({
+    extended: true,
+  }),
 );
 
 /*
@@ -207,21 +144,15 @@ app.use(
 */
 
 app.use(
+  "/uploads",
 
- "/uploads",
+  express.static(
+    path.join(
+      process.cwd(),
 
- express.static(
-
-  path.join(
-
-   process.cwd(),
-
-   "uploads"
-
-  )
-
- )
-
+      "uploads",
+    ),
+  ),
 );
 
 /*
@@ -231,27 +162,18 @@ app.use(
 */
 
 app.get(
+  "/",
 
- "/",
+  (_req, res) =>
+    successResponse(
+      res,
 
- (_req, res) =>
+      {
+        version: "1.0.0",
+      },
 
- successResponse(
-
-  res,
-
-  {
-
-   version:
-
-   "1.0.0",
-
-  },
-
-  "RUPP Student Conference & Opportunity Platform API"
-
- )
-
+      "RUPP Student Conference & Opportunity Platform API",
+    ),
 );
 
 /*
@@ -261,216 +183,161 @@ app.get(
 */
 
 app.use(
+  "/api/auth",
 
- "/api/auth",
-
- authRoutes
-
+  authRoutes,
 );
 
 app.use(
+  "/api/events",
 
- "/api/events",
-
- eventRoutes
-
+  eventRoutes,
 );
 
 app.use(
+  "/api/students",
 
- "/api/students",
-
- studentRoutes
-
+  studentRoutes,
 );
 
 app.use(
+  "/api/admin",
 
- "/api/admin",
-
- adminRoutes
-
+  adminRoutes,
 );
 
 app.use(
+  "/api/users",
 
- "/api/users",
-
- userRoutes
-
+  userRoutes,
 );
 
 app.use(
+  "/api/organizations",
 
- "/api/organizations",
-
- organizationRoutes
-
+  organizationRoutes,
 );
 
 app.use(
+  "/api/attendance",
 
- "/api/attendance",
+  attendanceRoutes,
+);
 
- attendanceRoutes
+app.use("/api", ticketRoutes);
 
+app.use(
+  "/api/leaderboard",
+
+  leaderboardRoutes,
 );
 
 app.use(
-  "/api",
-  ticketRoutes
-);
-
-app.use(
-
- "/api/leaderboard",
-
- leaderboardRoutes
-
-);
-
-app.use(
-
   "/api/badges",
 
-  badgeRoutes
-
+  badgeRoutes,
 );
 
 app.use(
+  "/api/opportunities",
 
- "/api/opportunities",
-
- opportunityRoutes
-
+  opportunityRoutes,
 );
 
 app.use(
+  "/api/applications",
 
- "/api/applications",
-
- applicationRoutes
-
+  applicationRoutes,
 );
 
 app.use(
+  "/api/notifications",
 
- "/api/notifications",
-
- notificationRoutes
-
+  notificationRoutes,
 );
 
 app.use(
+  "/api/dashboard",
 
- "/api/dashboard",
-
- dashboardRoutes
-
+  dashboardRoutes,
 );
 
 app.use(
+  "/api/audit",
 
- "/api/audit",
-
- auditRoutes
-
+  auditRoutes,
 );
 
 app.use(
+  "/api/event-categories",
 
- "/api/event-categories",
-
- eventCategoryRoutes
-
+  eventCategoryRoutes,
 );
 
 app.use(
+  "/api/activity",
 
- "/api/activity",
-
- activityRoutes
-
+  activityRoutes,
 );
 
 app.use(
+  "/api/opportunity-types",
 
- "/api/opportunity-types",
-
- opportunityTypeRoutes
-
+  opportunityTypeRoutes,
 );
 
 app.use(
+  "/api/universities",
 
- "/api/universities",
-
- universityRoutes
-
+  universityRoutes,
 );
 
 app.use(
+  "/api/faculties",
 
- "/api/faculties",
-
- facultyRoutes
-
+  facultyRoutes,
 );
 
 app.use(
+  "/api/majors",
 
- "/api/majors",
-
- majorRoutes
-
+  majorRoutes,
 );
 
 app.use(
+  "/api/skills",
 
- "/api/skills",
-
- skillRoutes
-
+  skillRoutes,
 );
 
 app.use(
+  "/api/profile",
 
- "/api/profile",
-
- profileRoutes
-
+  profileRoutes,
 );
 
 app.use(
+  "/api/search",
 
- "/api/search",
-
- searchRoutes
-
+  searchRoutes,
 );
 
 app.use(
+  "/api/recommendations",
 
- "/api/recommendations",
-
- recommendationRoutes
-
+  recommendationRoutes,
 );
 
 app.use(
-
   "/api/student-skills",
 
-  studentSkillRoutes
-
+  studentSkillRoutes,
 );
 
 app.use(
-
   "/api/analytics",
 
-  analyticsRoutes
-
+  analyticsRoutes,
 );
 /*
 |--------------------------------------------------------------------------
@@ -479,17 +346,11 @@ app.use(
 */
 
 app.use(
+  "/api/docs",
 
- "/api/docs",
+  swaggerUi.serve,
 
- swaggerUi.serve,
-
- swaggerUi.setup(
-
-  swaggerSpec
-
- )
-
+  swaggerUi.setup(swaggerSpec),
 );
 
 /*
@@ -499,31 +360,21 @@ app.use(
 */
 
 app.use(
+  (
+    req,
 
- (
+    res,
 
-  req,
+    next,
+  ) => {
+    next(
+      new AppError(
+        `Cannot ${req.method} ${req.originalUrl}`,
 
-  res,
-
-  next
-
- ) => {
-
- next(
-
- new AppError(
-
- `Cannot ${req.method} ${req.originalUrl}`,
-
- 404
-
- )
-
- );
-
-}
-
+        404,
+      ),
+    );
+  },
 );
 
 /*
@@ -532,10 +383,6 @@ app.use(
 |--------------------------------------------------------------------------
 */
 
-app.use(
-
- errorMiddleware
-
-);
+app.use(errorMiddleware);
 
 export default app;

@@ -1,33 +1,16 @@
-function ApplicationStatusBadge({
-
-  status,
-
-}) {
-
+function ApplicationStatusBadge({ status }) {
   const styles = {
+    PENDING: "bg-gray-100 text-gray-700",
 
-    PENDING:
+    REVIEWING: "bg-yellow-100 text-yellow-700",
 
-      "bg-gray-100 text-gray-700",
+    ACCEPTED: "bg-green-100 text-green-700",
 
-    REVIEWING:
-
-      "bg-yellow-100 text-yellow-700",
-
-    ACCEPTED:
-
-      "bg-green-100 text-green-700",
-
-    REJECTED:
-
-      "bg-red-100 text-red-700",
-
+    REJECTED: "bg-red-100 text-red-700",
   };
 
   return (
-
     <span
-
       className={`
 
         px-4
@@ -40,22 +23,13 @@ function ApplicationStatusBadge({
 
         font-semibold
 
-        ${
-
-          styles[status]
-
-        }
+        ${styles[status]}
 
       `}
-
     >
-
       {status}
-
     </span>
-
   );
-
 }
 
 export default ApplicationStatusBadge;
