@@ -1,332 +1,252 @@
-# RUPP Student Conference & Opportunity Platform
+🎓 RUPP Student Conference & Opportunity Platform
 
-## Introduction
+A full-stack web platform that centralizes student conferences, workshops, scholarships, internships, competitions, and career opportunities for students at the Royal University of Phnom Penh (RUPP).
 
-The RUPP Student Conference & Opportunity Platform is a university ecosystem platform designed to connect students with:
-- Conferences
-- Workshops
-- Competitions
-- Scholarships
-- Internships
-- Volunteer Programs
-- Career Opportunities
+The platform provides a centralized ecosystem where Students, Organizations, and Administrators collaborate through a secure role-based system.
 
-The platform aims to provide a centralized system where students can discover opportunities, register for events, track participation, earn activity scores, and build their academic and professional profiles.
+⸻
 
-Target Scale:
+📖 Project Overview
 
-- 30,000+ active students
-- Multiple universities
-- Multiple organizations
-- Large-scale event and opportunity management
+Many university opportunities are scattered across Facebook pages, Telegram groups, posters, and individual organization websites, making them difficult for students to discover.
 
----
+This project solves that problem by creating a single platform where students can:
 
-# Technology Stack
+* Register for conferences and workshops
+* Apply for internships and scholarships
+* Discover organizations
+* Save opportunities
+* Track activity history
+* Earn activity scores
+* Receive notifications
+* View personalized recommendations
 
-## Backend
+Organizations can publish events and opportunities, while administrators moderate all submitted content.
 
-- Node.js
-- Express.js
-- TypeScript
-- Prisma ORM
-- PostgreSQL
-- JWT Authentication
-- bcrypt
+⸻
 
-## Database
+✨ Features
 
-- PostgreSQL
+👨‍🎓 Student
 
-## Development Tools
+* Secure Authentication (JWT)
+* Student Profile
+* Browse Events
+* Register for Events
+* QR Event Ticket
+* Browse Opportunities
+* Apply for Opportunities
+* Save Opportunities
+* My Applications
+* My Events
+* Activity History
+* Student Badges
+* Personalized Recommendations
+* Analytics Dashboard
+* Real-time Notifications
+* Leaderboard
 
-- Prisma Studio
-- Postman
-- TSX
-- Git & GitHub
+⸻
 
----
+🏢 Organization
 
-# Project Architecture
+* Organization Dashboard
+* Create Events
+* Edit Events
+* Delete Events
+* Create Opportunities
+* Edit Opportunities
+* Delete Opportunities
+* View Event Registrations
+* View Opportunity Applicants
+* Attendance Scanner
+* Organization Analytics
 
-Feature-Based Modular Architecture
+⸻
 
-src/
-│
-├── config/
-│   └── prisma.ts
-│
-├── middlewares/
-│   ├── auth.middleware.ts
-│   └── rbac.middleware.ts
-│
-├── modules/
-│   │
-│   ├── admin/
-│   ├── auth/
-│   ├── attendance/
-│   ├── dashboard/
-│   ├── event/
-│   ├── leaderboard/
-│   ├── notification/
-│   ├── opportunity/
-│   ├── organization/
-│   ├── student/
-│   └── user/
-│
-├── app.ts
-└── server.ts
+👨‍💼 Administrator
 
-Each module follows:
+* Dashboard
+* Approve / Reject Events
+* Approve / Reject Opportunities
+* Manage Universities
+* Manage Faculties
+* Manage Majors
+* Manage Skills
+* Manage Event Categories
+* Manage Opportunity Types
+* Platform Analytics
 
-module/
-│
-├── controller
-├── service
-└── routes
+⸻
 
-Flow:
+🏗️ System Architecture
 
-Request
-   ↓
-Route
-   ↓
-Controller
-   ↓
-Service
-   ↓
-Prisma
-   ↓
+Frontend (React)
+        │
+ REST API (Express.js)
+        │
+ Business Logic
+        │
+ Prisma ORM
+        │
+ PostgreSQL
+
+The backend follows a 3-Layer Architecture
+
+* Controller Layer
+* Service Layer
+* Data Layer (Prisma)
+
+⸻
+
+🛠 Technology Stack
+
+Frontend
+
+* React
+* React Router
+* Redux Toolkit
+* Tailwind CSS
+* Axios
+* Heroicons
+* Lucide React
+* React Hot Toast
+* Socket.IO Client
+* Cloudinary Upload Images
+⸻
+
+Backend
+
+* Node.js
+* Express.js
+* TypeScript
+* Prisma ORM
+* PostgreSQL
+* JWT Authentication
+* bcrypt
+* Socket.IO
+* Docker
+
+⸻
+
 Database
 
----
+* PostgreSQL
+* Prisma Schema
+* 25+ relational tables
+* 3NF database design
 
-# Database Overview
+⸻
 
-Current Core Entities:
+🔒 Security
 
-- Users
-- Roles
-- Permissions
-- Organizations
-- Students
-- Universities
-- Faculties
-- Majors
-- Event Categories
-- Events
-- Event Registrations
-- Attendance Records
-- Activity Score History
-- Opportunities
-- Applications
-- Notifications
+* JWT Authentication
+* Password Hashing (bcrypt)
+* Role-Based Access Control (RBAC)
+* Protected Routes
+* Input Validation
+* Audit Logs
+* User Sessions
 
-Current Database Size:
+⸻
 
-25+ Tables
+📊 Current Modules
 
-Database Design Pattern:
+✅ Authentication
 
-RBAC
-+
-University Structure
-+
-Event Management
-+
-Opportunity Management
-+
-Notification System
+✅ User Profile
 
----
+✅ Events
 
-# Features Completed
+✅ Event Registration
 
-## Authentication
+✅ Attendance
 
-Status: Completed
+✅ Opportunities
 
-Features:
+✅ Applications
 
-- User Registration
-- User Login
-- Password Hashing (bcrypt)
-- JWT Token Generation
-- Protected Routes
+✅ Saved Opportunities
 
-Endpoints:
+✅ Notifications
 
-POST /api/auth/register
-POST /api/auth/login
+✅ Analytics
 
----
+✅ Recommendations
 
-## Role-Based Access Control (RBAC)
+✅ Leaderboard
 
-Status: Completed
+✅ Dashboard
 
-Roles:
+⸻
 
-- STUDENT
-- ORGANIZATION
-- ADMIN
+📂 Project Structure
 
-Features:
+frontend/
+├── src/
+│   ├── api/
+│   ├── components/
+│   ├── pages/
+│   ├── redux/
+│   ├── routes/
+│   ├── hooks/
+│   ├── utils/
+│   └── constants/
+backend/
+├── src/
+│   ├── modules/
+│   ├── middlewares/
+│   ├── config/
+│   ├── socket/
+│   ├── utils/
+│   └── routes/
+prisma/
+└── schema.prisma
 
-- Route Protection
-- Role Validation
-- Permission Enforcement
+⸻
 
----
+👥 User Roles
 
-## Organization System
+Student
 
-Status: Completed
+* Register events
+* Apply opportunities
+* Save opportunities
+* Receive recommendations
 
-Features:
+Organization
 
-- Organization Registration
-- Organization Accounts
-- Organization Event Management
+* Publish events
+* Publish opportunities
+* Manage applicants
+* Manage registrations
 
----
+Administrator
 
-## Event System
+* Approve content
+* Manage master data
+* Monitor analytics
 
-Status: Completed
+⸻
 
-Features:
+🚀 Installation
 
-- Create Event
-- View Events
-- Event Categories
-- Capacity Management
+Clone Repository
 
-Endpoints:
-POST /api/events
-GET /api/events
-GET /api/events/:id
+git clone https://github.com/tepmakhon/rupp-student-conference-platform.git
 
----
+Backend
 
-## Event Approval Workflow
-
-Status: Completed
-
-Features:
-
-- Admin Approval
-- Event Status Tracking
-
-Endpoints:
-
-PATCH /api/events/:id/approve
----
-
-## Event Registration System
-
-Status: Completed
-
-Features:
-
-- Join Event
-- Duplicate Prevention
-- Capacity Validation
-
-Endpoints:
-
-POST /api/events/:id/register
-
----
-
-## Attendance System
-
-Status: Completed
-
-Features:
-
-- Student Check-In
-- Attendance Records
-- Attendance Validation
-
-Endpoints:
-
-POST /api/attendance/checkin/:eventId
-
----
-
-## Activity Score System
-
-Status: Completed
-
-Features:
-
-- Score Awarding
-- Score History
-- Student Ranking Data
-
-Example:
-
-Attend Event
-+10 Score
-
----
-
-## Leaderboard
-
-Status: Completed
-
-Features:
-
-- Top Students
-- Ranking by Activity Score
-
-Endpoints:
-
-GET /api/leaderboard
-
----
-
-# Current Project Progress
-Authentication          ✅
-RBAC                    ✅
-Organizations           ✅
-Events                  ✅
-Approval Workflow       ✅
-Registration            ✅
-
-Attendance              ✅
-Activity Score          ✅
-Leaderboard             ✅
-
-Opportunities           ⏳
-Applications            ⏳
-Notifications           ⏳
-
-Analytics               ⏳
-
-Frontend                ❌
-Deployment              ❌
-
----
-
-# How to Run the Project
-
-Install Dependencies
-
+cd backend
 npm install
 
-Configure Environment Variables
+Create .env
 
-Create:
-
-env :
-DATABASE_URL=postgresql://postgres:password@localhost:5432/rupp_platform
-
-JWT_SECRET=super_secure_secret_key
-
-JWT_EXPIRES_IN=7d
-
+DATABASE_URL=
+JWT_SECRET=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 
 Generate Prisma Client
 
@@ -340,133 +260,69 @@ Start Server
 
 npm run dev
 
-Expected:
+⸻
 
-Server running on port 5050
+Frontend
 
----
+cd frontend
+npm install
+npm run dev
 
-# How to Test the Project
+⸻
 
-## 1. Register Student
+📸 Screenshots
 
-POST /api/auth/register
+* Login
+* Student Dashboard
+* Organization Dashboard
+* Admin Dashboard
+![alt text](x0-login.png)
+![alt text](x1-student.png)
+![alt text](x2-organization.png)
+![alt text](x3-admin.png)
 
-{
-  "email": "student@gmail.com",
-  "password": "123456",
-  "role": "STUDENT"
-}
+⸻
 
----
+📈 Future Improvements
 
-## 2. Login
+* AI Recommendation Engine
+* Resume Builder
+* Certificate Verification
+* Email Notifications
+* Mobile Application
+* Calendar Integration
+* Advanced Analytics
+* Export Reports (PDF / Excel)
+* Multi-University Support
+* Khmer Language Support
+* Docker Deployment
+* CI/CD Pipeline
 
-POST /api/auth/login
+⸻
 
-Copy the JWT token.
+🎯 Project Goals
 
----
+* Increase student participation in academic activities.
+* Centralize university opportunities.
+* Improve communication between organizations and students.
+* Build a scalable platform that can expand beyond RUPP to universities across Cambodia.
 
-## 3. Create Event Category
+⸻
 
-Using Prisma Studio:
+👨‍💻 Developer
 
-npx prisma studio
+Tep Makhon
 
-Insert:
-
-Workshop
-Competition
-Conference
-
----
-
-## 4. Register Organization
-json
-{
-  "email": "org@gmail.com",
-  "password": "123456",
-  "role": "ORGANIZATION"
-}
-
----
-
-## 5. Create Event
-
-POST /api/events
-
-Authorization:
-
-text Bearer TOKEN 
-
----
-
-## 6. Approve Event
-
-Admin Account:
-
-http PATCH /api/events/:id/approve 
-
----
-
-## 7. Join Event
-
-Student Account:
-
-http POST /api/events/:id/register 
-
----
-
-## 8. Check In
-
-Student Account:
-
-http POST /api/attendance/checkin/:eventId 
-
-Expected:
-
-text Attendance Created Activity Score +10 
-
----
-
-## 9. View Leaderboard
-
-http GET /api/leaderboard 
-
----
-
-# Upcoming Features
-
-Phase 2:
-
-- Opportunity Management
-- Internship System
-- Scholarship System
-- Application Tracking
-- Notification Center
-- Dashboard Analytics
-
-Phase 3:
-
-- React Frontend
-- Admin Dashboard
-- Student Dashboard
-- Organization Dashboard
-
-Phase 4:
-
-- Docker Deployment
-- Cloud Hosting
-- CI/CD Pipeline
-- Production Monitoring
-
----
-
-# Author
+Computer Science Student
 
 Royal University of Phnom Penh (RUPP)
 
-Computer Science Project
+GitHub: https://github.com/tepmakhon
 
-RUPP Student Conference & Opportunity Platform
+LinkedIn: https://www.linkedin.com/in/tep-makhon-542ab836b/
+
+⸻
+
+📄 License
+
+This project is developed for educational purposes as part of a Computer Science project at the Royal University of Phnom Penh.
