@@ -57,8 +57,32 @@ import {
   setDashboardError,
 } from "../../redux/slices/dashboardSlice";
 
-function StudentDashboardPage() {
+import socket from "../../socket/socket";
 
+function StudentDashboardPage() {
+  useEffect(() => {
+
+    const refreshDashboard = () => {
+
+      loadDashboard();
+
+    };
+
+    socket.on(
+      "dashboard_update",
+      refreshDashboard
+    );
+
+    return () => {
+
+      socket.off(
+        "dashboard_update",
+        refreshDashboard
+      );
+
+    };
+
+  }, []);
   const dispatch =
     useDispatch();
 

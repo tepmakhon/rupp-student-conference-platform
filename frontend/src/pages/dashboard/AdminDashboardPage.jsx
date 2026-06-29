@@ -68,8 +68,24 @@ import {
 
 } from "../../redux/slices/dashboardSlice";
 
-function AdminDashboardPage() {
+import socket from "../../socket/socket";
 
+function AdminDashboardPage() {
+  useEffect(() => {
+    const refreshDashboard = () => {
+      loadDashboard();
+    };
+    socket.on(
+      "dashboard_update",
+      refreshDashboard
+    );
+    return () => {
+      socket.off(
+        "dashboard_update",
+        refreshDashboard
+      );
+    };
+  }, []);
   const dispatch =
     useDispatch();
 
