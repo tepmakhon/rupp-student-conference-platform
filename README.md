@@ -82,13 +82,21 @@ Organizations can publish events and opportunities, while administrators moderat
 🏗️ System Architecture
 
 Frontend (React)
+
         │
+
  REST API (Express.js)
+
         │
+
  Business Logic
+
         │
+
  Prisma ORM
+
         │
+
  PostgreSQL
 
 The backend follows a 3-Layer Architecture
@@ -183,6 +191,7 @@ Database
 📂 Project Structure
 
 frontend/
+
 ├── src/
 │   ├── api/
 │   ├── components/
@@ -192,7 +201,9 @@ frontend/
 │   ├── hooks/
 │   ├── utils/
 │   └── constants/
+
 backend/
+
 ├── src/
 │   ├── modules/
 │   ├── middlewares/
@@ -242,11 +253,10 @@ npm install
 
 Create .env
 
-DATABASE_URL=
-JWT_SECRET=
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
+DATABASE_URL="postgresql://postgres:password@postgres:5432/dbname"
+# DATABASE_URL="postgresql://postgres:password@localhost:5433/dbname"
+JWT_SECRET="super_secure_secret_key_change_this"
+JWT_EXPIRES_IN="7d"
 
 Generate Prisma Client
 
