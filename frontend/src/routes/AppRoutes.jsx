@@ -106,6 +106,8 @@ from "../pages/student/ActivityHistoryPage";
 import StudentBadgesPage
 from "../pages/student/StudentBadgesPage";
 
+import RecommendationsPage
+from "../pages/student/RecommendationsPage";
 /*
 |--------------------------------------------------------------------------
 | Organization
@@ -545,6 +547,18 @@ function AppRoutes() {
 
           }
 
+        />
+        
+        <Route
+          path="/recommendations"
+          element={
+            protect(
+              <RecommendationsPage />,
+              [
+                ROLES.STUDENT,
+              ]
+            )
+          }
         />
 
         <Route

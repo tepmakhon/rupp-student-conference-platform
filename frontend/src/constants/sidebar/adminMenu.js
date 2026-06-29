@@ -3,6 +3,8 @@ import {
   ClipboardDocumentCheckIcon,
   UserCircleIcon,
   ChartBarIcon,
+  CalendarDaysIcon,
+  BriefcaseIcon,
 } from "@heroicons/react/24/outline";
 
 const adminMenu = [
@@ -12,6 +14,18 @@ const adminMenu = [
     icon: HomeIcon,
   },
 
+  {
+    name: "Events",
+    path: "/events",
+    icon: CalendarDaysIcon,
+  },
+
+  {
+    name: "Opportunities",
+    path: "/opportunities",
+    icon: BriefcaseIcon,
+  },
+  
   {
     name: "Pending Events",
     path: "/admin/events/pending",

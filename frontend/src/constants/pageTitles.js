@@ -10,6 +10,9 @@ const pageTitles = {
 
   "/opportunities":
     "Opportunities",
+    
+  "/recommendations":
+    "Recommended",
 
   "/saved-opportunities":
     "Saved Opportunities",

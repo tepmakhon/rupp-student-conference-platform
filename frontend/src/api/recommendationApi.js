@@ -1,11 +1,9 @@
-import axiosInstance
-from "./axios";
+import axiosInstance from "./axios";
 
-export const getRecommendations =
-async () => {
- const response =
-    await axiosInstance.get(
-    "/recommendations" 
+export const getRecommendations = async () => {
+  const response = await axiosInstance.get(
+    "/recommendations"
   );
- return response.data.data;
+
+  return response.data.data;
 };
