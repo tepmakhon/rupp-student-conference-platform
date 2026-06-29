@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import toast from "react-hot-toast";
 
 import {
@@ -40,11 +39,8 @@ function ApplicantCard({
         console.error(error);
 
         toast.error(
-
           error?.response?.data?.message ||
-
           "Failed to update application"
-
         );
 
       } finally {
@@ -52,10 +48,10 @@ function ApplicantCard({
         setLoading(false);
 
       }
+
     };
 
   return (
-    
 
     <div
       className="
@@ -86,15 +82,11 @@ function ApplicantCard({
         >
 
           <img
-
             src={
               profile?.profileImageUrl ||
-
               "https://placehold.co/120x120?text=User"
             }
-
             alt="Applicant"
-
             className="
               w-20
               h-20
@@ -112,15 +104,10 @@ function ApplicantCard({
                 text-primary
               "
             >
-
               {
-
                 profile?.fullName ||
-
                 applicant.student?.user?.email
-
               }
-
             </h2>
 
             <p
@@ -129,88 +116,59 @@ function ApplicantCard({
                 mt-1
               "
             >
-
-              {
-
-                applicant.student?.user?.email
-
-              }
-
+              {applicant.student?.user?.email}
             </p>
 
             <div
               className="
-                mt-3
+                mt-4
                 text-sm
                 text-gray-600
-                space-y-1
+                space-y-2
               "
             >
 
               <p>
-
-                University:
-
-                {" "}
-
+                <span className="font-semibold">
+                  University:
+                </span>{" "}
                 {
-
-                  applicant.student?.university?.name ||
-
-                  "-"
-
+                  applicant.student?.university
+                    ?.universityName || "-"
                 }
-
               </p>
 
               <p>
-
-                Faculty:
-
-                {" "}
-
+                <span className="font-semibold">
+                  Faculty:
+                </span>{" "}
                 {
-
-                  applicant.student?.faculty?.name ||
-
-                  "-"
-
+                  applicant.student?.faculty
+                    ?.facultyName || "-"
                 }
-
               </p>
 
               <p>
-
-                Major:
-
-                {" "}
-
+                <span className="font-semibold">
+                  Major:
+                </span>{" "}
                 {
-
-                  applicant.student?.major?.name ||
-
-                  "-"
-
+                  applicant.student?.major
+                    ?.majorName || "-"
                 }
-
               </p>
 
               <p>
-
-                Applied:
-
-                {" "}
-
+                <span className="font-semibold">
+                  Applied:
+                </span>{" "}
                 {
-
-                  new Date(
-
-                    applicant.appliedAt
-
-                  ).toLocaleDateString()
-
+                  applicant.appliedAt
+                    ? new Date(
+                        applicant.appliedAt
+                      ).toLocaleDateString()
+                    : "-"
                 }
-
               </p>
 
             </div>
@@ -238,26 +196,14 @@ function ApplicantCard({
               font-medium
             "
           >
-
-            {
-
-              applicant.applicationStatus
-
-            }
-
+            {applicant.applicationStatus}
           </span>
 
           <button
-
             onClick={() =>
-
-              handleStatus(
-                "REVIEWING"
-              )
+              handleStatus("REVIEWING")
             }
-
             disabled={loading}
-
             className="
               bg-yellow-500
               hover:bg-yellow-600
@@ -268,22 +214,14 @@ function ApplicantCard({
               disabled:opacity-50
             "
           >
-
             Review
-
           </button>
 
           <button
-
             onClick={() =>
-
-              handleStatus(
-                "ACCEPTED"
-              )
+              handleStatus("ACCEPTED")
             }
-
             disabled={loading}
-
             className="
               bg-green-600
               hover:bg-green-700
@@ -294,22 +232,14 @@ function ApplicantCard({
               disabled:opacity-50
             "
           >
-
             Accept
-
           </button>
 
           <button
-
             onClick={() =>
-
-              handleStatus(
-                "REJECTED"
-              )
+              handleStatus("REJECTED")
             }
-
             disabled={loading}
-
             className="
               bg-red-600
               hover:bg-red-700
@@ -320,9 +250,7 @@ function ApplicantCard({
               disabled:opacity-50
             "
           >
-
             Reject
-
           </button>
 
         </div>
@@ -332,6 +260,7 @@ function ApplicantCard({
     </div>
 
   );
+
 }
 
 export default ApplicantCard;

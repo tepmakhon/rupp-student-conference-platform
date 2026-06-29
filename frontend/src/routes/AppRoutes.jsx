@@ -7,7 +7,7 @@ import {
 
 import ProtectedRoute
 from "./ProtectedRoute";
-
+import GuestRoute from "./GuestRoute";
 import {
   ROLES,
   ALL_ROLES,
@@ -235,29 +235,22 @@ function AppRoutes() {
         {/* Auth */}
 
         <Route
-
           path="/login"
-
           element={
-
-            <LoginPage />
-
+            <GuestRoute>
+              <LoginPage />
+            </GuestRoute>
           }
-
         />
 
         <Route
-
           path="/register"
-
           element={
-
-            <RegisterPage />
-
+            <GuestRoute>
+              <RegisterPage />
+            </GuestRoute>
           }
-
         />
-
         {/* Shared */}
 
         <Route

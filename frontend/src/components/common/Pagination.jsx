@@ -1,127 +1,79 @@
 function Pagination({
-
   page,
-
   totalPages,
-
-  setPage,
-
+  onPageChange,
 }) {
+  if (totalPages <= 1) return null;
 
   return (
-
     <div
-
       className="
-
         flex
-
         justify-center
-
-        gap-4
-
+        items-center
+        gap-2
+        mt-10
       "
-
     >
-
       <button
-
-        disabled={
-
-          page === 1
-
-        }
-
+        disabled={page === 1}
         onClick={() =>
-
-          setPage(
-
-            page - 1
-
-          )
-
+          onPageChange(page - 1)
         }
-
         className="
-
-          border
-
           px-4
-
           py-2
-
           rounded-xl
-
-          disabled:opacity-50
-
+          border
+          disabled:opacity-40
         "
-
       >
-
         Previous
-
       </button>
 
-      <span>
-
-        {
-
-          page
-
-        }
-
-        /
-
-        {
-
-          totalPages
-
-        }
-
-      </span>
+      {Array.from(
+        { length: totalPages },
+        (_, index) => (
+          <button
+            key={index}
+            onClick={() =>
+              onPageChange(index + 1)
+            }
+            className={`
+              px-4
+              py-2
+              rounded-xl
+              ${
+                page === index + 1
+                  ? "bg-primary text-white"
+                  : "border"
+              }
+            `}
+          >
+            {index + 1}
+          </button>
+        )
+      )}
 
       <button
-
         disabled={
-
           page === totalPages
-
         }
-
         onClick={() =>
-
-          setPage(
-
-            page + 1
-
-          )
-
+          onPageChange(page + 1)
         }
-
         className="
-
-          border
-
           px-4
-
           py-2
-
           rounded-xl
-
-          disabled:opacity-50
-
+          border
+          disabled:opacity-40
         "
-
       >
-
         Next
-
       </button>
-
     </div>
-
   );
-
 }
 
 export default Pagination;

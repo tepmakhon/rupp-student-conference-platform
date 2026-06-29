@@ -26,10 +26,10 @@ function App() {
 
     socket.connect();
 
-    socket.emit(
-      "join",
-      String(user.id)
-    );
+    socket.emit("join", {
+      userId: String(user.id),
+      role: user.role,
+    });
 
     return () => {
 

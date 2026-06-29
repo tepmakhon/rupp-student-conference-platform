@@ -1,65 +1,56 @@
-import {
-
-  useState,
-
-} from "react";
-
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { uploadToCloudinary } from "../../utils/cloudinaryUpload";
 function OpportunityForm({
-
   initialData = {},
-
   opportunityTypes = [],
-
   loading = false,
-
   onSubmit,
-
 }) {
 
-  const [
-
-    form,
-
-    setForm,
-
-  ] = useState({
-
-    title:
-
-      initialData.title || "",
-
-    description:
-
-      initialData.description || "",
-
-    requirements:
-
-      initialData.requirements || "",
-
-    coverImageUrl:
-
-      initialData.coverImageUrl || "",
-
-    deadline:
-
-      initialData.deadline
-
-      ?
-
-      initialData.deadline
-
-      .slice(0,10)
-
-      :
-
-      "",
-
-    typeId:
-
-      initialData.typeId || "",
-
+  const [form, setForm] = useState({
+    title: initialData.title || "",
+    description: initialData.description || "",
+    requirements: initialData.requirements || "",
+    coverImageUrl: initialData.coverImageUrl || "",
+    deadline: initialData.deadline
+      ? initialData.deadline.slice(0, 10)
+      : "",
+    typeId: initialData.typeId || "",
   });
 
+  const [uploading, setUploading] =
+    useState(false);
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      const imageUrl =
+        await uploadToCloudinary(file);
+
+      setForm((prev) => ({
+        ...prev,
+        coverImageUrl: imageUrl,
+      }));
+
+      toast.success(
+        "Image uploaded successfully"
+      );
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.message ||
+        "Upload failed"
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
   const handleChange =
 
     (e) => {
@@ -434,149 +425,174 @@ function OpportunityForm({
 
       </div>
 
-      <div
+      {/* Cover Image */}
 
-        className="
+        <div className="space-y-8">
 
-          grid
+          <div>
 
-          md:grid-cols-2
+            <label
+              className="
+                block
+                mb-3
+                font-semibold
+                text-primary
+              "
+            >
+              Cover Image
+            </label>
 
-          gap-8
+            <div className="space-y-4">
 
-        "
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="
+                  w-full
+                  border
+                  rounded-2xl
+                  p-3
+                  cursor-pointer
+                  file:mr-4
+                  file:px-4
+                  file:py-2
+                  file:rounded-xl
+                  file:border-0
+                  file:bg-primary
+                  file:text-white
+                  file:cursor-pointer
+                  hover:file:bg-secondary
+                "
+              />
 
-      >
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-3
+                "
+              >
+                <div className="flex-1 h-px bg-gray-200" />
+                <span className="text-gray-400 text-sm">
+                  OR
+                </span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
 
-        {/* Cover */}
+              <input
+                type="text"
+                name="coverImageUrl"
+                placeholder="Paste image URL..."
+                value={form.coverImageUrl}
+                onChange={handleChange}
+                className="
+                  w-full
+                  border
+                  rounded-2xl
+                  p-4
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-secondary
+                "
+              />
 
-        <div>
+              {uploading && (
+                <p className="text-blue-600 font-medium">
+                  Uploading image...
+                </p>
+              )}
 
-          <label
+              {form.coverImageUrl && (
 
-            className="
+                <div
+                  className="
+                    relative
+                    rounded-3xl
+                    overflow-hidden
+                    border
+                    shadow-sm
+                    bg-gray-100
+                  "
+                >
 
-              block
+                  <img
+                    src={form.coverImageUrl}
+                    alt="Preview"
+                    className="
+                      w-full
+                      max-h-[500px]
+                      object-contain
+                    "
+                  />
 
-              mb-3
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm({
+                        ...form,
+                        coverImageUrl: "",
+                      })
+                    }
+                    className="
+                      absolute
+                      top-4
+                      right-4
+                      bg-red-500
+                      hover:bg-red-600
+                      text-white
+                      px-4
+                      py-2
+                      rounded-xl
+                      shadow
+                      transition
+                    "
+                  >
+                    Remove
+                  </button>
 
-              font-semibold
+                </div>
 
-              text-primary
+              )}
 
-            "
+            </div>
 
-          >
+          </div>
 
-            Cover Image URL
+          {/* Deadline */}
 
-          </label>
+          <div>
 
-          <input
+            <label
+              className="
+                block
+                mb-3
+                font-semibold
+                text-primary
+              "
+            >
+              Deadline
+            </label>
 
-            type="text"
+            <input
+              type="date"
+              name="deadline"
+              value={form.deadline}
+              onChange={handleChange}
+              className="
+                w-full
+                border
+                rounded-2xl
+                p-4
+                focus:outline-none
+                focus:ring-2
+                focus:ring-secondary
+              "
+            />
 
-            name="coverImageUrl"
-
-            value={
-
-              form.coverImageUrl
-
-            }
-
-            onChange={
-
-              handleChange
-
-            }
-
-            className="
-
-              w-full
-
-              border
-
-              rounded-2xl
-
-              p-4
-
-              focus:outline-none
-
-              focus:ring-2
-
-              focus:ring-secondary
-
-            "
-
-          />
+          </div>
 
         </div>
-
-        {/* Deadline */}
-
-        <div>
-
-          <label
-
-            className="
-
-              block
-
-              mb-3
-
-              font-semibold
-
-              text-primary
-
-            "
-
-          >
-
-            Deadline
-
-          </label>
-
-          <input
-
-            type="date"
-
-            name="deadline"
-
-            value={
-
-              form.deadline
-
-            }
-
-            onChange={
-
-              handleChange
-
-            }
-
-            className="
-
-              w-full
-
-              border
-
-              rounded-2xl
-
-              p-4
-
-              focus:outline-none
-
-              focus:ring-2
-
-              focus:ring-secondary
-
-            "
-
-          />
-
-        </div>
-
-      </div>
 
       <button
 

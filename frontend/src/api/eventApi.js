@@ -6,12 +6,22 @@ import axiosInstance from "./axios";
 |--------------------------------------------------------------------------
 */
 
-export const getApprovedEvents = async (
+export const getApprovedEvents = async ({
   page = 1,
-  limit = 10
-) => {
+  limit = 10,
+  keyword = "",
+  categoryId = "",
+} = {}) => {
   const response = await axiosInstance.get(
-    `/events/approved?page=${page}&limit=${limit}`
+    "/events/approved",
+    {
+      params: {
+        page,
+        limit,
+        keyword,
+        categoryId,
+      },
+    }
   );
 
   return response.data.data;

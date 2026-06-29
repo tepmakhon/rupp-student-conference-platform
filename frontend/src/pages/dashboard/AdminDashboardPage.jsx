@@ -65,29 +65,6 @@ import {
 import socket from "../../socket/socket";
 
 function AdminDashboardPage() {
-  useEffect(() => {
-
-    const refreshDashboard = () => {
-
-      loadDashboard();
-
-    };
-
-    socket.on(
-      "dashboard_update",
-      refreshDashboard
-    );
-
-    return () => {
-
-      socket.off(
-        "dashboard_update",
-        refreshDashboard
-      );
-
-    };
-
-  }, [loadDashboard]);
   const dispatch =
     useDispatch();
 
@@ -198,7 +175,29 @@ function AdminDashboardPage() {
       ]
 
     );
+  useEffect(() => {
 
+    const refreshDashboard = () => {
+
+      loadDashboard();
+
+    };
+
+    socket.on(
+      "dashboard_update",
+      refreshDashboard
+    );
+
+    return () => {
+
+      socket.off(
+        "dashboard_update",
+        refreshDashboard
+      );
+
+    };
+
+  }, [loadDashboard]);
   useEffect(() => {
 
     loadDashboard();
