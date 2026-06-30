@@ -1,0 +1,4 @@
+DATABASE_URL="postgresql://postgres:password@postgres:5432/rupp_db"
+# DATABASE_URL="postgresql://postgres:password@localhost:5433/rupp_db"
+JWT_SECRET="super_secure_secret_key_change_this"
+JWT_EXPIRES_IN="7d"
