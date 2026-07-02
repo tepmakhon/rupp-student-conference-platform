@@ -1,19 +1,52 @@
 import axiosInstance from "./axios";
 
-export const getStudentAnalytics = async () => {
-  const response = await axiosInstance.get("/analytics/student");
+/*
+|--------------------------------------------------------------------------
+| Student
+|--------------------------------------------------------------------------
+*/
+
+export const getStudentAnalytics = async ({ month, year } = {}) => {
+  const response = await axiosInstance.get("/analytics/student", {
+    params: {
+      month,
+      year,
+    },
+  });
 
   return response.data.data;
 };
 
-export const getOrganizationAnalytics = async () => {
-  const response = await axiosInstance.get("/analytics/organization");
+/*
+|--------------------------------------------------------------------------
+| Organization
+|--------------------------------------------------------------------------
+*/
+
+export const getOrganizationAnalytics = async ({ month, year } = {}) => {
+  const response = await axiosInstance.get("/analytics/organization", {
+    params: {
+      month,
+      year,
+    },
+  });
 
   return response.data.data;
 };
 
-export const getAdminAnalytics = async () => {
-  const response = await axiosInstance.get("/analytics/admin");
+/*
+|--------------------------------------------------------------------------
+| Admin
+|--------------------------------------------------------------------------
+*/
+
+export const getAdminAnalytics = async ({ month, year } = {}) => {
+  const response = await axiosInstance.get("/analytics/admin", {
+    params: {
+      month,
+      year,
+    },
+  });
 
   return response.data.data;
 };

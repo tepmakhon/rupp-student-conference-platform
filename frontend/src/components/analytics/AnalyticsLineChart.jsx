@@ -6,6 +6,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Legend,
 } from "recharts";
 
 function AnalyticsLineChart({ data }) {
@@ -27,24 +28,35 @@ function AnalyticsLineChart({ data }) {
           mb-6
         "
       >
-        Trend
+        Monthly Trend
       </h2>
 
-      <ResponsiveContainer width="100%" height={350}>
+      <ResponsiveContainer width="100%" height={380}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis dataKey="name" />
+          <XAxis dataKey="month" />
 
           <YAxis />
 
           <Tooltip />
 
+          <Legend />
+
           <Line
             type="monotone"
-            dataKey="value"
-            stroke="#0F4C3A"
+            dataKey="registrations"
+            stroke="#2563EB"
             strokeWidth={3}
+            dot
+          />
+
+          <Line
+            type="monotone"
+            dataKey="applications"
+            stroke="#16A34A"
+            strokeWidth={3}
+            dot
           />
         </LineChart>
       </ResponsiveContainer>

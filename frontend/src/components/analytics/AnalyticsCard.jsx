@@ -1,10 +1,4 @@
-function AnalyticsCard({
-  title,
-
-  value,
-
-  icon: Icon,
-}) {
+function AnalyticsCard({ title, value, growth, icon: Icon }) {
   return (
     <div
       className="
@@ -41,6 +35,16 @@ function AnalyticsCard({
           >
             {value}
           </h2>
+          {growth !== undefined && growth !== null && (
+            <p
+              className={
+                growth >= 0 ? "text-green-600 mt-2" : "text-red-600 mt-2"
+              }
+            >
+              {growth >= 0 ? "▲" : "▼"} {Math.abs(growth)}%
+              <span className="text-gray-500 ml-2">vs last month</span>
+            </p>
+          )}
         </div>
 
         <div

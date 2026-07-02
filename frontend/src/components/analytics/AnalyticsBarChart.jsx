@@ -5,6 +5,7 @@ import {
   XAxis,
   YAxis,
   Tooltip,
+  Legend,
   CartesianGrid,
 } from "recharts";
 
@@ -27,20 +28,24 @@ function AnalyticsBarChart({ data }) {
           mb-6
         "
       >
-        Overview
+        Monthly Comparison
       </h2>
 
-      <ResponsiveContainer width="100%" height={350}>
+      <ResponsiveContainer width="100%" height={380}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis dataKey="name" />
+          <XAxis dataKey="month" />
 
           <YAxis />
 
           <Tooltip />
 
-          <Bar dataKey="value" fill="#0F4C3A" radius={[8, 8, 0, 0]} />
+          <Legend />
+
+          <Bar dataKey="registrations" fill="#2563EB" radius={[6, 6, 0, 0]} />
+
+          <Bar dataKey="applications" fill="#16A34A" radius={[6, 6, 0, 0]} />
         </BarChart>
       </ResponsiveContainer>
     </div>
