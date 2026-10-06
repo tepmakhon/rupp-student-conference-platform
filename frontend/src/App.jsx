@@ -1,30 +1,32 @@
 import AppRoutes from "./routes/AppRoutes";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import socket from "./socket/socket";
+import { logout } from "./redux/slices/authSlice";
 
 function App() {
-  useEffect(() => {
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-  }, []);
-  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    if (!user?.id) return;
-
-    socket.connect();
-
-    socket.emit("join", {
-      userId: String(user.id),
-      role: user.role,
-    });
-
-    return () => {
-      socket.disconnect();
+    const expire = () => dispatch(logout());
+    const syncLogout = (event) => {
+      if (event.key === "token" && !event.newValue) expire();
     };
-  }, [user]);
+    window.addEventListener("auth:expired", expire);
+    window.addEventListener("storage", syncLogout);
+    return () => {
+      window.removeEventListener("auth:expired", expire);
+      window.removeEventListener("storage", syncLogout);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!token) return;
+    socket.auth = { token };
+    socket.connect();
+    return () => socket.disconnect();
+  }, [token]);
   return <AppRoutes />;
 }
 

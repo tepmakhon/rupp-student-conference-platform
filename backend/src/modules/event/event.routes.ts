@@ -1,3 +1,6 @@
+import { rejectionSchema } from "../audit/moderation.validation.js";
+import { validateIdParam } from "../../middlewares/id.middleware.js";
+import { optionalAuth } from "../../middlewares/optionalAuth.middleware.js";
 import { Router } from "express";
 
 import {
@@ -24,6 +27,8 @@ import { validate } from "../../middlewares/validate.middleware.js";
 import { createEventSchema, updateEventSchema } from "./event.validation.js";
 
 const router = Router();
+router.param("id", validateIdParam);
+
 
 /**
  * @swagger
@@ -167,7 +172,7 @@ router.get(
   getMyEventsController,
 );
 
-router.get("/:id", getEventByIdController);
+router.get("/:id", optionalAuth, getEventByIdController);
 
 /**
  * @swagger
@@ -238,6 +243,7 @@ router.patch(
   "/:id/reject",
   authMiddleware,
   rbac(["ADMIN"]),
+  validate(rejectionSchema),
   rejectEventController,
 );
 

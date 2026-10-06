@@ -39,6 +39,10 @@ export const checkInEvent = async (eventId: bigint, userId: bigint) => {
     throw new AppError("You are not registered for this event", 400);
   }
 
+  if (registration.registrationStatus !== "APPROVED" || registration.event.status !== "APPROVED") {
+    throw new AppError("Registration or event is not approved", 400);
+  }
+
   const existingAttendance = await prisma.attendanceRecord.findUnique({
     where: {
       registrationId: registration.id,
@@ -62,6 +66,7 @@ export const checkInEvent = async (eventId: bigint, userId: bigint) => {
       student.id,
       20,
       `Attended ${registration.event.title}`,
+      tx,
     );
 
     return attendance;
@@ -170,6 +175,10 @@ export const scanAttendance = async (
     throw new AppError("Unauthorized", 403);
   }
 
+  if (registration.registrationStatus !== "APPROVED" || registration.event.status !== "APPROVED") {
+    throw new AppError("Registration or event is not approved", 400);
+  }
+
   const existing = await prisma.attendanceRecord.findUnique({
     where: {
       registrationId,
@@ -180,23 +189,13 @@ export const scanAttendance = async (
     throw new AppError("Student already checked in", 409);
   }
 
-  const attendance = await prisma.attendanceRecord.create({
-    data: {
-      registrationId,
-
-      verificationMethod: "QR_CODE",
-
-      checkInTime: new Date(),
-    },
+  const attendance = await prisma.$transaction(async (tx) => {
+    const record = await tx.attendanceRecord.create({
+      data: { registrationId, verificationMethod: "QR_CODE", checkInTime: new Date() },
+    });
+    await addActivityScore(registration.student.id, 20, `Attended ${registration.event.title}`, tx);
+    return record;
   });
-
-  await addActivityScore(
-    registration.student.id,
-
-    20,
-
-    `Attended ${registration.event.title}`,
-  );
   refreshStudentDashboard(registration.student.userId);
 
   refreshOrganizationDashboard(organizationUserId);

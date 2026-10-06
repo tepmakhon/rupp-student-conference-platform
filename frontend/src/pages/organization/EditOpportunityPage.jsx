@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -36,11 +36,7 @@ function EditOpportunityPage() {
 
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -62,7 +58,17 @@ function EditOpportunityPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadData();
+    });
+    return () => { active = false; };
+  }, [loadData]);
+
+
 
   const handleSubmit = async (form) => {
     try {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState , useCallback } from "react";
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import PageHeader from "../../components/common/PageHeader";
@@ -29,35 +29,8 @@ function EventListPage() {
     totalPages: 1,
     total: 0,
   });
-  const loadCategories = async () => {
-    try {
-      const data = await getEventCategories();
-      setCategories(data || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    loadCategories();
-  }, []);
 
-  useEffect(() => {
-    loadEvents();
-  }, [page, debouncedKeyword, categoryId]);
-
-  useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    debounceRef.current = setTimeout(() => {
-      setDebouncedKeyword(keyword);
-    }, 500);
-
-    return () => clearTimeout(debounceRef.current);
-  }, [keyword]);
-
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -84,7 +57,46 @@ function EventListPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, debouncedKeyword, categoryId]);
+
+  const loadCategories = useCallback(async () => {
+    try {
+      const data = await getEventCategories();
+      setCategories(data || []);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadCategories();
+    });
+    return () => { active = false; };
+  }, [loadCategories]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadEvents();
+    });
+    return () => { active = false; };
+  }, [page, debouncedKeyword, categoryId, loadEvents]);
+
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      setDebouncedKeyword(keyword);
+    }, 500);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [keyword]);
+
+
   return (
     <DashboardLayout>
       <div className="max-w-7xl mx-auto space-y-8">

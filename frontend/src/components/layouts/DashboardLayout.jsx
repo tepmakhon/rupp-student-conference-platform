@@ -1,3 +1,4 @@
+import BottomNavigation from "./BottomNavigation";
 import { useState } from "react";
 
 import Sidebar from "./Sidebar";
@@ -20,6 +21,7 @@ function DashboardLayout({ children }) {
       <main
         className="
           flex-1
+          min-w-0
           md:ml-64
           flex
           flex-col
@@ -32,12 +34,14 @@ function DashboardLayout({ children }) {
           className="
             flex-1
             p-4
+            pb-24
             md:p-8
           "
         >
           {children}
         </section>
       </main>
+      <BottomNavigation />
     </div>
   );
 }

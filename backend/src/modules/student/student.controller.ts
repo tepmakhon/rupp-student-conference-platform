@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import * as studentService from "./student.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getMyHistory = async (req: Request, res: Response) => {
   try {
@@ -11,8 +11,8 @@ export const getMyHistory = async (req: Request, res: Response) => {
     const history = await studentService.getScoreHistory(BigInt(user.id));
 
     return successResponse(res, history, "Score history retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -26,8 +26,8 @@ export const createProfile = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, profile, "Student profile created", 201);
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -38,8 +38,8 @@ export const getMyProfile = async (req: Request, res: Response) => {
     const profile = await studentService.getMyProfile(BigInt(user.id));
 
     return successResponse(res, profile, "Student profile retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -52,7 +52,7 @@ export const getPublicProfile = async (req: Request, res: Response) => {
     const profile = await studentService.getStudentPublicProfile(id);
 
     return successResponse(res, profile, "Student profile retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };

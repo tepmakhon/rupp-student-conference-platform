@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -19,11 +19,7 @@ function CreateEventPage() {
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadCategories();
-  }, []);
-
-  const loadCategories = async () => {
+  const loadCategories = useCallback(async () => {
     try {
       const data = await getEventCategories();
 
@@ -35,7 +31,17 @@ function CreateEventPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadCategories();
+    });
+    return () => { active = false; };
+  }, [loadCategories]);
+
+
 
   const handleCreate = async (form) => {
     try {

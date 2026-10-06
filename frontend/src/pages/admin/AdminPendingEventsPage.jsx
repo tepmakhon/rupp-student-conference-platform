@@ -40,7 +40,11 @@ function AdminPendingEventsPage() {
   }, []);
 
   useEffect(() => {
-    loadEvents();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadEvents();
+    });
+    return () => { active = false; };
   }, [loadEvents]);
 
   return (

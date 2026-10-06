@@ -9,6 +9,15 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "src/types/**/*.d.ts"],
-  "exclude": ["node_modules", "dist", "generated"]
+  "include": [
+    "src/**/*",
+    "src/types/**/*.d.ts",
+    "prisma/seed.ts",
+    "scripts/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "generated"
+  ]
 }

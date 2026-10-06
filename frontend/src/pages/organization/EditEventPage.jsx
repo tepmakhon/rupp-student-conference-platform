@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -23,11 +23,7 @@ function EditEventPage() {
 
   const [initialData, setInitialData] = useState(null);
 
-  useEffect(() => {
-    loadPage();
-  }, []);
-
-  const loadPage = async () => {
+  const loadPage = useCallback(async () => {
     try {
       const [event, categoriesData] = await Promise.all([
         getEventById(id),
@@ -49,15 +45,7 @@ function EditEventPage() {
         capacity: event.capacity || "",
 
         eventDate: event.eventDate
-          ? new Date(event.eventDate)
-
-              .toISOString()
-
-              .slice(
-                0,
-
-                16,
-              )
+          ? new Date(new Date(event.eventDate).getTime() - new Date(event.eventDate).getTimezoneOffset() * 60000).toISOString().slice(0, 16)
           : "",
 
         bannerImageUrl: event.bannerImageUrl || "",
@@ -69,7 +57,17 @@ function EditEventPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadPage();
+    });
+    return () => { active = false; };
+  }, [loadPage]);
+
+
 
   const handleUpdate = async (form) => {
     try {

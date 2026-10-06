@@ -8,8 +8,14 @@ services:
 
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Hon979471197
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the root .env}
       POSTGRES_DB: rupp_db
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d rupp_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
     ports:
       - "5433:5432"
@@ -23,7 +29,8 @@ services:
     container_name: rupp-backend
 
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
     ports:
       - "5050:5050"

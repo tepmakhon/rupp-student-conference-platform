@@ -1,10 +1,8 @@
-import { useEffect } from "react";
+import { useEffect , useCallback } from "react";
 
-import { Link } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
@@ -46,13 +44,8 @@ function ProfilePage() {
 
   const isOrganization = Boolean(profile?.organization);
 
-  const isAdmin = profile?.role?.roleName === "ADMIN";
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       dispatch(setProfileLoading(true));
 
@@ -68,7 +61,17 @@ function ProfilePage() {
     } finally {
       dispatch(setProfileLoading(false));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadProfile();
+    });
+    return () => { active = false; };
+  }, [loadProfile]);
+
+
 
   return (
     <DashboardLayout>

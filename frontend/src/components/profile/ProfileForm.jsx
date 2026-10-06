@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect, useState , useCallback } from "react";
+import { uploadToCloudinary } from "../../utils/cloudinaryUpload";
 
 import { getMyProfile, createProfile, updateProfile } from "../../api/userApi";
 
@@ -21,11 +21,7 @@ function ProfileForm() {
     profileImageUrl: "",
   });
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       const profile = await getMyProfile();
 
@@ -46,12 +42,22 @@ function ProfileForm() {
       });
 
       setHasProfile(true);
-    } catch (error) {
+    } catch {
       setHasProfile(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadProfile();
+    });
+    return () => { active = false; };
+  }, [loadProfile]);
+
+
 
   const handleChange = (e) => {
     setFormData({
@@ -75,18 +81,7 @@ function ProfileForm() {
       let profileImageUrl = formData.profileImageUrl;
 
       if (image) {
-        const cloudData = new FormData();
-
-        cloudData.append("file", image);
-
-        cloudData.append("upload_preset", "rupp_platform_cloudnary");
-
-        const uploadRes = await axios.post(
-          "https://api.cloudinary.com/v1_1/dct61ygjw/image/upload",
-          cloudData,
-        );
-
-        profileImageUrl = uploadRes.data.secure_url;
+        profileImageUrl = await uploadToCloudinary(image);
       }
 
       const payload = {

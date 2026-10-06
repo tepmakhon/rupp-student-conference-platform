@@ -59,33 +59,19 @@ export const updateMySkills = async (
     );
   }
 
-  /*
-  |--------------------------------------------------------------------------
-  | Remove Existing Skills
-  |--------------------------------------------------------------------------
-  */
-
-  await prisma.studentSkill.deleteMany({
-    where: {
-      studentId: student.id,
-    },
-  });
-
-  /*
-  |--------------------------------------------------------------------------
-  | Add New Skills
-  |--------------------------------------------------------------------------
-  */
-
-  if (skillIds.length > 0) {
-    await prisma.studentSkill.createMany({
-      data: skillIds.map((skillId) => ({
-        studentId: student.id,
-
-        skillId: BigInt(skillId),
-      })),
-    });
+  if (!Array.isArray(skillIds) || skillIds.length > 100 ||
+      !skillIds.every((id) => typeof id === "string" && /^[1-9]\d*$/.test(id))) {
+    throw new AppError("Invalid skill IDs", 400);
   }
+  const ids = [...new Set(skillIds)].map((id) => BigInt(id));
+  await prisma.$transaction(async (tx) => {
+    const count = await tx.skill.count({ where: { id: { in: ids } } });
+    if (count !== ids.length) throw new AppError("One or more skills do not exist", 400);
+    await tx.studentSkill.deleteMany({ where: { studentId: student.id } });
+    if (ids.length) await tx.studentSkill.createMany({
+      data: ids.map((skillId) => ({ studentId: student.id, skillId })),
+    });
+  });
 
   return getMySkills(userId);
 };

@@ -168,7 +168,7 @@ export const getMyEvents = async (userId: bigint) => {
   });
 };
 
-export const getEventById = async (eventId: bigint) => {
+export const getEventById = async (eventId: bigint, user?: { id: string; roleName: string }) => {
   const event = await prisma.event.findUnique({
     where: {
       id: eventId,
@@ -177,11 +177,16 @@ export const getEventById = async (eventId: bigint) => {
     include: {
       organization: true,
       category: true,
-      registrations: true,
+      _count: { select: { registrations: true } },
     },
   });
 
   if (!event) {
+    throw new AppError("Event not found", 404);
+  }
+
+  if (event.status !== "APPROVED" && user?.roleName !== "ADMIN" &&
+      event.organization.userId.toString() !== user?.id) {
     throw new AppError("Event not found", 404);
   }
 
@@ -217,7 +222,7 @@ export const getPendingEvents = async () => {
 |--------------------------------------------------------------------------
 */
 
-export const approveEvent = async (eventId: bigint) => {
+export const approveEvent = async (eventId: bigint, actorId: bigint) => {
   const existingEvent = await prisma.event.findUnique({
     where: {
       id: eventId,
@@ -253,7 +258,7 @@ export const approveEvent = async (eventId: bigint) => {
 
   refreshAdminDashboard();
   await createAuditLog(
-    event.organization.userId,
+    actorId,
     `EVENT_APPROVED:${event.title}`,
   );
 
@@ -266,7 +271,7 @@ export const approveEvent = async (eventId: bigint) => {
 |--------------------------------------------------------------------------
 */
 
-export const rejectEvent = async (eventId: bigint) => {
+export const rejectEvent = async (eventId: bigint, actorId: bigint, reason: string) => {
   const existingEvent = await prisma.event.findUnique({
     where: {
       id: eventId,
@@ -284,7 +289,7 @@ export const rejectEvent = async (eventId: bigint) => {
 
     data: {
       status: "REJECTED",
-      approvedAt: new Date(),
+      approvedAt: null,
     },
 
     include: {
@@ -295,15 +300,15 @@ export const rejectEvent = async (eventId: bigint) => {
   await createNotification(
     event.organization.userId,
     "Event Rejected",
-    `${event.title} has been rejected by admin`,
+    `${event.title} has been rejected: ${reason}`,
     "EVENT",
   );
   refreshOrganizationDashboard(event.organization.userId);
 
   refreshAdminDashboard();
   await createAuditLog(
-    event.organization.userId,
-    `EVENT_REJECTED:${event.title}`,
+    actorId,
+    `EVENT_REJECTED:${event.id}:${event.title}:${reason}`,
   );
 
   return event;
@@ -326,60 +331,27 @@ export const registerForEvent = async (eventId: bigint, userId: bigint) => {
     throw new AppError("Please complete your student profile first", 400);
   }
 
-  const event = await prisma.event.findUnique({
-    where: {
-      id: eventId,
-    },
-
-    include: {
-      registrations: true,
-      organization: true,
-    },
+  // Serialize registrations for this event before checking remaining seats.
+  const { event, registration } = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM events WHERE id = ${eventId} FOR UPDATE`;
+    const event = await tx.event.findUnique({ where: { id: eventId }, include: { organization: true } });
+    if (!event) throw new AppError("Event not found", 404);
+    if (event.status !== "APPROVED") throw new AppError("Event is not approved", 400);
+    if (event.eventDate < new Date()) throw new AppError("This event has already ended", 400);
+    const existing = await tx.eventRegistration.findUnique({
+      where: { eventId_studentId: { eventId, studentId: student.id } },
+    });
+    if (existing) throw new AppError("Already registered", 409);
+    const count = await tx.eventRegistration.count({ where: { eventId, registrationStatus: { not: "CANCELLED" } } });
+    if (event.capacity !== null && count >= event.capacity) throw new AppError("Event is full", 400);
+    const registration = await tx.eventRegistration.create({
+      data: { eventId, studentId: student.id, registrationStatus: "APPROVED" },
+    });
+    await addActivityScore(student.id, 10, `Registered for ${event.title}`, tx);
+    return { event, registration };
   });
 
-  if (!event) {
-    throw new AppError("Event not found", 404);
-  }
-
-  if (event.status !== "APPROVED") {
-    throw new AppError("Event is not approved", 400);
-  }
-
-  if (new Date(event.eventDate) < new Date()) {
-    throw new AppError("This event has already ended", 400);
-  }
-
-  const existingRegistration = await prisma.eventRegistration.findFirst({
-    where: {
-      eventId,
-      studentId: student.id,
-    },
-  });
-
-  if (existingRegistration) {
-    throw new AppError("Already registered", 400);
-  }
-
-  if (event.capacity && event.registrations.length >= event.capacity) {
-    throw new AppError("Event is full", 400);
-  }
-
-  const registration = await prisma.eventRegistration.create({
-    data: {
-      eventId,
-      studentId: student.id,
-      registrationStatus: "APPROVED",
-    },
-  });
-
-  await addActivityScore(
-    student.id,
-
-    10,
-
-    `Registered for ${event.title}`,
-  );
-
+  await createNotification(userId, "Registration confirmed", `You are registered for ${event.title}`, "EVENT");
   await createNotification(
     event.organization.userId,
     "New Event Registration",
@@ -485,6 +457,8 @@ export const updateEvent = async (
     },
 
     data: {
+      status: "PENDING",
+      approvedAt: null,
       title: data.title,
 
       description: data.description,
@@ -551,22 +525,10 @@ export const deleteEvent = async (eventId: bigint, userId: bigint) => {
     |--------------------------------------------------------------------------
     */
 
-  await prisma.eventRegistration.deleteMany({
-    where: {
-      eventId,
-    },
-  });
-
-  /*
-    |--------------------------------------------------------------------------
-    | Delete event
-    |--------------------------------------------------------------------------
-    */
-
-  await prisma.event.delete({
-    where: {
-      id: eventId,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.attendanceRecord.deleteMany({ where: { registration: { eventId } } });
+    await tx.eventRegistration.deleteMany({ where: { eventId } });
+    await tx.event.delete({ where: { id: eventId } });
   });
 
   return true;

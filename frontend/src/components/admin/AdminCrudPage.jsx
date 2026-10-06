@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState, useCallback } from "react";
+import useApiQuery from "../../hooks/useApiQuery";
+import ErrorState from "../common/ErrorState";
+import { useMemo, useState } from "react";
 
 import toast from "react-hot-toast";
 
@@ -37,9 +39,8 @@ function AdminCrudPage({
 
   remove,
 }) {
-  const [items, setItems] = useState([]);
-
-  const [loading, setLoading] = useState(true);
+  const { data, loading, error, retry: loadData } = useApiQuery(getAll);
+  const items = useMemo(() => Array.isArray(data) ? data : [], [data]);
 
   const [search, setSearch] = useState("");
 
@@ -50,26 +51,7 @@ function AdminCrudPage({
   const [selected, setSelected] = useState(null);
 
   const [form, setForm] = useState({});
-
-  const loadData = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const data = await getAll();
-
-      setItems(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error(error);
-
-      toast.error(`Failed to load ${entityName}`);
-    } finally {
-      setLoading(false);
-    }
-  }, [entityName, getAll]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  const [saving, setSaving] = useState(false);
 
   const filtered = useMemo(() => {
     if (!search) {
@@ -115,6 +97,8 @@ function AdminCrudPage({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (saving) return;
+    setSaving(true);
 
     try {
       if (selected) {
@@ -138,10 +122,12 @@ function AdminCrudPage({
       console.error(error);
 
       toast.error(error?.response?.data?.message || "Operation failed");
-    }
+    } finally { setSaving(false); }
   };
 
   const handleDelete = async () => {
+    if (saving || !selected) return;
+    setSaving(true);
     try {
       await remove(selected.id);
 
@@ -154,7 +140,7 @@ function AdminCrudPage({
       console.error(error);
 
       toast.error(error?.response?.data?.message || "Delete failed");
-    }
+    } finally { setSaving(false); }
   };
 
   return (
@@ -182,7 +168,9 @@ function AdminCrudPage({
           onAdd={handleAdd}
         />
 
-        <AdminDataTable
+        {error && <ErrorState message={error} onRetry={loadData} />}
+
+        {!error && <AdminDataTable
           columns={columns}
 
           data={filtered}
@@ -200,9 +188,10 @@ function AdminCrudPage({
 
             setDeleteOpen(true);
           }}
-        />
+        />}
 
         <AdminFormModal
+          saving={saving}
           open={modalOpen}
 
           title={selected ? `Edit ${entityName}` : `Create ${entityName}`}
@@ -215,6 +204,7 @@ function AdminCrudPage({
             <div key={field.name}>
               {field.type === "textarea" ? (
                 <Textarea
+                  required={field.required || false}
                   label={field.label}
 
                   value={form[field.name] || ""}
@@ -233,6 +223,7 @@ function AdminCrudPage({
                 />
               ) : field.type === "select" ? (
                 <Select
+                  required={field.required || false}
                   label={field.label}
 
                   value={form[field.name] || ""}
@@ -255,6 +246,7 @@ function AdminCrudPage({
                 />
               ) : (
                 <Input
+                  required={field.required || false}
                   label={field.label}
 
                   type={field.type || "text"}
@@ -279,10 +271,11 @@ function AdminCrudPage({
         </AdminFormModal>
 
         <DeleteConfirmationModal
+          saving={saving}
           open={deleteOpen}
 
           title={
-            selected?.name || selected?.title || selected?.categoryName || ""
+            selected?.name || selected?.title || selected?.categoryName || selected?.facultyName || selected?.majorName || selected?.universityName || selected?.skillName || selected?.typeName || ""
           }
 
           onClose={() => setDeleteOpen(false)}

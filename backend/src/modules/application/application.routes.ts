@@ -1,3 +1,4 @@
+import { validateIdParam } from "../../middlewares/id.middleware.js";
 import { Router } from "express";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
@@ -15,6 +16,8 @@ import { validate } from "../../middlewares/validate.middleware.js";
 import { updateApplicationStatusSchema } from "./application.validation.js";
 
 const router = Router();
+router.param("id", validateIdParam);
+
 
 /*
 |--------------------------------------------------------------------------

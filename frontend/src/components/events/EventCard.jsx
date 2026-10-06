@@ -1,3 +1,4 @@
+import SafeImage from "../common/SafeImage";
 import { Link } from "react-router-dom";
 
 import {
@@ -50,7 +51,7 @@ function EventCard({ event }) {
 
           "
         >
-          <img
+          <SafeImage
             src={
               event.bannerImageUrl || "https://placehold.co/800x500?text=Event"
             }

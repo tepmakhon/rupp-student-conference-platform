@@ -1,3 +1,6 @@
+import { z } from "zod";
+import { validate } from "../../middlewares/validate.middleware.js";
+import { validateIdParam } from "../../middlewares/id.middleware.js";
 import { Router } from "express";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
@@ -12,12 +15,15 @@ import {
   exportAttendancePDF,
 } from "./attendance.controller.js";
 const router = Router();
+router.param("eventId", validateIdParam);
+
 
 router.post("/checkin/:eventId", authMiddleware, rbac(["STUDENT"]), checkIn);
 
 router.get("/my", authMiddleware, rbac(["STUDENT"]), getMyAttendance);
 
-router.post("/scan", authMiddleware, rbac(["ORGANIZATION"]), scanAttendance);
+router.post("/scan", authMiddleware, rbac(["ORGANIZATION"]),
+  validate(z.object({ registrationId: z.union([z.string().regex(/^[1-9]\d*$/), z.number().int().positive().safe()]) })), scanAttendance);
 
 router.get(
   "/statistics/:eventId",

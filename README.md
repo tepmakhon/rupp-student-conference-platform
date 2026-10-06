@@ -338,3 +338,25 @@ LinkedIn: https://www.linkedin.com/in/tep-makhon-542ab836b/
 📄 License
 
 This project is developed for educational purposes as part of a Computer Science project at the Royal University of Phnom Penh.
+
+## Engineering review and current setup
+
+See [the implementation and audit report](docs/project-review.md) for the architecture, database relationships, security changes, verified checks, and remaining work. The [generated API map](docs/api-map.md) lists the actual mounted endpoints and their role requirements.
+
+Install both dependency sets with `npm ci` from `backend/` and `frontend/`. Copy each directory's `env-example` to `.env` and configure your database, JWT secret and frontend API URL. Image uploads require `VITE_CLOUDINARY_CLOUD_NAME` and `VITE_CLOUDINARY_UPLOAD_PRESET`; rebuild the frontend after changing Vite variables.
+
+From `backend/`, generate the client with `npx prisma generate`, apply migrations to your development database with `npx prisma migrate dev`, and run `npm run db:seed` to create roles and reference data. Optionally set `ADMIN_EMAIL` and `ADMIN_PASSWORD` before seeding to create the initial administrator. Existing accounts and passwords are preserved. `npm run admin:reset` requires those same environment variables and only resets an existing administrator account.
+
+Docker Compose now requires `POSTGRES_PASSWORD` in a root `.env` or your shell environment. Match it to the credentials in `backend/.env` and, for an existing PostgreSQL volume, use the password already configured for that database. Environment files are excluded from the backend Docker image. Database readiness is checked before starting the backend. Container building and database migration execution still need validation with a running Docker daemon.
+
+Run these checks after changes:
+
+```sh
+npm run build --prefix backend
+npm run lint --prefix frontend -- --max-warnings=0
+npm run build --prefix frontend
+npm test --prefix backend
+npm run docs:api --prefix backend
+```
+
+The regression suite includes frontend contracts and therefore requires frontend dependencies as well as backend dependencies. Database calls are mocked in these tests; they do not replace the complete student, organization and admin acceptance flows against PostgreSQL. CI runs these checks on pushes and pull requests.

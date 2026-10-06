@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -43,11 +43,7 @@ function LeaderboardPage() {
     error,
   } = useSelector((state) => state.leaderboard);
 
-  useEffect(() => {
-    loadLeaderboard();
-  }, [page]);
-
-  const loadLeaderboard = async () => {
+  const loadLeaderboard = useCallback(async () => {
     try {
       dispatch(setLeaderboardLoading(true));
 
@@ -67,7 +63,17 @@ function LeaderboardPage() {
     } finally {
       dispatch(setLeaderboardLoading(false));
     }
-  };
+  }, [page, dispatch]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadLeaderboard();
+    });
+    return () => { active = false; };
+  }, [page, loadLeaderboard]);
+
+
 
   const filteredStudents = students.filter((student) =>
     student.fullName

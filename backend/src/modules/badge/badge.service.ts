@@ -1,3 +1,4 @@
+import { getBadgesForScore } from "./badge.constants.js";
 import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 
@@ -14,51 +15,7 @@ export const getMyBadges = async (userId: bigint) => {
 
   const score = student.activityScore;
 
-  const badges = [
-    {
-      id: 1,
-      name: "Active Student",
-      icon: "🥉",
-      color: "bronze",
-      requiredScore: 50,
-    },
-
-    {
-      id: 2,
-      name: "Community Contributor",
-      icon: "🥈",
-      color: "silver",
-      requiredScore: 150,
-    },
-
-    {
-      id: 3,
-      name: "Campus Champion",
-      icon: "🥇",
-      color: "gold",
-      requiredScore: 300,
-    },
-
-    {
-      id: 4,
-      name: "University Leader",
-      icon: "🏆",
-      color: "purple",
-      requiredScore: 600,
-    },
-
-    {
-      id: 5,
-      name: "Legend Student",
-      icon: "💎",
-      color: "blue",
-      requiredScore: 1000,
-    },
-  ].map((badge) => ({
-    ...badge,
-
-    unlocked: score >= badge.requiredScore,
-  }));
+  const badges = getBadgesForScore(score);
 
   return {
     activityScore: score,

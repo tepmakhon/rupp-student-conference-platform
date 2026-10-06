@@ -60,7 +60,7 @@ function AttendanceScannerPage() {
     return () => {
       scanner.clear().catch(() => {});
     };
-  }, []);
+  }, [id, navigate]);
 
   return (
     <DashboardLayout>

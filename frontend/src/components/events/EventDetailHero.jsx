@@ -1,3 +1,4 @@
+import SafeImage from "../common/SafeImage";
 import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
 
 function EventDetailHero({ event }) {
@@ -13,7 +14,7 @@ function EventDetailHero({ event }) {
 
       "
     >
-      <img
+      <SafeImage
         src={event.bannerImageUrl || "https://placehold.co/1200x500?text=Event"}
 
         alt={event.title}

@@ -1,5 +1,7 @@
+import { useId } from "react";
 function Input({
   label,
+  id,
 
   type = "text",
 
@@ -14,11 +16,14 @@ function Input({
   disabled = false,
 
   className = "",
+  ...rest
 }) {
+  const generatedId = useId();
+  const fieldId = id || generatedId;
   return (
     <div className="space-y-2">
       {label && (
-        <label
+        <label htmlFor={fieldId}
           className="
 
               block
@@ -33,7 +38,7 @@ function Input({
         </label>
       )}
 
-      <input
+      <input {...rest} id={fieldId}
         type={type}
 
         value={value}

@@ -1,49 +1,17 @@
-import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { AppError } from "../utils/AppError.js";
+import { type Request, type Response, type NextFunction } from "express";
+import { authenticateToken } from "../utils/authUser.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret";
-
-export const authMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+  const match = req.headers.authorization?.match(/^Bearer (\S+)$/);
+  if (!match) return res.status(401).json({ success: false, message: "Bearer token required" });
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader) {
-      return res.status(401).json({
-        message: "No token provided",
-      });
-    }
-
-    const token = authHeader.startsWith("Bearer ")
-      ? authHeader.split(" ")[1]
-      : null;
-
-    if (!token) {
-      return res.status(401).json({
-        message: "Invalid token format",
-      });
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET) as {
-      id: string;
-      email: string;
-      roleName: string;
-    };
-
-    req.user = decoded as {
-      id: string;
-      email: string;
-      roleId: string;
-      roleName: string;
-    };
-
+    req.user = await authenticateToken(match[1]);
     next();
   } catch (error) {
-    return res.status(401).json({
-      message: "Invalid token",
-    });
+    if (error instanceof AppError && error.statusCode === 401) {
+      return res.status(401).json({ success: false, message: "Invalid or inactive session" });
+    }
+    next(error);
   }
 };

@@ -1,4 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import useApiQuery from "../../hooks/useApiQuery";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { useState, useCallback } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -23,35 +26,11 @@ import { getEventById, registerForEvent } from "../../api/eventApi";
 function EventDetailPage() {
   const { id } = useParams();
 
-  const [event, setEvent] = useState(null);
-
-  const [loading, setLoading] = useState(true);
-
-  const [error, setError] = useState("");
-
+  const role = useSelector((state) => state.auth.role);
   const [registering, setRegistering] = useState(false);
-
-  const loadEvent = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      setError("");
-
-      const data = await getEventById(id);
-
-      setEvent(data);
-    } catch (error) {
-      console.error(error);
-
-      setError("Failed to load event");
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    loadEvent();
-  }, [loadEvent]);
+  const [registeredId, setRegisteredId] = useState(null);
+  const loader = useCallback(() => getEventById(id), [id]);
+  const { data: event, loading, error, retry } = useApiQuery(loader);
 
   const handleRegister = async () => {
     try {
@@ -59,6 +38,7 @@ function EventDetailPage() {
 
       await registerForEvent(id);
 
+      setRegisteredId(id);
       toast.success("Successfully registered");
     } catch (error) {
       toast.error(error?.response?.data?.message || "Registration failed");
@@ -78,7 +58,7 @@ function EventDetailPage() {
   if (error) {
     return (
       <DashboardLayout>
-        <ErrorState message={error} />
+        <ErrorState message={error} onRetry={retry} />
       </DashboardLayout>
     );
   }
@@ -115,11 +95,13 @@ function EventDetailPage() {
 
           "
         >
-          <EventRegisterButton
+          {role === "STUDENT" && event.status === "APPROVED" && (registeredId === id
+            ? <Link to="/my-events" className="bg-primary text-white px-6 py-3 rounded-xl">View my registrations</Link>
+            : <EventRegisterButton
             registering={registering}
 
             onRegister={handleRegister}
-          />
+          />)}
         </div>
       </div>
     </DashboardLayout>

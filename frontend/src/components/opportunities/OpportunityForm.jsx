@@ -1,3 +1,4 @@
+import SafeImage from "../common/SafeImage";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { uploadToCloudinary } from "../../utils/cloudinaryUpload";
@@ -371,7 +372,7 @@ function OpportunityForm({
                     bg-gray-100
                   "
               >
-                <img
+                <SafeImage
                   src={form.coverImageUrl}
                   alt="Preview"
                   className="
@@ -445,7 +446,7 @@ function OpportunityForm({
       <button
         type="submit"
 
-        disabled={loading}
+        disabled={loading || uploading}
 
         className="
 

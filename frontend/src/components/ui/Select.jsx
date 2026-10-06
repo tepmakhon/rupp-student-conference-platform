@@ -1,5 +1,7 @@
+import { useId } from "react";
 function Select({
   label,
+  id,
 
   value,
 
@@ -16,11 +18,14 @@ function Select({
   required = false,
 
   className = "",
+  ...rest
 }) {
+  const generatedId = useId();
+  const fieldId = id || generatedId;
   return (
     <div className="space-y-2">
       {label && (
-        <label
+        <label htmlFor={fieldId}
           className="
 
               block
@@ -35,7 +40,7 @@ function Select({
         </label>
       )}
 
-      <select
+      <select {...rest} id={fieldId}
         value={value}
 
         required={required}

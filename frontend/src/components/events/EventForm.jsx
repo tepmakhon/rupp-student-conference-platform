@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import SafeImage from "../common/SafeImage";
+import { useState } from "react";
 
 import toast from "react-hot-toast";
 
@@ -13,7 +14,7 @@ function EventForm({
 
   submitText,
 }) {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(() => ({
     title: "",
 
     description: "",
@@ -27,17 +28,12 @@ function EventForm({
     eventDate: "",
 
     bannerImageUrl: "",
-  });
+    ...initialData,
+  }));
 
   const [loading, setLoading] = useState(false);
 
   const [imageUploading, setImageUploading] = useState(false);
-
-  useEffect(() => {
-    if (initialData) {
-      setForm(initialData);
-    }
-  }, [initialData]);
 
   const handleChange = (e) => {
     setForm((previous) => ({
@@ -79,7 +75,7 @@ function EventForm({
     try {
       setLoading(true);
 
-      await onSubmit(form);
+      await onSubmit({ ...form, eventDate: new Date(form.eventDate).toISOString(), capacity: form.capacity === "" ? undefined : Number(form.capacity) });
     } finally {
       setLoading(false);
     }
@@ -263,6 +259,8 @@ function EventForm({
 
           <input
             type="number"
+            min="1"
+            step="1"
 
             name="capacity"
 
@@ -408,7 +406,7 @@ function EventForm({
       {/* Preview */}
 
       {form.bannerImageUrl && (
-        <img
+        <SafeImage
           src={form.bannerImageUrl}
 
           alt="banner"

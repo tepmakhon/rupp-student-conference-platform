@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import useApiQuery from "../../hooks/useApiQuery";
+import ErrorState from "../common/ErrorState";
+import { useCallback } from "react";
 
 import { TrophyIcon } from "@heroicons/react/24/outline";
 
@@ -7,25 +9,9 @@ import { Link } from "react-router-dom";
 import { getLeaderboard } from "../../api/leaderboardApi";
 
 function LeaderboardPreview() {
-  const [students, setStudents] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadLeaderboard();
-  }, []);
-
-  const loadLeaderboard = async () => {
-    try {
-      const data = await getLeaderboard(1, 5);
-
-      setStudents(data.students || []);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loader = useCallback(() => getLeaderboard(1, 5), []);
+  const { data, loading, error, retry } = useApiQuery(loader);
+  const students = data?.students || [];
 
   return (
     <div
@@ -83,9 +69,11 @@ function LeaderboardPreview() {
         </Link>
       </div>
 
+      {error && <ErrorState message={error} onRetry={retry} />}
+
       {loading && <p>Loading...</p>}
 
-      {!loading && (
+      {!loading && !error && (
         <div
           className="
             space-y-4

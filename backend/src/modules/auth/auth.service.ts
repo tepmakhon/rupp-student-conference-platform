@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 
-import jwt from "jsonwebtoken";
+import { signToken } from "../../utils/jwt.js";
 
 import { prisma } from "../../config/prisma.js";
 
@@ -12,7 +12,7 @@ import { RegisterPayload, LoginPayload } from "./auth.types.js";
 
 import { validateRegister, validateLogin } from "./auth.validation.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "secret";
+
 
 /*
 |--------------------------------------------------------------------------
@@ -124,6 +124,19 @@ export const registerUser = async (data: RegisterPayload) => {
 
         400,
       );
+    }
+  }
+
+  if (roleName === "STUDENT") {
+    const ids = [universityId, facultyId, majorId];
+    if (!ids.every((id) => typeof id === "string" && /^[1-9]\d*$/.test(id))) {
+      throw new AppError("Invalid education IDs", 400);
+    }
+    const major = await prisma.major.findUnique({
+      where: { id: BigInt(majorId!) }, include: { faculty: true },
+    });
+    if (!major || major.facultyId !== BigInt(facultyId!) || major.faculty.universityId !== BigInt(universityId!)) {
+      throw new AppError("University, faculty and major must belong to the same education hierarchy", 400);
     }
   }
 
@@ -257,7 +270,7 @@ export const registerUser = async (data: RegisterPayload) => {
   |--------------------------------------------------------------------------
   */
 
-  const token = jwt.sign(
+  const token = signToken(
     {
       id: user.id.toString(),
 
@@ -268,11 +281,6 @@ export const registerUser = async (data: RegisterPayload) => {
       roleName: role.roleName,
     },
 
-    JWT_SECRET,
-
-    {
-      expiresIn: "7d",
-    },
   );
 
   return {
@@ -323,6 +331,10 @@ export const loginUser = async (data: LoginPayload) => {
     );
   }
 
+  if (user.accountStatus !== "ACTIVE") {
+    throw new AppError("Account is not active", 403);
+  }
+
   const isValid = await bcrypt.compare(
     password,
 
@@ -361,7 +373,7 @@ export const loginUser = async (data: LoginPayload) => {
   |--------------------------------------------------------------------------
   */
 
-  const token = jwt.sign(
+  const token = signToken(
     {
       id: user.id.toString(),
 
@@ -372,11 +384,6 @@ export const loginUser = async (data: LoginPayload) => {
       roleName: user.role.roleName,
     },
 
-    JWT_SECRET,
-
-    {
-      expiresIn: "7d",
-    },
   );
 
   return {

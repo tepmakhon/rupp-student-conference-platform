@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import * as service from "./university.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getAllUniversities = async (
   req: Request,
@@ -19,14 +19,8 @@ export const getAllUniversities = async (
 
       "Universities retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 500,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -47,14 +41,8 @@ export const createUniversity = async (
 
       201,
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -77,14 +65,8 @@ export const updateUniversity = async (
 
       "University updated",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -103,13 +85,7 @@ export const deleteUniversity = async (
 
       "University deleted",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

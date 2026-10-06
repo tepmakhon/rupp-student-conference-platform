@@ -4,7 +4,7 @@ import * as userService from "./user.service.js";
 
 import { createProfileSchema, updateProfileSchema } from "./user.validation.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 interface AuthRequest extends Request {
   user?: {
@@ -22,8 +22,8 @@ export const createProfile = async (req: AuthRequest, res: Response) => {
     const profile = await userService.createProfile(BigInt(req.user!.id), data);
 
     return successResponse(res, profile, "Profile created successfully");
-  } catch (error: any) {
-    return errorResponse(res, error.message, 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -32,8 +32,8 @@ export const getMyProfile = async (req: AuthRequest, res: Response) => {
     const profile = await userService.getProfile(BigInt(req.user!.id));
 
     return successResponse(res, profile, "Profile fetched successfully");
-  } catch (error: any) {
-    return errorResponse(res, error.message, 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -44,7 +44,7 @@ export const updateMyProfile = async (req: AuthRequest, res: Response) => {
     const profile = await userService.updateProfile(BigInt(req.user!.id), data);
 
     return successResponse(res, profile, "Profile updated successfully");
-  } catch (error: any) {
-    return errorResponse(res, error.message, 400);
+  } catch (error) {
+    throw error;
   }
 };

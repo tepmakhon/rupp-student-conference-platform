@@ -12,7 +12,7 @@ import {
   deleteEvent,
 } from "./event.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 /*
 |--------------------------------------------------------------------------
@@ -25,8 +25,8 @@ export const createEventController = async (req: Request, res: Response) => {
     const event = await createEvent(req.body, req.user);
 
     return successResponse(res, event, "Event created", 201);
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -41,8 +41,8 @@ export const getApprovedEventsController = async (
   res: Response,
 ) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page ?? 1);
+    const limit = Number(req.query.limit ?? 10);
 
     const keyword = String(req.query.keyword || "");
 
@@ -60,8 +60,8 @@ export const getApprovedEventsController = async (
       },
       "Approved events fetched",
     );
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 500);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -77,11 +77,11 @@ export const getEventByIdController = async (req: Request, res: Response) => {
       Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const event = await getEventById(eventId);
+    const event = await getEventById(eventId, req.user);
 
     return successResponse(res, event, "Event retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 404);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -99,8 +99,8 @@ export const getPendingEventsController = async (
     const events = await getPendingEvents();
 
     return successResponse(res, events, "Pending events fetched");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 500);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -116,11 +116,11 @@ export const approveEventController = async (req: Request, res: Response) => {
       Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const event = await approveEvent(eventId);
+    const event = await approveEvent(eventId, BigInt(req.user!.id));
 
     return successResponse(res, event, "Event approved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -136,11 +136,11 @@ export const rejectEventController = async (req: Request, res: Response) => {
       Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const event = await rejectEvent(eventId);
+    const event = await rejectEvent(eventId, BigInt(req.user!.id), req.body.reason);
 
     return successResponse(res, event, "Event rejected");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -166,8 +166,8 @@ export const registerEventController = async (req: Request, res: Response) => {
       "Successfully registered for event",
       201,
     );
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -184,14 +184,8 @@ export const getMyEventsController = async (req: Request, res: Response) => {
 
       "Events retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 500,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -211,14 +205,8 @@ export const getMyRegistrationsController = async (
 
       "Registered events retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 500,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -240,14 +228,8 @@ export const updateEventController = async (req: Request, res: Response) => {
 
       "Event updated",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -268,14 +250,8 @@ export const deleteEventController = async (req: Request, res: Response) => {
 
       "Event deleted",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -299,13 +275,7 @@ export const getEventRegistrationsController = async (
 
       "Registrations retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

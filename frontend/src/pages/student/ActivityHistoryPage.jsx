@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import ErrorState from "../../components/common/ErrorState";
+import useApiQuery from "../../hooks/useApiQuery";
 
-import toast from "react-hot-toast";
+
+
 
 import { ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
 
@@ -9,29 +11,8 @@ import DashboardLayout from "../../components/layouts/DashboardLayout";
 import { getMyActivityHistory } from "../../api/activityApi";
 
 function ActivityHistoryPage() {
-  const [history, setHistory] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadHistory();
-  }, []);
-
-  const loadHistory = async () => {
-    try {
-      setLoading(true);
-
-      const data = await getMyActivityHistory();
-
-      setHistory(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error(error);
-
-      toast.error("Failed to load activity history");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, loading, error, retry: loadHistory } = useApiQuery(getMyActivityHistory);
+  const history = Array.isArray(data) ? data : [];
 
   return (
     <DashboardLayout>
@@ -139,6 +120,8 @@ function ActivityHistoryPage() {
 
         {/* Loading */}
 
+        {error && <ErrorState message={error} onRetry={loadHistory} />}
+
         {loading && (
           <div
             className="
@@ -161,7 +144,7 @@ function ActivityHistoryPage() {
 
         {/* Empty */}
 
-        {!loading && history.length === 0 && (
+        {!loading && !error && history.length === 0 && (
           <div
             className="
 
@@ -223,7 +206,7 @@ function ActivityHistoryPage() {
 
         {/* Timeline */}
 
-        {!loading && history.length > 0 && (
+        {!loading && !error && history.length > 0 && (
           <div
             className="
 

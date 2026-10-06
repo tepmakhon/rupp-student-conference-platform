@@ -62,7 +62,11 @@ function OpportunityListPage() {
   }, [page, keyword, typeId]);
 
   useEffect(() => {
-    loadOpportunities();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadOpportunities();
+    });
+    return () => { active = false; };
   }, [loadOpportunities]);
 
   return (

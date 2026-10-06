@@ -1,3 +1,4 @@
+import { validateIdParam } from "../../middlewares/id.middleware.js";
 import { Router } from "express";
 
 import {
@@ -19,6 +20,8 @@ import {
 } from "./opportunityType.validation.js";
 
 const router = Router();
+router.param("id", validateIdParam);
+
 
 router.get("/", getAllTypes);
 

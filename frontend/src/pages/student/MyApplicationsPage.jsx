@@ -1,4 +1,8 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import Pagination from "../../components/common/Pagination";
+import ErrorState from "../../components/common/ErrorState";
+import useApiQuery from "../../hooks/useApiQuery";
+
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
@@ -12,32 +16,13 @@ import ApplicationCard from "../../components/applications/ApplicationCard";
 
 import { getMyApplications } from "../../api/applicationApi";
 
-import toast from "react-hot-toast";
+
 
 function StudentApplicationsPage() {
-  const [applications, setApplications] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadApplications();
-  }, []);
-
-  const loadApplications = async () => {
-    try {
-      setLoading(true);
-
-      const data = await getMyApplications();
-
-      setApplications(data.applications || []);
-    } catch (error) {
-      console.error(error);
-
-      toast.error("Failed to load applications");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [page, setPage] = useState(1);
+  const loader = useCallback(() => getMyApplications(page, 10), [page]);
+  const { data, loading, error, retry: loadApplications } = useApiQuery(loader);
+  const applications = data?.applications || [];
 
   return (
     <DashboardLayout>
@@ -58,9 +43,11 @@ function StudentApplicationsPage() {
           description="Track all your applications"
         />
 
+        {error && <ErrorState message={error} onRetry={loadApplications} />}
+
         {loading && <LoadingState />}
 
-        {!loading && applications.length === 0 && (
+        {!loading && !error && applications.length === 0 && (
           <EmptyState
             title="No Applications Yet"
 
@@ -68,7 +55,7 @@ function StudentApplicationsPage() {
           />
         )}
 
-        {!loading && applications.length > 0 && (
+        {!loading && !error && applications.length > 0 && (
           <div
             className="
 
@@ -87,6 +74,7 @@ function StudentApplicationsPage() {
             ))}
           </div>
         )}
+        {!loading && !error && <Pagination page={page} totalPages={data?.pagination?.totalPages || 0} onPageChange={setPage} />}
       </div>
     </DashboardLayout>
   );

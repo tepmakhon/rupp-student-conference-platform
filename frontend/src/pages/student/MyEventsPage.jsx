@@ -1,6 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+import ErrorState from "../../components/common/ErrorState";
+import useApiQuery from "../../hooks/useApiQuery";
+import { useState } from "react";
 
-import toast from "react-hot-toast";
+
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
@@ -17,45 +19,13 @@ import StudentEventsSearch from "../../components/events/StudentEventsSearch";
 import { getMyRegisteredEvents } from "../../api/eventApi";
 
 function StudentMyEventsPage() {
-  const [events, setEvents] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
+  const { data, loading, error, retry: loadEvents } = useApiQuery(getMyRegisteredEvents);
+  const events = Array.isArray(data) ? data.map((registration) => registration.event).filter(Boolean) : [];
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
-  const loadEvents = async () => {
-    try {
-      setLoading(true);
-
-      const data = await getMyRegisteredEvents();
-
-      const normalized = Array.isArray(data)
-        ? data
-
-            .map((registration) => registration.event)
-
-            .filter(Boolean)
-        : [];
-
-      setEvents(normalized);
-    } catch (error) {
-      console.error(error);
-
-      toast.error("Failed to load events");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filteredEvents = useMemo(() => {
-    return events.filter((event) =>
-      event?.title?.toLowerCase().includes(search.toLowerCase()),
-    );
-  }, [events, search]);
+  const filteredEvents = events.filter((event) =>
+    event?.title?.toLowerCase().includes(search.toLowerCase()),
+  );
   return (
     <DashboardLayout>
       <div
@@ -81,9 +51,11 @@ function StudentMyEventsPage() {
           onChange={setSearch}
         />
 
+        {error && <ErrorState message={error} onRetry={loadEvents} />}
+
         {loading && <LoadingState />}
 
-        {!loading && filteredEvents.length === 0 && (
+        {!loading && !error && filteredEvents.length === 0 && (
           <EmptyState
             title="No Events Yet"
 
@@ -91,7 +63,7 @@ function StudentMyEventsPage() {
           />
         )}
 
-        {!loading && filteredEvents.length > 0 && (
+        {!loading && !error && filteredEvents.length > 0 && (
           <StudentEventsGrid events={filteredEvents} />
         )}
       </div>

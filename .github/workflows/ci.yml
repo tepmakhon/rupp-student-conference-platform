@@ -1,0 +1,29 @@
+name: Validate platform
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
+      JWT_SECRET: ci-only-secret-with-at-least-32-characters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
+      - run: npm ci --prefix backend
+      - run: npm ci --prefix frontend
+      - run: npx prisma generate
+        working-directory: backend
+      - run: npm run build --prefix backend
+      - run: npm run lint --prefix frontend -- --max-warnings=0
+      - run: npm run build --prefix frontend
+      - run: npm test --prefix backend

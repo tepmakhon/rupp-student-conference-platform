@@ -47,7 +47,7 @@ const notificationSlice = createSlice({
         totalPages: 1,
       };
 
-      state.unreadCount = state.notifications.filter(
+      state.unreadCount = payload.unreadCount ?? state.notifications.filter(
         (item) => !item.isRead,
       ).length;
     },

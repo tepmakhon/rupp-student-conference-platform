@@ -1,3 +1,4 @@
+import SafeImage from "../common/SafeImage";
 import { Briefcase, Building2, Calendar } from "lucide-react";
 
 import { formatDate } from "../../utils/formatDate";
@@ -12,7 +13,7 @@ function OpportunityHero({ opportunity }) {
         overflow-hidden
       "
     >
-      <img
+      <SafeImage
         src={opportunity.coverImageUrl || "https://placehold.co/1200x500"}
 
         alt={opportunity.title}

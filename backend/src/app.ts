@@ -1,6 +1,8 @@
 import express from "express";
 
 import cors from "cors";
+import { allowedOrigins } from "./config/cors.js";
+import { responseReplacer } from "./utils/responseSerializer.js";
 
 import path from "path";
 
@@ -94,6 +96,7 @@ setupBigIntSerialization();
 const app = express();
 
 app.disable("x-powered-by");
+app.set("json replacer", responseReplacer);
 
 /*
 |--------------------------------------------------------------------------
@@ -117,7 +120,7 @@ app.use(apiLimiter);
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:3000"],
+    origin: allowedOrigins,
 
     credentials: true,
   }),

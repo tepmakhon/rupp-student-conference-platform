@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import * as service from "./major.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getAllMajors = async (
   req: Request,
@@ -19,14 +19,8 @@ export const getAllMajors = async (
 
       "Majors retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 500,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -47,14 +41,8 @@ export const createMajor = async (
 
       201,
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -77,14 +65,8 @@ export const updateMajor = async (
 
       "Major updated",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -103,13 +85,7 @@ export const deleteMajor = async (
 
       "Major deleted",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

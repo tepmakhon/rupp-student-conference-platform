@@ -6,12 +6,14 @@ export const rbac = (allowedRoles: string[]) => {
 
     if (!user) {
       return res.status(401).json({
+        success: false,
         message: "Unauthorized",
       });
     }
 
     if (!allowedRoles.some((role) => role === user.roleName)) {
       return res.status(403).json({
+        success: false,
         message: "Forbidden: RBAC blocked",
       });
     }

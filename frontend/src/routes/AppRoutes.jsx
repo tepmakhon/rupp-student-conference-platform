@@ -1,3 +1,7 @@
+import { lazy, Suspense } from "react";
+import LoadingState from "../components/common/LoadingState";
+const AdminUsersPage = lazy(() => import("../pages/admin/AdminUsersPage"));
+const AdminAuditLogsPage = lazy(() => import("../pages/admin/AdminAuditLogsPage"));
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
@@ -10,9 +14,9 @@ import { ROLES, ALL_ROLES } from "../constants/roles";
 |--------------------------------------------------------------------------
 */
 
-import LoginPage from "../pages/auth/LoginPage";
+const LoginPage = lazy(() => import("../pages/auth/LoginPage"));
 
-import RegisterPage from "../pages/auth/RegisterPage";
+const RegisterPage = lazy(() => import("../pages/auth/RegisterPage"));
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +24,7 @@ import RegisterPage from "../pages/auth/RegisterPage";
 |--------------------------------------------------------------------------
 */
 
-import DashboardPage from "../pages/dashboard/DashboardPage";
+const DashboardPage = lazy(() => import("../pages/dashboard/DashboardPage"));
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +32,7 @@ import DashboardPage from "../pages/dashboard/DashboardPage";
 |--------------------------------------------------------------------------
 */
 
-import LeaderboardPage from "../pages/leaderboard/LeaderboardPage";
+const LeaderboardPage = lazy(() => import("../pages/leaderboard/LeaderboardPage"));
 
 /*
 |--------------------------------------------------------------------------
@@ -36,9 +40,9 @@ import LeaderboardPage from "../pages/leaderboard/LeaderboardPage";
 |--------------------------------------------------------------------------
 */
 
-import ProfilePage from "../pages/profile/ProfilePage";
+const ProfilePage = lazy(() => import("../pages/profile/ProfilePage"));
 
-import EditProfilePage from "../pages/profile/EditProfilePage";
+const EditProfilePage = lazy(() => import("../pages/profile/EditProfilePage"));
 
 /*
 |--------------------------------------------------------------------------
@@ -46,11 +50,11 @@ import EditProfilePage from "../pages/profile/EditProfilePage";
 |--------------------------------------------------------------------------
 */
 
-import EventListPage from "../pages/events/EventListPage";
+const EventListPage = lazy(() => import("../pages/events/EventListPage"));
 
-import EventDetailPage from "../pages/events/EventDetailPage";
+const EventDetailPage = lazy(() => import("../pages/events/EventDetailPage"));
 
-import EventTicketPage from "../pages/ticket/EventTicketPage";
+const EventTicketPage = lazy(() => import("../pages/ticket/EventTicketPage"));
 
 /*
 |--------------------------------------------------------------------------
@@ -58,13 +62,13 @@ import EventTicketPage from "../pages/ticket/EventTicketPage";
 |--------------------------------------------------------------------------
 */
 
-import OpportunityListPage from "../pages/opportunities/OpportunityListPage";
+const OpportunityListPage = lazy(() => import("../pages/opportunities/OpportunityListPage"));
 
-import OpportunityDetailPage from "../pages/opportunities/OpportunityDetailPage";
+const OpportunityDetailPage = lazy(() => import("../pages/opportunities/OpportunityDetailPage"));
 
-import CreateOpportunityPage from "../pages/opportunities/CreateOpportunityPage";
+const CreateOpportunityPage = lazy(() => import("../pages/opportunities/CreateOpportunityPage"));
 
-import SavedOpportunitiesPage from "../pages/opportunities/SavedOpportunitiesPage";
+const SavedOpportunitiesPage = lazy(() => import("../pages/opportunities/SavedOpportunitiesPage"));
 
 /*
 |--------------------------------------------------------------------------
@@ -72,38 +76,38 @@ import SavedOpportunitiesPage from "../pages/opportunities/SavedOpportunitiesPag
 |--------------------------------------------------------------------------
 */
 
-import MyApplicationsPage from "../pages/student/MyApplicationsPage";
+const MyApplicationsPage = lazy(() => import("../pages/student/MyApplicationsPage"));
 
-import StudentMyEventsPage from "../pages/student/MyEventsPage";
+const StudentMyEventsPage = lazy(() => import("../pages/student/MyEventsPage"));
 
-import ActivityHistoryPage from "../pages/student/ActivityHistoryPage";
+const ActivityHistoryPage = lazy(() => import("../pages/student/ActivityHistoryPage"));
 
-import StudentBadgesPage from "../pages/student/StudentBadgesPage";
+const StudentBadgesPage = lazy(() => import("../pages/student/StudentBadgesPage"));
 
-import RecommendationsPage from "../pages/student/RecommendationsPage";
+const RecommendationsPage = lazy(() => import("../pages/student/RecommendationsPage"));
 /*
 |--------------------------------------------------------------------------
 | Organization
 |--------------------------------------------------------------------------
 */
 
-import MyOpportunitiesPage from "../pages/organization/MyOpportunitiesPage";
+const MyOpportunitiesPage = lazy(() => import("../pages/organization/MyOpportunitiesPage"));
 
-import EditOpportunityPage from "../pages/organization/EditOpportunityPage";
+const EditOpportunityPage = lazy(() => import("../pages/organization/EditOpportunityPage"));
 
-import EventRegistrationsPage from "../pages/organization/EventRegistrationsPage";
+const EventRegistrationsPage = lazy(() => import("../pages/organization/EventRegistrationsPage"));
 
-import EventAttendancePage from "../pages/organization/EventAttendancePage";
+const EventAttendancePage = lazy(() => import("../pages/organization/EventAttendancePage"));
 
-import OpportunityApplicantsPage from "../pages/organization/OpportunityApplicantsPage";
+const OpportunityApplicantsPage = lazy(() => import("../pages/organization/OpportunityApplicantsPage"));
 
-import CreateEventPage from "../pages/events/CreateEventPage";
+const CreateEventPage = lazy(() => import("../pages/events/CreateEventPage"));
 
-import EditEventPage from "../pages/organization/EditEventPage";
+const EditEventPage = lazy(() => import("../pages/organization/EditEventPage"));
 
-import OrganizationMyEventsPage from "../pages/organization/MyEventsPage";
+const OrganizationMyEventsPage = lazy(() => import("../pages/organization/MyEventsPage"));
 
-import AttendanceScannerPage from "../pages/organization/AttendanceScannerPage";
+const AttendanceScannerPage = lazy(() => import("../pages/organization/AttendanceScannerPage"));
 
 /*
 |--------------------------------------------------------------------------
@@ -111,31 +115,31 @@ import AttendanceScannerPage from "../pages/organization/AttendanceScannerPage";
 |--------------------------------------------------------------------------
 */
 
-import AdminPendingEventsPage from "../pages/admin/AdminPendingEventsPage";
+const AdminPendingEventsPage = lazy(() => import("../pages/admin/AdminPendingEventsPage"));
 
-import AdminPendingOpportunitiesPage from "../pages/admin/AdminPendingOpportunitiesPage";
+const AdminPendingOpportunitiesPage = lazy(() => import("../pages/admin/AdminPendingOpportunitiesPage"));
 
-import AdminEventCategoriesPage from "../pages/admin/AdminEventCategoriesPage";
+const AdminEventCategoriesPage = lazy(() => import("../pages/admin/AdminEventCategoriesPage"));
 
-import AdminOpportunityTypesPage from "../pages/admin/AdminOpportunityTypesPage";
+const AdminOpportunityTypesPage = lazy(() => import("../pages/admin/AdminOpportunityTypesPage"));
 
-import AdminUniversitiesPage from "../pages/admin/AdminUniversitiesPage";
+const AdminUniversitiesPage = lazy(() => import("../pages/admin/AdminUniversitiesPage"));
 
-import AdminFacultiesPage from "../pages/admin/AdminFacultiesPage";
+const AdminFacultiesPage = lazy(() => import("../pages/admin/AdminFacultiesPage"));
 
-import AdminMajorsPage from "../pages/admin/AdminMajorsPage";
+const AdminMajorsPage = lazy(() => import("../pages/admin/AdminMajorsPage"));
 
-import AdminSkillsPage from "../pages/admin/AdminSkillsPage";
+const AdminSkillsPage = lazy(() => import("../pages/admin/AdminSkillsPage"));
 
 /*
 |--------------------------------------------------------------------------
 | Notifications
 |--------------------------------------------------------------------------
 */
-import NotificationPage from "../pages/notifications/NotificationPage";
+const NotificationPage = lazy(() => import("../pages/notifications/NotificationPage"));
 
 //Analytics
-import AnalyticsPage from "../pages/analytics/AnalyticsPage";
+const AnalyticsPage = lazy(() => import("../pages/analytics/AnalyticsPage"));
 
 function AppRoutes() {
   const protect = (
@@ -146,7 +150,7 @@ function AppRoutes() {
 
   return (
     <BrowserRouter>
-      <Routes>
+      <Suspense fallback={<LoadingState message="Loading page..." />}><Routes>
         {/* Home */}
 
         <Route
@@ -211,7 +215,7 @@ function AppRoutes() {
             ALL_ROLES,
           )}
         />
-        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/analytics" element={protect(<AnalyticsPage />, ALL_ROLES)} />
 
         <Route
           path="/profile"
@@ -226,7 +230,7 @@ function AppRoutes() {
         <Route
           path="/profile/edit"
 
-          element={<EditProfilePage />}
+          element={protect(<EditProfilePage />, ALL_ROLES)}
         />
 
         <Route
@@ -339,7 +343,7 @@ function AppRoutes() {
         <Route
           path="/badges"
           element={
-            <ProtectedRoute roles={["STUDENT"]}>
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
               <StudentBadgesPage />
             </ProtectedRoute>
           }
@@ -348,7 +352,7 @@ function AppRoutes() {
         <Route
           path="/events/:eventId/ticket"
           element={
-            <ProtectedRoute roles={["STUDENT"]}>
+            <ProtectedRoute allowedRoles={["STUDENT"]}>
               <EventTicketPage />
             </ProtectedRoute>
           }
@@ -369,7 +373,7 @@ function AppRoutes() {
         <Route
           path="/organization/attendance/scanner"
           element={
-            <ProtectedRoute roles={["ORGANIZATION"]}>
+            <ProtectedRoute allowedRoles={["ORGANIZATION"]}>
               <AttendanceScannerPage />
             </ProtectedRoute>
           }
@@ -436,6 +440,9 @@ function AppRoutes() {
         />
 
         {/* Admin */}
+        <Route path="/admin/users" element={protect(<AdminUsersPage />, [ROLES.ADMIN])} />
+        <Route path="/admin/organizations" element={protect(<AdminUsersPage key="organizations" organizationsOnly />, [ROLES.ADMIN])} />
+        <Route path="/admin/audit-logs" element={protect(<AdminAuditLogsPage />, [ROLES.ADMIN])} />
 
         <Route
           path="/admin/events/pending"
@@ -530,7 +537,7 @@ function AppRoutes() {
             />
           }
         />
-      </Routes>
+      </Routes></Suspense>
     </BrowserRouter>
   );
 }

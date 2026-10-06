@@ -1,3 +1,4 @@
+import SafeImage from "../common/SafeImage";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -54,7 +55,7 @@ function ApplicantCard({ applicant, onUpdate }) {
             gap-5
           "
         >
-          <img
+          <SafeImage
             src={
               profile?.profileImageUrl ||
               "https://placehold.co/120x120?text=User"

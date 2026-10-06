@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import SafeImage from "../../components/common/SafeImage";
+import { useEffect, useState , useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
@@ -18,11 +19,7 @@ function RecommendationsPage() {
   const [events, setEvents] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
 
-  useEffect(() => {
-    loadRecommendations();
-  }, []);
-
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -39,7 +36,17 @@ function RecommendationsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadRecommendations();
+    });
+    return () => { active = false; };
+  }, [loadRecommendations]);
+
+
 
   return (
     <DashboardLayout>
@@ -133,7 +140,7 @@ function RecommendationsPage() {
                       "
                     >
                       {event.bannerImageUrl && (
-                        <img
+                        <SafeImage
                           src={event.bannerImageUrl}
                           alt={event.title}
                           className="
@@ -196,7 +203,7 @@ function RecommendationsPage() {
                       "
                     >
                       {opportunity.coverImageUrl && (
-                        <img
+                        <SafeImage
                           src={opportunity.coverImageUrl}
                           alt={opportunity.title}
                           className="

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import * as opportunityService from "./opportunity.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const createOpportunity = async (req: Request, res: Response) => {
   try {
@@ -14,16 +14,16 @@ export const createOpportunity = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, opportunity, "Opportunity created", 201);
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
 export const getAllOpportunities = async (req: Request, res: Response) => {
   try {
-    const page = Number(req.query.page) || 1;
+    const page = Number(req.query.page ?? 1);
 
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit ?? 10);
 
     const keyword = req.query.keyword as string;
 
@@ -40,8 +40,8 @@ export const getAllOpportunities = async (req: Request, res: Response) => {
     });
 
     return successResponse(res, result, "Opportunities retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 500);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -51,11 +51,11 @@ export const getOpportunityById = async (req: Request, res: Response) => {
       Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const opportunity = await opportunityService.getOpportunityById(id);
+    const opportunity = await opportunityService.getOpportunityById(id, req.user);
 
     return successResponse(res, opportunity, "Opportunity retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 404);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -68,8 +68,8 @@ export const getPendingOpportunities = async (req: Request, res: Response) => {
       opportunities,
       "Pending opportunities retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 500);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -79,11 +79,11 @@ export const approveOpportunity = async (req: Request, res: Response) => {
       Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
 
-    const opportunity = await opportunityService.approveOpportunity(id);
+    const opportunity = await opportunityService.approveOpportunity(id, BigInt(req.user!.id));
 
     return successResponse(res, opportunity, "Opportunity approved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -107,8 +107,8 @@ export const applyOpportunity = async (req: Request, res: Response) => {
       "Application submitted successfully",
       201,
     );
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -117,11 +117,11 @@ export const rejectOpportunity = async (req: Request, res: Response) => {
     const id = BigInt(
       Array.isArray(req.params.id) ? req.params.id[0] : req.params.id,
     );
-    const opportunity = await opportunityService.rejectOpportunity(id);
+    const opportunity = await opportunityService.rejectOpportunity(id, BigInt(req.user!.id), req.body.reason);
 
     return successResponse(res, opportunity, "Opportunity rejected");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -138,8 +138,8 @@ export const saveOpportunity = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, result, "Opportunity saved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -157,8 +157,8 @@ export const unsaveOpportunity = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, result, "Opportunity removed from saved list");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -171,8 +171,8 @@ export const getSavedOpportunities = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, result, "Saved opportunities retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -181,8 +181,8 @@ export const getRecentOpportunities = async (req: Request, res: Response) => {
     const data = await opportunityService.getRecentOpportunities();
 
     return successResponse(res, data, "Recent opportunities retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 500);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -198,8 +198,8 @@ export const getOrganizationOpportunities = async (
     );
 
     return successResponse(res, data, "Organization opportunities retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -222,14 +222,8 @@ export const getMyOpportunities = async (req: Request, res: Response) => {
 
       "My opportunities retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 500,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -266,14 +260,8 @@ export const updateOpportunity = async (req: Request, res: Response) => {
 
       "Opportunity updated",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -308,13 +296,7 @@ export const deleteOpportunity = async (req: Request, res: Response) => {
 
       "Opportunity deleted",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

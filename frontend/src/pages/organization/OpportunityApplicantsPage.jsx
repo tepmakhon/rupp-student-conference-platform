@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import ErrorState from "../../components/common/ErrorState";
+import useApiQuery from "../../hooks/useApiQuery";
+import { useCallback } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -8,34 +10,14 @@ import ApplicantCard from "../../components/organization/ApplicantCard";
 
 import { getApplicants } from "../../api/applicationApi";
 
-import toast from "react-hot-toast";
+
 
 function OpportunityApplicantsPage() {
   const { id } = useParams();
 
-  const [applicants, setApplicants] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadApplicants();
-  }, [id]);
-
-  const loadApplicants = async () => {
-    try {
-      setLoading(true);
-
-      const data = await getApplicants(id);
-
-      setApplicants(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error(error);
-
-      toast.error("Failed to load applicants");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loader = useCallback(() => getApplicants(id), [id]);
+  const { data, loading, error, retry: loadApplicants } = useApiQuery(loader);
+  const applicants = Array.isArray(data) ? data : [];
 
   return (
     <DashboardLayout>
@@ -70,7 +52,7 @@ function OpportunityApplicantsPage() {
           </p>
         </div>
 
-        {loading ? (
+        {error ? <ErrorState message={error} onRetry={loadApplicants} /> : loading ? (
           <div
             className="
                 flex

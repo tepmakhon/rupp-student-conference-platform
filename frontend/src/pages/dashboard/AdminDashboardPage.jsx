@@ -75,7 +75,11 @@ function AdminDashboardPage() {
     };
   }, [loadDashboard]);
   useEffect(() => {
-    loadDashboard();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadDashboard();
+    });
+    return () => { active = false; };
   }, [loadDashboard]);
 
   const dashboardCards = [

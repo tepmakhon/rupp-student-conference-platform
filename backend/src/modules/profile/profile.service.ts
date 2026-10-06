@@ -1,3 +1,4 @@
+import { getBadgesForScore } from "../badge/badge.constants.js";
 import { prisma } from "../../config/prisma.js";
 
 import { AppError } from "../../utils/AppError.js";
@@ -137,39 +138,8 @@ export const getMyProfile = async (userId: bigint) => {
 
   const activityScore = user.student?.activityScore || 0;
 
-  const badges = [
-    {
-      badgeName: "Bronze Explorer",
-
-      requiredScore: 100,
-
-      unlocked: activityScore >= 100,
-    },
-
-    {
-      badgeName: "Silver Explorer",
-
-      requiredScore: 300,
-
-      unlocked: activityScore >= 300,
-    },
-
-    {
-      badgeName: "Gold Explorer",
-
-      requiredScore: 600,
-
-      unlocked: activityScore >= 600,
-    },
-
-    {
-      badgeName: "Platinum Explorer",
-
-      requiredScore: 1000,
-
-      unlocked: activityScore >= 1000,
-    },
-  ];
+  // Preserve the existing profile badgeName contract using the shared catalog.
+  const badges = getBadgesForScore(activityScore).map((badge) => ({ ...badge, badgeName: badge.name }));
 
   return {
     ...user,
@@ -238,87 +208,90 @@ export const updateMyProfile = async (
     );
   }
 
-  let parsedDate = null;
+  let parsedDate: Date | null | undefined = dateOfBirth === undefined ? undefined : null;
 
   if (dateOfBirth && !isNaN(Date.parse(dateOfBirth))) {
     parsedDate = new Date(dateOfBirth);
   }
 
-  await prisma.userProfile.upsert({
-    where: {
-      userId,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.userProfile.upsert({
+      where: {
+        userId,
+      },
 
-    create: {
-      userId,
+      create: {
+        userId,
 
-      fullName,
+        fullName: fullName || user.email,
 
-      phoneNumber,
+        phoneNumber,
 
-      gender,
+        gender,
 
-      dateOfBirth: parsedDate,
+        dateOfBirth: parsedDate,
 
-      bio,
+        bio,
 
-      profileImageUrl,
-    },
+        profileImageUrl,
+      },
 
-    update: {
-      fullName,
+      update: {
+        fullName,
 
-      phoneNumber,
+        phoneNumber,
 
-      gender,
+        gender,
 
-      dateOfBirth: parsedDate,
+        dateOfBirth: parsedDate,
 
-      bio,
+        bio,
 
-      profileImageUrl,
-    },
+        profileImageUrl,
+      },
+    });
+
+    if (user.role.roleName === "STUDENT") {
+      const student = await tx.student.findUnique({
+        where: {
+          userId,
+        },
+      });
+
+      if (student) {
+        await tx.student.update({
+          where: {
+            userId,
+          },
+
+          data: {
+            academicYear,
+          },
+        });
+      }
+    }
+
+    if (user.role.roleName === "ORGANIZATION") {
+      const organization = await tx.organization.findUnique({
+        where: {
+          userId,
+        },
+      });
+
+      if (organization) {
+        await tx.organization.update({
+          where: {
+            userId,
+          },
+
+          data: {
+            websiteUrl,
+          },
+        });
+      }
+    }
+
   });
-
-  if (user.role.roleName === "STUDENT") {
-    const student = await prisma.student.findUnique({
-      where: {
-        userId,
-      },
-    });
-
-    if (student) {
-      await prisma.student.update({
-        where: {
-          userId,
-        },
-
-        data: {
-          academicYear,
-        },
-      });
-    }
-  }
-
-  if (user.role.roleName === "ORGANIZATION") {
-    const organization = await prisma.organization.findUnique({
-      where: {
-        userId,
-      },
-    });
-
-    if (organization) {
-      await prisma.organization.update({
-        where: {
-          userId,
-        },
-
-        data: {
-          websiteUrl,
-        },
-      });
-    }
-  }
 
   return await getMyProfile(userId);
 };

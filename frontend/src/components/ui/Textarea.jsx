@@ -1,5 +1,7 @@
+import { useId } from "react";
 function Textarea({
   label,
+  id,
 
   value,
 
@@ -12,11 +14,14 @@ function Textarea({
   required = false,
 
   className = "",
+  ...rest
 }) {
+  const generatedId = useId();
+  const fieldId = id || generatedId;
   return (
     <div className="space-y-2">
       {label && (
-        <label
+        <label htmlFor={fieldId}
           className="
 
               block
@@ -31,7 +36,7 @@ function Textarea({
         </label>
       )}
 
-      <textarea
+      <textarea {...rest} id={fieldId}
         rows={rows}
 
         value={value}

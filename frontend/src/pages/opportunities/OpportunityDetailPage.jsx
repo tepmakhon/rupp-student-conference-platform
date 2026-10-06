@@ -20,7 +20,6 @@ import OpportunityRequirements from "../../components/opportunities/OpportunityR
 
 import OpportunityActionButtons from "../../components/opportunities/OpportunityActionButtons";
 
-import Button from "../../components/ui/Button";
 import {
   getOpportunityById,
   saveOpportunity,
@@ -64,7 +63,11 @@ function OpportunityDetailPage() {
   }, [id]);
 
   useEffect(() => {
-    loadOpportunity();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadOpportunity();
+    });
+    return () => { active = false; };
   }, [loadOpportunity]);
 
   const handleSave = async () => {

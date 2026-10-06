@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -40,7 +40,6 @@ function EditProfilePage() {
 
   const isOrganization = Boolean(profile?.organization);
 
-  const isAdmin = profile?.role?.roleName === "ADMIN";
 
   const [selectedSkills, setSelectedSkills] = useState([]);
 
@@ -62,11 +61,7 @@ function EditProfilePage() {
     websiteUrl: "",
   });
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -114,7 +109,17 @@ function EditProfilePage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadProfile();
+    });
+    return () => { active = false; };
+  }, [loadProfile]);
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

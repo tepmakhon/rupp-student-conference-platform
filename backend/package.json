@@ -7,10 +7,11 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/src/server.js"
-  },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+    "start": "node dist/src/server.js",
+    "test": "vitest run",
+    "db:seed": "node --import tsx prisma/seed.ts",
+    "docs:api": "node --import tsx scripts/extract-routes.ts",
+    "admin:reset": "node --import tsx scripts/reset-admin.ts"
   },
   "keywords": [],
   "author": "",

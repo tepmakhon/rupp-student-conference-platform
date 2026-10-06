@@ -1,12 +1,10 @@
+import SafeImage from "../common/SafeImage";
 import { useState, useEffect, useRef } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
 import {
   MagnifyingGlassIcon,
-  BuildingOfficeIcon,
-  CalendarDaysIcon,
-  BriefcaseIcon,
 } from "@heroicons/react/24/outline";
 
 import { globalSearch } from "../../api/searchApi";
@@ -29,7 +27,7 @@ function NavbarSearch() {
 
   const [open, setOpen] = useState(false);
 
-  const timeoutRef = useRef();
+  const [searchError, setSearchError] = useState("");
 
   const wrapperRef = useRef();
 
@@ -58,36 +56,22 @@ function NavbarSearch() {
   */
 
   useEffect(() => {
-    setSelectedIndex(-1);
-    clearTimeout(timeoutRef.current);
-
-    if (keyword.trim().length < 2) {
-      setResults({
-        events: [],
-        opportunities: [],
-        organizations: [],
-      });
-
-      setOpen(false);
-
-      return;
-    }
-
-    timeoutRef.current = setTimeout(async () => {
+    if (keyword.trim().length < 2) return;
+    let active = true;
+    const timeout = setTimeout(async () => {
+      setLoading(true);
+      setOpen(true);
+      setSearchError("");
       try {
-        setLoading(true);
-
         const data = await globalSearch(keyword);
-
-        setResults(data);
-
-        setOpen(true);
-      } catch (error) {
-        console.error(error);
+        if (active) setResults(data);
+      } catch {
+        if (active) setSearchError("Search failed. Check your connection and try again.");
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     }, 300);
+    return () => { active = false; clearTimeout(timeout); };
   }, [keyword]);
 
   const total =
@@ -145,7 +129,7 @@ function NavbarSearch() {
       }
 
       if (item.category === "organization") {
-        navigate(`/organizations/${item.id}`);
+        return;
       }
 
       setOpen(false);
@@ -202,7 +186,12 @@ function NavbarSearch() {
           value={keyword}
           onKeyDown={handleKeyDown}
 
-          onChange={(e) => setKeyword(e.target.value)}
+          onChange={(e) => {
+            setKeyword(e.target.value);
+            setSelectedIndex(-1);
+            setOpen(false);
+            setResults({ events: [], opportunities: [], organizations: [] });
+          }}
 
           placeholder="Search..."
 
@@ -296,7 +285,9 @@ function NavbarSearch() {
             </div>
           )}
 
-          {!loading && total === 0 && (
+          {searchError && <p role="alert" className="p-5 text-red-600">{searchError}</p>}
+
+          {!loading && !searchError && total === 0 && (
             <div className="p-6 text-center text-gray-500">
               <div className="p-10 text-center">
                 <MagnifyingGlassIcon
@@ -315,7 +306,7 @@ function NavbarSearch() {
             </div>
           )}
 
-          {!loading && total > 0 && (
+          {!loading && !searchError && total > 0 && (
             <>
               {/* Opportunities */}
 
@@ -345,7 +336,7 @@ function NavbarSearch() {
                                     }
                                   `}
                     >
-                      <img
+                      <SafeImage
                         src={item.logoUrl || "/images/default-logo.png"}
                         alt=""
                         className="
@@ -398,7 +389,7 @@ function NavbarSearch() {
                                   }
                                 `}
                     >
-                      <img
+                      <SafeImage
                         src={
                           item.bannerImageUrl || "/images/event-placeholder.jpg"
                         }
@@ -434,7 +425,8 @@ function NavbarSearch() {
                   {results.organizations.map((item, index) => (
                     <Link
                       key={item.id}
-                      to={`/organizations/${item.id}`}
+                      to="#"
+                      aria-disabled="true"
                       onClick={() => setOpen(false)}
                       className={`
                                   flex
@@ -454,7 +446,7 @@ function NavbarSearch() {
                                   }
                                 `}
                     >
-                      <img
+                      <SafeImage
                         src={item.logoUrl || "/images/default-logo.png"}
                         alt=""
                         className="

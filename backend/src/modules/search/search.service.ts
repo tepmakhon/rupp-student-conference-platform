@@ -14,6 +14,7 @@ export const globalSearch = async (keyword: string) => {
   const [events, opportunities, organizations] = await Promise.all([
     prisma.event.findMany({
       where: {
+        status: "APPROVED",
         OR: [
           {
             title: {

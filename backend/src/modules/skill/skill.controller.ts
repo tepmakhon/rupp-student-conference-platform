@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import * as service from "./skill.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getAllSkills = async (
   req: Request,
@@ -19,14 +19,8 @@ export const getAllSkills = async (
 
       "Skills retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 500,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -47,14 +41,8 @@ export const createSkill = async (
 
       201,
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -77,14 +65,8 @@ export const updateSkill = async (
 
       "Skill updated",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -103,13 +85,7 @@ export const deleteSkill = async (
 
       "Skill deleted",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

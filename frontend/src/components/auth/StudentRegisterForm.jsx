@@ -27,6 +27,8 @@ function StudentRegisterForm({
         <input
           type="text"
 
+          required
+          aria-label="Full name"
           value={form.fullName}
 
           onChange={(e) =>
@@ -63,6 +65,8 @@ function StudentRegisterForm({
         </label>
 
         <select
+          required
+          aria-label="University"
           value={form.universityId}
 
           onChange={(e) =>
@@ -70,6 +74,8 @@ function StudentRegisterForm({
               ...form,
 
               universityId: e.target.value,
+              facultyId: "",
+              majorId: "",
             })
           }
 
@@ -109,6 +115,9 @@ function StudentRegisterForm({
         </label>
 
         <select
+          required
+          aria-label="Faculty"
+          disabled={!form.universityId}
           value={form.facultyId}
 
           onChange={(e) =>
@@ -116,6 +125,7 @@ function StudentRegisterForm({
               ...form,
 
               facultyId: e.target.value,
+              majorId: "",
             })
           }
 
@@ -129,7 +139,7 @@ function StudentRegisterForm({
         >
           <option value="">Select Faculty</option>
 
-          {faculties.map((faculty) => (
+          {faculties.filter((faculty) => String(faculty.universityId) === form.universityId).map((faculty) => (
             <option
               key={faculty.id}
 
@@ -155,6 +165,9 @@ function StudentRegisterForm({
         </label>
 
         <select
+          required
+          aria-label="Major"
+          disabled={!form.facultyId}
           value={form.majorId}
 
           onChange={(e) =>
@@ -175,7 +188,7 @@ function StudentRegisterForm({
         >
           <option value="">Select Major</option>
 
-          {majors.map((major) => (
+          {majors.filter((major) => String(major.facultyId) === form.facultyId).map((major) => (
             <option
               key={major.id}
 

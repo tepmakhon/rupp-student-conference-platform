@@ -38,6 +38,10 @@ const adminMenu = [
     icon: ClipboardDocumentCheckIcon,
   },
 
+  { name: "Users", path: "/admin/users", icon: UserCircleIcon },
+  { name: "Organizations", path: "/admin/organizations", icon: BriefcaseIcon },
+  { name: "Audit Logs", path: "/admin/audit-logs", icon: ClipboardDocumentCheckIcon },
+
   {
     name: "Event Categories",
     path: "/admin/event-categories",

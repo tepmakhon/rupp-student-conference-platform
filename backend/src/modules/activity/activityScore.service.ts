@@ -1,3 +1,4 @@
+import { type Prisma } from "@prisma/client";
 import { prisma } from "../../config/prisma.js";
 
 import { refreshStudentDashboard } from "../../socket/dashboardEvents.js";
@@ -8,8 +9,10 @@ export const addActivityScore = async (
   score: number,
 
   reason: string,
+
+  transaction?: Prisma.TransactionClient,
 ) => {
-  const student = await prisma.$transaction(async (tx) => {
+  const update = async (tx: Prisma.TransactionClient) => {
     const updatedStudent = await tx.student.update({
       where: {
         id: studentId,
@@ -33,9 +36,11 @@ export const addActivityScore = async (
     });
 
     return updatedStudent;
-  });
+  };
 
-  refreshStudentDashboard(student.userId);
+  const student = transaction ? await update(transaction) : await prisma.$transaction(update);
+
+  if (!transaction) refreshStudentDashboard(student.userId);
 
   return student;
 };

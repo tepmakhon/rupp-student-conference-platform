@@ -1,4 +1,7 @@
 const pageTitles = {
+  "/admin/users": "Users",
+  "/admin/organizations": "Organizations",
+  "/admin/audit-logs": "Audit Logs",
   "/dashboard": "Dashboard",
 
   "/leaderboard": "Leaderboard",

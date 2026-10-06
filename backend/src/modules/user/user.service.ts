@@ -1,3 +1,4 @@
+import { AppError } from "../../utils/AppError.js";
 import { prisma } from "../../config/prisma.js";
 
 import { CreateProfileInput, UpdateProfileInput } from "./user.validation.js";
@@ -11,7 +12,7 @@ export const createProfile = async (
   });
 
   if (existing) {
-    throw new Error("Profile already exists");
+    throw new AppError("Profile already exists", 409);
   }
 
   return prisma.userProfile.create({

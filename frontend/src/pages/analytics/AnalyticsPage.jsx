@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import ErrorState from "../../components/common/ErrorState";
+import { getApiErrorMessage } from "../../utils/apiError";
+import { useEffect, useState , useCallback } from "react";
 
 import { useSelector } from "react-redux";
 
 import {
-  ChartBarIcon,
   CalendarDaysIcon,
   BriefcaseIcon,
   UserGroupIcon,
@@ -31,6 +32,7 @@ function AnalyticsPage() {
   const role = useSelector((state) => state.auth.role);
 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [cards, setCards] = useState([]);
   const today = new Date();
@@ -41,11 +43,9 @@ function AnalyticsPage() {
   const [year, setYear] = useState(today.getFullYear());
 
   const [topEvents, setTopEvents] = useState([]);
-  useEffect(() => {
-    loadAnalytics();
-  }, [month, year, role]);
-
-  const loadAnalytics = async () => {
+  const loadAnalytics = useCallback(async () => {
+    setLoading(true);
+    setError("");
     try {
       let data;
 
@@ -172,10 +172,22 @@ function AnalyticsPage() {
           },
         ]);
       }
+    } catch (error) {
+      setError(getApiErrorMessage(error));
     } finally {
       setLoading(false);
     }
-  };
+  }, [role, month, year]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadAnalytics();
+    });
+    return () => { active = false; };
+  }, [month, year, role, loadAnalytics]);
+
+
 
   return (
     <DashboardLayout>
@@ -193,7 +205,7 @@ function AnalyticsPage() {
 
         {loading ? (
           <AnalyticsLoading />
-        ) : (
+        ) : error ? <ErrorState message={error} onRetry={loadAnalytics} /> : (
           <>
             <AnalyticsFilterBar
               month={month}

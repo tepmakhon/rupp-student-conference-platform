@@ -1,17 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const token = localStorage.getItem("token");
+let token = localStorage.getItem("token");
 
 let user = null;
 
 try {
   const storedUser = localStorage.getItem("user");
 
-  user = storedUser ? JSON.parse(storedUser) : null;
-} catch (error) {
+  user = storedUser ? JSON.parse(storedUser, (key, value) =>
+    ["passwordHash", "password", "refreshToken"].includes(key) ? undefined : value) : null;
+  if (user) localStorage.setItem("user", JSON.stringify(user));
+} catch {
   console.error("Invalid user data in localStorage");
 
   localStorage.removeItem("user");
+}
+
+if (!token || !user?.id || !["STUDENT", "ORGANIZATION", "ADMIN"].includes(user?.role?.roleName)) {
+  token = null;
+  user = null;
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("role");
 }
 
 const initialState = {
@@ -21,7 +31,7 @@ const initialState = {
 
   role: user?.role?.roleName || null,
 
-  isAuthenticated: !!token,
+  isAuthenticated: !!token && !!user,
 };
 
 const authSlice = createSlice({

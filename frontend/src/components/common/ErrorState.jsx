@@ -2,9 +2,10 @@ function ErrorState({
   message = "Something went wrong.",
 
   action,
+  onRetry,
 }) {
   return (
-    <div
+    <div role="alert"
       className="
 
         bg-red-50
@@ -50,6 +51,7 @@ function ErrorState({
       </p>
 
       {action}
+      {onRetry && <button type="button" onClick={onRetry} className="bg-primary text-white px-6 py-3 rounded-xl">Try again</button>}
     </div>
   );
 }

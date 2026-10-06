@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import * as service from "./faculty.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getAllFaculties = async (req: Request, res: Response) => {
   try {
@@ -15,14 +15,8 @@ export const getAllFaculties = async (req: Request, res: Response) => {
 
       "Faculties retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 500,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -39,14 +33,8 @@ export const createFaculty = async (req: Request, res: Response) => {
 
       201,
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -65,14 +53,8 @@ export const updateFaculty = async (req: Request, res: Response) => {
 
       "Faculty updated",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -87,13 +69,7 @@ export const deleteFaculty = async (req: Request, res: Response) => {
 
       "Faculty deleted",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

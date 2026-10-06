@@ -1,3 +1,4 @@
+import SafeImage from "../common/SafeImage";
 import { Link } from "react-router-dom";
 
 import { Calendar, Building2, ArrowRight } from "lucide-react";
@@ -38,7 +39,7 @@ function OpportunityCard({ opportunity }) {
 
         "
       >
-        <img
+        <SafeImage
           src={opportunity.coverImageUrl || "https://placehold.co/800x500"}
 
           alt={opportunity.title}

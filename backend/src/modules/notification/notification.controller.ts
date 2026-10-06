@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 
 import * as notificationService from "./notification.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getNotifications = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
 
-    const page = Number(req.query.page) || 1;
+    const page = Number(req.query.page ?? 1);
 
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit ?? 10);
 
     const notifications = await notificationService.getMyNotifications(
       BigInt(user.id),
@@ -27,14 +27,8 @@ export const getNotifications = async (req: Request, res: Response) => {
 
       "Notifications retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -52,8 +46,8 @@ export const readNotification = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, null, "Notification marked as read");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -64,7 +58,7 @@ export const readAllNotifications = async (req: Request, res: Response) => {
     await notificationService.markAllAsRead(BigInt(user.id));
 
     return successResponse(res, null, "All notifications marked as read");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { requireEventOwner } from "../../utils/eventOwnership.js";
 
 import * as attendanceService from "./attendance.service.js";
 
@@ -6,7 +7,7 @@ import * as attendanceExport from "./attendance.export.js";
 
 import * as attendancePdf from "./attendance.pdf.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const checkIn = async (req: Request, res: Response) => {
   try {
@@ -26,8 +27,8 @@ export const checkIn = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, attendance, "Check-in successful");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -36,8 +37,8 @@ export const getMyAttendance = async (req: Request, res: Response) => {
     const data = await attendanceService.getMyAttendance(BigInt(req.user!.id));
 
     return successResponse(res, data, "Attendance retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -51,8 +52,8 @@ export const scanAttendance = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, data, "Attendance verified");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -71,6 +72,7 @@ export const getAttendanceStatistics = async (req: Request, res: Response) => {
     }
 
     const eventId = BigInt(eventIdParam);
+    await requireEventOwner(eventId, BigInt(req.user!.id));
 
     const statistics = await attendanceService.getAttendanceStatistics(eventId);
 
@@ -81,14 +83,8 @@ export const getAttendanceStatistics = async (req: Request, res: Response) => {
 
       "Attendance statistics retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -111,16 +107,11 @@ export const exportAttendanceCSV = async (
     }
 
     const eventId = BigInt(eventIdParam);
+    await requireEventOwner(eventId, BigInt(req.user!.id));
 
     await attendanceExport.exportCSV(eventId, res);
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -139,19 +130,14 @@ export const exportAttendancePDF = async (req: Request, res: Response) => {
     }
 
     const eventId = BigInt(eventIdParam);
+    await requireEventOwner(eventId, BigInt(req.user!.id));
 
     await attendancePdf.exportPDF(
       eventId,
 
       res,
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

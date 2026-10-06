@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -21,11 +21,7 @@ function EventTicketPage() {
 
   const [ticket, setTicket] = useState(null);
 
-  useEffect(() => {
-    loadTicket();
-  }, []);
-
-  const loadTicket = async () => {
+  const loadTicket = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -41,7 +37,17 @@ function EventTicketPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [eventId]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadTicket();
+    });
+    return () => { active = false; };
+  }, [loadTicket]);
+
+
 
   return (
     <DashboardLayout>

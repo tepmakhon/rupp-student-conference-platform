@@ -1,3 +1,4 @@
+import { getPagination } from "../../utils/pagination.js";
 import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 import { createNotification } from "../notification/notification.service.js";
@@ -19,7 +20,7 @@ export const getMyApplications = async (
     throw new AppError("Please complete your student profile first", 404);
   }
 
-  const skip = (page - 1) * limit;
+  const { skip } = getPagination(page, limit);
 
   const [applications, total] = await Promise.all([
     prisma.application.findMany({
@@ -203,7 +204,7 @@ export const updateApplicationStatus = async (
   emitDashboardUpdate(userId);
 
   await createAuditLog(
-    updatedApplication.student.userId,
+    userId,
     `APPLICATION_${status}:${updatedApplication.opportunity.title}`,
   );
 

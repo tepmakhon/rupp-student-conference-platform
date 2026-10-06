@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import toast from "react-hot-toast";
 
@@ -13,11 +13,7 @@ function EditProfileSkills({
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    loadSkills();
-  }, []);
-
-  const loadSkills = async () => {
+  const loadSkills = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -31,7 +27,17 @@ function EditProfileSkills({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadSkills();
+    });
+    return () => { active = false; };
+  }, [loadSkills]);
+
+
 
   const toggleSkill = (skillId) => {
     const exists = selectedSkills.includes(skillId);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -23,11 +23,7 @@ function EventRegistrationsPage() {
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadRegistrations();
-  }, []);
-
-  const loadRegistrations = async () => {
+  const loadRegistrations = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -43,7 +39,17 @@ function EventRegistrationsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadRegistrations();
+    });
+    return () => { active = false; };
+  }, [loadRegistrations]);
+
+
 
   return (
     <DashboardLayout>

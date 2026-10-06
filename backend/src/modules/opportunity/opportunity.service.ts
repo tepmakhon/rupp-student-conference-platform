@@ -33,7 +33,7 @@ export const createOpportunity = async (data: any, userId: bigint) => {
 
       coverImageUrl: data.coverImageUrl,
 
-      deadline: data.deadline ? new Date(data.deadline) : null,
+      deadline: data.deadline === undefined ? undefined : data.deadline ? new Date(data.deadline) : null,
 
       typeId: BigInt(data.typeId),
 
@@ -139,9 +139,8 @@ export const getAllOpportunities = async ({
   ------------------------------------
   */
 
-  if (status) {
-    where.status = status;
-  }
+  // Public discovery must never expose unmoderated submissions.
+  where.status = "APPROVED";
 
   const [opportunities, total] = await Promise.all([
     prisma.opportunity.findMany({
@@ -184,7 +183,7 @@ export const getAllOpportunities = async ({
   };
 };
 
-export const getOpportunityById = async (opportunityId: bigint) => {
+export const getOpportunityById = async (opportunityId: bigint, user?: { id: string; roleName: string }) => {
   const opportunity = await prisma.opportunity.findUnique({
     where: {
       id: opportunityId,
@@ -197,6 +196,11 @@ export const getOpportunityById = async (opportunityId: bigint) => {
   });
 
   if (!opportunity) {
+    throw new AppError("Opportunity not found", 404);
+  }
+
+  if (opportunity.status !== "APPROVED" && user?.roleName !== "ADMIN" &&
+      opportunity.organization.userId.toString() !== user?.id) {
     throw new AppError("Opportunity not found", 404);
   }
 
@@ -226,7 +230,7 @@ export const getPendingOpportunities = async () => {
   });
 };
 
-export const approveOpportunity = async (opportunityId: bigint) => {
+export const approveOpportunity = async (opportunityId: bigint, actorId: bigint) => {
   const existingOpportunity = await prisma.opportunity.findUnique({
     where: {
       id: opportunityId,
@@ -262,14 +266,14 @@ export const approveOpportunity = async (opportunityId: bigint) => {
 
   refreshAdminDashboard();
   await createAuditLog(
-    opportunity.organization.userId,
+    actorId,
     `OPPORTUNITY_APPROVED:${opportunity.title}`,
   );
 
   return opportunity;
 };
 
-export const rejectOpportunity = async (opportunityId: bigint) => {
+export const rejectOpportunity = async (opportunityId: bigint, actorId: bigint, reason: string) => {
   const existingOpportunity = await prisma.opportunity.findUnique({
     where: {
       id: opportunityId,
@@ -297,7 +301,7 @@ export const rejectOpportunity = async (opportunityId: bigint) => {
   await createNotification(
     opportunity.organization.userId,
     "Opportunity Rejected",
-    `${opportunity.title} has been rejected by admin`,
+    `${opportunity.title} has been rejected: ${reason}`,
     "OPPORTUNITY",
   );
   refreshOrganizationDashboard(opportunity.organization.userId);
@@ -305,8 +309,8 @@ export const rejectOpportunity = async (opportunityId: bigint) => {
   refreshAdminDashboard();
 
   await createAuditLog(
-    opportunity.organization.userId,
-    `OPPORTUNITY_REJECTED:${opportunity.title}`,
+    actorId,
+    `OPPORTUNITY_REJECTED:${opportunity.id}:${opportunity.title}:${reason}`,
   );
 
   return opportunity;
@@ -364,15 +368,14 @@ export const applyOpportunity = async (
     throw new AppError("Already applied", 409);
   }
 
-  const application = await prisma.application.create({
-    data: {
-      opportunityId,
-      studentId: student.id,
-      cvUrl: data.cvUrl || null,
-    },
+  const application = await prisma.$transaction(async (tx) => {
+    const application = await tx.application.create({
+      data: { opportunityId, studentId: student.id, cvUrl: data.cvUrl || null },
+    });
+    await addActivityScore(student.id, 15, `Applied for ${opportunity.title}`, tx);
+    return application;
   });
-
-  await addActivityScore(student.id, 15, `Applied for ${opportunity.title}`);
+  await createNotification(userId, "Application submitted", `Your application for ${opportunity.title} has been submitted`, "OPPORTUNITY");
   await createNotification(
     opportunity.organization.userId,
     "New Application",
@@ -660,6 +663,8 @@ export const updateOpportunity = async (
     },
 
     data: {
+      status: "PENDING",
+      approvedAt: null,
       title: data.title,
 
       description: data.description,
@@ -670,7 +675,7 @@ export const updateOpportunity = async (
 
       typeId: data.typeId ? BigInt(data.typeId) : undefined,
 
-      deadline: data.deadline ? new Date(data.deadline) : null,
+      deadline: data.deadline === undefined ? undefined : data.deadline ? new Date(data.deadline) : null,
     },
   });
 };
@@ -715,28 +720,10 @@ export const deleteOpportunity = async (
   --------------------------------
   */
 
-  await prisma.savedOpportunity.deleteMany({
-    where: {
-      opportunityId,
-    },
-  });
-
-  await prisma.application.deleteMany({
-    where: {
-      opportunityId,
-    },
-  });
-
-  /*
-  --------------------------------
-  Delete opportunity
-  --------------------------------
-  */
-
-  await prisma.opportunity.delete({
-    where: {
-      id: opportunityId,
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.savedOpportunity.deleteMany({ where: { opportunityId } });
+    await tx.application.deleteMany({ where: { opportunityId } });
+    await tx.opportunity.delete({ where: { id: opportunityId } });
   });
 
   return true;

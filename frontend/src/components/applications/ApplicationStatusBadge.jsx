@@ -1,14 +1,5 @@
+import { getStatusStyle } from "../../constants/statusStyles";
 function ApplicationStatusBadge({ status }) {
-  const styles = {
-    PENDING: "bg-gray-100 text-gray-700",
-
-    REVIEWING: "bg-yellow-100 text-yellow-700",
-
-    ACCEPTED: "bg-green-100 text-green-700",
-
-    REJECTED: "bg-red-100 text-red-700",
-  };
-
   return (
     <span
       className={`
@@ -23,7 +14,7 @@ function ApplicationStatusBadge({ status }) {
 
         font-semibold
 
-        ${styles[status]}
+        ${getStatusStyle(status)}
 
       `}
     >

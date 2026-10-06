@@ -1,3 +1,4 @@
+import { getPagination } from "../../utils/pagination.js";
 import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../utils/AppError.js";
 
@@ -20,7 +21,7 @@ export const createAuditLog = async (
 };
 
 export const getAllAuditLogs = async (page = 1, limit = 10) => {
-  const skip = (page - 1) * limit;
+  const { skip } = getPagination(page, limit);
 
   if (page < 1 || limit < 1) {
     throw new AppError("Invalid pagination values", 400);
@@ -69,7 +70,7 @@ export const getAuditLogsByUser = async (
   page = 1,
   limit = 10,
 ) => {
-  const skip = (page - 1) * limit;
+  const { skip } = getPagination(page, limit);
 
   if (page < 1 || limit < 1) {
     throw new AppError("Invalid pagination values", 400);

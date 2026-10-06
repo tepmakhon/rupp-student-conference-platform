@@ -10,7 +10,6 @@ import {
   SparklesIcon,
 } from "@heroicons/react/24/outline";
 
-import { ROLES } from "../roles";
 
 const studentMenu = [
   {

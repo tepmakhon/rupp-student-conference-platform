@@ -1,29 +1,15 @@
-import { useEffect, useState } from "react";
+import useApiQuery from "../../hooks/useApiQuery";
+import ErrorState from "../common/ErrorState";
+import SafeImage from "../common/SafeImage";
+
 
 import { Link } from "react-router-dom";
 
 import { getRecentOpportunities } from "../../api/opportunityApi";
 
 function RecentOpportunities() {
-  const [opportunities, setOpportunities] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadRecentOpportunities();
-  }, []);
-
-  const loadRecentOpportunities = async () => {
-    try {
-      const data = await getRecentOpportunities();
-
-      setOpportunities(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data, loading, error, retry } = useApiQuery(getRecentOpportunities);
+  const opportunities = Array.isArray(data) ? data : [];
 
   if (loading) {
     return (
@@ -39,6 +25,8 @@ function RecentOpportunities() {
       </div>
     );
   }
+
+  if (error) return <ErrorState message={error} onRetry={retry} />;
 
   return (
     <div
@@ -76,7 +64,7 @@ function RecentOpportunities() {
                   p-2
                 "
           >
-            <img
+            <SafeImage
               src={
                 opportunity.coverImageUrl ||
                 "https://placehold.co/120x80?text=Opportunity"

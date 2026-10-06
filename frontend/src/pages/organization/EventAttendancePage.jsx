@@ -86,20 +86,15 @@ function EventAttendancePage() {
   */
 
   useEffect(() => {
-    loadData();
-
-    socket.emit(
-      "join_attendance",
-
-      id,
-    );
-
+    let active = true;
+    Promise.resolve().then(() => { if (active) loadData(); });
+    const join = () => socket.emit("join_attendance", String(id));
+    socket.on("connect", join);
+    if (socket.connected) join();
     return () => {
-      socket.emit(
-        "leave_attendance",
-
-        id,
-      );
+      active = false;
+      socket.off("connect", join);
+      socket.emit("leave_attendance", String(id));
     };
   }, [id, loadData]);
 

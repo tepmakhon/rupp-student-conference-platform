@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -34,10 +34,6 @@ function RegisterPage() {
   const [form, setForm] = useState({
     email: "",
 
-    password: "",
-
-    confirmPassword: "",
-
     fullName: "",
 
     universityId: "",
@@ -53,11 +49,7 @@ function RegisterPage() {
     description: "",
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [universityData, facultyData, majorData] = await Promise.all([
         getUniversities(),
@@ -75,13 +67,25 @@ function RegisterPage() {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadData();
+    });
+    return () => { active = false; };
+  }, [loadData]);
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const credentials = new FormData(e.currentTarget);
+    const password = credentials.get("password");
 
     try {
-      if (form.password !== form.confirmPassword) {
+      if (password !== credentials.get("confirmPassword")) {
         return toast.error("Passwords do not match");
       }
 
@@ -90,7 +94,7 @@ function RegisterPage() {
       const payload = {
         email: form.email,
 
-        password: form.password,
+        password,
 
         roleName: role,
       };
@@ -205,6 +209,9 @@ function RegisterPage() {
 
           <input
             type="email"
+            aria-label="Email"
+            autoComplete="email"
+            required
 
             placeholder="Email"
 
@@ -236,17 +243,13 @@ function RegisterPage() {
           <input
             type="password"
 
+            aria-label="Password"
             placeholder="Password"
 
-            value={form.password}
-
-            onChange={(e) =>
-              setForm({
-                ...form,
-
-                password: e.target.value,
-              })
-            }
+            name="password"
+            autoComplete="new-password"
+            required
+            minLength={8}
 
             className="
 
@@ -266,17 +269,13 @@ function RegisterPage() {
           <input
             type="password"
 
+            aria-label="Confirm password"
             placeholder="Confirm Password"
 
-            value={form.confirmPassword}
-
-            onChange={(e) =>
-              setForm({
-                ...form,
-
-                confirmPassword: e.target.value,
-              })
-            }
+            name="confirmPassword"
+            autoComplete="new-password"
+            required
+            minLength={8}
 
             className="
 

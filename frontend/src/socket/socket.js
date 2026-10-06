@@ -1,8 +1,5 @@
 import { io } from "socket.io-client";
+import { SOCKET_URL } from "../utils/apiConfig";
 
-const socket = io("http://localhost:5050", {
-  autoConnect: false,
-  withCredentials: true,
-});
-
+const socket = io(SOCKET_URL, { autoConnect: false, withCredentials: true });
 export default socket;

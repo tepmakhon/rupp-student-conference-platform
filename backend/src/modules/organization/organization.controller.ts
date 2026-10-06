@@ -5,7 +5,7 @@ import {
   updateOrganizationLogo,
 } from "./organization.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getOrganizationProfile = async (req: Request, res: Response) => {
   try {
@@ -14,8 +14,8 @@ export const getOrganizationProfile = async (req: Request, res: Response) => {
     const organization = await getMyOrganization(BigInt(user.id));
 
     return successResponse(res, organization, "Organization profile retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -29,7 +29,7 @@ export const updateLogo = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, organization, "Organization logo updated");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -25,11 +25,7 @@ function CreateOpportunityPage() {
 
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    loadTypes();
-  }, []);
-
-  const loadTypes = async () => {
+  const loadTypes = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -43,7 +39,17 @@ function CreateOpportunityPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadTypes();
+    });
+    return () => { active = false; };
+  }, [loadTypes]);
+
+
 
   const handleSubmit = async (form) => {
     try {

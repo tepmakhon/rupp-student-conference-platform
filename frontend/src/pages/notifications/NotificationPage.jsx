@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState , useCallback } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 
@@ -55,11 +55,7 @@ function NotificationPage() {
 
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    loadNotifications(page);
-  }, [page]);
-
-  const loadNotifications = async (currentPage = 1) => {
+  const loadNotifications = useCallback(async (currentPage = 1) => {
     try {
       dispatch(setNotificationLoading(true));
 
@@ -79,7 +75,17 @@ function NotificationPage() {
     } finally {
       dispatch(setNotificationLoading(false));
     }
-  };
+  }, [dispatch]);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadNotifications(page);
+    });
+    return () => { active = false; };
+  }, [page, loadNotifications]);
+
+
 
   const filteredNotifications = useMemo(() => {
     let items = notifications;
@@ -151,6 +157,8 @@ function NotificationPage() {
 
           unread={unreadCount}
         />
+
+        {unreadCount > 0 && <button type="button" onClick={handleReadAll} className="bg-primary text-white px-5 py-3 rounded-xl">Mark all as read</button>}
 
         <NotificationStats notifications={notifications} />
 

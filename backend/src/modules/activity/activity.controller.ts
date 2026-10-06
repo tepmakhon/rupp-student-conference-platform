@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import * as activityService from "./activity.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getMyActivityHistoryController = async (
   req: Request,
@@ -20,13 +20,7 @@ export const getMyActivityHistoryController = async (
 
       "Activity history retrieved",
     );
-  } catch (error: any) {
-    return errorResponse(
-      res,
-
-      error.message,
-
-      error.statusCode || 400,
-    );
+  } catch (error) {
+    throw error;
   }
 };

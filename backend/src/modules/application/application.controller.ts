@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 
 import * as applicationService from "./application.service.js";
 
-import { successResponse, errorResponse } from "../../utils/apiResponse.js";
+import { successResponse } from "../../utils/apiResponse.js";
 
 export const getMyApplications = async (req: Request, res: Response) => {
   try {
     const user = req.user!;
 
-    const page = Number(req.query.page) || 1;
+    const page = Number(req.query.page ?? 1);
 
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit ?? 10);
 
     const result = await applicationService.getMyApplications(
       BigInt(user.id),
@@ -19,8 +19,8 @@ export const getMyApplications = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, result, "Applications retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 500);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -37,8 +37,8 @@ export const getApplicants = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, applicants, "Applicants retrieved");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -56,7 +56,7 @@ export const updateStatus = async (req: Request, res: Response) => {
     );
 
     return successResponse(res, application, "Application status updated");
-  } catch (error: any) {
-    return errorResponse(res, error.message, error.statusCode || 400);
+  } catch (error) {
+    throw error;
   }
 };

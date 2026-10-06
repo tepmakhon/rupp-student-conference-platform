@@ -1,18 +1,11 @@
-import { useState } from "react";
+import ModerationActions from "./ModerationActions";
 
-import toast from "react-hot-toast";
 
-import {
-  approveOpportunity,
-  rejectOpportunity,
-} from "../../api/opportunityApi";
 
 import {
   BriefcaseIcon,
   BuildingOfficeIcon,
   CalendarDaysIcon,
-  CheckCircleIcon,
-  XCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import { formatDate } from "../../utils/formatDate";
@@ -22,48 +15,6 @@ function PendingOpportunityCard({
 
   onAction,
 }) {
-  const [processing, setProcessing] = useState(false);
-
-  const handleApprove = async () => {
-    try {
-      setProcessing(true);
-
-      await approveOpportunity(opportunity.id);
-
-      toast.success("Opportunity approved");
-
-      await onAction();
-    } catch (error) {
-      console.error(error);
-
-      toast.error(
-        error?.response?.data?.message || "Failed to approve opportunity",
-      );
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleReject = async () => {
-    try {
-      setProcessing(true);
-
-      await rejectOpportunity(opportunity.id);
-
-      toast.success("Opportunity rejected");
-
-      await onAction();
-    } catch (error) {
-      console.error(error);
-
-      toast.error(
-        error?.response?.data?.message || "Failed to reject opportunity",
-      );
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   return (
     <div
       className="
@@ -245,119 +196,7 @@ function PendingOpportunityCard({
         )}
       </div>
 
-      {/* Actions */}
-
-      <div
-        className="
-
-          flex
-
-          flex-col
-
-          sm:flex-row
-
-          gap-4
-
-          mt-8
-
-        "
-      >
-        <button
-          onClick={handleApprove}
-
-          disabled={processing}
-
-          className="
-
-            flex-1
-
-            flex
-
-            items-center
-
-            justify-center
-
-            gap-2
-
-            bg-secondary
-
-            hover:bg-green-700
-
-            text-white
-
-            py-3
-
-            rounded-xl
-
-            font-medium
-
-            transition
-
-            disabled:opacity-50
-
-          "
-        >
-          <CheckCircleIcon
-            className="
-
-              w-5
-
-              h-5
-
-            "
-          />
-
-          {processing ? "Processing..." : "Approve"}
-        </button>
-
-        <button
-          onClick={handleReject}
-
-          disabled={processing}
-
-          className="
-
-            flex-1
-
-            flex
-
-            items-center
-
-            justify-center
-
-            gap-2
-
-            bg-red-600
-
-            hover:bg-red-700
-
-            text-white
-
-            py-3
-
-            rounded-xl
-
-            font-medium
-
-            transition
-
-            disabled:opacity-50
-
-          "
-        >
-          <XCircleIcon
-            className="
-
-              w-5
-
-              h-5
-
-            "
-          />
-
-          {processing ? "Processing..." : "Reject"}
-        </button>
-      </div>
+      <ModerationActions type="opportunity" id={opportunity.id} onAction={onAction} />
     </div>
   );
 }

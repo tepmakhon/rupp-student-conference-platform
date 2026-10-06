@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import useApiQuery from "../../hooks/useApiQuery";
+import ErrorState from "../common/ErrorState";
+import { useEffect, useRef, useState , useCallback } from "react";
 
 import { Link } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { BellIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
@@ -14,13 +16,7 @@ import {
   readAllNotifications,
 } from "../../api/notificationApi";
 
-import {
-  setNotifications,
-  setNotificationLoading,
-  setNotificationError,
-  markAsRead,
-  markAllAsRead,
-} from "../../redux/slices/notificationSlice";
+import { markAsRead, markAllAsRead } from "../../redux/slices/notificationSlice";
 
 import NotificationCard from "./NotificationCard";
 
@@ -28,36 +24,50 @@ import socket from "../../socket/socket";
 import { playNotificationSound } from "../../utils/playNotificationSound";
 
 function NotificationDropdown() {
-  useEffect(() => {
-    socket.on("new_notification", handleNotification);
-
-    return () => {
-      socket.off("new_notification", handleNotification);
-    };
-  }, []);
   const dispatch = useDispatch();
 
   const dropdownRef = useRef(null);
 
   const [open, setOpen] = useState(false);
 
-  const {
-    notifications,
+  const loader = useCallback(() => getNotifications(1, 5), []);
+  const { data, loading, error, retry: loadNotifications } = useApiQuery(loader);
+  const notifications = data?.userNotifications || [];
+  const unreadCount = data?.unreadCount || 0;
 
-    unreadCount,
+  const handleNotification = useCallback(async (notification) => {
+    playNotificationSound();
 
-    loading,
-  } = useSelector((state) => state.notification);
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification(
+        notification.notification?.title || "New Notification",
+
+        {
+          body: notification.notification?.message || "",
+
+          icon: "/logo.png",
+        },
+      );
+    }
+
+    toast.success(notification.notification?.title || "New Notification");
+    await loadNotifications();
+  }, [loadNotifications]);
 
   useEffect(() => {
-    loadNotifications();
+    socket.on("new_notification", handleNotification);
 
+    return () => {
+      socket.off("new_notification", handleNotification);
+    };
+  }, [handleNotification]);
+  useEffect(() => {
     const interval = setInterval(() => {
       loadNotifications();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [loadNotifications]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -80,60 +90,15 @@ function NotificationDropdown() {
       );
   }, []);
 
-  const loadNotifications = async () => {
-    try {
-      dispatch(setNotificationLoading(true));
 
-      dispatch(setNotificationError(null));
 
-      const data = await getNotifications(
-        1,
-
-        5,
-      );
-
-      dispatch(setNotifications(data));
-    } catch (error) {
-      console.error(error);
-
-      toast.error("Failed to load notifications");
-    } finally {
-      dispatch(setNotificationLoading(false));
-    }
-  };
-  const handleNotification = async (notification) => {
-    playNotificationSound();
-
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification(
-        notification.notification?.title || "New Notification",
-
-        {
-          body: notification.notification?.message || "",
-
-          icon: "/logo.png",
-        },
-      );
-    }
-
-    toast.success(notification.notification?.title || "New Notification");
-    console.log(
-      "Socket notification:",
-
-      notification,
-    );
-
-    playNotificationSound();
-
-    toast.success(notification.notification?.title || "New Notification");
-    await loadNotifications();
-  };
 
   const handleRead = async (id) => {
     try {
       await readNotification(id);
 
       dispatch(markAsRead(id));
+      loadNotifications();
     } catch (error) {
       console.error(error);
     }
@@ -144,6 +109,7 @@ function NotificationDropdown() {
       await readAllNotifications();
 
       dispatch(markAllAsRead());
+      loadNotifications();
 
       toast.success("All notifications marked as read");
     } catch (error) {
@@ -372,7 +338,9 @@ function NotificationDropdown() {
               </div>
             )}
 
-            {!loading && notifications.length === 0 && (
+            {error && <ErrorState message={error} onRetry={loadNotifications} />}
+
+            {!loading && !error && notifications.length === 0 && (
               <div
                 className="
 
@@ -410,7 +378,7 @@ function NotificationDropdown() {
               </div>
             )}
 
-            {!loading &&
+            {!loading && !error &&
               notifications.map((notification) => (
                 <div key={notification.id} className="border-b last:border-b-0">
                   <NotificationCard

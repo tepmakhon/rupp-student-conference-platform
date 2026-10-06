@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { getSkills } from "../../api/skillApi";
 
@@ -9,15 +9,21 @@ function ProfileSkillSelector({
 }) {
   const [skills, setSkills] = useState([]);
 
-  useEffect(() => {
-    loadSkills();
-  }, []);
-
-  const loadSkills = async () => {
+  const loadSkills = useCallback(async () => {
     const data = await getSkills();
 
     setSkills(data);
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadSkills();
+    });
+    return () => { active = false; };
+  }, [loadSkills]);
+
+
 
   const toggleSkill = (skillId) => {
     if (value.includes(skillId)) {

@@ -114,8 +114,8 @@ export const approveEvent = async (id) => {
   return response.data;
 };
 
-export const rejectEvent = async (id) => {
-  const response = await axiosInstance.patch(`/events/${id}/reject`);
+export const rejectEvent = async (id, reason) => {
+  const response = await axiosInstance.patch(`/events/${id}/reject`, { reason });
 
   return response.data;
 };

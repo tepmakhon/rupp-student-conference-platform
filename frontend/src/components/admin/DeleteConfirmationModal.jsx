@@ -7,6 +7,7 @@ import Button from "../ui/Button";
 
 function DeleteConfirmationModal({
   open,
+  saving = false,
 
   title,
 
@@ -129,6 +130,7 @@ function DeleteConfirmationModal({
           <button
             type="button"
 
+            disabled={saving}
             onClick={onClose}
 
             className="
@@ -233,6 +235,7 @@ function DeleteConfirmationModal({
 
             variant="outline"
 
+            disabled={saving}
             onClick={onClose}
           >
             Cancel
@@ -243,9 +246,10 @@ function DeleteConfirmationModal({
 
             variant="danger"
 
+            disabled={saving}
             onClick={onConfirm}
           >
-            Delete
+            {saving ? "Deleting..." : "Delete"}
           </Button>
         </div>
       </div>

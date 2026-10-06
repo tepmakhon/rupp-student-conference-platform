@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -27,11 +27,7 @@ function MyEventsPage() {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  useEffect(() => {
-    loadEvents();
-  }, []);
-
-  const loadEvents = async () => {
+  const loadEvents = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -45,7 +41,17 @@ function MyEventsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadEvents();
+    });
+    return () => { active = false; };
+  }, [loadEvents]);
+
+
 
   const openDelete = (event) => {
     setSelected(event);

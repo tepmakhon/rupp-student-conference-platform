@@ -4,6 +4,7 @@ import Button from "../ui/Button";
 
 function AdminFormModal({
   open,
+  saving = false,
 
   title,
 
@@ -92,6 +93,7 @@ function AdminFormModal({
           <button
             type="button"
 
+            disabled={saving}
             onClick={onClose}
 
             className="
@@ -153,12 +155,13 @@ function AdminFormModal({
 
               variant="outline"
 
-              onClick={onClose}
+              disabled={saving}
+            onClick={onClose}
             >
               Cancel
             </Button>
 
-            <Button type="submit">Save</Button>
+            <Button type="submit" disabled={saving}>{saving ? "Saving..." : "Save"}</Button>
           </div>
         </form>
       </div>

@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
 import authReducer from "./slices/authSlice";
 import profileReducer from "./slices/profileSlice.js";
@@ -8,8 +8,7 @@ import opportunityReducer from "./slices/opportunitySlice";
 import dashboardReducer from "./slices/dashboardSlice";
 import leaderboardReducer from "./slices/leaderboardSlice";
 
-export const store = configureStore({
-  reducer: {
+const appReducer = combineReducers({
     auth: authReducer,
     dashboard: dashboardReducer,
     leaderboard: leaderboardReducer,
@@ -17,5 +16,8 @@ export const store = configureStore({
     notification: notificationReducer,
     events: eventReducer,
     opportunities: opportunityReducer,
-  },
+});
+
+export const store = configureStore({
+  reducer: (state, action) => appReducer(action.type === "auth/logout" ? { auth: state?.auth } : state, action),
 });

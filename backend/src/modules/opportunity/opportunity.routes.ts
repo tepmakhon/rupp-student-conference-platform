@@ -1,3 +1,6 @@
+import { rejectionSchema } from "../audit/moderation.validation.js";
+import { validateIdParam } from "../../middlewares/id.middleware.js";
+import { optionalAuth } from "../../middlewares/optionalAuth.middleware.js";
 import { Router } from "express";
 
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
@@ -6,7 +9,7 @@ import { rbac } from "../../middlewares/rbac.middleware.js";
 
 import { validate } from "../../middlewares/validate.middleware.js";
 
-import { createOpportunitySchema } from "./opportunity.validation.js";
+import { createOpportunitySchema, updateOpportunitySchema, applyOpportunitySchema } from "./opportunity.validation.js";
 
 import {
   createOpportunity,
@@ -27,6 +30,8 @@ import {
 } from "./opportunity.controller.js";
 
 const router = Router();
+router.param("id", validateIdParam);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -85,7 +90,7 @@ router.get(
   getOrganizationOpportunities,
 );
 
-router.get("/:id", getOpportunityById);
+router.get("/:id", optionalAuth, getOpportunityById);
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +117,7 @@ router.patch(
 
   rbac(["ORGANIZATION"]),
 
+  validate(updateOpportunitySchema),
   updateOpportunity,
 );
 
@@ -148,6 +154,7 @@ router.patch(
 
   rbac(["ADMIN"]),
 
+  validate(rejectionSchema),
   rejectOpportunity,
 );
 
@@ -164,6 +171,7 @@ router.post(
 
   rbac(["STUDENT"]),
 
+  validate(applyOpportunitySchema),
   applyOpportunity,
 );
 

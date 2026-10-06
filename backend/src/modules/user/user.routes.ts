@@ -1,3 +1,7 @@
+import { validateIdParam } from "../../middlewares/id.middleware.js";
+import { z } from "zod";
+import { validate } from "../../middlewares/validate.middleware.js";
+import { getUsers, changeAccountStatus } from "./user.admin.controller.js";
 import express from "express";
 
 import {
@@ -13,6 +17,12 @@ import { rbac } from "../../middlewares/rbac.middleware.js";
 import { successResponse } from "../../utils/apiResponse.js";
 
 const router = express.Router();
+router.param("id", validateIdParam);
+
+router.get("/", authMiddleware, rbac(["ADMIN"]), getUsers);
+router.patch("/:id/status", authMiddleware, rbac(["ADMIN"]),
+  validate(z.object({ accountStatus: z.enum(["ACTIVE", "SUSPENDED"]) })), changeAccountStatus);
+
 
 /**
  * @swagger

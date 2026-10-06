@@ -1,12 +1,8 @@
-import { useState } from "react";
+import ModerationActions from "./ModerationActions";
 
-import toast from "react-hot-toast";
 
-import { approveEvent, rejectEvent } from "../../api/eventApi";
 
 import {
-  CheckCircleIcon,
-  XCircleIcon,
   CalendarDaysIcon,
   MapPinIcon,
   BuildingOfficeIcon,
@@ -20,44 +16,6 @@ function PendingEventCard({
 
   onAction,
 }) {
-  const [processing, setProcessing] = useState(false);
-
-  const handleApprove = async () => {
-    try {
-      setProcessing(true);
-
-      await approveEvent(event.id);
-
-      toast.success("Event approved");
-
-      await onAction();
-    } catch (error) {
-      console.error(error);
-
-      toast.error(error?.response?.data?.message || "Failed to approve event");
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleReject = async () => {
-    try {
-      setProcessing(true);
-
-      await rejectEvent(event.id);
-
-      toast.success("Event rejected");
-
-      await onAction();
-    } catch (error) {
-      console.error(error);
-
-      toast.error(error?.response?.data?.message || "Failed to reject event");
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   return (
     <div
       className="
@@ -280,119 +238,7 @@ function PendingEventCard({
         )}
       </div>
 
-      {/* Actions */}
-
-      <div
-        className="
-
-          flex
-
-          flex-col
-
-          sm:flex-row
-
-          gap-4
-
-          mt-8
-
-        "
-      >
-        <button
-          onClick={handleApprove}
-
-          disabled={processing}
-
-          className="
-
-            flex-1
-
-            flex
-
-            items-center
-
-            justify-center
-
-            gap-2
-
-            bg-secondary
-
-            hover:bg-green-700
-
-            text-white
-
-            rounded-xl
-
-            py-3
-
-            font-medium
-
-            transition
-
-            disabled:opacity-50
-
-          "
-        >
-          <CheckCircleIcon
-            className="
-
-              w-5
-
-              h-5
-
-            "
-          />
-
-          {processing ? "Processing..." : "Approve"}
-        </button>
-
-        <button
-          onClick={handleReject}
-
-          disabled={processing}
-
-          className="
-
-            flex-1
-
-            flex
-
-            items-center
-
-            justify-center
-
-            gap-2
-
-            bg-red-600
-
-            hover:bg-red-700
-
-            text-white
-
-            rounded-xl
-
-            py-3
-
-            font-medium
-
-            transition
-
-            disabled:opacity-50
-
-          "
-        >
-          <XCircleIcon
-            className="
-
-              w-5
-
-              h-5
-
-            "
-          />
-
-          {processing ? "Processing..." : "Reject"}
-        </button>
-      </div>
+      <ModerationActions type="event" id={event.id} onAction={onAction} />
     </div>
   );
 }

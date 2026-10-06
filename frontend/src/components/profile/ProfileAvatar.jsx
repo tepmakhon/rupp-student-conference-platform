@@ -1,3 +1,4 @@
+import SafeImage from "../common/SafeImage";
 import { useRef, useState } from "react";
 
 import { FaCamera } from "react-icons/fa";
@@ -90,7 +91,7 @@ function ProfileAvatar({
 
         "
       >
-        <img
+        <SafeImage
           src={avatar}
 
           alt="profile"

@@ -48,10 +48,6 @@ function StudentDashboardPage() {
 
   const { stats, loading, error } = useSelector((state) => state.dashboard);
 
-  useEffect(() => {
-    loadDashboard();
-  }, []);
-
   const loadDashboard = useCallback(async () => {
     try {
       dispatch(setDashboardLoading(true));
@@ -71,7 +67,11 @@ function StudentDashboardPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    loadDashboard();
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadDashboard();
+    });
+    return () => { active = false; };
   }, [loadDashboard]);
 
   useEffect(() => {

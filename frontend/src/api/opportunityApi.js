@@ -6,9 +6,9 @@ export const getOpportunities = async (
   keyword = "",
   typeId = "",
 ) => {
-  const response = await axiosInstance.get(
-    `/opportunities?page=${page}&limit=${limit}&keyword=${keyword}&typeId=${typeId}`,
-  );
+  const response = await axiosInstance.get("/opportunities", {
+    params: { page, limit, keyword, typeId },
+  });
   return response.data.data;
 };
 
@@ -60,8 +60,8 @@ export const approveOpportunity = async (id) => {
   return response.data.data;
 };
 
-export const rejectOpportunity = async (id) => {
-  const response = await axiosInstance.patch(`/opportunities/${id}/reject`);
+export const rejectOpportunity = async (id, reason) => {
+  const response = await axiosInstance.patch(`/opportunities/${id}/reject`, { reason });
   return response.data.data;
 };
 

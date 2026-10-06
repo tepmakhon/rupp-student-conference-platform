@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState , useCallback } from "react";
 
 import toast from "react-hot-toast";
 
@@ -27,11 +27,7 @@ function StudentBadgesPage() {
 
   const [activityScore, setActivityScore] = useState(0);
 
-  useEffect(() => {
-    loadBadges();
-  }, []);
-
-  const loadBadges = async () => {
+  const loadBadges = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -51,7 +47,17 @@ function StudentBadgesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => {
+      if (active) loadBadges();
+    });
+    return () => { active = false; };
+  }, [loadBadges]);
+
+
 
   return (
     <DashboardLayout>

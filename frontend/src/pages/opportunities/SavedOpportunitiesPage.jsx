@@ -1,6 +1,8 @@
-import { useEffect, useState, useCallback } from "react";
+import ErrorState from "../../components/common/ErrorState";
+import useApiQuery from "../../hooks/useApiQuery";
 
-import toast from "react-hot-toast";
+
+
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 
@@ -15,37 +17,8 @@ import OpportunityCard from "../../components/opportunities/OpportunityCard";
 import { getSavedOpportunities } from "../../api/opportunityApi";
 
 function SavedOpportunitiesPage() {
-  const [opportunities, setOpportunities] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-
-  const loadSavedOpportunities = useCallback(async () => {
-    try {
-      setLoading(true);
-
-      const data = await getSavedOpportunities();
-
-      const normalized = Array.isArray(data)
-        ? data
-
-            .map((item) => item.opportunity)
-
-            .filter(Boolean)
-        : [];
-
-      setOpportunities(normalized);
-    } catch (error) {
-      console.error(error);
-
-      toast.error("Failed to load saved opportunities");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadSavedOpportunities();
-  }, [loadSavedOpportunities]);
+  const { data, loading, error, retry: loadSavedOpportunities } = useApiQuery(getSavedOpportunities);
+  const opportunities = Array.isArray(data) ? data.map((item) => item.opportunity).filter(Boolean) : [];
 
   return (
     <DashboardLayout>
@@ -64,9 +37,11 @@ function SavedOpportunitiesPage() {
           description="Manage opportunities you saved for later."
         />
 
+        {error && <ErrorState message={error} onRetry={loadSavedOpportunities} />}
+
         {loading && <LoadingState />}
 
-        {!loading && opportunities.length === 0 && (
+        {!loading && !error && opportunities.length === 0 && (
           <EmptyState
             title="No Saved Opportunities"
 
@@ -74,7 +49,7 @@ function SavedOpportunitiesPage() {
           />
         )}
 
-        {!loading && opportunities.length > 0 && (
+        {!loading && !error && opportunities.length > 0 && (
           <div
             className="
 
